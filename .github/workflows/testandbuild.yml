@@ -14,6 +14,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22.x"
-      - run: npm ci
+      - run: npm ci --omit=dev
       - run: npm run typecheck
       - run: npm run build
