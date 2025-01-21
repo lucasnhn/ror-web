@@ -11,17 +11,19 @@ export default [
      * Public routes
      */
     index("routes/home.tsx"),
-    route("auth/login", "routes/auth/authorize.ts"),
-    route("auth/callback", "routes/auth/callback.tsx"),
 
     /**
      * Authorization routes
      */
+
     layout("routes/auth/layout.tsx", [
       route("login", "routes/auth/login.tsx"),
       route("logout", "routes/auth/logout.tsx"),
       route("unauthorized", "routes/auth/unauthorized.tsx"),
     ]),
+    // These are simply resource routes, they should only be run on the server
+    route("auth/login", "routes/auth/authorize.tsx"),
+    route("auth/callback", "routes/auth/callback.tsx"),
 
     /**
      * Protected routes
