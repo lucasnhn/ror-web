@@ -19,9 +19,18 @@ VITE_AUTH_CLIENT_ID=MY_AUTHENTICATION_CLIENT_ID
 VITE_AUTH_CLIENT_SECRET=MY_AUTHENTICATION_CLIENT_SECRET
 VITE_AUTH_REDIRECT_URI=http://localhost:11000/auth/callback
 VITE_ROR_API_URL=OUR_INSTANCE_OF_ROR_API
+VITE_SIGNING_SECRET=
 ```
 
 **Note**: Environmental variables will be validated running runtime and mapped to a different naming convention. See `/app/env.ts` for implementation details.
+
+To generate a secret for `VITE_SIGNING_SECRET` you can run the following command:
+
+```bash
+openssl rand -base64 32
+```
+
+The secret is used for signing cookies meant to be used for session management.
 
 ### Installation
 
