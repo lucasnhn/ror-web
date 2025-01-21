@@ -11,6 +11,7 @@ export const env = createEnv({
     AUTH_CLIENT_ID: z.string().min(1),
     AUTH_CLIENT_SECRET: z.string().min(1),
     AUTH_REDIRECT_URI: z.string().url(),
+    SIGNING_SECRET: z.string().min(1),
   },
   /**
    * Environment variables available on the client (and server).
@@ -31,6 +32,7 @@ export const env = createEnv({
     AUTH_CLIENT_ID: import.meta.env.VITE_AUTH_CLIENT_ID,
     AUTH_CLIENT_SECRET: import.meta.env.VITE_AUTH_CLIENT_SECRET,
     AUTH_REDIRECT_URI: import.meta.env.VITE_AUTH_REDIRECT_URI,
+    SIGNING_SECRET: import.meta.env.VITE_SIGNING_SECRET,
     PUBLIC_ROR_API_URL: import.meta.env.VITE_ROR_API_URL,
     PUBLIC_DEV_MODE: import.meta.env.DEV,
   },

@@ -7,7 +7,7 @@
   "scripts": {
     "build": "cross-env NODE_ENV=production react-router build",
     "dev": "react-router dev -p 11000",
-    "start": "cross-env NODE_ENV=production react-router-serve ./build/server/index.js -p 11000",
+    "start": "cross-env NODE_ENV=production PORT=11000 react-router-serve ./build/server/index.js",
     "typecheck": "react-router typegen && tsc"
   },
   "dependencies": {
