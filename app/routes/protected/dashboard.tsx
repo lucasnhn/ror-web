@@ -2,9 +2,6 @@ import { authAccessTokenCookie } from "~/services/auth/auth.service";
 import { UsersAPI } from "~/services/ror-api/users.api";
 import type { Route } from "./+types/dashboard";
 import { env } from "~/env";
-import { useEffect } from "react";
-import { useAuthentication } from "~/features/auth-provider/use-authentication";
-import { useSearchParams } from "react-router";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const cookie = request.headers.get("Cookie");
