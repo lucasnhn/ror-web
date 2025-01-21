@@ -7,9 +7,6 @@ import {
   authAccessTokenCookie,
 } from "~/services/auth/auth.service";
 import type { Route } from "./+types/callback";
-import { useEffect } from "react";
-import { useAuthentication } from "~/features/auth-provider/use-authentication";
-import { useNavigate } from "react-router";
 
 export async function loader({ request }: Route.LoaderArgs) {
   try {
@@ -36,17 +33,26 @@ export async function loader({ request }: Route.LoaderArgs) {
       idTokenExpected: true,
     });
 
+    /**
+     * Save our access_token in a secured cookie that can be retrieved inside of "loader" functions.
+
+     * @example
+     * export async function loader({ request }: Route.LoaderArgs) {
+     *   const cookie = request.headers.get("Cookie");
+     *   const accessToken = await authAccessTokenCookie.parse(cookie);
+     *  // Do something with the token
+     * }
+     */
     const headers = new Headers();
     headers.append(
       "Set-Cookie",
       await authAccessTokenCookie.serialize(tokens.access_token)
     );
 
+    /**
+     * Ready to send our user to our protected landing page
+     */
     const redirectTo = new URL("/dashboard", request.url);
-    redirectTo.searchParams.append("access_token", tokens.access_token);
-    if (tokens.id_token) {
-      redirectTo.searchParams.append("id_token", tokens.id_token);
-    }
 
     return redirect(redirectTo.toString(), {
       headers,
@@ -62,35 +68,10 @@ export function HydrateFallback() {
   return <p>Verifying authentication…</p>;
 }
 
-export default function Component({ params }: Route.ComponentProps) {
-  const navigate = useNavigate();
-  const { setAccessToken, setIdToken } = useAuthentication();
-  /**
-   * Save the access token to local storage
-   */
-  useEffect(() => {
-    if (params.id_token) {
-      window.localStorage.setItem("__ror_id_token", params.id_token);
-      setIdToken(params.id_token);
-    }
-
-    if (params.access_token) {
-      window.localStorage.setItem("__ror_access_token", params.access_token);
-      setAccessToken(params.access_token);
-      navigate("/dashboard");
-    }
-  }, [
-    params.access_token,
-    params.id_token,
-    navigate,
-    setAccessToken,
-    setIdToken,
-  ]);
-
+export default function CallbackRoute() {
   return (
     <div>
-      <p>Callback</p>
-      <pre>{JSON.stringify(params, null, 2)}</pre>
+      <p>Verifying authentication…</p>
     </div>
   );
 }

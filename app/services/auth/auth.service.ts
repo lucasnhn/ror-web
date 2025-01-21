@@ -19,18 +19,12 @@ export const authCodeVerificationCookie = createCookie(
   }
 );
 
-export const authIdTokenCookie = createCookie("__ror_id_token", {
-  secure: env.PUBLIC_DEV_MODE ? false : true,
-  path: "/",
-  httpOnly: false, // We want to access this in the client
-  maxAge: 60 * 30, // 30 min
-});
-
 export const authAccessTokenCookie = createCookie("__ror_access_token", {
   secure: env.PUBLIC_DEV_MODE ? false : true,
   path: "/",
   httpOnly: true,
   maxAge: 60 * 30, // 30 min
+  secrets: [env.SIGNING_SECRET],
 });
 
 /**

@@ -6,6 +6,12 @@ import type {
   HTTPMethod,
   RequestOptions,
 } from "./types";
+import {
+  RorAPIError,
+  RorForbidden,
+  RorNotFound,
+  RorUnauthorized,
+} from "./error";
 
 export class RorApiClient {
   private config: ClientConfig;
@@ -62,10 +68,7 @@ export class RorApiClient {
       if (timeoutId) clearTimeout(timeoutId);
 
       if (!response.ok) {
-        throw {
-          message: response.statusText,
-          status: response.status,
-        } as APIError;
+        throw new RorAPIError(response.statusText, response.status);
       }
 
       const data = await response.json();
@@ -76,6 +79,19 @@ export class RorApiClient {
       };
     } catch (error) {
       if (timeoutId) clearTimeout(timeoutId);
+
+      if (error instanceof RorAPIError) {
+        if (error.status === 401) {
+          throw new RorUnauthorized(error.message);
+        } else if (error.status === 403) {
+          throw new RorForbidden(error.message);
+        } else if (error.status === 404) {
+          throw new RorNotFound(error.message);
+        } else {
+          throw error;
+        }
+      }
+
       throw error;
     }
   }
