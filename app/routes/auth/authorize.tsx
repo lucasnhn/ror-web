@@ -27,8 +27,6 @@ export async function loader() {
     const parameters = new URLSearchParams();
     const headers = new Headers();
 
-    let state: string;
-
     parameters.set("redirect_uri", redirect_uri);
     parameters.set("client_id", env.AUTH_CLIENT_ID);
     parameters.set("scope", scope);
@@ -48,11 +46,10 @@ export async function loader() {
     );
 
     /**
-     * We cannot be sure the AS supports PKCE so we're going to use state too. Use
-     * of PKCE is backwards compatible even if the AS doesn't support it which is
-     * why we're using it regardless.
+     * State verification step
+     * A simple security measure to prevent CSRF attacks, the state will be verified in the callback
      */
-    state = client.randomState();
+    const state = client.randomState();
     parameters.set("state", state);
     headers.append("Set-Cookie", await authStateCookie.serialize(state));
 
