@@ -33,17 +33,33 @@ export const authAccessTokenCookie = createCookie("__ror_access_token", {
   maxAge: 60 * 30, // 30 min
 });
 
+/**
+ * Retrieve the .well-known configuration from the Authorization Server.
+ * @returns The configuration object.
+ */
 export async function discoverAuthMetadata(): Promise<client.Configuration> {
   const options: client.DiscoveryRequestOptions = {
-    // "allowInsecureRequests" is deprecated but used for local development
+    /**
+     * "allowInsecureRequests" is marked as deprecated but used for local development to not have to deal with HTTPS.
+     * When using production build, then we adhere to using HTTPS.
+     */
     execute: env.PUBLIC_DEV_MODE ? [client.allowInsecureRequests] : [],
   };
 
+  const serverUrl = new URL(env.AUTH_ISSUER);
+  const clientId = env.AUTH_CLIENT_ID;
+  const clientSecret = env.AUTH_CLIENT_SECRET;
+  const metadata: Partial<client.ClientMetadata> = {
+    client_secret: env.AUTH_CLIENT_SECRET,
+  };
+  const clientAuthentication: client.ClientAuth =
+    client.ClientSecretPost(clientSecret);
+
   return client.discovery(
-    new URL(env.AUTH_ISSUER),
-    env.AUTH_CLIENT_ID,
-    env.AUTH_CLIENT_SECRET,
-    undefined,
+    serverUrl,
+    clientId,
+    metadata,
+    clientAuthentication,
     options
   );
 }
