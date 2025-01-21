@@ -78,3 +78,7 @@ export async function loader() {
     }
   }
 }
+
+export default function AuthorizeRoute() {
+  return <p>Redirecting...</p>;
+}
