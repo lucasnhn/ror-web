@@ -12,6 +12,11 @@ export const env = createEnv({
     AUTH_CLIENT_SECRET: z.string().min(1),
     AUTH_REDIRECT_URI: z.string().url(),
     SIGNING_SECRET: z.string().min(1),
+    /**
+     * A flag that is used for our authorization library to allow or disallow HTTP requests.
+     * @default true
+     */
+    FORCE_TLS: z.union([z.literal("true"), z.literal("false")]).default("true"),
   },
   /**
    * Environment variables available on the client (and server).
@@ -34,6 +39,7 @@ export const env = createEnv({
     AUTH_REDIRECT_URI: import.meta.env.VITE_AUTH_REDIRECT_URI,
     SIGNING_SECRET: import.meta.env.VITE_SIGNING_SECRET,
     PUBLIC_ROR_API_URL: import.meta.env.VITE_ROR_API_URL,
+    FORCE_TLS: import.meta.env.VITE_FORCE_TLS,
     PUBLIC_DEV_MODE: import.meta.env.DEV,
   },
 });

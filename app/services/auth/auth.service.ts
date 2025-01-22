@@ -34,10 +34,10 @@ export const authAccessTokenCookie = createCookie("__ror_access_token", {
 export async function discoverAuthMetadata(): Promise<client.Configuration> {
   const options: client.DiscoveryRequestOptions = {
     /**
-     * "allowInsecureRequests" is marked as deprecated but used for local development to not have to deal with HTTPS.
-     * When using production build, then we adhere to using HTTPS.
+     * "allowInsecureRequests" is marked as deprecated but that is meant as a warning only
+     * We utilize this option to allow insecure requests in development mode with our env flag "FORCE_TLS"
      */
-    execute: env.PUBLIC_DEV_MODE ? [client.allowInsecureRequests] : [],
+    execute: env.FORCE_TLS === "false" ? [client.allowInsecureRequests] : [],
   };
 
   const serverUrl = new URL(env.AUTH_ISSUER);
