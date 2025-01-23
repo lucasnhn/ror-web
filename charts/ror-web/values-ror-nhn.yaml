@@ -1,0 +1,21 @@
+service:
+  type: NodePort
+  port: 8080
+ingress:
+  enabled: true
+  className: avi-ingress-class-helsenett
+  annotations: {}
+  hosts:
+    - host: beta.ror.nhn.no
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls:
+    - secretName: ror-web-tls
+      hosts:
+        - beta.ror.nhn.no
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
