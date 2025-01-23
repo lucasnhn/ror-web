@@ -33,13 +33,13 @@ export const env = createEnv({
    * `import.meta.env` is a Vite specific feature.
    */
   runtimeEnv: {
-    AUTH_ISSUER: process.env.VITE_AUTH_ISSUER,
-    AUTH_CLIENT_ID: process.env.VITE_AUTH_CLIENT_ID,
-    AUTH_CLIENT_SECRET: process.env.VITE_AUTH_CLIENT_SECRET,
-    AUTH_REDIRECT_URI: process.env.VITE_AUTH_REDIRECT_URI,
-    SIGNING_SECRET: process.env.VITE_SIGNING_SECRET,
-    PUBLIC_ROR_API_URL: process.env.VITE_ROR_API_URL,
-    FORCE_TLS: process.env.VITE_FORCE_TLS,
+    AUTH_ISSUER: process.env.AUTH_ISSUER,
+    AUTH_CLIENT_ID: process.env.AUTH_CLIENT_ID,
+    AUTH_CLIENT_SECRET: process.env.AUTH_CLIENT_SECRET,
+    AUTH_REDIRECT_URI: process.env.AUTH_REDIRECT_URI,
+    SIGNING_SECRET: process.env.SIGNING_SECRET,
+    PUBLIC_ROR_API_URL: process.env.ROR_API_URL,
+    FORCE_TLS: process.env.FORCE_TLS,
     PUBLIC_DEV_MODE: process.env.NODE_ENV === "development",
   },
 });
