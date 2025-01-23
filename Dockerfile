@@ -4,5 +4,5 @@ LABEL org.opencontainers.image.source https://github.com/norskhelsenett/ror
 WORKDIR /app
 
 COPY node_modules /app/node_modules
-COPY build /app
-CMD ["node_modules/.bin/react-router-serve", "./server/index.js"]
+COPY build /app/build
+CMD ["node_modules/.bin/react-router-serve", "./build/server/index.js"]
