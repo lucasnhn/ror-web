@@ -24,7 +24,7 @@ export const env = createEnv({
   clientPrefix: "PUBLIC_",
   client: {
     PUBLIC_ROR_API_URL: z.string().url(),
-    PUBLIC_DEV_MODE: z.boolean(),
+    PUBLIC_DEV_MODE: z.boolean().optional(),
   },
   /**
    * The runtime environment variables mapped to our `server` and `client` schemas.
@@ -33,13 +33,13 @@ export const env = createEnv({
    * `import.meta.env` is a Vite specific feature.
    */
   runtimeEnv: {
-    AUTH_ISSUER: import.meta.env.VITE_AUTH_ISSUER,
-    AUTH_CLIENT_ID: import.meta.env.VITE_AUTH_CLIENT_ID,
-    AUTH_CLIENT_SECRET: import.meta.env.VITE_AUTH_CLIENT_SECRET,
-    AUTH_REDIRECT_URI: import.meta.env.VITE_AUTH_REDIRECT_URI,
-    SIGNING_SECRET: import.meta.env.VITE_SIGNING_SECRET,
-    PUBLIC_ROR_API_URL: import.meta.env.VITE_ROR_API_URL,
-    FORCE_TLS: import.meta.env.VITE_FORCE_TLS,
-    PUBLIC_DEV_MODE: import.meta.env.DEV,
+    AUTH_ISSUER: process.env.VITE_AUTH_ISSUER,
+    AUTH_CLIENT_ID: process.env.VITE_AUTH_CLIENT_ID,
+    AUTH_CLIENT_SECRET: process.env.VITE_AUTH_CLIENT_SECRET,
+    AUTH_REDIRECT_URI: process.env.VITE_AUTH_REDIRECT_URI,
+    SIGNING_SECRET: process.env.VITE_SIGNING_SECRET,
+    PUBLIC_ROR_API_URL: process.env.VITE_ROR_API_URL,
+    FORCE_TLS: process.env.VITE_FORCE_TLS,
+    PUBLIC_DEV_MODE: process.env.NODE_ENV === "development",
   },
 });

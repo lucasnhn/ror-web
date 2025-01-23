@@ -6,6 +6,10 @@ Frontend for admin GUI in the ROR project.
 - 📖 [React Router](https://reactrouter.com/)
 - 🎨 Styling (To be decided)
 
+## Requirements
+- Minimum [Node.js](https://nodejs.org/en/) v22.9.0
+  - due to [--env-file-if-exists](https://nodejs.org/dist/v22.13.1/docs/api/cli.html#--env-file-if-existsconfig) usage in package.json start script
+
 ## Getting Started
 
 ### Setup environmental variables
