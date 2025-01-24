@@ -11,6 +11,7 @@ export const env = createEnv({
     AUTH_ISSUER: z.string().url(),
     AUTH_CLIENT_ID: z.string().min(1),
     AUTH_CLIENT_SECRET: z.string().min(1),
+    TRUST_HOST: z.string().min(1),
   },
   /**
    * Environment variables available on the client (and server).
@@ -31,5 +32,6 @@ export const env = createEnv({
     AUTH_CLIENT_ID: process.env.AUTH_CLIENT_ID,
     AUTH_CLIENT_SECRET: process.env.AUTH_CLIENT_SECRET,
     PUBLIC_ROR_API_URL: process.env.ROR_API_URL,
+    TRUST_HOST: process.env.TRUST_HOST,
   },
 });

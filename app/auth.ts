@@ -17,8 +17,11 @@ const dexIdpProvider: Provider = {
   clientSecret: env.AUTH_CLIENT_SECRET,
 };
 
+const trusthost = Boolean(JSON.parse(env.TRUST_HOST));
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [dexIdpProvider],
+  trustHost: trusthost,
   callbacks: {
     jwt({ token, account }) {
       if (account?.provider === "dex") {
