@@ -5,11 +5,13 @@
   "scripts": {
     "dev": "next dev --turbopack -p 11000",
     "build": "next build",
+    "build:github": "env-cmd -f .env.github-workflow next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
     "@t3-oss/env-core": "^0.11.1",
+    "env-cmd": "^10.1.0",
     "next": "15.1.6",
     "next-auth": "^5.0.0-beta.25",
     "react": "^19.0.0",
