@@ -1,5 +1,5 @@
-import { env } from "~/env";
-import { createApiClient, loggingMiddleware } from "~/services/ror-api-client";
+import { env } from "@/env";
+import { createApiClient, loggingMiddleware } from "@/packages/ror-api-client";
 
 export const rorApiClient = (accessToken: string) => {
   const middlewares = [loggingMiddleware];
