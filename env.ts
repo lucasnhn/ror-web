@@ -7,16 +7,11 @@ export const env = createEnv({
    * Will throw if you access these variables on the client.
    */
   server: {
+    AUTH_SECRET: z.string().min(1),
     AUTH_ISSUER: z.string().url(),
     AUTH_CLIENT_ID: z.string().min(1),
     AUTH_CLIENT_SECRET: z.string().min(1),
-    AUTH_REDIRECT_URI: z.string().url(),
-    SIGNING_SECRET: z.string().min(1),
-    /**
-     * A flag that is used for our authorization library to allow or disallow HTTP requests.
-     * @default true
-     */
-    FORCE_TLS: z.union([z.literal("true"), z.literal("false")]).default("true"),
+    TRUST_HOST: z.string().min(1),
   },
   /**
    * Environment variables available on the client (and server).
@@ -24,7 +19,6 @@ export const env = createEnv({
   clientPrefix: "PUBLIC_",
   client: {
     PUBLIC_ROR_API_URL: z.string().url(),
-    PUBLIC_DEV_MODE: z.boolean().optional(),
   },
   /**
    * The runtime environment variables mapped to our `server` and `client` schemas.
@@ -33,13 +27,11 @@ export const env = createEnv({
    * `import.meta.env` is a Vite specific feature.
    */
   runtimeEnv: {
+    AUTH_SECRET: process.env.AUTH_SECRET,
     AUTH_ISSUER: process.env.AUTH_ISSUER,
     AUTH_CLIENT_ID: process.env.AUTH_CLIENT_ID,
     AUTH_CLIENT_SECRET: process.env.AUTH_CLIENT_SECRET,
-    AUTH_REDIRECT_URI: process.env.AUTH_REDIRECT_URI,
-    SIGNING_SECRET: process.env.SIGNING_SECRET,
     PUBLIC_ROR_API_URL: process.env.ROR_API_URL,
-    FORCE_TLS: process.env.FORCE_TLS,
-    PUBLIC_DEV_MODE: process.env.NODE_ENV === "development",
+    TRUST_HOST: process.env.TRUST_HOST,
   },
 });

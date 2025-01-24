@@ -72,26 +72,6 @@ export function createApiClient(
     return result;
   }
 
-  async function retryRequest<T>(
-    fn: () => Promise<T>,
-    retries: number = defaultConfig.retryPolicy?.maxRetries ??
-      DEFAULT_MAX_RETRIES
-  ): Promise<T> {
-    try {
-      return await fn();
-    } catch (error) {
-      if (retries === 0 || !(error instanceof RorApiError)) {
-        throw error;
-      }
-
-      await new Promise((resolve) =>
-        setTimeout(resolve, defaultConfig.retryPolicy?.retryInterval)
-      );
-
-      return retryRequest(fn, retries - 1);
-    }
-  }
-
   function applyMiddleware(
     middlewares: Middleware[],
     baseRequest: (config: RequestConfig<any>) => Promise<unknown>
@@ -107,8 +87,8 @@ export function createApiClient(
   ): Promise<R> {
     const fetchConfig = buildFetchConfiguration(config);
     const url = buildUrl(config.path);
-    const executeRequest = () => fetch(url, fetchConfig).then(handleResponse);
-    return retryRequest(executeRequest);
+    const response = await fetch(url, fetchConfig);
+    return handleResponse(response);
   }
 
   const requestWithMiddleware = applyMiddleware(middlewares, request);

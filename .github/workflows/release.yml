@@ -56,7 +56,7 @@ jobs:
       - run: mv package.json package-backup.json
       - run: jq --arg rorversion ${{ needs.setenv.outputs.rorversion}} --arg shortsha ${{ needs.setenv.outputs.shortsha}} '.version = $rorversion | .commit = $shortsha' package-backup.json > package.json
       - run: npm ci
-      - run: npm run build
+      - run: npm run build:github
 
       # Set up BuildKit Docker container builder to be able to build
       # multi-platform images and export cache
