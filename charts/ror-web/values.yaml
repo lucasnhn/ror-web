@@ -125,7 +125,7 @@ volumes: []
 #     optional: false
 
 # Additional volumeMounts on the output Deployment definition.
-volumeMounts: [{ name: 'config', mountPath: '/etc/config', readOnly: true }]
+volumeMounts: []
 # - name: foo
 #   mountPath: "/etc/foo"
 #   readOnly: true
