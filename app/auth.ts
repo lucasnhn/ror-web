@@ -1,4 +1,4 @@
-import NextAuth, { DefaultSession } from "next-auth";
+import NextAuth from "next-auth";
 import { Provider } from "next-auth/providers";
 import { env } from "../env";
 
