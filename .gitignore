@@ -49,3 +49,6 @@ out
 # Vite & Vitest
 vite.config.*.timestamp*
 vitest.config.*.timestamp*
+
+# Turborepo
+.turbo
