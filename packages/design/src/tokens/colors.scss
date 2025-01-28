@@ -1,0 +1,76 @@
+@use "sass:map";
+
+/// Our color tokens are diveded into several layers
+/// 1. Color space
+/// 2. Core
+/// 3. Components
+
+
+/// The (1) color space is entirely based on the Evil Martians Harmony color system.
+@use "colors/neutral" as n;
+
+/// The (2) core tokens are global colors that are used across components.
+/// Naming is heavily based on the Carbon Design System.
+/// For reference see https://carbondesignsystem.com/elements/color/tokens/
+:root {
+    --color-white: #fff;
+    --color-background: var(--color-white);
+    --color-background-hover: #{map.get(n.$neutral-rgb, "100")};
+    --color-background-active: #{map.get(n.$neutral-rgb, "200")};
+    --color-background-selected: #{map.get(n.$neutral-rgb, "300")};
+    --color-background-selected-hover: #{map.get(n.$neutral-rgb, "400")};
+    --color-background-inverse: #{map.get(n.$neutral-rgb, "950")};
+    --color-background-inverse-hover: #{map.get(n.$neutral-rgb, "500")};
+    --layer-01: var(--color-white);
+    --layer-02: #{map.get(n.$neutral-rgb, "100")};
+    --layer-03: var(--color-white);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-background: #{map.get(n.$neutral-rgb, "950")};
+        --color-background-hover: #{map.get(n.$neutral-rgb, "900")};
+        --color-background-active: #{map.get(n.$neutral-rgb, "800")};
+        --color-background-selected: #{map.get(n.$neutral-rgb, "700")};
+        --color-background-selected-hover: #{map.get(n.$neutral-rgb, "600")};
+        --color-background-inverse: #{map.get(n.$neutral-rgb, "50")};
+        --color-background-inverse-hover: #{map.get(n.$neutral-rgb, "100")};
+        --layer-01: #{map.get(n.$neutral-rgb, "900")};
+        --layer-02: #{map.get(n.$neutral-rgb, "800")};
+        --layer-03: #{map.get(n.$neutral-rgb, "700")};
+    }
+}
+
+@supports (color: oklch(0% 0 0)) {
+
+    @media (color-gamut: p3) {
+        :root {
+            --color-background: var(--color-white);
+            --color-background-hover: #{map.get(n.$neutral-p3, "100")};
+            --color-background-active: #{map.get(n.$neutral-p3, "200")};
+            --color-background-selected: #{map.get(n.$neutral-p3, "300")};
+            --color-background-selected-hover: #{map.get(n.$neutral-p3, "400")};
+            --color-background-inverse: #{map.get(n.$neutral-p3, "950")};
+            --color-background-inverse-hover: #{map.get(n.$neutral-p3, "500")};
+            --layer-01: var(--color-white);
+            --layer-02: #{map.get(n.$neutral-p3, "100")};
+            --layer-03: var(--color-white);
+        }
+    }
+
+    @media (color-gamut: p3) and (prefers-color-scheme: dark) {
+        :root {
+            --color-background: #{map.get(n.$neutral-p3, "950")};
+            --color-background-hover: #{map.get(n.$neutral-p3, "900")};
+            --color-background-active: #{map.get(n.$neutral-p3, "800")};
+            --color-background-selected: #{map.get(n.$neutral-p3, "700")};
+            --color-background-selected-hover: #{map.get(n.$neutral-p3, "600")};
+            --color-background-inverse: #{map.get(n.$neutral-p3, "50")};
+            --color-background-inverse-hover: #{map.get(n.$neutral-p3, "100")};
+            --layer-01: #{map.get(n.$neutral-p3, "900")};
+            --layer-02: #{map.get(n.$neutral-p3, "800")};
+            --layer-03: #{map.get(n.$neutral-p3, "700")};
+        }
+    }
+
+}
