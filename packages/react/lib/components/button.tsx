@@ -1,11 +1,19 @@
+import clsx from "clsx";
 import type { ButtonHTMLAttributes } from "react";
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  /** How large should the button be? */
+  size?: 'small' | 'medium' | 'large';
+
+  /** Any additional classNames for customization */
   className?: string;
 }
 
-export function Button({ children, ...rest }: ButtonProps) {
+export function Button({ size = "medium", className, children, ...rest }: ButtonProps) {
+  const classes = clsx("ror-button", {
+    [`ror-button--${size}`]: true,
+  }, className)
   return (
-    <button {...rest}>{children}</button>
+    <button className={classes} {...rest}>{children}</button>
   )
 }
