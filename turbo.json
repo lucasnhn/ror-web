@@ -15,11 +15,10 @@
       "cache": false
     },
     "lint": {
-      "dependsOn": ["^lint"],
+      "dependsOn": ["@ror/react#build"],
       "cache": false
     },
     "clean": {
-      "dependsOn": ["^clean"],
       "cache": false
     }
   }
