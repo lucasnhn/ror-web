@@ -1,10 +1,11 @@
 {
   "name": "@ror/design",
-  "version": "0.0.1",
+  "version": "0.0.6",
   "private": true,
   "scripts": {
     "build": "sass src/index.scss dist/index.css",
-    "dev": "sass --watch src/index.scss dist/index.css"
+    "dev": "sass --watch src/index.scss dist/index.css",
+    "clean": "rm -rf dist && rm -rf .turbo"
   },
   "devDependencies": {
     "sass": "^1.83.4"

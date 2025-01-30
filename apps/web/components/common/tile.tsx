@@ -1,16 +1,17 @@
 import clsxm from "@/utils/clsxm";
-import { PropsWithChildren } from "react";
+import type { ReactNode } from "react";
 
 interface TileProps {
   layer: 1 | 2 | 3;
   className?: string;
+  children: ReactNode;
 }
 
 export function Tile({
   layer = 1,
   className,
   children,
-}: PropsWithChildren<TileProps>) {
+}: TileProps) {
   const classes = clsxm(
     {
       [`bg-(--layer-01)`]: layer === 1,
@@ -19,5 +20,9 @@ export function Tile({
     },
     className,
   );
-  return <div className={classes}>{children}</div>;
+  return (
+    <div className={classes}>
+      {children}
+    </div>
+  );
 }

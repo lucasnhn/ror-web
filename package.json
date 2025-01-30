@@ -1,6 +1,6 @@
 {
   "name": "ror-web-monorepo",
-  "version": "0.0.0",
+  "version": "0.0.6",
   "private": true,
   "workspaces": [
     "apps/*",
@@ -10,7 +10,8 @@
   "scripts": {
     "dev": "turbo dev",
     "build": "turbo build",
-    "lint": "turbo lint"
+    "lint": "turbo lint",
+    "clean": "turbo clean && rm -rf node_modules && rm -rf .turbo"
   },
   "devDependencies": {
     "turbo": "^2.3.4"

@@ -1,12 +1,13 @@
 {
   "name": "@ror/design-docs",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.6",
   "type": "module",
   "scripts": {
     "lint": "eslint ./stories",
     "dev": "storybook dev -p 11001",
-    "build": "storybook build"
+    "build": "storybook build",
+    "clean": "rm -rf storybook-static && rm -rf .turbo && rm -rf node_modules"
   },
   "dependencies": {
     "react": "^19.0.0",
