@@ -22,7 +22,7 @@
       "cache": false
     },
     "build:github": {
-      "dependsOn": ["@ror/react#build"],
+      "dependsOn": ["^build"],
       "outputs": [".next/**"]
     }
   }
