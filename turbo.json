@@ -20,6 +20,10 @@
     },
     "clean": {
       "cache": false
+    },
+    "build:github": {
+      "dependsOn": ["@ror/react#build"],
+      "outputs": [".next/**"]
     }
   }
 }
