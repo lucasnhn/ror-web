@@ -1,3 +1,4 @@
+@use "../config" as c;
 @use "sass:map";
 
 /// Our color tokens are diveded into several layers
@@ -5,71 +6,62 @@
 /// 2. Core
 /// 3. Components
 
-
 /// The (1) color space is entirely based on the Evil Martians Harmony color system.
-@use "colors/neutral" as n;
+@use "colors/neutral" as *;
+@use "colors/teal" as *;
 
 /// The (2) core tokens are global colors that are used across components.
 /// Naming is heavily based on the Carbon Design System.
 /// For reference see https://carbondesignsystem.com/elements/color/tokens/
 :root {
-    --color-white: #fff;
-    --color-background: var(--color-white);
-    --color-background-hover: #{map.get(n.$neutral-rgb, "100")};
-    --color-background-active: #{map.get(n.$neutral-rgb, "200")};
-    --color-background-selected: #{map.get(n.$neutral-rgb, "300")};
-    --color-background-selected-hover: #{map.get(n.$neutral-rgb, "400")};
-    --color-background-inverse: #{map.get(n.$neutral-rgb, "950")};
-    --color-background-inverse-hover: #{map.get(n.$neutral-rgb, "500")};
-    --layer-01: var(--color-white);
-    --layer-02: #{map.get(n.$neutral-rgb, "100")};
-    --layer-03: var(--color-white);
-}
 
-@media (prefers-color-scheme: dark) {
-    :root {
-        --color-background: #{map.get(n.$neutral-rgb, "950")};
-        --color-background-hover: #{map.get(n.$neutral-rgb, "900")};
-        --color-background-active: #{map.get(n.$neutral-rgb, "800")};
-        --color-background-selected: #{map.get(n.$neutral-rgb, "700")};
-        --color-background-selected-hover: #{map.get(n.$neutral-rgb, "600")};
-        --color-background-inverse: #{map.get(n.$neutral-rgb, "50")};
-        --color-background-inverse-hover: #{map.get(n.$neutral-rgb, "100")};
-        --layer-01: #{map.get(n.$neutral-rgb, "900")};
-        --layer-02: #{map.get(n.$neutral-rgb, "800")};
-        --layer-03: #{map.get(n.$neutral-rgb, "700")};
-    }
+    --#{c.$prefix}-color-white: #fff;
+
+    /// Backgrounds
+    --#{c.$prefix}-color-background: light-dark(var(--#{c.$prefix}-color-white), #{map.get($neutral-rgb, "950")});
+    --#{c.$prefix}-color-background-hover: light-dark(#{map.get($neutral-rgb, "100")}, #{map.get($neutral-rgb, "900")});
+    --#{c.$prefix}-color-background-active: light-dark(#{map.get($neutral-rgb, "200")}, #{map.get($neutral-rgb, "800")});
+    --#{c.$prefix}-color-background-selected: light-dark(#{map.get($neutral-rgb, "300")}, #{map.get($neutral-rgb, "700")});
+    --#{c.$prefix}-color-background-selected-hover: light-dark(#{map.get($neutral-rgb, "400")}, #{map.get($neutral-rgb, "600")});
+    --#{c.$prefix}-color-background-inverse: light-dark(#{map.get($neutral-rgb, "950")}, #{map.get($neutral-rgb, "50")});
+    --#{c.$prefix}-color-background-inverse-hover: light-dark(#{map.get($neutral-rgb, "500")}, #{map.get($neutral-rgb, "100")});
+
+    /// Layer
+    --#{c.$prefix}-layer-01: light-dark(#{map.get($neutral-rgb, "50")}, #{map.get($neutral-rgb, "900")});
+    --#{c.$prefix}-layer-02: light-dark(#{map.get($neutral-rgb, "100")}, #{map.get($neutral-rgb, "800")});
+    --#{c.$prefix}-layer-03: light-dark(#{map.get($neutral-rgb, "50")}, #{map.get($neutral-rgb, "700")});
+
+    /// Text
+    --#{c.$prefix}-text-on-color: light-dark(var(--#{c.$prefix}-color-white), #{map.get($teal-rgb, "200")});
+
+    /// Button
+    --#{c.$prefix}-button-primary: light-dark(#{map.get($teal-rgb, "500")}, #{map.get($teal-rgb, "800")});
+    --#{c.$prefix}-button-primary-border: light-dark(#{map.get($teal-rgb, "600")}, #{map.get($teal-rgb, "700")});
 }
 
 @supports (color: oklch(0% 0 0)) {
 
     @media (color-gamut: p3) {
         :root {
-            --color-background: var(--color-white);
-            --color-background-hover: #{map.get(n.$neutral-p3, "100")};
-            --color-background-active: #{map.get(n.$neutral-p3, "200")};
-            --color-background-selected: #{map.get(n.$neutral-p3, "300")};
-            --color-background-selected-hover: #{map.get(n.$neutral-p3, "400")};
-            --color-background-inverse: #{map.get(n.$neutral-p3, "950")};
-            --color-background-inverse-hover: #{map.get(n.$neutral-p3, "500")};
-            --layer-01: var(--color-white);
-            --layer-02: #{map.get(n.$neutral-p3, "100")};
-            --layer-03: var(--color-white);
-        }
-    }
+            /// Background
+            --#{c.$prefix}-color-background: light-dark(var(--#{c.$prefix}-color-white), #{map.get($neutral-p3, "950")});
+            --#{c.$prefix}-color-background-hover: light-dark(#{map.get($neutral-p3, "100")}, #{map.get($neutral-p3, "900")});
+            --#{c.$prefix}-color-background-active: light-dark(#{map.get($neutral-p3, "200")}, #{map.get($neutral-p3, "800")});
+            --#{c.$prefix}-color-background-selected: light-dark(#{map.get($neutral-p3, "300")}, #{map.get($neutral-p3, "700")});
+            --#{c.$prefix}-color-background-selected-hover: light-dark(#{map.get($neutral-p3, "400")}, #{map.get($neutral-p3, "600")});
+            --#{c.$prefix}-color-background-inverse: light-dark(#{map.get($neutral-p3, "950")}, #{map.get($neutral-p3, "50")});
+            --#{c.$prefix}-color-background-inverse-hover: light-dark(#{map.get($neutral-p3, "500")}, #{map.get($neutral-p3, "100")});
 
-    @media (color-gamut: p3) and (prefers-color-scheme: dark) {
-        :root {
-            --color-background: #{map.get(n.$neutral-p3, "950")};
-            --color-background-hover: #{map.get(n.$neutral-p3, "900")};
-            --color-background-active: #{map.get(n.$neutral-p3, "800")};
-            --color-background-selected: #{map.get(n.$neutral-p3, "700")};
-            --color-background-selected-hover: #{map.get(n.$neutral-p3, "600")};
-            --color-background-inverse: #{map.get(n.$neutral-p3, "50")};
-            --color-background-inverse-hover: #{map.get(n.$neutral-p3, "100")};
-            --layer-01: #{map.get(n.$neutral-p3, "900")};
-            --layer-02: #{map.get(n.$neutral-p3, "800")};
-            --layer-03: #{map.get(n.$neutral-p3, "700")};
+            /// Layer
+            --#{c.$prefix}-layer-01: light-dark(#{map.get($neutral-p3, "50")}, #{map.get($neutral-p3, "900")});
+            --#{c.$prefix}-layer-02: light-dark(#{map.get($neutral-p3, "100")}, #{map.get($neutral-p3, "800")});
+            --#{c.$prefix}-layer-03: light-dark(#{map.get($neutral-p3, "50")}, #{map.get($neutral-p3, "700")});
+
+            /// Text
+            --#{c.$prefix}-text-on-color: light-dark(#{map.get($neutral-p3, "950")}, #{map.get($neutral-p3, "300")});
+
+            /// Button
+            --#{c.$prefix}-button-primary: light-dark(#{map.get($teal-p3, "500")}, #{map.get($teal-p3, "900")});
         }
     }
 
