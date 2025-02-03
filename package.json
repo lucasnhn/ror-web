@@ -12,7 +12,9 @@
     "build": "turbo build",
     "lint": "turbo lint",
     "clean": "turbo clean && rm -rf node_modules && rm -rf .turbo",
-    "build:github": "turbo run @ror/web#build:github"
+    "build:github": "turbo run @ror/web#build:github",
+    "prune:web": "turbo prune @ror/web --docker",
+    "prune:docs": "turbo prune @ror/web --docker"
   },
   "devDependencies": {
     "turbo": "^2.3.4"
