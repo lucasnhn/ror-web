@@ -30,7 +30,7 @@ const dexIdpProvider: Provider = {
   },
 };
 
-const trusthost = Boolean(JSON.parse(env.TRUST_HOST));
+const trusthost = Boolean(JSON.parse(env.AUTH_TRUST_HOST));
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [dexIdpProvider],

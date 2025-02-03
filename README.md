@@ -18,7 +18,8 @@ AUTH_SECRET=
 AUTH_ISSUER=
 AUTH_CLIENT_ID=
 AUTH_CLIENT_SECRET=
-ROR_API_URL=
+AUTH_TRUST_HOST=true
+NEXT_PUBLIC_ROR_API_URL=
 ```
 
 **Note**: Environmental variables will be validated running runtime and mapped to a different naming convention. See `/env.ts` for implementation details.

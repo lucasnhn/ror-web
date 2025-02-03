@@ -11,14 +11,14 @@ export const env = createEnv({
     AUTH_ISSUER: z.string().url(),
     AUTH_CLIENT_ID: z.string().min(1),
     AUTH_CLIENT_SECRET: z.string().min(1),
-    TRUST_HOST: z.string().min(1),
+    AUTH_TRUST_HOST: z.string().min(1),
   },
   /**
    * Environment variables available on the client (and server).
    */
-  clientPrefix: "PUBLIC_",
+  clientPrefix: "NEXT_PUBLIC_",
   client: {
-    PUBLIC_ROR_API_URL: z.string().url(),
+    NEXT_PUBLIC_ROR_API_URL: z.string().url(),
   },
   /**
    * The runtime environment variables mapped to our `server` and `client` schemas.
@@ -31,7 +31,7 @@ export const env = createEnv({
     AUTH_ISSUER: process.env.AUTH_ISSUER,
     AUTH_CLIENT_ID: process.env.AUTH_CLIENT_ID,
     AUTH_CLIENT_SECRET: process.env.AUTH_CLIENT_SECRET,
-    PUBLIC_ROR_API_URL: process.env.ROR_API_URL,
-    TRUST_HOST: process.env.TRUST_HOST,
+    NEXT_PUBLIC_ROR_API_URL: process.env.NEXT_PUBLIC_ROR_API_URL,
+    AUTH_TRUST_HOST: process.env.AUTH_TRUST_HOST,
   },
 });
