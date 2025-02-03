@@ -1,0 +1,19 @@
+{
+  "name": "@ror/js-api-sdk",
+  "version": "0.0.6",
+  "private": true,
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
+  "scripts": {
+    "dev": "tsc --watch",
+    "build": "tsc",
+    "clean": "rm -rf dist && rm -rf .turbo && rm -rf node_modules"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3"
+  }
+}
