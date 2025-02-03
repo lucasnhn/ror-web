@@ -6,7 +6,7 @@ import dts from 'vite-plugin-dts'
 
 // Defines an array of entry points to be used to search for files.
 const entryPoints = [
-  'lib/**/*.tsx',
+  'src/**/*.tsx',
 ]
 
 // Searches for files that match the patterns defined in the array of input points.
@@ -15,8 +15,9 @@ const files = fg.sync(entryPoints, { absolute: true })
 
 // Maps the file paths in the "files" array to an array of key-value pair.
 const entities = files.map((file) => {
+  const regex = RegExp(/(?<=src\/).*$/)
   // Extract the part of the file path after the "lib" folder and before the file extension.
-  const [key] = file.match(/(?<=lib\/).*$/) || [] as string[]
+  const [key] = regex.exec(file) ?? [] as string[]
 
   // Remove the file extension from the key.
   const keyWithoutExt = key.replace(/\.[^.]*$/, '')
@@ -26,15 +27,15 @@ const entities = files.map((file) => {
 
 // Convert the array of key-value pairs to an object using the Object.fromEntries() method.
 // Returns an object where each key is the file name without the extension and the value is the absolute file path.
-const entries = Object.fromEntries(entities)
+const entries = Object.fromEntries(entities) as Record<string, string>;
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
     react(),
     dts({
-      include: ['lib'],
-      tsconfigPath: resolve(__dirname, "tsconfig.lib.json"),
+      include: 'src',
+      tsconfigPath: resolve(__dirname, "tsconfig.app.json"),
     })
   ],
   build: {
