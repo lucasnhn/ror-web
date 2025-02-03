@@ -5,14 +5,15 @@
   "type": "module",
   "scripts": {
     "lint": "eslint ./stories",
-    "dev": "storybook dev -p 11001",
+    "dev": "storybook dev -p 11001 --no-open",
     "build": "storybook build",
     "clean": "rm -rf storybook-static && rm -rf .turbo && rm -rf node_modules"
   },
   "dependencies": {
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "@ror/react": "*"
+    "@ror/react": "*",
+    "@ror/design": "*"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^3.2.4",
