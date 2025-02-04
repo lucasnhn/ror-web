@@ -26,6 +26,7 @@
     padding: 0 0.875rem;
     font-size: var(--font-size-small, 0.8125rem);
     cursor: pointer;
+    -webkit-font-smoothing: antialiased;
 }
 
 .#{c.$prefix}-btn--small {
@@ -33,4 +34,15 @@
     block-size: 1.75rem;
     padding: 0 0.5rem;
     border-radius: 4px;
+}
+
+.#{c.$prefix}-btn--large {
+    font-size: var(--font-size-medium, 1rem);
+    block-size: 2.5rem;
+    padding: 0 1.25rem;
+    border-radius: 6px;
+}
+
+.#{c.$prefix}-btn--secondary {
+
 }
