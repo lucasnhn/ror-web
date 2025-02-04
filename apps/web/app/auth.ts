@@ -37,6 +37,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   trustHost: trusthost,
   callbacks: {
     jwt({ token, account }) {
+      console.log("JWT CALLBACK account", account);
       if (account?.provider === "dex") {
         if (!account?.access_token) {
           throw new Error(
@@ -48,12 +49,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return token;
     },
     session({ session, token }) {
+      console.log("session CALLBACK", session);
       session.accessToken = token.accessToken as string;
       return session;
     },
-    authorized: async ({ auth }) => {
-      // Logged in users are authenticated, otherwise redirect to login page
-      return !!auth;
+    authorized: async ({ auth, request }) => {
+      console.log("authorized CALLBACK auth", auth)
+      // Logged in users with an access token are authenticated, otherwise redirect to login page
+      return !!auth?.accessToken;
     },
   },
 });
