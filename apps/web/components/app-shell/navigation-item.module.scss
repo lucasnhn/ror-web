@@ -1,0 +1,61 @@
+.item {
+    padding: 0.325rem 0.5rem;
+    border-radius: 0.25rem;
+
+    &:not(:last-child) {
+        margin-bottom: 0.25rem;
+    }
+}
+
+.control {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    cursor: pointer;
+
+    &:hover {
+        color: var(--color-teal-800)
+    }
+}
+
+.controlInner {
+    display: flex;
+    align-items: center;
+    column-gap: 0.5rem;
+}
+
+.controlIcon {
+    width: 0.75rem;
+    height: 0.75rem;
+    color: var(--color-neutral-700);
+}
+
+.control[aria-expanded=true] + .subMenuList {
+    display: block;
+}
+
+.control[aria-expanded=true] .controlIcon {
+    transform: rotate(90deg);
+}
+
+.subMenuList {
+    display: none;
+    margin-top: 0.25rem;
+}
+
+.subMenuList li {
+    display: block;
+    padding-left: 1rem;
+}
+
+.subMenuList a {
+    display: block;
+    padding: 0.325rem 0.5rem;
+    color: var(--color-neutral-800);
+    font-size: 0.8125rem;
+}
+
+.subMenuList a:hover {
+    color: var(--color-teal-800)
+}
