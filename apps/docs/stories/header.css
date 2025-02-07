@@ -5,8 +5,8 @@
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   padding: 15px 20px;
   font-family: 'Nunito Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  background: var(--color-background);
-  color: var(--color-background-inverse);
+  background: var(--background);
+  color: var(--background-inverse);
 }
 
 .storybook-header svg {

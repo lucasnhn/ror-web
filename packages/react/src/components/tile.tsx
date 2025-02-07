@@ -1,12 +1,13 @@
-import clsxm from "@/utils/clsxm";
+import {clsx} from "clsx";
 import type { ReactElement, ReactNode } from "react";
+import { LayerLevel, MAX_LEVEL, MIN_LEVEL } from "./layer";
 
 interface TileProps {
   /**
-  * Layering tokens - 1, 2, 3
-  * @default 1
+  * Layering level tokens - 0, 1, 2
+  * @default 0
   */
-  layer: 1 | 2 | 3;
+  layer?: LayerLevel
   /**
   * Render the component by your element of choice
   * @example
@@ -24,16 +25,22 @@ interface TileProps {
 }
 
 export function Tile({
-  layer = 1,
+  layer = 0,
   className,
   children,
   as
 }: TileProps) {
-  const classes = clsxm(
+
+  const value = Math.max(
+    MIN_LEVEL,
+    Math.min(layer, MAX_LEVEL)
+  );
+
+  const classes = clsx('r-tile',
     {
-      [`bg-(--r-layer-01)`]: layer === 1,
-      [`bg-(--r-layer-02)`]: layer === 2,
-      [`bg-(--r-layer-03)`]: layer === 3,
+      'r-tile--01': value === 0,
+      'r-tile--02': value === 1,
+      'r-tile--03': value === 2,
     },
     className,
   );

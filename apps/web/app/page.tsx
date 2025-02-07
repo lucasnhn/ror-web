@@ -1,5 +1,4 @@
-import { Button } from "@ror/react";
-import { Tile } from "@/components/common/tile";
+import { Button, Tile } from "@ror/react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -33,7 +32,7 @@ export default function Home() {
         </Button>
 
       </main>
-      <Tile layer={1} className="flex gap-6 flex-wrap items-center justify-center py-4 px-6 rounded">
+      <Tile className="flex gap-6 flex-wrap items-center justify-center py-4 px-6 rounded">
         <a
           className="flex items-center gap-2 hover:underline hover:underline-offset-4"
           href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
