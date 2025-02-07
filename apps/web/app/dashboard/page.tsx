@@ -1,5 +1,6 @@
 import { authGuard } from "@/app/auth-guard";
 import { rorApiClient } from "@/services/ror-api";
+import { Tile } from "@ror/react/components/tile";
 
 export default async function DashboardPage() {
   const session = await authGuard();
@@ -7,7 +8,9 @@ export default async function DashboardPage() {
   return (
     <div>
       <h1>Dashboard</h1>
-      <pre>{JSON.stringify(self, null, 2)}</pre>
+      <Tile>
+        <pre>{JSON.stringify(self, null, 2)}</pre>
+      </Tile>
     </div>
   );
 }

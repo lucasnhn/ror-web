@@ -18,24 +18,27 @@
     ::file-selector-button {
         border-color: var(--color-neutral-200, currentColor);
     }
-}
 
-html {
-    color-scheme: light;
-}
-
-@media (prefers-color-scheme: dark) {
     html {
-        color-scheme: dark;
+        color-scheme: light;
     }
+
+    @media (prefers-color-scheme: dark) {
+        html {
+            color-scheme: dark;
+        }
+    }
+
+    body {
+        color: var(--r-text-primary);
+        background: var(--r-background);
+        font-family: var(--font-family-sans);
+        -webkit-font-smoothing: antialiased;
+    }
+
 }
 
-body {
-    color: var(--r-color-background-inverse);
-    background: var(--r-color-background);
-    font-family: var(--font-family-sans);
-    -webkit-font-smoothing: antialiased;
-}
+
 
 @layer utilities {
     .hide-scrollbar {

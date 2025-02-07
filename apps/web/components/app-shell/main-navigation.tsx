@@ -1,8 +1,9 @@
-import Link from "next/link";
 import { NavigationItem } from "./navigation-item";
 
 const DashboardIcon = (
   <svg
+    aria-hidden="true"
+    role="img"
     xmlns="http://www.w3.org/2000/svg"
     width="24"
     height="24"
@@ -23,6 +24,8 @@ const DashboardIcon = (
 
 const StatisticsIcon = (
   <svg
+    aria-hidden="true"
+    role="img"
     xmlns="http://www.w3.org/2000/svg"
     width="24"
     height="24"
@@ -40,6 +43,8 @@ const StatisticsIcon = (
 
 const EconomyIcon = (
   <svg
+    aria-hidden="true"
+    role="img"
     xmlns="http://www.w3.org/2000/svg"
     width="24"
     height="24"
@@ -60,6 +65,8 @@ const EconomyIcon = (
 
 const AdministrationIcon = (
   <svg
+    aria-hidden="true"
+    role="img"
     xmlns="http://www.w3.org/2000/svg"
     width="24"
     height="24"
@@ -79,6 +86,8 @@ const AdministrationIcon = (
 
 const HelpIcon = (
   <svg
+    aria-hidden="true"
+    role="img"
       xmlns="http://www.w3.org/2000/svg"
       width="24"
       height="24"
@@ -95,39 +104,71 @@ const HelpIcon = (
     </svg>
 )
 
+const statistics = [
+  {
+    label: "Metrics",
+    href: "/metrics",
+  }
+]
 
-export function AppShellMainNavigation() {
+const economy = [
+  {
+    label: "Price list",
+    href: "/price-list",
+  }
+]
+
+const administration = [
+  {
+    label: "Data centers",
+    href: "/admin/data-centers"
+  },
+  {
+    label: "Policy reports",
+    href: "/admin/policy-reports"
+  },
+  {
+    label: "Price list",
+    href: "/admin/price-list"
+  },
+  {
+    label: "Projects",
+    href: "/admin/projects"
+  },
+  {
+    label: "Vulnerability reports",
+    href: "/admin/vulnerability-reports"
+  },
+  {
+    label: "Workspaces",
+    href: "/admin/workspaces"
+  }
+]
+
+const help = [
+  {
+    label: "Documentation",
+    href: "/help/documentation"
+  },
+  {
+    label: "About",
+    href: "/help/about"
+  },
+  {
+    label: "Release notes",
+    href: "/help/release-notes"
+  }
+]
+
+export function MainNavigation() {
     return (
-      <nav className="flex flex-col text-sm">
-        <ul>
-          <NavigationItem label="Dashboard" href="/dashboard" icon={DashboardIcon} />
-          <NavigationItem label="Statistics" icon={StatisticsIcon}>
-            <ul>
-              <li><Link href="/metrics">Metrics</Link></li>
-            </ul>
-          </NavigationItem>
-          <NavigationItem label="Economy" icon={EconomyIcon}>
-            <ul>
-              <li><Link href="/economy">Price list</Link></li>
-            </ul>
-          </NavigationItem>
-          <NavigationItem label="Administration" icon={AdministrationIcon}>
-            <ul>
-              <li><Link href="/admin/data-centers">Data centers</Link></li>
-              <li><Link href="/admin/policy-reports">Policy reports</Link></li>
-              <li><Link href="/admin/price-list">Price list</Link></li>
-              <li><Link href="/admin/projects">Projects</Link></li>
-              <li><Link href="/admin/vulnerability-reports">Vulnerability reports</Link></li>
-              <li><Link href="/admin/workspaces">Workspaces</Link></li>
-            </ul>
-          </NavigationItem>
-          <NavigationItem label="Help" icon={HelpIcon}>
-            <ul>
-              <li><Link href="/help/documentation">Documentation</Link></li>
-              <li><Link href="/help/about">About</Link></li>
-              <li><Link href="/help/release-notes">Release notes</Link></li>
-            </ul>
-          </NavigationItem>
+      <nav>
+        <ul className="flex flex-col gap-1">
+          <NavigationItem label="Overview" href="/dashboard" icon={DashboardIcon} />
+          <NavigationItem label="Statistics" subNav={statistics} icon={StatisticsIcon} />
+          <NavigationItem label="Economy" subNav={economy} icon={EconomyIcon} />
+          <NavigationItem label="Administration" subNav={administration} icon={AdministrationIcon} />
+          <NavigationItem label="Help" subNav={help} icon={HelpIcon} />
         </ul>
       </nav>
     );

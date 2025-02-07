@@ -1,61 +1,111 @@
 .item {
-    padding: 0.325rem 0.5rem;
-    border-radius: 0.25rem;
-
-    &:not(:last-child) {
-        margin-bottom: 0.25rem;
-    }
+    --menu-item-hover-bg: var(--r-background-hover);
+    --menu-item-gap: calc(var(--spacing) * 3);
 }
 
-.control {
+.menuSection {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    gap: var(--menu-item-gap);
     width: 100%;
+    padding: 0.25rem 0.5rem;
+    height: 2rem;
+    min-width: 2rem;
+    border-radius: var(--radius-sm);
     cursor: pointer;
-
-    &:hover {
-        color: var(--color-teal-800)
-    }
 }
 
-.controlInner {
-    display: flex;
+.menuSection:hover {
+    background: var(--menu-item-hover-bg);
+}
+
+.label {
+    display: none;
     align-items: center;
+    flex-grow: 1;
     column-gap: 0.5rem;
+    font-size: var(--text-sm);
 }
 
-.controlIcon {
+.caret {
+    display: none;
     width: 0.75rem;
     height: 0.75rem;
     color: var(--color-neutral-700);
+    justify-self: flex-end;
 }
 
-.control[aria-expanded=true] + .subMenuList {
+.menuItem {
+    display: flex;
+    align-items: center;
+    gap: var(--menu-item-gap);
+    padding: 0.25rem 0.5rem;
+    font-size: var(--text-sm);
+    border-radius: var(--radius-sm);
+    height: 2rem;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.menuItem:hover {
+    background: var(--menu-item-hover-bg);
+}
+
+.menuItem.active {
+    background: var(--menu-item-hover-bg);
+    font-weight: 500;
+}
+
+.menuItem.active::before {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    content: '';
+    height: calc(100% - 8px);
+    width: 3px;
+    background: var(--color-teal-800);
+    border-radius: 4px;
+}
+
+/// Make sure that icon does not shrink when the expansion of the left panel is toggled
+.menuSection svg,
+.menuItem svg {
+    flex-shrink: 0;
+}
+
+/// Subnavigation
+.subNav {
+    display: none;
+    margin-top: calc(var(--spacing) * 0.5);
+}
+
+.subNav li {
     display: block;
 }
 
-.control[aria-expanded=true] .controlIcon {
+.subNav li:not(:last-child) {
+    margin-bottom: calc(var(--spacing) * 0.5);
+}
+
+.subNav .menuItem {
+    /// Align text with parent menu label (left-padding + icon width + gap)
+    padding-left: calc(0.5rem + 1rem + var(--menu-item-gap));
+}
+
+/// Expanded state
+.menuSection[aria-expanded=true] + .subNav {
+    display: block;
+}
+
+.menuSection[aria-expanded=true] .caret {
     transform: rotate(90deg);
 }
 
-.subMenuList {
-    display: none;
-    margin-top: 0.25rem;
-}
-
-.subMenuList li {
-    display: block;
-    padding-left: 1rem;
-}
-
-.subMenuList a {
-    display: block;
-    padding: 0.325rem 0.5rem;
-    color: var(--color-neutral-800);
-    font-size: 0.8125rem;
-}
-
-.subMenuList a:hover {
-    color: var(--color-teal-800)
+/// Container queries - set on the whole left panel element
+@container (width > 3rem) {
+    .label,
+   .caret {
+        display: flex;
+    }
 }

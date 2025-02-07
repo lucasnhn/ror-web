@@ -1,0 +1,33 @@
+'use client';
+import { useAppShellContext } from "./app-shell-context";
+
+export function LeftPanelToggleButton() {
+  const { leftPanelExpanded, onToggleLeftPanel } = useAppShellContext();
+
+  const handleOnClick = () => {
+    onToggleLeftPanel(!leftPanelExpanded);
+  }
+
+  return (
+    <button
+      className="w-8 h-8 shrink-0 cursor-pointer hover:bg-(--r-background-hover) flex items-center justify-center justify-self-end rounded-sm border border-(--r-border-subtle-00)"
+      onClick={handleOnClick}
+    >
+      <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          fill="none"
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
+          className="w-4 h-4 text-(--r-icon-primary)"
+          viewBox="0 0 24 24"
+        >
+          <rect width="18" height="18" x="3" y="3" rx="2"></rect>
+          <path d="M9 3v18"></path>
+        </svg>
+    </button>
+  )
+}
