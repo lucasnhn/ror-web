@@ -1,4 +1,5 @@
 import { auth } from '@/app/auth'
+import Image from 'next/image'
 
 export async function Profile() {
   const session = await auth()
@@ -6,8 +7,12 @@ export async function Profile() {
   if (!session?.user) return null
   if (session.user?.image && session.user.name) {
     return (
-      <div>
-        <img src={session.user.image} alt={session.user.name} />
+      <div className='flex items-center gap-2'>
+        <Image src={session.user.image} alt={session.user.name} width={32} height={32} className='relative flex shrink-0 items-center justify-center w-8 h-8 overflow-hidden bg-neutral-100 rounded-full dark:bg-neutral-600' />
+        <div className='hidden @min-[15rem]:flex flex-col text-xs'>
+          <span>{session.user.name}</span>
+          <span className='text-(--r-text-secondary)'>{session.user.email}</span>
+        </div>
       </div>
     )
   }

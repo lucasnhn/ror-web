@@ -51,7 +51,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       session.accessToken = token.accessToken as string
       return session
     },
-    authorized: async ({ auth, request }) => {
+    authorized: async ({ auth }) => {
       console.log('authorized CALLBACK auth', auth)
       // Logged in users with an access token are authenticated, otherwise redirect to login page
       return !!auth?.accessToken

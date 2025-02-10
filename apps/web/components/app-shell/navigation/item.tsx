@@ -1,6 +1,5 @@
 'use client'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 import { MouseEventHandler, useCallback, useState, type ReactNode } from 'react'
 import { Popover, PopoverContent, PopoverPortal, PopoverTrigger } from '@radix-ui/react-popover'
 import { useDebounce } from '@uidotdev/usehooks'
@@ -23,7 +22,6 @@ interface NavigationItemProps {
 
 export function NavigationItem({ label, href, icon, items }: NavigationItemProps) {
   const { leftPanelExpanded } = useAppShellContext()
-  const pathname = usePathname()
   const [flyoverOpen, setFlyoverOpen] = useState(false)
   const [staticOpen, setStaticOpen] = useState(false)
 
@@ -46,13 +44,13 @@ export function NavigationItem({ label, href, icon, items }: NavigationItemProps
   }, [leftPanelExpanded])
 
   const handleOnTriggerMouseOver = useCallback<MouseEventHandler<HTMLButtonElement>>(
-    (event) => {
+    () => {
       // Dont open the flyover if the static menu is open (when the left panel is expanded)
       // for all other scenarios open the flyover
       if (staticOpen && leftPanelExpanded) return
       setFlyoverOpen(true)
     },
-    [staticOpen]
+    [staticOpen, leftPanelExpanded]
   )
 
   const handleOnTriggerMouseLeave = useCallback(() => {
@@ -97,8 +95,9 @@ export function NavigationItem({ label, href, icon, items }: NavigationItemProps
                 strokeLinecap='round'
                 strokeLinejoin='round'
                 strokeWidth='3'
-                className={s.caret}
                 viewBox='0 0 24 24'
+                className={s.caret}
+                data-expanded={shouldShowStaticMenu}
               >
                 <path d='m9 18 6-6-6-6'></path>
               </svg>
