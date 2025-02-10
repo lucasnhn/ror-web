@@ -108,7 +108,7 @@
 }
 
 /// Expanded state
-.trigger[aria-expanded=true] .caret {
+.caret[data-expanded="true"] {
     transform: rotate(90deg);
 }
 
