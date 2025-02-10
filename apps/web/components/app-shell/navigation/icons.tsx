@@ -1,6 +1,6 @@
-import { NavigationItem } from "./navigation-item";
+import s from './item.module.scss';
 
-const DashboardIcon = (
+export const DashboardIcon = (
   <svg
     aria-hidden="true"
     role="img"
@@ -12,7 +12,7 @@ const DashboardIcon = (
     strokeLinecap="round"
     strokeLinejoin="round"
     strokeWidth="2"
-    className="w-4 h-4 text-current"
+    className={s.icon}
     viewBox="0 0 24 24"
   >
     <rect width="7" height="7" x="3" y="3" rx="1"></rect>
@@ -22,7 +22,7 @@ const DashboardIcon = (
   </svg>
 );
 
-const StatisticsIcon = (
+export const StatisticsIcon = (
   <svg
     aria-hidden="true"
     role="img"
@@ -34,14 +34,14 @@ const StatisticsIcon = (
     strokeLinecap="round"
     strokeLinejoin="round"
     strokeWidth="2"
-    className="w-4 h-4 text-current"
+    className={s.icon}
     viewBox="0 0 24 24"
   >
     <path d="M3 3v16a2 2 0 0 0 2 2h16M18 17V9M13 17V5M8 17v-3"></path>
   </svg>
 );
 
-const EconomyIcon = (
+export const EconomyIcon = (
   <svg
     aria-hidden="true"
     role="img"
@@ -53,7 +53,7 @@ const EconomyIcon = (
     strokeLinecap="round"
     strokeLinejoin="round"
     strokeWidth="2"
-    className="w-4 h-4 text-current"
+    className={s.icon}
     viewBox="0 0 24 24"
   >
     <path d="M11 15h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 17"></path>
@@ -63,7 +63,7 @@ const EconomyIcon = (
   </svg>
 );
 
-const AdministrationIcon = (
+export const AdministrationIcon = (
   <svg
     aria-hidden="true"
     role="img"
@@ -75,7 +75,7 @@ const AdministrationIcon = (
     strokeLinecap="round"
     strokeLinejoin="round"
     strokeWidth="2"
-    className="w-4 h-4 text-current"
+    className={s.icon}
     viewBox="0 0 24 24"
   >
     <path d="M20 7h-9M14 17H5"></path>
@@ -84,7 +84,7 @@ const AdministrationIcon = (
   </svg>
 )
 
-const HelpIcon = (
+export const HelpIcon = (
   <svg
     aria-hidden="true"
     role="img"
@@ -96,80 +96,10 @@ const HelpIcon = (
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth="2"
-      className="w-4 h-4 text-current"
+      className={s.icon}
       viewBox="0 0 24 24"
     >
       <circle cx="12" cy="12" r="10"></circle>
       <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"></path>
     </svg>
 )
-
-const statistics = [
-  {
-    label: "Metrics",
-    href: "/metrics",
-  }
-]
-
-const economy = [
-  {
-    label: "Price list",
-    href: "/price-list",
-  }
-]
-
-const administration = [
-  {
-    label: "Data centers",
-    href: "/admin/data-centers"
-  },
-  {
-    label: "Policy reports",
-    href: "/admin/policy-reports"
-  },
-  {
-    label: "Price list",
-    href: "/admin/price-list"
-  },
-  {
-    label: "Projects",
-    href: "/admin/projects"
-  },
-  {
-    label: "Vulnerability reports",
-    href: "/admin/vulnerability-reports"
-  },
-  {
-    label: "Workspaces",
-    href: "/admin/workspaces"
-  }
-]
-
-const help = [
-  {
-    label: "Documentation",
-    href: "/help/documentation"
-  },
-  {
-    label: "About",
-    href: "/help/about"
-  },
-  {
-    label: "Release notes",
-    href: "/help/release-notes"
-  }
-]
-
-export function MainNavigation() {
-    return (
-      <nav>
-        <ul className="flex flex-col gap-1">
-          <NavigationItem label="Overview" href="/dashboard" icon={DashboardIcon} />
-          <NavigationItem label="Statistics" subNav={statistics} icon={StatisticsIcon} />
-          <NavigationItem label="Economy" subNav={economy} icon={EconomyIcon} />
-          <NavigationItem label="Administration" subNav={administration} icon={AdministrationIcon} />
-          <NavigationItem label="Help" subNav={help} icon={HelpIcon} />
-        </ul>
-      </nav>
-    );
-}
