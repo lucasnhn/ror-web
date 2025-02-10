@@ -12,16 +12,16 @@ interface AppShellLeftPanelProps {
 
 const variants = {
   expanded: {
-    width: 256,
+    "--left-panel-width": "16rem",
   },
   collapsed: {
-    width: 48,
+    "--left-panel-width": "3rem",
   }
 }
 
 export function AppShellLeftPanel({ children }: AppShellLeftPanelProps) {
   const { leftPanelExpanded } = useAppShellContext();
-  const classes = clsxm("@container bg-(--r-background) text-(--r-background-inverse) h-screen border-r border-(--r-border-subtle-00) transition-width duration-200 hide-scrollbar overflow-y-auto")
+  const classes = clsxm("@container w-(--left-panel-width) bg-(--r-background) text-(--r-background-inverse) h-screen border-r border-(--r-border-subtle-00) transition-width duration-200 hide-scrollbar overflow-y-auto")
   return (
     <motion.div layout initial="expanded" transition={{ duration: 0.1 }} variants={variants} animate={leftPanelExpanded ? "expanded": "collapsed"} className={classes}>
       <div className="flex flex-col h-full">

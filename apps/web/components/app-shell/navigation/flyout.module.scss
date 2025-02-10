@@ -1,0 +1,26 @@
+.flyout {
+    background: var(--r-background);
+	box-shadow: 0 2px 6px 0 rgba(0,0,0,.2);
+	padding: calc(var(--spacing) * 1);
+	border-radius: var(--radius-sm);
+}
+
+.flyoutMenu {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--spacing) * 0.5);
+}
+
+.flyoutMenu a {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: calc(var(--spacing) * 1) calc(var(--spacing) * 3);
+    font-size: var(--text-sm);
+    border-radius: var(--radius-sm);
+    height: 2rem;
+}
+
+.flyoutMenu a:hover {
+    background: var(--r-background-hover);
+}

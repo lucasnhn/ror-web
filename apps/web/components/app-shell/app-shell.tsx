@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import { AppShellLeftPanel } from "./left-panel";
-import { MainNavigation } from "./main-navigation";
+import { Navigation } from "./navigation/navigation";
 import { Profile } from "./profile";
 import { LeftPanelToggleButton } from "./left-panel-toggle";
 
@@ -13,7 +13,7 @@ export function AppShell({ children }: AppShellProps) {
       <div className="grid grid-cols-[max-content_auto]">
         <AppShellLeftPanel>
           <div className="p-2">
-            <MainNavigation />
+            <Navigation />
           </div>
           <div className="p-2 pr-2 py-2 mt-auto transition-all duration-150">
             <div className="h-full flex flex-col items-start justify-between gap-2 @min-[6rem]:flex-row">
