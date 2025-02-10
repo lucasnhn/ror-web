@@ -1,15 +1,15 @@
-import NextAuth from "next-auth";
-import { Provider } from "next-auth/providers";
-import { env } from "../env";
+import NextAuth from 'next-auth'
+import { Provider } from 'next-auth/providers'
+import { env } from '../env'
 
 /**
  * We are adding the accessToken to the session so it can be retrieved from the
  * `auth()` function. Here we are simply augmenting the existing Session type to
  * include the accessToken.
  */
-declare module "next-auth" {
+declare module 'next-auth' {
   interface Session {
-    accessToken: string;
+    accessToken: string
   }
 }
 
@@ -17,46 +17,44 @@ declare module "next-auth" {
  * DexIDP provider configuration
  */
 const dexIdpProvider: Provider = {
-  type: "oidc",
-  id: "dex",
-  name: "dex",
+  type: 'oidc',
+  id: 'dex',
+  name: 'dex',
   issuer: env.AUTH_ISSUER,
   clientId: env.AUTH_CLIENT_ID,
   clientSecret: env.AUTH_CLIENT_SECRET,
   authorization: {
     params: {
-      scope: "openid profile email groups",
+      scope: 'openid profile email groups',
     },
   },
-};
+}
 
-const trusthost = Boolean(JSON.parse(env.AUTH_TRUST_HOST));
+const trusthost = Boolean(JSON.parse(env.AUTH_TRUST_HOST))
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [dexIdpProvider],
   trustHost: trusthost,
   callbacks: {
     jwt({ token, account }) {
-      console.log("JWT CALLBACK account", account);
-      if (account?.provider === "dex") {
+      console.log('JWT CALLBACK account', account)
+      if (account?.provider === 'dex') {
         if (!account?.access_token) {
-          throw new Error(
-            "Did not receive access_token from DexIdp on login callback",
-          );
+          throw new Error('Did not receive access_token from DexIdp on login callback')
         }
-        return { ...token, accessToken: account.access_token };
+        return { ...token, accessToken: account.access_token }
       }
-      return token;
+      return token
     },
     session({ session, token }) {
-      console.log("session CALLBACK", session);
-      session.accessToken = token.accessToken as string;
-      return session;
+      console.log('session CALLBACK', session)
+      session.accessToken = token.accessToken as string
+      return session
     },
     authorized: async ({ auth, request }) => {
-      console.log("authorized CALLBACK auth", auth)
+      console.log('authorized CALLBACK auth', auth)
       // Logged in users with an access token are authenticated, otherwise redirect to login page
-      return !!auth?.accessToken;
+      return !!auth?.accessToken
     },
   },
-});
+})

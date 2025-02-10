@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod'
 
 export const UserSelf = z.object({
   auth: z.object({
@@ -12,4 +12,4 @@ export const UserSelf = z.object({
     email: z.string(),
     groups: z.array(z.string()),
   }),
-});
+})

@@ -1,106 +1,83 @@
-import {
-  RorApiError,
-  RorForbiddenError,
-  RorNotFoundError,
-  RorUnauthorizedError,
-} from "./error";
-import { createUsersResource } from "./resources/users/users.resource.";
-import type {
-  ApiClientConfig,
-  RequestConfig,
-  RetryPolicyConfig,
-  Middleware,
-} from "./types";
+import { RorApiError, RorForbiddenError, RorNotFoundError, RorUnauthorizedError } from './error'
+import { createUsersResource } from './resources/users/users.resource.'
+import type { ApiClientConfig, RequestConfig, RetryPolicyConfig, Middleware } from './types'
 
-const DEFAULT_MAX_RETRIES = 3;
-const DEFAULT_RETRY_INTERVAL = 1000;
+const DEFAULT_MAX_RETRIES = 3
+const DEFAULT_RETRY_INTERVAL = 1000
 const DEFAULT_RETRY_POLICY: RetryPolicyConfig = {
   maxRetries: DEFAULT_MAX_RETRIES,
   retryInterval: DEFAULT_RETRY_INTERVAL,
-};
+}
 
-export function createApiClient(
-  config: ApiClientConfig,
-  middlewares: Middleware[] = []
-) {
+export function createApiClient(config: ApiClientConfig, middlewares: Middleware[] = []) {
   const defaultConfig: ApiClientConfig = {
     retryPolicy: DEFAULT_RETRY_POLICY,
     ...config,
-  };
+  }
 
   function getHeaders(additionalHeaders?: HeadersInit): HeadersInit {
     return {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
       Authorization: `Bearer ${defaultConfig.accessToken}`,
       ...defaultConfig.headers,
       ...additionalHeaders,
-    };
+    }
   }
 
   function buildUrl(path: string): string {
-    return `${defaultConfig.baseUrl}${path}`;
+    return `${defaultConfig.baseUrl}${path}`
   }
 
-  function buildFetchConfiguration<T extends object = {}>(
-    config: RequestConfig<T>
-  ): RequestInit {
+  function buildFetchConfiguration<T extends object = {}>(config: RequestConfig<T>): RequestInit {
     return {
       method: config.method,
       headers: getHeaders(config.headers),
       ...(config.body && { body: JSON.stringify(config.body) }),
-    };
+    }
   }
 
   function handleErrorResponse(response: Response) {
     switch (response.status) {
       case 404:
-        throw new RorNotFoundError(response.statusText);
+        throw new RorNotFoundError(response.statusText)
       case 403:
-        throw new RorForbiddenError(response.statusText);
+        throw new RorForbiddenError(response.statusText)
       case 401:
-        throw new RorUnauthorizedError(response.statusText);
+        throw new RorUnauthorizedError(response.statusText)
       default:
-        throw new RorApiError(response.statusText, response.status);
+        throw new RorApiError(response.statusText, response.status)
     }
   }
 
   async function handleResponse(response: Response) {
     if (!response.ok) {
-      handleErrorResponse(response);
+      handleErrorResponse(response)
     }
-    const result = await response.json();
-    return result;
+    const result = await response.json()
+    return result
   }
 
-  function applyMiddleware(
-    middlewares: Middleware[],
-    baseRequest: (config: RequestConfig<any>) => Promise<unknown>
-  ) {
-    return middlewares.reduceRight(
-      (request, middleware) => middleware(request),
-      baseRequest
-    );
+  function applyMiddleware(middlewares: Middleware[], baseRequest: (config: RequestConfig<any>) => Promise<unknown>) {
+    return middlewares.reduceRight((request, middleware) => middleware(request), baseRequest)
   }
 
-  async function request<R, TBody extends object = {}>(
-    config: RequestConfig<TBody>
-  ): Promise<R> {
-    const fetchConfig = buildFetchConfiguration(config);
-    const url = buildUrl(config.path);
-    const response = await fetch(url, fetchConfig);
-    return handleResponse(response);
+  async function request<R, TBody extends object = {}>(config: RequestConfig<TBody>): Promise<R> {
+    const fetchConfig = buildFetchConfiguration(config)
+    const url = buildUrl(config.path)
+    const response = await fetch(url, fetchConfig)
+    return handleResponse(response)
   }
 
-  const requestWithMiddleware = applyMiddleware(middlewares, request);
+  const requestWithMiddleware = applyMiddleware(middlewares, request)
 
   const baseClient = {
     get: <R>(path: string, headers?: HeadersInit) =>
-      requestWithMiddleware({ path, method: "GET", headers }) as Promise<R>,
+      requestWithMiddleware({ path, method: 'GET', headers }) as Promise<R>,
 
     post: <R, T extends object>(path: string, body: T, headers?: HeadersInit) =>
       requestWithMiddleware({
         path,
-        method: "POST",
+        method: 'POST',
         body,
         headers,
       }) as Promise<R>,
@@ -108,17 +85,17 @@ export function createApiClient(
     put: <R, T extends object>(path: string, body: T, headers?: HeadersInit) =>
       requestWithMiddleware({
         path,
-        method: "PUT",
+        method: 'PUT',
         body,
         headers,
       }) as Promise<R>,
 
     delete: <R>(path: string, headers?: HeadersInit) =>
-      requestWithMiddleware({ path, method: "DELETE", headers }) as Promise<R>,
-  };
+      requestWithMiddleware({ path, method: 'DELETE', headers }) as Promise<R>,
+  }
 
   return {
     client: baseClient,
     users: createUsersResource(baseClient),
-  };
+  }
 }

@@ -1,5 +1,5 @@
-import { createEnv } from "@t3-oss/env-core";
-import { z } from "zod";
+import { createEnv } from '@t3-oss/env-core'
+import { z } from 'zod'
 
 export const env = createEnv({
   /*
@@ -16,7 +16,7 @@ export const env = createEnv({
   /**
    * Environment variables available on the client (and server).
    */
-  clientPrefix: "NEXT_PUBLIC_",
+  clientPrefix: 'NEXT_PUBLIC_',
   client: {
     NEXT_PUBLIC_ROR_API_URL: z.string().url(),
   },
@@ -34,4 +34,4 @@ export const env = createEnv({
     NEXT_PUBLIC_ROR_API_URL: process.env.NEXT_PUBLIC_ROR_API_URL,
     AUTH_TRUST_HOST: process.env.AUTH_TRUST_HOST,
   },
-});
+})
