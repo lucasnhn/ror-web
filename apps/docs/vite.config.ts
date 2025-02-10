@@ -6,5 +6,5 @@ export default defineConfig({
   plugins: [react()],
   optimizeDeps: {
     exclude: ['@ror/react', '@ror/design'],
-  }
+  },
 })

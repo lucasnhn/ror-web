@@ -1,5 +1,5 @@
-import clsx, { ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
+import clsx, { ClassValue } from 'clsx'
+import { twMerge } from 'tailwind-merge'
 
 /**
  * clsxm
@@ -7,6 +7,6 @@ import { twMerge } from "tailwind-merge";
  * @docs https://github.com/dcastil/tailwind-merge
  * @param {ClassValue[]} classes - The normal classes you would provide to clsx.
  */
-const clsxm = (...classes: ClassValue[]) => twMerge(clsx(...classes));
+const clsxm = (...classes: ClassValue[]) => twMerge(clsx(...classes))
 
-export default clsxm;
+export default clsxm

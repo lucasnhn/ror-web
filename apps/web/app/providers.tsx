@@ -1,14 +1,10 @@
-import { ReactNode } from "react";
-import { AppShellContextProvider } from "@/components/app-shell/app-shell-context";
+import { ReactNode } from 'react'
+import { AppShellContextProvider } from '@/components/app-shell/app-shell-context'
 
 interface ProvidersProps {
-  children: ReactNode;
+  children: ReactNode
 }
 
 export function Providers({ children }: ProvidersProps) {
-  return (
-    <AppShellContextProvider>
-      {children}
-    </AppShellContextProvider>
-  )
+  return <AppShellContextProvider>{children}</AppShellContextProvider>
 }

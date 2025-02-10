@@ -1,31 +1,31 @@
-'use client';
-import { createContext, ReactNode, useContext, useState } from "react";
+'use client'
+import { createContext, ReactNode, useContext, useState } from 'react'
 
 interface AppShellContextType {
-  leftPanelExpanded: boolean;
+  leftPanelExpanded: boolean
 }
 
 interface AppShellContextDispatchType {
-  onToggleLeftPanel: (expanded: boolean) => void;
+  onToggleLeftPanel: (expanded: boolean) => void
 }
 
 const AppShellContext = createContext<AppShellContextType>({
   leftPanelExpanded: true,
-});
+})
 
 const AppShellDispatchContext = createContext<AppShellContextDispatchType>({
   onToggleLeftPanel: () => {},
-});
+})
 
 interface AppShellContextProviderProps {
-  children: ReactNode;
+  children: ReactNode
 }
 
 export function AppShellContextProvider({ children }: AppShellContextProviderProps) {
-  const [leftPanelExpanded, setLeftPanelExpanded] = useState(true);
+  const [leftPanelExpanded, setLeftPanelExpanded] = useState(true)
 
   const handleOnToggleLeftPanel = (expanded: boolean) => {
-    setLeftPanelExpanded(expanded);
+    setLeftPanelExpanded(expanded)
   }
 
   return (
@@ -34,10 +34,10 @@ export function AppShellContextProvider({ children }: AppShellContextProviderPro
         {children}
       </AppShellDispatchContext.Provider>
     </AppShellContext.Provider>
-  );
-};
+  )
+}
 
-type UseAppShellContextReturnType = AppShellContextType & AppShellContextDispatchType;
+type UseAppShellContextReturnType = AppShellContextType & AppShellContextDispatchType
 
 export function useAppShellContext(): UseAppShellContextReturnType {
   const context = useContext(AppShellContext)
