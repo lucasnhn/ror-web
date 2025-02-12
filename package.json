@@ -15,7 +15,7 @@
     "build:github": "turbo run @ror/web#build:github",
     "prune:web": "turbo prune @ror/web --docker",
     "prune:docs": "turbo prune @ror/web --docker",
-    "format": "prettier --write \"{apps,packages}/**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"{apps,packages}/**/*.{ts,tsx,md,css,scss}\""
   },
   "devDependencies": {
     "prettier": "3.5.0",

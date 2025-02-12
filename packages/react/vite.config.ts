@@ -3,6 +3,9 @@ import fg from 'fast-glob'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
 import dts from 'vite-plugin-dts'
+import preserveDirectives from 'rollup-plugin-preserve-directives'
+
+import pkg from './package.json'
 
 // Defines an array of entry points to be used to search for files.
 const entryPoints = ['src/**/*.tsx']
@@ -26,6 +29,13 @@ const entities = files.map((file) => {
 // Convert the array of key-value pairs to an object using the Object.fromEntries() method.
 // Returns an object where each key is the file name without the extension and the value is the absolute file path.
 const entries = Object.fromEntries(entities) as Record<string, string>
+
+// Extracts the dependencies and peerDependencies from the package.json file.
+const externalPackages = [...Object.keys(pkg.dependencies), ...Object.keys(pkg.peerDependencies)]
+
+// Creating regexes of the packages to make sure subpaths of the
+// packages are also treated as external
+const regexesOfPackages = externalPackages.map((packageName) => new RegExp(`^${packageName}(.*)?`))
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -52,13 +62,19 @@ export default defineConfig({
       formats: ['es'],
     },
     rollupOptions: {
-      external: ['react', 'react/jsx-runtime', 'react-dom', 'react-dom/client'],
+      external: [...regexesOfPackages, 'react/jsx-runtime'],
       output: {
+        preserveModules: true,
         globals: {
           react: 'React',
           'react-dom': 'ReactDOM',
         },
       },
+      plugins: [
+        // Preserve directives such as "use client" in the output.
+        // must be used together with output.preserveModules = true
+        preserveDirectives(),
+      ],
     },
     emptyOutDir: true,
   },

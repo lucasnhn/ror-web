@@ -1,5 +1,14 @@
 import { auth } from '@/app/auth'
 import Image from 'next/image'
+import { Popover, PopoverContent, PopoverPortal, PopoverTrigger } from '@radix-ui/react-popover'
+import s from './profile.module.css'
+import { SignOutButton } from '@/components/auth/sign-out-button'
+
+const containerClasses =
+  'flex items-center gap-2 border rounded-sm border-(--r-border-subtle-00) p-2 hover:bg-(--r-layer-01) group'
+
+const avatarClasses =
+  'relative flex shrink-0 items-center justify-center w-8 h-8 overflow-hidden bg-neutral-100 rounded-full dark:bg-neutral-600 group-hover:bg-(--r-layer-02)'
 
 export async function Profile() {
   const session = await auth()
@@ -7,13 +16,15 @@ export async function Profile() {
   if (!session?.user) return null
   if (session.user?.image && session.user.name) {
     return (
-      <div className='flex items-center gap-2'>
-        <Image src={session.user.image} alt={session.user.name} width={32} height={32} className='relative flex shrink-0 items-center justify-center w-8 h-8 overflow-hidden bg-neutral-100 rounded-full dark:bg-neutral-600' />
-        <div className='hidden @min-[15rem]:flex flex-col text-xs'>
-          <span>{session.user.name}</span>
-          <span className='text-(--r-text-secondary)'>{session.user.email}</span>
-        </div>
-      </div>
+      <Popover>
+        <PopoverTrigger asChild>
+          <div className={containerClasses}>
+            <Image src={session.user.image} alt={session.user.name} width={32} height={32} className={avatarClasses} />
+            <ProfileName name={session.user.name} email={session.user.email} />
+          </div>
+        </PopoverTrigger>
+        <ProfilePopover />
+      </Popover>
     )
   }
 
@@ -25,28 +36,53 @@ export async function Profile() {
       .toUpperCase()
 
     return (
-      <div className='flex items-center gap-2'>
-        <div className='relative flex shrink-0 items-center justify-center w-8 h-8 overflow-hidden bg-neutral-100 rounded-full dark:bg-neutral-600'>
-          <span className='text-xs text-neutral-800 dark:text-neutral-300'>{initials}</span>
-        </div>
-        <div className='hidden @min-[15rem]:flex flex-col text-xs'>
-          <span>{session.user.name}</span>
-          <span className='text-(--r-text-secondary)'>{session.user.email}</span>
-        </div>
-      </div>
+      <Popover>
+        <PopoverTrigger asChild>
+          <div className={containerClasses}>
+            <div className={avatarClasses}>
+              <span className='text-xs text-neutral-800 dark:text-neutral-300'>{initials}</span>
+            </div>
+            <ProfileName name={session.user.name} email={session.user.email} />
+          </div>
+        </PopoverTrigger>
+        <ProfilePopover />
+      </Popover>
     )
   }
 
   return (
-    <div className='flex items-center gap-2'>
-      <div className='relative flex shrink-0 items-center justify-center w-8 h-8 overflow-hidden bg-neutral-100 rounded-full dark:bg-neutral-600'>
-        <span className='text-xs text-neutral-800 dark:text-neutral-300'>?</span>
-      </div>
-      <div className='hidden @min-[15rem]:flex flex-col text-xs'>
-        <span>{session.user.email}</span>
-      </div>
+    <Popover>
+      <PopoverTrigger asChild>
+        <div className={containerClasses}>
+          <div className={avatarClasses}>
+            <span className='text-xs text-neutral-800 dark:text-neutral-300'>?</span>
+          </div>
+          <ProfileName name={session.user.name} email={session.user.email} />
+        </div>
+      </PopoverTrigger>
+      <ProfilePopover />
+    </Popover>
+  )
+}
+
+function ProfileName({ name, email }: { name?: string | null; email?: string | null }) {
+  if (!name && !email) return null
+  return (
+    <div className='hidden @min-[15rem]:flex flex-col text-xs'>
+      {name ? <span>{name}</span> : null}
+      {email ? <span className='text-(--r-text-secondary)'>{email}</span> : null}
     </div>
   )
+}
 
-
+function ProfilePopover() {
+  return (
+    <PopoverPortal>
+      <PopoverContent sideOffset={5}>
+        <div className={s.popover}>
+          <SignOutButton />
+        </div>
+      </PopoverContent>
+    </PopoverPortal>
+  )
 }

@@ -1,10 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { Tile } from '@ror/react/components/tile'
+import { Tile, TileProps } from '@ror/react/src/components/tile'
+import type { ComponentType } from 'react'
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta = {
   title: 'ui/Tile',
-  component: Tile,
+  component: Tile as ComponentType<TileProps>,
   parameters: {
     // Optional parameter to center the component in the Canvas. More info: https://storybook.js.org/docs/configure/story-layout
     layout: 'centered',

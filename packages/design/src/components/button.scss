@@ -1,48 +1,53 @@
-@use "../config.scss" as c;
+@use '../config.scss' as c;
 
 .#{c.$prefix}-btn {
-    display: inline-flex;
-    vertical-align: top;
-    align-items: center;
-    justify-content: center;
-    white-space: nowrap;
-    flex-shrink: 0;
-    margin: 0px;
-    border-radius: 5px;
-    font-weight: var(--font-weight-medium, 500);
-    line-height: normal;
-    transition-property: border, background-color, color, opacity;
-    transition-duration: var(--speed-highlightFadeOut, 150ms);
-    user-select: none;
-    app-region: no-drag;
-    position: relative;
-    border: 0.5px solid var(--#{c.$prefix}-button-primary-border);
-    background-color: var(--#{c.$prefix}-button-primary);
-    color: var(--#{c.$prefix}-text-on-color);
-    inline-size: max-content;
-    min-inline-size: 2rem;
-    max-inline-size: 20rem;
-    block-size: 2rem;
-    padding: 0 0.875rem;
-    font-size: var(--font-size-small, 0.8125rem);
-    cursor: pointer;
-    -webkit-font-smoothing: antialiased;
+  display: inline-flex;
+  vertical-align: top;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin: 0px;
+  border-radius: 5px;
+  font-weight: var(--font-weight-medium, 500);
+  line-height: normal;
+  transition-property: border, background-color, color, opacity;
+  transition-duration: var(--speed-highlightFadeOut, 150ms);
+  user-select: none;
+  app-region: no-drag;
+  position: relative;
+  border: 0.5px solid var(--#{c.$prefix}-button-primary-border);
+  background-color: var(--#{c.$prefix}-button-primary);
+  color: var(--#{c.$prefix}-text-on-color);
+  inline-size: max-content;
+  min-inline-size: 2rem;
+  max-inline-size: 20rem;
+  block-size: 2rem;
+  padding: 0 0.875rem;
+  font-size: var(--font-size-small, 0.8125rem);
+  cursor: pointer;
+  -webkit-font-smoothing: antialiased;
 }
 
 .#{c.$prefix}-btn--small {
-    font-size: var(--font-size-xsmall, 0.75rem);
-    block-size: 1.75rem;
-    padding: 0 0.5rem;
-    border-radius: 4px;
+  font-size: var(--font-size-xsmall, 0.75rem);
+  block-size: 1.75rem;
+  padding: 0 0.5rem;
+  border-radius: 4px;
 }
 
 .#{c.$prefix}-btn--large {
-    font-size: var(--font-size-medium, 1rem);
-    block-size: 2.5rem;
-    padding: 0 1.25rem;
-    border-radius: 6px;
+  font-size: var(--font-size-medium, 1rem);
+  block-size: 2.5rem;
+  padding: 0 1.25rem;
+  border-radius: 6px;
 }
 
 .#{c.$prefix}-btn--secondary {
+  background: var(--#{c.$prefix}-button-secondary);
+  color: var(--#{c.$prefix}-text-on-color);
+  border-color: var(--#{c.$prefix}-button-secondary-border);
+}
 
+.#{c.$prefix}-btn--ghost {
 }

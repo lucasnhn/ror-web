@@ -1,7 +1,5 @@
 'use client'
 import { type ReactNode } from 'react'
-import { RorLogo } from '../common/ror-logo'
-import Link from 'next/link'
 import { motion } from 'motion/react'
 import clsxm from '@/utils/clsxm'
 import { useAppShellContext } from './app-shell-context'
@@ -34,14 +32,6 @@ export function AppShellLeftPanel({ children }: AppShellLeftPanelProps) {
       className={classes}
     >
       <div className='flex flex-col h-full'>
-        <div className='p-2 flex items-center justify-between'>
-          <Link
-            href='/'
-            className='w-8 h-8 cursor-pointer hover:bg-neutral-100 flex items-center justify-center rounded-sm shrink-0'
-          >
-            <RorLogo className='w-8 h-8' />
-          </Link>
-        </div>
         {children}
       </div>
     </motion.div>
