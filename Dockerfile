@@ -3,8 +3,8 @@ FROM ${GCR_MIRROR}distroless/nodejs22-debian12
 LABEL org.opencontainers.image.source https://github.com/norskhelsenett/ror
 WORKDIR /app
 
-COPY public ./public
-COPY .next/standalone ./
-COPY .next/static ./.next/static
+COPY apps/web/public ./public
+COPY apps/web/.next/standalone ./
+COPY apps/web/.next/static ./.next/static
 
-CMD ["/app/server.js"]
+CMD ["/app/apps/web/server.js"]
