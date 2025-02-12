@@ -2,16 +2,28 @@ import { createEnv } from '@t3-oss/env-nextjs'
 import { z } from 'zod'
 
 /**
- * Hack to circumvent how @t3-oss/env-nextjs handles environment variables that
- * should be picked up by the runtime but are not.
+ * Hack to circumvent how @t3-oss/env-nextjs handles client facing environment variables
  * @see https://github.com/t3-oss/t3-env/issues/85
  *
  * @remarks
- * This should only be used for client-facing variables, i.e. those prefixed with NEXT_PUBLIC_.
+ * Each time a client-facing environment variable is accessed,
+ * it will first be read from the server environment variables, if it's not found there,
+ * it will be read from the client environment variables.
+ *
+ * @note This should only be used for client-facing variables, i.e. those prefixed with NEXT_PUBLIC_.
  */
 const readVariable = (key: string | undefined) => {
-  if (!key) throw new Error(`Environment variable ${key} not found`)
-  if (typeof window === 'undefined') return process.env[key]
+  if (!key) throw new Error(`You must provide a key to readVariable`)
+
+  /**
+   * Load environment variables from the server if we're not in the browser.
+   */
+  if (typeof window === 'undefined') {
+    return process.env[key]
+  }
+  /**
+   * Load environment variables from the client if we're in the browser.
+   */
   // @ts-expect-error - __ENV is injected by next.js
   return window.__ENV[key]
 }
@@ -47,7 +59,7 @@ export const env = createEnv({
     AUTH_ISSUER: process.env.AUTH_ISSUER,
     AUTH_CLIENT_ID: process.env.AUTH_CLIENT_ID,
     AUTH_CLIENT_SECRET: process.env.AUTH_CLIENT_SECRET,
-    NEXT_PUBLIC_ROR_API_URL: readVariable(process.env.NEXT_PUBLIC_ROR_API_URL),
+    NEXT_PUBLIC_ROR_API_URL: readVariable('NEXT_PUBLIC_ROR_API_URL'),
     AUTH_TRUST_HOST: process.env.AUTH_TRUST_HOST,
   },
 })
