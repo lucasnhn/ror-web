@@ -5,6 +5,6 @@ WORKDIR /app
 
 COPY apps/web/public ./public
 COPY apps/web/.next/standalone ./
-COPY apps/web/.next/static ./.next/static
+COPY apps/web/.next/static ./apps/web/.next/static
 
 CMD ["/app/apps/web/server.js"]
