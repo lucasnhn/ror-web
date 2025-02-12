@@ -4,7 +4,6 @@ import { Navigation } from './navigation/navigation'
 import { LeftPanelToggleButton } from './left-panel-toggle'
 import { Profile } from './profile'
 import { AppShellLogo } from './app-shell-logo'
-import { SignOutButton } from '@/components/auth/sign-out-button'
 
 interface AppShellProps {
   children: ReactNode
