@@ -1,0 +1,22 @@
+@use '../config.scss' as *;
+
+.#{$prefix}-tooltip {
+  --r-shadow:
+    0 0 1px var(--r-shadow-color-default, #05050629), 0 0 2px var(--r-shadow-color-default, #05050629),
+    0 2px 8px var(--r-shadow-color-default, #05050629);
+  --r-shadow-colored: 0 0 1px var(--r-shadow-color), 0 0 2px var(--r-shadow-color), 0 2px 8px var(--r-shadow-color);
+
+  &__inner {
+    background: var(--r-background-inverse);
+    color: var(--r-text-inverse);
+    max-inline-size: 18rem;
+    border-radius: 0.25rem;
+    box-shadow: var(--r-ring-offset-shadow, 0 0 #0000), var(--r-ring-shadow, 0 0 #0000), var(--r-shadow);
+    border-radius: 0.25rem;
+    line-height: 1rem;
+    font-weight: 400;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.75rem;
+    text-align: center;
+  }
+}

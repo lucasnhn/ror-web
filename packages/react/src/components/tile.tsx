@@ -2,7 +2,7 @@ import { clsx } from 'clsx'
 import type { ReactElement, ReactNode } from 'react'
 import { LayerLevel, MAX_LEVEL, MIN_LEVEL } from './layer'
 
-interface TileProps {
+export interface TileProps {
   /**
    * Layering level tokens - 0, 1, 2
    * @default 0
@@ -24,7 +24,7 @@ interface TileProps {
   children: ReactNode
 }
 
-export function Tile({ layer = 0, className, children, as }: TileProps) {
+export function Tile({ layer = 0, className, children, as }: TileProps): ReactNode {
   const value = Math.max(MIN_LEVEL, Math.min(layer, MAX_LEVEL))
 
   const classes = clsx(
