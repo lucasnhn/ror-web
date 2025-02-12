@@ -25,7 +25,9 @@ export function createApiClient(config: ApiClientConfig, middlewares: Middleware
   }
 
   function buildUrl(path: string): string {
-    return `${defaultConfig.baseUrl}${path}`
+    const baseUrl = new URL(defaultConfig.baseUrl)
+    baseUrl.pathname = path
+    return baseUrl.toString()
   }
 
   function buildFetchConfiguration<T extends object = {}>(config: RequestConfig<T>): RequestInit {
@@ -72,10 +74,11 @@ export function createApiClient(config: ApiClientConfig, middlewares: Middleware
 
   const baseClient = {
     get: <R>(path: string, headers?: HeadersInit) =>
-      requestWithMiddleware({ path, method: 'GET', headers }) as Promise<R>,
+      requestWithMiddleware({ baseUrl: defaultConfig.baseUrl, path, method: 'GET', headers }) as Promise<R>,
 
     post: <R, T extends object>(path: string, body: T, headers?: HeadersInit) =>
       requestWithMiddleware({
+        baseUrl: defaultConfig.baseUrl,
         path,
         method: 'POST',
         body,
@@ -84,6 +87,7 @@ export function createApiClient(config: ApiClientConfig, middlewares: Middleware
 
     put: <R, T extends object>(path: string, body: T, headers?: HeadersInit) =>
       requestWithMiddleware({
+        baseUrl: defaultConfig.baseUrl,
         path,
         method: 'PUT',
         body,
@@ -91,7 +95,7 @@ export function createApiClient(config: ApiClientConfig, middlewares: Middleware
       }) as Promise<R>,
 
     delete: <R>(path: string, headers?: HeadersInit) =>
-      requestWithMiddleware({ path, method: 'DELETE', headers }) as Promise<R>,
+      requestWithMiddleware({ baseUrl: defaultConfig.baseUrl, path, method: 'DELETE', headers }) as Promise<R>,
   }
 
   return {

@@ -39,6 +39,7 @@ export interface FetchConfig {
 }
 
 export interface RequestConfig<T extends object = {}> {
+  baseUrl: string
   path: string
   method: string
   body?: T
