@@ -17,7 +17,7 @@
     "@ror/design": "*",
     "@ror/js-api-sdk": "*",
     "@ror/react": "*",
-    "@t3-oss/env-core": "^0.12.0",
+    "@t3-oss/env-nextjs": "0.12.0",
     "@uidotdev/usehooks": "2.4.1",
     "clsx": "^2.1.1",
     "env-cmd": "^10.1.0",
