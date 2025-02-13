@@ -25,6 +25,7 @@ const dexIdpProvider: Provider = {
   clientSecret: env.AUTH_CLIENT_SECRET,
   authorization: {
     params: {
+      audience: env.AUTH_AUDIENCE,
       scope: 'openid profile email groups',
     },
   },
@@ -37,7 +38,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   trustHost: trusthost,
   callbacks: {
     jwt({ token, account }) {
-      console.log('JWT CALLBACK account', account)
       if (account?.provider === 'dex') {
         if (!account?.access_token) {
           throw new Error('Did not receive access_token from DexIdp on login callback')
@@ -47,12 +47,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return token
     },
     session({ session, token }) {
-      console.log('session CALLBACK', session)
       session.accessToken = token.accessToken as string
       return session
     },
     authorized: async ({ auth }) => {
-      console.log('authorized CALLBACK auth', auth)
       // Logged in users with an access token are authenticated, otherwise redirect to login page
       return !!auth?.accessToken
     },

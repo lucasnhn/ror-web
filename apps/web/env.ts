@@ -39,6 +39,7 @@ export const env = createEnv({
     AUTH_CLIENT_ID: z.string().min(1),
     AUTH_CLIENT_SECRET: z.string().min(1),
     AUTH_TRUST_HOST: z.string().min(1),
+    AUTH_AUDIENCE: z.string().min(1),
   },
   /*
    * Environment variables available on the client (and server).
@@ -55,11 +56,17 @@ export const env = createEnv({
    * 💡 You'll get type errors if not all variables from `server` & `client` are included here.
    */
   runtimeEnv: {
+    // Secret for signing tokens
     AUTH_SECRET: process.env.AUTH_SECRET,
+    // Auth server
     AUTH_ISSUER: process.env.AUTH_ISSUER,
     AUTH_CLIENT_ID: process.env.AUTH_CLIENT_ID,
     AUTH_CLIENT_SECRET: process.env.AUTH_CLIENT_SECRET,
-    NEXT_PUBLIC_ROR_API_URL: readVariable('NEXT_PUBLIC_ROR_API_URL'),
+    AUTH_AUDIENCE: process.env.AUTH_AUDIENCE,
+    // Weather or not to trust the host header
+    // This is useful when running in a docker instance
     AUTH_TRUST_HOST: process.env.AUTH_TRUST_HOST,
+    // The base url to the ROR API
+    NEXT_PUBLIC_ROR_API_URL: readVariable('NEXT_PUBLIC_ROR_API_URL'),
   },
 })
