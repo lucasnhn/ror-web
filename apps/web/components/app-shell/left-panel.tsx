@@ -24,16 +24,13 @@ export function AppShellLeftPanel({ children }: AppShellLeftPanelProps) {
   )
   return (
     <motion.div
-      layout
-      initial='expanded'
+      initial={leftPanelExpanded ? 'expanded' : 'collapsed'}
       transition={{ duration: 0.1 }}
       variants={variants}
       animate={leftPanelExpanded ? 'expanded' : 'collapsed'}
       className={classes}
     >
-      <div className='flex flex-col h-full'>
-        {children}
-      </div>
+      <div className='flex flex-col h-full'>{children}</div>
     </motion.div>
   )
 }

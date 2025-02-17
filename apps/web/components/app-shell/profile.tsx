@@ -4,8 +4,7 @@ import { Popover, PopoverContent, PopoverPortal, PopoverTrigger } from '@radix-u
 import s from './profile.module.css'
 import { SignOutButton } from '@/components/auth/sign-out-button'
 
-const containerClasses =
-  'flex items-center gap-2 border rounded-sm border-(--r-border-subtle-00) p-2 hover:bg-(--r-layer-01) group'
+const containerClasses = 'flex items-center justify-start gap-2 group cursor-pointer'
 
 const avatarClasses =
   'relative flex shrink-0 items-center justify-center w-8 h-8 overflow-hidden bg-neutral-100 rounded-full dark:bg-neutral-600 group-hover:bg-(--r-layer-02)'
@@ -67,18 +66,13 @@ export async function Profile() {
 
 function ProfileName({ name, email }: { name?: string | null; email?: string | null }) {
   if (!name && !email) return null
-  return (
-    <div className='hidden @min-[15rem]:flex flex-col text-xs'>
-      {name ? <span>{name}</span> : null}
-      {email ? <span className='text-(--r-text-secondary)'>{email}</span> : null}
-    </div>
-  )
+  return <div className='hidden @min-[15rem]:flex flex-col text-xs'>{name ? <span>{name}</span> : null}</div>
 }
 
 function ProfilePopover() {
   return (
     <PopoverPortal>
-      <PopoverContent sideOffset={5}>
+      <PopoverContent collisionPadding={8} sideOffset={4}>
         <div className={s.popover}>
           <SignOutButton />
         </div>

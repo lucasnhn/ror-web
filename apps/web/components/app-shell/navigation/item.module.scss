@@ -1,121 +1,118 @@
 .item {
-    --menu-item-hover-bg: var(--r-background-hover);
-    --menu-item-gap: calc(var(--spacing) * 3);
-    --menu-item-x-padding: calc(var(--spacing) * 2);
-    --menu-item-y-padding: calc(var(--spacing) * 1);
+  --menu-item-hover-bg: var(--r-layer-01-hover);
+  --menu-item-gap: calc(var(--spacing) * 3);
+  --menu-item-x-padding: calc(var(--spacing) * 2);
+  --menu-item-y-padding: calc(var(--spacing) * 1);
 }
 
 .trigger {
-    display: flex;
-    align-items: center;
-    gap: var(--menu-item-gap);
-    width: 100%;
-    padding: var(--menu-item-y-padding) var(--menu-item-x-padding);
-    height: 2rem;
-    min-width: 2rem;
-    border-radius: var(--radius-sm);
-    cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: var(--menu-item-gap);
+  width: 100%;
+  padding: var(--menu-item-y-padding) var(--menu-item-x-padding);
+  height: 2rem;
+  min-width: 2rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
 }
 
 .trigger:hover {
-    background: var(--menu-item-hover-bg);
+  background: var(--menu-item-hover-bg);
 }
 
 .label {
-    display: none;
-    align-items: center;
-    flex-grow: 1;
-    column-gap: 0.5rem;
-    font-size: var(--text-sm);
+  display: none;
+  align-items: center;
+  flex-grow: 1;
+  column-gap: 0.5rem;
+  font-size: var(--text-sm);
 }
 
 .icon {
-    width: 1rem;
-    height: 1rem;
-    color: currentColor;
+  width: 1rem;
+  height: 1rem;
+  color: currentColor;
 }
 
 .caret {
-    display: none;
-    width: 0.75rem;
-    height: 0.75rem;
-    color: var(--r-icon-secondary);
-    justify-self: flex-end;
+  display: none;
+  width: 0.75rem;
+  height: 0.75rem;
+  color: var(--r-icon-secondary);
+  justify-self: flex-end;
 }
 
 .menuItem {
-    display: flex;
-    align-items: center;
-    gap: var(--menu-item-gap);
-    padding: var(--menu-item-y-padding) var(--menu-item-x-padding);
-    font-size: var(--text-sm);
-    border-radius: var(--radius-sm);
-    height: 2rem;
-    position: relative;
-    cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: var(--menu-item-gap);
+  padding: var(--menu-item-y-padding) var(--menu-item-x-padding);
+  font-size: var(--text-sm);
+  border-radius: var(--radius-sm);
+  height: 2rem;
+  position: relative;
+  cursor: pointer;
 }
 
 .menuItem:hover,
 .staticMenu a:hover {
-    background: var(--menu-item-hover-bg);
+  background: var(--menu-item-hover-bg);
 }
 
 .menuItem.active {
-    background: var(--menu-item-hover-bg);
-    font-weight: 500;
+  background: var(--menu-item-hover-bg);
+  font-weight: 500;
 }
 
 .menuItem.active::before {
-    position: absolute;
-    top: 4px;
-    left: 4px;
-    content: '';
-    height: calc(100% - 8px);
-    width: 3px;
-    background: var(--color-teal-800);
-    border-radius: 4px;
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  content: '';
+  height: calc(100% - 8px);
+  width: 3px;
+  background: var(--color-teal-800);
+  border-radius: 4px;
 }
 
 /// Make sure that icon does not shrink when the expansion of the left panel is toggled
 .trigger svg,
 .menuItem svg {
-    flex-shrink: 0;
+  flex-shrink: 0;
 }
 
 /// Static menu
 .collapsed {
-    display: none;
+  display: none;
 }
 
 .staticMenu {
-    margin-top: calc(var(--spacing) * 0.5);
+  margin-top: calc(var(--spacing) * 0.5);
 }
 
 .staticMenu a {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    padding:
-        var(--menu-item-y-padding)
-        var(--menu-item-x-padding)
-        var(--menu-item-y-padding)
-        /// Align the sub navigation label with the top level label
-        /// x-padding + icon size + menu item gap
-        calc(var(--menu-item-x-padding) + calc(var(--spacing)*4) + var(--menu-item-gap));
-    font-size: var(--text-sm);
-    border-radius: var(--radius-sm);
-    height: 2rem;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: var(--menu-item-y-padding) var(--menu-item-x-padding) var(--menu-item-y-padding)
+    /// Align the sub navigation label with the top level label
+    /// x-padding + icon size + menu item gap
+    calc(var(--menu-item-x-padding) + calc(var(--spacing) * 4) + var(--menu-item-gap));
+  font-size: var(--text-sm);
+  border-radius: var(--radius-sm);
+  height: 2rem;
 }
 
 /// Expanded state
-.caret[data-expanded="true"] {
-    transform: rotate(90deg);
+.caret[data-expanded='true'] {
+  transform: rotate(90deg);
 }
 
 /// Container queries - set on the whole left panel element
 @container (width > 3rem) {
-    .label,
-   .caret {
-        display: flex;
-    }
+  .label,
+  .caret {
+    display: flex;
+  }
 }
