@@ -39,7 +39,6 @@ export const env = createEnv({
     AUTH_CLIENT_ID: z.string().min(1),
     AUTH_CLIENT_SECRET: z.string().min(1),
     AUTH_TRUST_HOST: z.string().min(1),
-    AUTH_AUDIENCE: z.string().min(1),
   },
   /*
    * Environment variables available on the client (and server).
@@ -62,7 +61,6 @@ export const env = createEnv({
     AUTH_ISSUER: process.env.AUTH_ISSUER,
     AUTH_CLIENT_ID: process.env.AUTH_CLIENT_ID,
     AUTH_CLIENT_SECRET: process.env.AUTH_CLIENT_SECRET,
-    AUTH_AUDIENCE: process.env.AUTH_AUDIENCE,
     // Weather or not to trust the host header
     // This is useful when running in a docker instance
     AUTH_TRUST_HOST: process.env.AUTH_TRUST_HOST,
