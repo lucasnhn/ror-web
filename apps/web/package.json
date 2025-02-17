@@ -3,7 +3,7 @@
   "version": "0.0.6",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 11000",
+    "dev": "next dev -p 11100",
     "build": "next build",
     "build:github": "env-cmd -f .env.github-workflow next build",
     "start": "next start",
