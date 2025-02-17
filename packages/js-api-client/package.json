@@ -1,5 +1,5 @@
 {
-  "name": "@ror/js-api-sdk",
+  "name": "@ror/js-api-client",
   "version": "0.0.6",
   "private": true,
   "main": "./dist/index.js",

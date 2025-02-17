@@ -1,5 +1,5 @@
 import { env } from '@/env'
-import { createApiClient, loggingMiddleware } from '@ror/js-api-sdk'
+import { createApiClient, loggingMiddleware } from '@ror/js-api-client'
 
 export const rorApiClient = (accessToken: string) => {
   const middlewares = [loggingMiddleware]
