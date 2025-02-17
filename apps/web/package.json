@@ -15,7 +15,7 @@
     "@headlessui/react": "2.2.0",
     "@radix-ui/react-popover": "1.1.6",
     "@ror/design": "*",
-    "@ror/js-api-sdk": "*",
+    "@ror/js-api-client": "*",
     "@ror/react": "*",
     "@t3-oss/env-nextjs": "0.12.0",
     "@uidotdev/usehooks": "2.4.1",
