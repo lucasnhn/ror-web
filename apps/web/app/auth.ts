@@ -25,7 +25,6 @@ const dexIdpProvider: Provider = {
   clientSecret: env.AUTH_CLIENT_SECRET,
   authorization: {
     params: {
-      audience: env.AUTH_AUDIENCE,
       scope: 'openid profile email groups',
     },
   },
