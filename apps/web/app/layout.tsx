@@ -4,7 +4,6 @@ import './globals.css'
 import { AppShell } from '@/components/app-shell/app-shell'
 import { Providers } from './providers'
 import { getDarkModePreferenceAction } from '@/utils/dark-mode.actions'
-import { getLeftPanelPreferenceAction } from '@/components/app-shell/app-shell-actions'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-family-sans' })
 
