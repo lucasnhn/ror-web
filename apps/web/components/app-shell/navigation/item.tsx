@@ -8,7 +8,7 @@ import s from './item.module.scss'
 import fo from './flyout.module.scss'
 
 import { Route } from './routes'
-import { useAppShellContext } from '../app-shell-context'
+import { useAppShellContext } from '../use-app-shell'
 import clsxm from '@/utils/clsxm'
 
 interface NavigationItemProps {
@@ -43,15 +43,12 @@ export function NavigationItem({ label, href, icon, items }: NavigationItemProps
     }
   }, [leftPanelExpanded])
 
-  const handleOnTriggerMouseOver = useCallback<MouseEventHandler<HTMLButtonElement>>(
-    () => {
-      // Dont open the flyover if the static menu is open (when the left panel is expanded)
-      // for all other scenarios open the flyover
-      if (staticOpen && leftPanelExpanded) return
-      setFlyoverOpen(true)
-    },
-    [staticOpen, leftPanelExpanded]
-  )
+  const handleOnTriggerMouseOver = useCallback<MouseEventHandler<HTMLButtonElement>>(() => {
+    // Dont open the flyover if the static menu is open (when the left panel is expanded)
+    // for all other scenarios open the flyover
+    if (staticOpen && leftPanelExpanded) return
+    setFlyoverOpen(true)
+  }, [staticOpen, leftPanelExpanded])
 
   const handleOnTriggerMouseLeave = useCallback(() => {
     setFlyoverOpen(false)

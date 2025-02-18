@@ -3,25 +3,31 @@ import { AppShellLeftPanel } from './left-panel'
 import { Navigation } from './navigation/navigation'
 import { LeftPanelToggleButton } from './left-panel-toggle'
 import { Profile } from './profile'
-import { AppShellLogo } from './app-shell-logo'
+import { Logo } from './logo'
+import { ThemeToggle } from './theme-toggle'
+import { getDarkModePreferenceAction, saveDarkModePreferenceAction } from '@/utils/dark-mode.actions'
 
 interface AppShellProps {
   children: ReactNode
 }
 
-export function AppShell({ children }: AppShellProps) {
+export async function AppShell({ children }: AppShellProps) {
+  const colorScheme = await getDarkModePreferenceAction()
   return (
     <div className='grid grid-cols-[max-content_auto]'>
       <AppShellLeftPanel>
-        <div className='p-2 flex flex-col @min-[6rem]:flex-row items-center justify-between gap-2'>
-          <AppShellLogo />
-          <LeftPanelToggleButton />
+        <div className='p-2 '>
+          <Logo />
         </div>
         <div className='p-2 flex flex-col gap-y-4'>
           <Navigation />
         </div>
-        <div className='p-2 mt-auto'>
+        <div className='p-2 mt-auto '>
           <Profile />
+        </div>
+        <div className='p-2 flex flex-col @min-[6rem]:flex-row items-center justify-end gap-2'>
+          <ThemeToggle colorScheme={colorScheme} onSavePreferenceAction={saveDarkModePreferenceAction} />
+          <LeftPanelToggleButton />
         </div>
       </AppShellLeftPanel>
       <div className='h-screen overflow-y-auto bg-(--r-background) p-4 md:p-8'>{children}</div>

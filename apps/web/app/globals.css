@@ -1,6 +1,6 @@
-@import "@ror/design/style.css";
-@import "@evilmartians/harmony/tailwind.css";
-@import "tailwindcss";
+@import '@ror/design/style.css';
+@import '@evilmartians/harmony/tailwind.css';
+@import 'tailwindcss';
 
 /*
   The default border color has changed to `currentColor` in Tailwind CSS v4,
@@ -11,38 +11,44 @@
   color utility to any element that depends on these defaults.
 */
 @layer base {
-    *,
-    ::after,
-    ::before,
-    ::backdrop,
-    ::file-selector-button {
-        border-color: var(--color-neutral-200, currentColor);
-    }
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-neutral-200, currentColor);
+  }
 
-    html {
-        color-scheme: light;
-    }
+  /**
+  * This lets the browser know that this websites supports both light and dark modes.
+  */
+  html {
+    color-scheme: light dark;
+  }
 
-    @media (prefers-color-scheme: dark) {
-        html {
-            color-scheme: dark;
-        }
-    }
+  html[data-color-scheme='light'] {
+    color-scheme: light;
+  }
 
-    body {
-        color: var(--r-text-primary);
-        background: var(--r-background);
-        font-family: var(--font-family-sans);
-        -webkit-font-smoothing: antialiased;
-    }
+  html[data-color-scheme='dark'] {
+    color-scheme: dark;
+  }
 
+  html[data-color-scheme='system'] {
+    color-scheme: light dark;
+  }
+
+  body {
+    color: var(--r-text-primary);
+    background: var(--r-background);
+    font-family: var(--font-family-sans);
+    -webkit-font-smoothing: antialiased;
+  }
 }
 
-
-
 @layer utilities {
-    .hide-scrollbar {
-        scrollbar-width: none;
-        -ms-overflow-style: none;
-    }
+  .hide-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
 }
