@@ -4,7 +4,7 @@ import { Tooltip } from '@ror/react/components/tooltip'
 import Link from 'next/link'
 import { RorLogo } from '@/components/common/ror-logo'
 
-export function AppShellLogo() {
+export function Logo() {
   return (
     <Tooltip content='Homepage' side='right'>
       <Link

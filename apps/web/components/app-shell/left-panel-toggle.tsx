@@ -1,12 +1,14 @@
 'use client'
 import { Tooltip } from '@ror/react'
-import { useAppShellContext } from './app-shell-context'
+import { useAppShellContext } from './use-app-shell'
+import { saveLeftPanelPreferenceAction } from './app-shell-actions'
 
 export function LeftPanelToggleButton() {
   const { leftPanelExpanded, onToggleLeftPanel } = useAppShellContext()
 
   const handleOnClick = () => {
     onToggleLeftPanel(!leftPanelExpanded)
+    saveLeftPanelPreferenceAction(!leftPanelExpanded)
   }
 
   const tooltipText = leftPanelExpanded ? 'Hide Sidebar' : 'Show Sidebar'

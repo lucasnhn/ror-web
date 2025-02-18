@@ -2,7 +2,7 @@
 import { type ReactNode } from 'react'
 import { motion } from 'motion/react'
 import clsxm from '@/utils/clsxm'
-import { useAppShellContext } from './app-shell-context'
+import { useAppShellContext } from './use-app-shell'
 
 interface AppShellLeftPanelProps {
   children: ReactNode
