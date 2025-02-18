@@ -4,6 +4,7 @@ import './globals.css'
 import { AppShell } from '@/components/app-shell/app-shell'
 import { Providers } from './providers'
 import { getDarkModePreferenceAction } from '@/utils/dark-mode.actions'
+import { getLeftPanelPreferenceAction } from '@/components/app-shell/app-shell-actions'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-family-sans' })
 
@@ -21,10 +22,13 @@ export default async function RootLayout({
   // otherwise it defaults to "system"
   const theme = await getDarkModePreferenceAction()
 
+  // Get the user's preferred sidebar open state
+  const defaultSidebarOpen = await getLeftPanelPreferenceAction()
+
   return (
     <html lang='en' className={inter.variable} data-color-scheme={theme}>
       <body>
-        <Providers>
+        <Providers defaultSidebarOpen={defaultSidebarOpen}>
           <AppShell>{children}</AppShell>
         </Providers>
       </body>
