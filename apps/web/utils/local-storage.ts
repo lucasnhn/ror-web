@@ -9,7 +9,7 @@
  * @typeParam T - The expected type of the stored value
  */
 export function getSavedPreference<T>(key: string, fallback: T): T {
-  if (localStorage.getItem(key)) {
+  if (window.localStorage.getItem(key)) {
     const value = window.localStorage.getItem(key) as T
     // Booleans are saved as strings, therefore we need to parse them
     if (value === 'true') {

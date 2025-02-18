@@ -1,43 +1,24 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { Popover, PopoverContent, PopoverPortal, PopoverTrigger } from '@radix-ui/react-popover'
 import { Moon, Sun, SunMoon } from 'lucide-react'
 import s from './theme-toggle.module.scss'
-import { getSavedPreference, removePreference, savePreference } from '@/utils/local-storage'
+import { ColorScheme, Labels } from '@/utils/dark-mode'
 
-const STORAGE_KEY = 'theme-preference'
-
-enum ColorScheme {
-  System = 'system',
-  Light = 'light',
-  Dark = 'dark',
+interface ThemeToggleProps {
+  colorScheme: ColorScheme
+  onSavePreferenceAction: (theme: ColorScheme) => void
 }
 
-const Labels = new Map([
-  [ColorScheme.System, 'System'],
-  [ColorScheme.Light, 'Light'],
-  [ColorScheme.Dark, 'Dark'],
-])
-
-function saveThemePreference(theme: ColorScheme) {
-  if (theme === ColorScheme.System) {
-    removePreference(STORAGE_KEY)
-    window.document.documentElement.removeAttribute('data-color-scheme')
-  } else {
-    savePreference(STORAGE_KEY, theme)
-    window.document.documentElement.setAttribute('data-color-scheme', theme)
-  }
-}
-
-export function ThemeToggle() {
-  const [colorScheme, setColorScheme] = useState<ColorScheme>(getSavedPreference(STORAGE_KEY, ColorScheme.System))
-
+export function ThemeToggle({ colorScheme, onSavePreferenceAction }: ThemeToggleProps) {
+  // Setup listeners for changes in the user's color scheme preference
   useEffect(() => {
     function handleOnMatchMediaChange({ matches: isDark }: MediaQueryListEvent) {
       const value = isDark ? ColorScheme.Dark : ColorScheme.Light
-      setColorScheme(value)
-      saveThemePreference(value)
+      if (colorScheme === ColorScheme.System) {
+        window.document.documentElement.setAttribute('data-color-scheme', value)
+      }
     }
 
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', handleOnMatchMediaChange)
@@ -45,16 +26,7 @@ export function ThemeToggle() {
     return () => {
       window.matchMedia('(prefers-color-scheme: dark)').removeEventListener('change', handleOnMatchMediaChange)
     }
-  }, [])
-
-  useEffect(() => {
-    document.firstElementChild?.setAttribute('data-color-scheme', colorScheme)
   }, [colorScheme])
-
-  const setTheme = (theme: ColorScheme) => {
-    setColorScheme(theme)
-    saveThemePreference(theme)
-  }
 
   return (
     <Popover>
@@ -66,9 +38,21 @@ export function ThemeToggle() {
           <div className={s.popover} role='group'>
             <span className={s.title}>Appearance</span>
             <div className={s.options}>
-              <ThemeOption theme={ColorScheme.Light} onClick={setTheme} />
-              <ThemeOption theme={ColorScheme.Dark} onClick={setTheme} />
-              <ThemeOption theme={ColorScheme.System} onClick={setTheme} />
+              <ThemeOption
+                theme={ColorScheme.Light}
+                isActive={colorScheme === ColorScheme.Light}
+                onClick={onSavePreferenceAction}
+              />
+              <ThemeOption
+                theme={ColorScheme.Dark}
+                isActive={colorScheme === ColorScheme.Dark}
+                onClick={onSavePreferenceAction}
+              />
+              <ThemeOption
+                theme={ColorScheme.System}
+                isActive={colorScheme === ColorScheme.System}
+                onClick={onSavePreferenceAction}
+              />
             </div>
           </div>
         </PopoverContent>
@@ -105,13 +89,21 @@ function ThemeIcon({ theme }: { theme: ColorScheme }) {
   }
 }
 
-function ThemeOption({ theme, onClick }: { theme: ColorScheme; onClick: (value: ColorScheme) => void }) {
+function ThemeOption({
+  theme,
+  isActive,
+  onClick,
+}: {
+  theme: ColorScheme
+  isActive: boolean
+  onClick: (value: ColorScheme) => void
+}) {
   const handleOnClick = () => {
     onClick(theme)
   }
 
   return (
-    <div className={s.option} role='option' data-value={theme} onClick={handleOnClick}>
+    <div className={s.option} role='option' data-value={theme} aria-selected={isActive} onClick={handleOnClick}>
       <figure className='rounded-md'>
         <ThemePreview theme={theme} />
       </figure>
