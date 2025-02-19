@@ -1,5 +1,6 @@
 import NextAuth from 'next-auth'
 import { Provider } from 'next-auth/providers'
+import { jwtDecode } from 'jwt-decode'
 import { env } from '../env'
 
 /**
@@ -50,8 +51,21 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return session
     },
     authorized: async ({ auth }) => {
-      // Logged in users with an access token are authenticated, otherwise redirect to login page
-      return !!auth?.accessToken
+      if (!auth?.accessToken) {
+        return false
+      }
+
+      const decodedToken = jwtDecode(auth?.accessToken as string)
+
+      if (!decodedToken) {
+        return false
+      }
+
+      // Check if the authentication token from dex has expired
+      const expirationTime = (decodedToken.exp as number) * 1000
+      const currentTime = Date.now()
+      const isTokenExpired = expirationTime < currentTime
+      return isTokenExpired ? false : true
     },
   },
 })
