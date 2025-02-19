@@ -58,6 +58,8 @@ Create a production build:
 npm run build
 ```
 
-## Deployment
+## Open Telemetry
 
-### Docker Deployment
+The web application is instrumented with Open Telemetry to collect telemetry data. See `apps/web/instrumentation.ts` for implementation and [Next.js Open Telemetry Documentation](https://nextjs.org/docs/app/building-your-application/optimizing/open-telemetry).
+
+It is possible to configure custom spans, see [Next.js Custom Spans](https://nextjs.org/docs/app/building-your-application/optimizing/open-telemetry#custom-spans) for more information.
