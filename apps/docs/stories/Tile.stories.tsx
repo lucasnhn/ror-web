@@ -17,6 +17,15 @@ const meta = {
     layer: 0,
     className: '',
   },
+  argTypes: {
+    layer: {
+      type: 'string',
+      description:
+        'Which layer to represent the tile on. See referencing docs on Layer model on https://carbondesignsystem.com/elements/color/usage/#layering-tokens',
+      options: [0, 1, 2],
+      control: 'inline-radio',
+    },
+  },
 } satisfies Meta<typeof Tile>
 
 export default meta

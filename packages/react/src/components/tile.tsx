@@ -24,7 +24,7 @@ export interface TileProps {
   children: ReactNode
 }
 
-export function Tile({ layer = 0, className, children, as }: TileProps): ReactNode {
+export function Tile({ layer = 0, className, children, as = 'div' }: TileProps): ReactNode {
   const value = Math.max(MIN_LEVEL, Math.min(layer, MAX_LEVEL))
 
   const classes = clsx(
@@ -36,6 +36,6 @@ export function Tile({ layer = 0, className, children, as }: TileProps): ReactNo
     },
     className
   )
-  const Element = as ?? 'div'
+  const Element = as
   return <Element className={classes}>{children}</Element>
 }
