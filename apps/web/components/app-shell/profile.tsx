@@ -56,16 +56,6 @@ export async function Profile() {
   )
 }
 
-function ProfileName({ name, email }: { name?: string | null; email?: string | null }) {
-  if (!name && !email) return null
-  return (
-    <div className='hidden @min-[15rem]:flex flex-col text-xs'>
-      {name ? <span>{name}</span> : null}
-      {email ? <span className='text-(--r-text-secondary)'>{email}</span> : null}
-    </div>
-  )
-}
-
 function ProfilePopover() {
   return (
     <PopoverPortal>
