@@ -1,5 +1,5 @@
 import { ReactElement } from 'react'
-import { AdministrationIcon, DashboardIcon, EconomyIcon, HelpIcon, StatisticsIcon } from './icons'
+import { AdministrationIcon, ClustersIcon, DashboardIcon, EconomyIcon, HelpIcon, StatisticsIcon } from './icons'
 
 export interface Route {
   label: string
@@ -22,6 +22,11 @@ export const routes: (TopLevelRoute | TopLevelRouteWithSubRoutes)[] = [
     label: 'Overview',
     href: '/dashboard',
     icon: DashboardIcon,
+  },
+  {
+    label: 'Clusters',
+    href: '/clusters',
+    icon: ClustersIcon,
   },
   {
     label: 'Statistics',
