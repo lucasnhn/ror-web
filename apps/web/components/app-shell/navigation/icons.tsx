@@ -1,3 +1,5 @@
+import { Boxes } from 'lucide-react'
+
 import s from './item.module.scss'
 
 export const DashboardIcon = (
@@ -21,6 +23,8 @@ export const DashboardIcon = (
     <rect width='7' height='7' x='3' y='14' rx='1'></rect>
   </svg>
 )
+
+export const ClustersIcon = <Boxes className={s.icon} />
 
 export const StatisticsIcon = (
   <svg
