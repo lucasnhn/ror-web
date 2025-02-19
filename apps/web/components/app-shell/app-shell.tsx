@@ -22,12 +22,12 @@ export async function AppShell({ children }: AppShellProps) {
         <div className='p-2 flex flex-col gap-y-4'>
           <Navigation />
         </div>
-        <div className='p-2 mt-auto '>
+        <div className='p-2 mt-auto flex flex-col @min-[6rem]:flex-row items-center justify-between gap-2'>
           <Profile />
-        </div>
-        <div className='p-2 flex flex-col @min-[6rem]:flex-row items-center justify-end gap-2'>
-          <ThemeToggle colorScheme={colorScheme} onSavePreferenceAction={saveDarkModePreferenceAction} />
-          <LeftPanelToggleButton />
+          <div className='flex flex-col @min-[6rem]:flex-row items-center justify-end gap-2'>
+            <ThemeToggle colorScheme={colorScheme} onSavePreferenceAction={saveDarkModePreferenceAction} />
+            <LeftPanelToggleButton />
+          </div>
         </div>
       </AppShellLeftPanel>
       <div className='h-screen overflow-y-auto bg-(--r-background) p-4 md:p-8'>{children}</div>

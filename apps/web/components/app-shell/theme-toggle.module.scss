@@ -24,6 +24,7 @@
   line-height: var(--text-xs--line-height);
   padding: 0 calc(var(--spacing) * 1);
   margin-top: calc(var(--spacing) * 1);
+  color: var(--r-text-primary);
 }
 
 .option {
@@ -40,7 +41,7 @@
   }
 
   &[aria-selected='true'] {
-    color: var(--r-button-primary);
+    color: var(--r-button-primary-border);
   }
 }
 
