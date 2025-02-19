@@ -1,3 +1,65 @@
-html {
-    font-family: -apple-system, "system-ui", "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+@use 'sass:meta';
+@use './tokens/font-family.scss' as *;
+
+@layer base {
+  *,
+  *::after,
+  *::before {
+    box-sizing: border-box;
+  }
+
+  html {
+    font-family: #{meta.inspect($font-family-system)};
+  }
+
+  html,
+  body {
+    height: 100%;
+  }
+
+  span,
+  a,
+  img,
+  label,
+  button,
+  input {
+    display: inline-block;
+    width: auto;
+    overflow: hidden;
+  }
+
+  button,
+  select,
+  textarea,
+  input {
+    padding: 5px;
+    outline: none;
+    font-size: 1rem;
+    font-weight: 500;
+    color: black;
+    background-color: white;
+  }
+
+  button {
+    padding: 0; /* special */
+    cursor: pointer;
+  }
+
+  textarea {
+    resize: none;
+  }
+
+  img {
+    object-fit: cover;
+    object-position: center;
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  hr {
+    height: 1px;
+    background-color: #dddddd;
+  }
 }
