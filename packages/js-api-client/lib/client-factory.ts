@@ -1,5 +1,6 @@
 import { RorApiError, RorForbiddenError, RorNotFoundError, RorUnauthorizedError } from './error'
-import { createUsersResource } from './resources/users/users.resource.'
+import { createClustersResource } from './resources/clusters/clusters.resource'
+import { createUsersResource } from './resources/users/users.resource'
 import type { ApiClientConfig, RequestConfig, RetryPolicyConfig, Middleware } from './types'
 
 const DEFAULT_MAX_RETRIES = 3
@@ -101,5 +102,6 @@ export function createApiClient(config: ApiClientConfig, middlewares: Middleware
   return {
     client: baseClient,
     users: createUsersResource(baseClient),
+    clusters: createClustersResource(baseClient),
   }
 }

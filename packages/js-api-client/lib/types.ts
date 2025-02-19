@@ -51,3 +51,14 @@ export type ApiRequest<R, T extends object> = (config: RequestConfig<T>) => Prom
 export type Middleware = (
   next: (config: RequestConfig) => Promise<unknown>
 ) => (config: RequestConfig) => Promise<unknown>
+
+export interface PaginationRequestParams {
+  /**
+   * Maximum number of items to return in a single page of results
+   */
+  limit?: number
+  /**
+   * Number of items to skip before starting to collect results
+   */
+  skip?: number
+}
