@@ -1,13 +1,16 @@
 @use '../config.scss' as c;
 
 .#{c.$prefix}-btn {
+  --btn-height: 2.5rem;
+  --btn-width: 2.5rem;
+  block-size: var(--btn-height);
   display: inline-flex;
   vertical-align: top;
   align-items: center;
   justify-content: center;
   white-space: nowrap;
   flex-shrink: 0;
-  margin: 0px;
+  margin: 0;
   border-radius: 5px;
   font-weight: var(--font-weight-medium, 500);
   line-height: normal;
@@ -20,9 +23,8 @@
   background-color: var(--#{c.$prefix}-button-primary);
   color: var(--#{c.$prefix}-text-on-color);
   inline-size: max-content;
-  min-inline-size: 2rem;
   max-inline-size: 20rem;
-  block-size: 2rem;
+  min-inline-size: 2rem;
   padding: 0 0.875rem;
   font-size: var(--font-size-small, 0.8125rem);
   cursor: pointer;
@@ -30,15 +32,17 @@
 }
 
 .#{c.$prefix}-btn--small {
+  --btn-height: 1.75rem;
+  --btn-weight: 1.75rem;
   font-size: var(--font-size-xsmall, 0.75rem);
-  block-size: 1.75rem;
   padding: 0 0.5rem;
   border-radius: 4px;
 }
 
 .#{c.$prefix}-btn--large {
+  --btn-height: 2.5rem;
+  --btn-weight: 2.5rem;
   font-size: var(--font-size-medium, 1rem);
-  block-size: 2.5rem;
   padding: 0 1.25rem;
   border-radius: 6px;
 }
@@ -50,4 +54,23 @@
 }
 
 .#{c.$prefix}-btn--ghost {
+  border-color: transparent;
+  background-color: transparent;
+}
+
+.#{c.$prefix}-btn--ghost:hover {
+  background: var(--#{c.$prefix}-background-hover);
+}
+
+.#{c.$prefix}-btn--icon-only {
+  justify-content: center;
+  padding: 0;
+  inline-size: var(--btn-width);
+}
+
+.#{c.$prefix}-btn--icon-only svg {
+  min-inline-size: 1rem;
+  inline-size: 1rem;
+  block-size: 1rem;
+  color: var(--#{c.$prefix}-icon-primary);
 }

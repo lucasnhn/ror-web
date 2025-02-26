@@ -1,0 +1,19 @@
+@use '../config' as c;
+
+/// Default contextual tokens
+/// @see ./src/components/layer.scss for overriding classes
+:root {
+  --#{c.$prefix}-layer: var(--#{c.$prefix}-layer-01);
+  --#{c.$prefix}-layer-active: var(--#{c.$prefix}-layer-active-01);
+  --#{c.$prefix}-layer-hover: var(--#{c.$prefix}-layer-hover-01);
+  --#{c.$prefix}-layer-selected: var(--#{c.$prefix}-layer-selected-01);
+  --#{c.$prefix}-layer-selected-hover: var(--#{c.$prefix}-layer-selected-hover-01);
+  --#{c.$prefix}-layer-accent: var(--#{c.$prefix}-layer-accent-01);
+  --#{c.$prefix}-layer-accent-hover: var(--#{c.$prefix}-layer-accent-hover-01);
+  --#{c.$prefix}-layer-accent-active: var(--#{c.$prefix}-layer-accent-active-01);
+  --#{c.$prefix}-field: var(--#{c.$prefix}-field-01);
+  --#{c.$prefix}-field-hover: var(--#{c.$prefix}-field-hover-01);
+  --#{c.$prefix}-border-subtle: var(--#{c.$prefix}-border-subtle-01);
+  --#{c.$prefix}-border-subtle-selected: var(--#{c.$prefix}-border-subtle-selected-01);
+  --#{c.$prefix}-border-strong: var(--#{c.$prefix}-border-strong-01);
+}
