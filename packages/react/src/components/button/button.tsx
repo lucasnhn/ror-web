@@ -54,7 +54,6 @@ function isButtonIconOnly(props: ButtonProps): props is ButtonWithIconOnlyProps 
 }
 
 export function Button(props: ButtonProps) {
-  // Make sure label is provided when iconOnly is true
   if (isButtonIconOnly(props)) {
     return <IconOnlyButton {...props} />
   }
