@@ -30,7 +30,7 @@ export async function AppShell({ children }: AppShellProps) {
           </div>
         </div>
       </AppShellLeftPanel>
-      <div className='h-screen overflow-y-auto bg-(--r-background) p-4 md:p-8'>{children}</div>
+      <div className='h-screen overflow-y-auto bg-(--r-background)'>{children}</div>
     </div>
   )
 }
