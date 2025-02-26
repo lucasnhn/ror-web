@@ -3,3 +3,4 @@ export type { BreadcrumbProps, BreadcrumbItemProps } from './components/breadcru
 export { Button } from './components/button.tsx'
 export { Tile } from './components/tile.tsx'
 export { Tooltip, TooltipProvider } from './components/tooltip.tsx'
+export { Tag } from './components/tag.tsx'
