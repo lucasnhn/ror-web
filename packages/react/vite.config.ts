@@ -8,7 +8,7 @@ import preserveDirectives from 'rollup-plugin-preserve-directives'
 import pkg from './package.json'
 
 // Defines an array of entry points to be used to search for files.
-const entryPoints = ['src/**/*.tsx']
+const entryPoints = ['src/**/*.tsx', 'src/**/*.ts']
 
 // Searches for files that match the patterns defined in the array of input points.
 // Returns an array of absolute file paths.

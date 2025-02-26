@@ -1,12 +1,24 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Inter, Ubuntu_Mono } from 'next/font/google'
+import { clsx } from 'clsx'
 import './globals.css'
 import { AppShell } from '@/components/app-shell/app-shell'
 import { Providers } from './providers'
 import { getDarkModePreferenceAction } from '@/utils/dark-mode.actions'
 import { getLeftPanelPreferenceAction } from '@/components/app-shell/app-shell-actions'
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-family-sans' })
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--r-font-family-sans',
+})
+
+const ubuntuMono = Ubuntu_Mono({
+  subsets: ['latin'],
+  display: 'swap',
+  weight: '400',
+  variable: '--r-font-family-mono',
+})
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -25,8 +37,10 @@ export default async function RootLayout({
   // Get the user's preferred sidebar open state
   const defaultSidebarOpen = await getLeftPanelPreferenceAction()
 
+  const classes = clsx(inter.variable, ubuntuMono.variable)
+
   return (
-    <html lang='en' className={inter.variable} data-color-scheme={theme}>
+    <html lang='en' className={classes} data-color-scheme={theme}>
       <body>
         <Providers defaultSidebarOpen={defaultSidebarOpen}>
           <AppShell>{children}</AppShell>

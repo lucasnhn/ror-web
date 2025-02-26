@@ -10,10 +10,11 @@
     "clean": "rm -rf storybook-static && rm -rf .turbo && rm -rf node_modules"
   },
   "dependencies": {
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "@ror/design": "*",
     "@ror/react": "*",
-    "@ror/design": "*"
+    "lucide-react": "0.475.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^3.2.4",

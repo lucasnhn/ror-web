@@ -1,0 +1,50 @@
+@use '../config.scss' as c;
+
+.#{c.$prefix}-layer,
+.#{c.$prefix}-layer--one {
+  --#{c.$prefix}-layer: var(--#{c.$prefix}-layer-01);
+  --#{c.$prefix}-layer-active: var(--#{c.$prefix}-layer-active-01);
+  --#{c.$prefix}-layer-hover: var(--#{c.$prefix}-layer-hover-01);
+  --#{c.$prefix}-layer-selected: var(--#{c.$prefix}-layer-selected-01);
+  --#{c.$prefix}-layer-selected-hover: var(--#{c.$prefix}-layer-selected-hover-01);
+  --#{c.$prefix}-layer-accent: var(--#{c.$prefix}-layer-accent-01);
+  --#{c.$prefix}-layer-accent-hover: var(--#{c.$prefix}-layer-accent-hover-01);
+  --#{c.$prefix}-layer-accent-active: var(--#{c.$prefix}-layer-accent-active-01);
+  --#{c.$prefix}-field: var(--#{c.$prefix}-field-01);
+  --#{c.$prefix}-field-hover: var(--#{c.$prefix}-field-hover-01);
+  --#{c.$prefix}-border-subtle: var(--#{c.$prefix}-border-subtle-01);
+  --#{c.$prefix}-border-subtle-selected: var(--#{c.$prefix}-border-subtle-selected-01);
+  --#{c.$prefix}-border-strong: var(--#{c.$prefix}-border-strong-01);
+}
+
+.#{c.$prefix}-layer--two {
+  --#{c.$prefix}-layer: var(--#{c.$prefix}-layer-02);
+  --#{c.$prefix}-layer-active: var(--#{c.$prefix}-layer-active-02);
+  --#{c.$prefix}-layer-hover: var(--#{c.$prefix}-layer-hover-02);
+  --#{c.$prefix}-layer-selected: var(--#{c.$prefix}-layer-selected-02);
+  --#{c.$prefix}-layer-selected-hover: var(--#{c.$prefix}-layer-selected-hover-02);
+  --#{c.$prefix}-layer-accent: var(--#{c.$prefix}-layer-accent-02);
+  --#{c.$prefix}-layer-accent-hover: var(--#{c.$prefix}-layer-accent-hover-02);
+  --#{c.$prefix}-layer-accent-active: var(--#{c.$prefix}-layer-accent-active-02);
+  --#{c.$prefix}-field: var(--#{c.$prefix}-field-02);
+  --#{c.$prefix}-field-hover: var(--#{c.$prefix}-field-hover-02);
+  --#{c.$prefix}-border-subtle: var(--#{c.$prefix}-border-subtle-01);
+  --#{c.$prefix}-border-subtle-selected: var(--#{c.$prefix}-border-subtle-selected-02);
+  --#{c.$prefix}-border-strong: var(--#{c.$prefix}-border-strong-02);
+}
+
+.#{c.$prefix}-layer--three {
+  --#{c.$prefix}-layer: var(--#{c.$prefix}-layer-03);
+  --#{c.$prefix}-layer-active: var(--#{c.$prefix}-layer-active-03);
+  --#{c.$prefix}-layer-hover: var(--#{c.$prefix}-layer-hover-03);
+  --#{c.$prefix}-layer-selected: var(--#{c.$prefix}-layer-selected-03);
+  --#{c.$prefix}-layer-selected-hover: var(--#{c.$prefix}-layer-selected-hover-03);
+  --#{c.$prefix}-layer-accent: var(--#{c.$prefix}-layer-accent-03);
+  --#{c.$prefix}-layer-accent-hover: var(--#{c.$prefix}-layer-accent-hover-03);
+  --#{c.$prefix}-layer-accent-active: var(--#{c.$prefix}-layer-accent-active-03);
+  --#{c.$prefix}-field: var(--#{c.$prefix}-field-03);
+  --#{c.$prefix}-field-hover: var(--#{c.$prefix}-field-hover-03);
+  --#{c.$prefix}-border-subtle: var(--#{c.$prefix}-border-subtle-02);
+  --#{c.$prefix}-border-subtle-selected: var(--#{c.$prefix}-border-subtle-selected-03);
+  --#{c.$prefix}-border-strong: var(--#{c.$prefix}-border-strong-03);
+}
