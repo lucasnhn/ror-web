@@ -18,7 +18,7 @@ export default function Home() {
           <li>Save and see your changes instantly.</li>
         </ol>
 
-        <Button size='small' asChild>
+        <Button size='sm' asChild>
           <Link href='/dashboard'>Go to dashboard</Link>
         </Button>
       </main>
