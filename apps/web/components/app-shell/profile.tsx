@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { Popover, PopoverContent, PopoverPortal, PopoverTrigger } from '@radix-ui/react-popover'
 import s from './profile.module.css'
 import { SignOutButton } from '@/components/auth/sign-out-button'
+import Link from 'next/link'
 
 export async function Profile() {
   const session = await auth()
@@ -61,7 +62,16 @@ function ProfilePopover() {
     <PopoverPortal>
       <PopoverContent collisionPadding={8} sideOffset={4}>
         <div className={s.popover}>
-          <SignOutButton />
+          <nav>
+            <ul className={s.menu}>
+              <li>
+                <Link href='/profile'>Profile</Link>
+              </li>
+              <li>
+                <Link href='/api/auth/signout'>Sign out</Link>
+              </li>
+            </ul>
+          </nav>
         </div>
       </PopoverContent>
     </PopoverPortal>

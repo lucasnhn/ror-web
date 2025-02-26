@@ -8,7 +8,7 @@ export default async function ClustersPage() {
   const client = rorApiClient(session.accessToken)
   const clusters = await client.clusters.filter()
   return (
-    <div>
+    <div className='p-10'>
       <header className='mb-8'>
         <Breadcrumb className='mb-2'>
           <BreadcrumbItem isCurrentPage>Clusters</BreadcrumbItem>

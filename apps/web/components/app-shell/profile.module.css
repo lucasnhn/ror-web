@@ -33,3 +33,24 @@
   border-radius: var(--radius-sm);
   width: 15rem;
 }
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--spacing) * 0.5);
+}
+
+.menu a {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: calc(var(--spacing) * 1) calc(var(--spacing) * 3);
+  font-size: var(--text-sm);
+  border-radius: var(--radius-sm);
+  height: 2rem;
+  color: var(--r-text-primary);
+}
+
+.menu a:hover {
+  background: var(--r-layer-01-hover);
+}

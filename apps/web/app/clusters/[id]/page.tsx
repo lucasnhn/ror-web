@@ -1,3 +1,4 @@
+import { KubernetesLogo } from '@/components/common/kubernetes-logo'
 import { Breadcrumb, BreadcrumbItem } from '@ror/react/components/breadcrumb'
 import Link from 'next/link'
 
@@ -13,16 +14,16 @@ export default async function ClusterPage({ params }: ClusterPageProps) {
   return (
     <div>
       <header className='mb-8'>
-        <Breadcrumb noTrailingSlash className='mb-2'>
-          <BreadcrumbItem asChild>
-            <Link href='/clusters'>Clusters</Link>
-          </BreadcrumbItem>
+        <Breadcrumb noTrailingSlash className='mb-4'>
           <BreadcrumbItem asChild>
             <Link href='/clusters'>Clusters</Link>
           </BreadcrumbItem>
           <BreadcrumbItem isCurrentPage>Cluster ({id})</BreadcrumbItem>
         </Breadcrumb>
-        <h1>Cluster ({id})</h1>
+        <div className='flex items-center gap-4'>
+          <KubernetesLogo className='h-10 w-10' />
+          <h1>{id}</h1>
+        </div>
       </header>
     </div>
   )
