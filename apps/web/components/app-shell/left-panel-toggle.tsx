@@ -1,5 +1,5 @@
 'use client'
-import { Tooltip } from '@ror/react'
+import { Tooltip } from '@ror/react/components/tooltip'
 import { useAppShellContext } from './use-app-shell'
 import { saveLeftPanelPreferenceAction } from './app-shell-actions'
 

@@ -1,0 +1,71 @@
+@use '../config.scss' as c;
+
+.#{c.$prefix}-code-snippet code {
+  font-family: var(--#{c.$prefix}-font-family-mono);
+  font-size: var(--#{c.$prefix}-code-01-font-size, 0.75rem);
+  font-weight: var(--#{c.$prefix}-code-01-font-weight, 400);
+  line-height: var(--#{c.$prefix}-code-01-line-height, 1.33333);
+  letter-spacing: var(--#{c.$prefix}-code-01-letter-spacing, 0.32px);
+}
+
+.#{c.$prefix}-code-snippet--single {
+  position: relative;
+  background-color: var(--#{c.$prefix}-layer);
+  inline-size: 100%;
+  max-inline-size: 48rem;
+  display: flex;
+  align-items: center;
+  block-size: 2.5rem;
+  padding-inline-end: 2.5rem;
+  border-radius: 0.125rem;
+}
+
+.#{c.$prefix}-code-snippet--single .#{c.$prefix}-code-snippet__container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  block-size: 100%;
+  overflow-x: auto;
+  padding-inline-start: 1rem;
+  scrollbar-width: none;
+}
+
+.#{c.$prefix}-code-snippet--single .#{c.$prefix}-code-snippet__overflow-indicator--right {
+  inset-inline-end: 2.5rem;
+}
+
+.#{c.$prefix}-code-snippet--single .#{c.$prefix}-code-snippet__overflow-indicator--right,
+.#{c.$prefix}-code-snippet--single .#{c.$prefix}-code-snippet__overflow-indicator--left {
+  position: absolute;
+  block-size: calc(100% - 0.25rem);
+  inline-size: 2rem;
+}
+
+.#{c.$prefix}-code-snippet__overflow-indicator--right {
+  order: 2;
+  background-image: linear-gradient(to right, transparent, var(--#{c.$prefix}-layer));
+  margin-inline-start: -1rem;
+}
+
+.#{c.$prefix}-code-snippet__overflow-indicator--left,
+.#{c.$prefix}-code-snippet__overflow-indicator--right {
+  z-index: 1;
+  flex: 1 0 auto;
+  inline-size: 1rem;
+}
+
+.#{c.$prefix}-code-snippet__copy-btn {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-end: 0;
+  border-radius: 0;
+}
+
+.#{c.$prefix}-code-snippet--single pre,
+.#{c.$prefix}-code-snippet--inline code {
+  white-space: pre;
+}
+
+.#{c.$prefix}-code-snippet--single pre {
+  padding-inline-end: 0.5rem;
+}

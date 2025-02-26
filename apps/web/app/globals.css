@@ -1,5 +1,3 @@
-@import '@ror/design/reset.css';
-@import '@ror/design/style.css';
 @import '@evilmartians/harmony/tailwind.css';
 @import 'tailwindcss';
 
@@ -12,6 +10,9 @@
   color utility to any element that depends on these defaults.
 */
 @layer base {
+  @import '@ror/design/reset.css';
+  @import '@ror/design/style.css';
+
   *,
   ::after,
   ::before,
@@ -42,7 +43,7 @@
   body {
     color: var(--r-text-primary);
     background: var(--r-background);
-    font-family: var(--font-family-sans);
+    font-family: var(--r-font-family-sans);
     -webkit-font-smoothing: antialiased;
   }
 }
