@@ -9,7 +9,7 @@ export function SignOutButton() {
         await signOut()
       }}
     >
-      <Button type='submit' variant='secondary' size='small'>
+      <Button type='submit' variant='secondary' size='sm'>
         Sign out
       </Button>
     </form>

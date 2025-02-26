@@ -2,7 +2,6 @@ import { auth } from '@/app/auth'
 import Image from 'next/image'
 import { Popover, PopoverContent, PopoverPortal, PopoverTrigger } from '@radix-ui/react-popover'
 import s from './profile.module.css'
-import { SignOutButton } from '@/components/auth/sign-out-button'
 import Link from 'next/link'
 
 export async function Profile() {

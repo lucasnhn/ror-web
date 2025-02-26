@@ -15,6 +15,10 @@
       "import": "./dist/components/*.js",
       "types": "./dist/components/*.d.ts"
     },
+    "./components/button": {
+      "import": "./dist/components/button/index.js",
+      "types": "./dist/components/button/index.d.ts"
+    },
     "./src/components/*": {
       "import": "./src/components/*.tsx"
     },

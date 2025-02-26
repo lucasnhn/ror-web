@@ -1,9 +1,9 @@
-import type { HTMLAttributes, ReactElement, ReactNode } from 'react'
+import type { ButtonHTMLAttributes, ReactElement, ReactNode } from 'react'
 import { BaseButton } from './button-base'
 import { ButtonWithIconOnlyProps, IconOnlyButton } from './button-icon-only'
 import { ButtonSize, ButtonVariant } from './constants'
 
-export interface ButtonProps extends HTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   /**
    * How large should the button be?
    * @default 'md'
