@@ -8,7 +8,7 @@ import {
   type TooltipProps as TooltipPrimitiveProps,
 } from '@radix-ui/react-tooltip'
 export { TooltipProvider } from '@radix-ui/react-tooltip'
-import { ReactNode } from 'react'
+import type { ReactNode } from 'react'
 
 export interface TooltipProps extends TooltipPrimitiveProps, Omit<TooltipContentProps, 'content'> {
   /**
@@ -21,11 +21,11 @@ export interface TooltipProps extends TooltipPrimitiveProps, Omit<TooltipContent
   content: ReactNode
 }
 
-export function Tooltip({ children, content, defaultOpen, open, onOpenChange, ...props }: TooltipProps) {
+export function Tooltip({ children, content, defaultOpen, open, onOpenChange, ...rest }: TooltipProps) {
   return (
     <TooltipPrimitive defaultOpen={defaultOpen} open={open} onOpenChange={onOpenChange}>
       <TooltipTrigger asChild>{children}</TooltipTrigger>
-      <TooltipContent {...props} className='r-tooltip'>
+      <TooltipContent {...rest} className='r-tooltip'>
         <div className='r-tooltip__inner'>{content}</div>
         <TooltipArrow width={8} height={5} className='r-tooltip__arrow' />
       </TooltipContent>

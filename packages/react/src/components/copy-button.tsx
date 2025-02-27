@@ -72,7 +72,6 @@ export function CopyButton({
 
     timeoutRef.current = setTimeout(() => {
       setShowFeedback(false)
-      setTooltipOpen(false)
     }, feedbackTimeout)
   }
 
