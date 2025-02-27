@@ -1,103 +1,3 @@
-// .metrics-wheel {
-//     width: 112px; 
-//     height: 112px; 
-    
-//     .progress-ring__circle {
-//         fill: transparent;
-//         stroke-width: 10;
-//         stroke-linecap: round;
-//         transform: rotate(-90deg);
-//         transform-origin: 50% 50%;
-//         stroke: var(--stroke-color, var(--#{c.$prefix}-chart-blue));
-//         transition: stroke-dashoffset 0.3s ease-in-out;
-//     }
-
-//     // .progress-ring__circle {
-//     //     stroke: var(--stroke-color, var(--#{c.$prefix}-chart-blue)); 
-//     //     transition: stroke-dashoffset 0.3s ease-in-out;
-//     // }
-
-//     .progress-text {
-//         fill: var(--text-color, white);
-//         font-size: 10px;
-//         font-weight: 600;
-//         text-anchor: middle;
-//         dominant-baseline: middle;
-//     }
-
-//     // Dynamic stroke colors based on the ratio
-//     &.metrics-wheel--emerald { --stroke-color: var(--#{c.$prefix}-chart-emerald); } 
-//     &.metrics-wheel--green { --stroke-color: var(--#{c.$prefix}-chart-green); }
-//     &.metrics-wheel--lime { --stroke-color: var(--#{c.$prefix}-chart-lime); }
-//     &.metrics-wheel--yellow { --stroke-color: var(--#{c.$prefix}-chart-yellow); }
-//     &.metrics-wheel--amber { --stroke-color: var(--#{c.$prefix}-chart-amber); }
-//     &.metrics-wheel--orange { --stroke-color: var(--#{c.$prefix}-chart-orange); }
-//     &.metrics-wheel--red { --stroke-color: var(--#{c.$prefix}-chart-red); }
-// }
-
-// .metrics-wheel {
-//     width: 112px; // Equivalent to Tailwind's w-28 (7rem)
-//     height: 112px;
-    
-//     .progress-ring__circle {
-//         fill: transparent;
-//         stroke-width: 10;
-//         stroke-linecap: round;
-//         transform: rotate(-90deg);
-//         transform-origin: 50% 50%;
-//         stroke: var(--stroke-color, #3b82f6); // Default to blue-500
-//         transition: stroke-dashoffset 0.3s ease-in-out;
-//     }
-
-//     .progress-text {
-//         fill: var(--text-color, white);
-//         font-size: 10px;
-//         font-weight: 600;
-//         text-anchor: middle;
-//         dominant-baseline: middle;
-//     }
-
-//     // Dynamic stroke colors
-//     &.metrics-wheel--emerald { --stroke-color: #10b981; } // Green-500
-//     &.metrics-wheel--green { --stroke-color: #22c55e; }
-//     &.metrics-wheel--lime { --stroke-color: #84cc16; }
-//     &.metrics-wheel--yellow { --stroke-color: #eab308; }
-//     &.metrics-wheel--amber { --stroke-color: #f59e0b; }
-//     &.metrics-wheel--orange { --stroke-color: #f97316; }
-//     &.metrics-wheel--red { --stroke-color: #ef4444; }
-//     &.metrics-wheel--blue { --stroke-color: #3b82f6; } // Default color
-// }
-
-// .metrics-wheel {
-//     display: flex;
-//     align-items: center;
-//     justify-content: center;
-  
-//     svg {
-//       width: 7rem;
-//       height: 7rem;
-//     }
-  
-//     .progress-ring__circle {
-//       stroke-width: 10;
-//       stroke-linecap: round;
-//       fill: transparent;
-//       transition: stroke-dashoffset 0.5s ease-in-out;
-//     }
-  
-//     .text-label {
-//       font-weight: bold;
-//       text-anchor: middle;
-//       dominant-baseline: middle;
-//     }
-  
-//     &.indicator {
-//       .progress-ring__circle {
-//         stroke: red;
-//       }
-//     }
-//   }
-
 @use '../config.scss' as c;
 
 .#{c.$prefix}-metrics-wheel {
@@ -125,10 +25,10 @@
         letter-spacing: 0.16px;
     }
 
-    &--indicator {
-        .#{c.$prefix}-metrics-wheel__circle {
-            // stroke: var(--#{c.$prefix}-indicator-color, red);
-            // stroke: red;
-        }
-    }
+    // &--indicator {
+    //     .#{c.$prefix}-metrics-wheel__circle {
+    //         // stroke: var(--#{c.$prefix}-indicator-color, red);
+    //         // stroke: red;
+    //     }
+    // }
 }

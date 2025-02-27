@@ -105,7 +105,6 @@ export function MetricsWheel({ part, whole, label="", indicator=false, className
     const classes = clsx (
         `r-metrics-wheel`, 
         className, 
-        {"r-metrics-wheel--indicator": indicator}, 
         {...rest}
     )
     const percentage = part / whole
@@ -118,7 +117,7 @@ export function MetricsWheel({ part, whole, label="", indicator=false, className
             <svg className={`w-28 h-28 ${className}`} viewBox="0 0 100 100">
                 <circle
                     // className={`${color} progress-ring__circle stroke-current`}
-                    className={`r-metrics-wheel__circle ${color} stroke-current`}
+                    className={`${color} stroke-current`}
                     strokeWidth="10"
                     strokeLinecap="round"
                     cx="50"
