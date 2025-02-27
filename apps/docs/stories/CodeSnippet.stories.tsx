@@ -1,11 +1,19 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { CodeSnippet } from '@ror/react/src/components/code-snippet'
+import { TooltipProvider } from '@ror/react/components/tooltip'
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta = {
   title: 'ui/Code Snippet',
   component: CodeSnippet,
   tags: ['autodocs'],
+  decorators: [
+    (Story) => (
+      <TooltipProvider>
+        <Story />
+      </TooltipProvider>
+    ),
+  ],
 } satisfies Meta<typeof CodeSnippet>
 
 export default meta

@@ -1,7 +1,9 @@
+'use client'
 import { clsx } from 'clsx'
-import { ReactNode } from 'react'
+import { useRef } from 'react'
+import type { ReactNode } from 'react'
+import copy from 'clipboard-copy'
 import { CopyButton } from './copy-button'
-import { TooltipProvider } from '@radix-ui/react-tooltip'
 
 type CodeSnippetType = 'single' | 'inline' | 'multi'
 
@@ -12,18 +14,50 @@ export interface CodeSnippetProps {
   type: CodeSnippetType
 
   /**
+   * Specify whether or not a copy button should be displayed
+   */
+  hideCopyButton?: boolean
+
+  /**
    * The content to display
    */
   children: ReactNode
 }
 
-export function CodeSnippet({ type, children }: CodeSnippetProps) {
+export function CodeSnippet({ type, hideCopyButton = false, children }: CodeSnippetProps) {
+  const codeElementRef = useRef<HTMLElement | null>(null)
   const baseClass = 'r-code-snippet'
   const classes = clsx(baseClass, {
     [`${baseClass}--single`]: type === 'single',
     [`${baseClass}--inline`]: type === 'inline',
     [`${baseClass}--multi`]: type === 'multi',
   })
+
+  const handleOnCopyClick = () => {
+    if (!codeElementRef.current) return
+    const innerText = codeElementRef.current.innerText
+    void copy(innerText)
+  }
+
+  if (type === 'inline') {
+    if (hideCopyButton) {
+      return (
+        <span className={classes}>
+          <code ref={codeElementRef} className={`${baseClass}__inline-code`}>
+            {children}
+          </code>
+        </span>
+      )
+    }
+
+    return (
+      <CopyButton className={classes} onClick={handleOnCopyClick}>
+        <code ref={codeElementRef} className={`${baseClass}__inline-code`}>
+          {children}
+        </code>
+      </CopyButton>
+    )
+  }
 
   return (
     <div className={classes}>
@@ -35,15 +69,11 @@ export function CodeSnippet({ type, children }: CodeSnippetProps) {
         aria-readonly='true'
       >
         <pre>
-          <code>{children}</code>
+          <code ref={codeElementRef}>{children}</code>
         </pre>
       </div>
-      <div className={`${baseClass}__overflow-indicator--right`} />
-      {type === 'single' || type === 'multi' ? (
-        <TooltipProvider>
-          <CopyButton className={`${baseClass}__copy-btn`} />
-        </TooltipProvider>
-      ) : null}
+      {type === 'single' ? <div className={`${baseClass}__overflow-indicator--right`} /> : null}
+      {!hideCopyButton ? <CopyButton className={`${baseClass}__copy-btn`} onClick={handleOnCopyClick} /> : null}
     </div>
   )
 }
