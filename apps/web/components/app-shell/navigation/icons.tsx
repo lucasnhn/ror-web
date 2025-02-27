@@ -116,9 +116,9 @@ export const DataCenter = (
     viewBox="0 0 24 24" 
     fill="none" 
     stroke="currentColor" 
-    stroke-width="2" 
-    stroke-linecap="round" 
-    stroke-linejoin="round" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round" 
     className="lucide lucide-building-2"
   >
     <path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/>

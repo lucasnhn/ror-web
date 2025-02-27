@@ -18,7 +18,12 @@
     "format": "prettier --write \"{apps,packages}/**/*.{ts,tsx,md,css,scss}\""
   },
   "devDependencies": {
+    "@csstools/postcss-oklab-function": "4.0.8",
     "prettier": "3.5.0",
     "turbo": "^2.3.4"
+  },
+  "dependencies": {
+    "@evilmartians/harmony": "1.4.0",
+    "react-circular-progressbar": "2.2.0"
   }
 }
