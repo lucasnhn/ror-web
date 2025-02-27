@@ -32,9 +32,12 @@ export default tseslint.config(
     },
   },
   {
-    // Allows for deconstruction an object where you want to omit a property
-    // for example:
-    // const { a, b, ...rest } = obj
-    'no-unused-vars': { ignoreRestSiblings: true },
+    files: ['**/*.{ts,tsx}'],
+    rules: {
+      // Allows for deconstruction an object where you want to omit a property
+      // for example:
+      // const { a, b, ...rest } = obj
+      'no-unused-vars': ['error', { ignoreRestSiblings: true }],
+    },
   }
 )
