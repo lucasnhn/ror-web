@@ -1,7 +1,9 @@
-import { Button, Tag, Tile } from "@ror/react";
+"use client"
+
+import { Button, Tag, Tile, MetricsWheel} from "@ror/react";
 import { FC, JSX } from "react";
 import { DataCenter } from "./navigation/icons";
-import MetricsWheel from "./metrics-wheel";
+
 
 interface MetricsBoardProps {
     className?: string;
@@ -157,8 +159,8 @@ const MetricsBoardProps: FC<MetricsBoardProps> = ({ className }) => {
     return (
         <div className={className}>
             <div className="grid grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-4">
-                {dashboardItems.map(({title, icon, description, seeAll, seeAllLink, type, wheelPart, wheelWhole, wheelLabel, wheelIndicator}: DashboardItem) => (
-                    <Tile className="rounded-md w-full min-w-80 max-w-[416px] p-3 flex flex-col justify-between">
+                {dashboardItems.map(({title, icon, description, seeAll, seeAllLink, type, wheelPart, wheelWhole, wheelLabel, wheelIndicator}: DashboardItem, i) => (
+                    <Tile key={i} className="rounded-md w-full min-w-80 max-w-[416px] p-3 flex flex-col justify-between">
                         <div className="flex justify-between">
                             <div className="flex flex-col gap-1">
                                 <h3 className="text-lg font-bold">{title}</h3>
@@ -169,9 +171,9 @@ const MetricsBoardProps: FC<MetricsBoardProps> = ({ className }) => {
                         </div>
                         {getChart(type, wheelPart, wheelWhole, wheelLabel, wheelIndicator)}
                     </Tile>
+                    
                 ))}
             </div>
-
         </div>
     )
 }
