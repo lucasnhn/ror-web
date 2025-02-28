@@ -1,3 +1,4 @@
+@use "sass:map";
 @use './white.scss' as *;
 @use './neutral.scss' as *;
 @use './teal.scss' as *;
@@ -22,17 +23,17 @@ $colors: (
 /// @param {String} $color-mode - The color mode ('p3' or 'rgb')
 /// @return {Color} The color value
 @function get-color-family($color-family, $color-mode: 'rgb') {
-  @if not map-has-key($colors, $color-family) {
+  @if not map.has-key($colors, $color-family) {
     @error "Color family '#{$color-family}' not found in the color palette.";
   }
 
-  $family-map: map-get($colors, $color-family);
+  $family-map: map.get($colors, $color-family);
 
-  @if not map-has-key($family-map, $color-mode) {
+  @if not map.has-key($family-map, $color-mode) {
     @error "Color mode '#{$color-mode}' not found in the '#{$color-family}' color family.";
   }
 
-  @return map-get($family-map, $color-mode);
+  @return map.get($family-map, $color-mode);
 }
 
 /// Gets a specific color value by shade from a color family
@@ -43,11 +44,11 @@ $colors: (
 @function get-color($color-family, $shade, $color-mode: 'rgb') {
   $color-map: get-color-family($color-family, $color-mode);
 
-  @if not map-has-key($color-map, $shade) {
+  @if not map.has-key($color-map, $shade) {
     @error "Shade '#{$shade}' not found in the '#{$color-family}' color family.";
   }
 
-  @return map-get($color-map, $shade);
+  @return map.get($color-map, $shade);
 }
 
 @function rgb-color($color-family, $shade) {

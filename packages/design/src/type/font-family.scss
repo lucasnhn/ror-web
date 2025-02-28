@@ -1,3 +1,4 @@
+@use "sass:map";
 @use 'sass:meta';
 
 $font-family-system:
@@ -37,7 +38,7 @@ $font-families: (
 /// @param {String} $name
 /// @return {String}
 @function font-family($name) {
-  @return map-get($font-families, $name);
+  @return map.get($font-families, $name);
 }
 
 /// Set the `font-family` property with the value for a given name
@@ -60,7 +61,7 @@ $font-weights: (
 /// @param {String} $weight
 /// @return {Number}
 @function font-weight($weight) {
-  @return map-get($font-weights, $weight);
+  @return map.get($font-weights, $weight);
 }
 
 /// Set the `font-weight` property with the value for a given name

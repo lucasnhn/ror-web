@@ -1,3 +1,4 @@
+@use "sass:math";
 @use 'sass:list';
 @use '../utilities/convert.scss' as convert;
 
@@ -9,7 +10,7 @@
     @return 12px;
   }
   // Yn = Yn-1 + {INT[(n-2)/4] + 1} * 2
-  @return get-type-size($step - 1) + (floor(($step - 2) * 0.25) + 1) * 2;
+  @return get-type-size($step - 1) + (math.floor(($step - 2) * 0.25) + 1) * 2;
 }
 
 /// Type scale follows a custom formula for determining each step size and supports sizes from 12px to 92px
@@ -22,7 +23,7 @@ $type-scale: ();
 /// @param {Number} $step
 /// @return {Number} In rem
 @function type-scale($step) {
-  @return nth($type-scale, $step);
+  @return list.nth($type-scale, $step);
 }
 
 /// Set the font-size value of a selector with the value at the given `$step`
