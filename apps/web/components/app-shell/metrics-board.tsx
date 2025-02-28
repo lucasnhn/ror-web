@@ -31,8 +31,10 @@ interface DashboardItem {
     type: DashboardItemType;
     wheelPart?: number;
     wheelWhole?: number;
+    wheelPercentage?: number;
     wheelLabel?: string;
-    wheelIndicator?: boolean ;
+    wheelIndicator?: boolean;
+    inverted?: boolean;
 }
 
 const dashboardItems: DashboardItem[] = [
@@ -63,8 +65,6 @@ const dashboardItems: DashboardItem[] = [
         title: "CLUSTERS",
         icon: BoxesIcon,
         description: "Active clusters",
-        seeAll: true,
-        seeAllLink: "#",
         type: "wheel",
         wheelPart: 255,
         wheelWhole: 255,
@@ -75,8 +75,6 @@ const dashboardItems: DashboardItem[] = [
         title: "NODES",
         icon: BoxIcon,
         description: "Active nodes",
-        seeAll: true,
-        seeAllLink: "#",
         type: "wheel",
         wheelPart: 838,
         wheelWhole: 838,
@@ -87,32 +85,28 @@ const dashboardItems: DashboardItem[] = [
         title: "CPU",
         icon: CpuIcon,
         description: "Utilized CPU power",
-        seeAll: true,
-        seeAllLink: "#",
         type: "wheel",
-        wheelPart: 2948, // TODO: Implement way of handling %
-        wheelWhole: 22676,
+        wheelPercentage: 13,
         wheelLabel: "13% - 2948",
         wheelIndicator: true,
+        inverted: true,
     },
     {
         title: "MEMORY",
         icon: HardDriveIcon,
         description: "Utilized memory",
-        seeAll: true,
-        seeAllLink: "#",
         type: "wheel",
-        wheelPart: 13.96, // TODO: Implement way of handling %
-        wheelWhole: 37.73,
+        wheelPercentage: 37,
         wheelLabel: "37% - 13.96 TiB",
         wheelIndicator: true,
+        inverted: true,
     },
 ]
 
-const getChart = (type: DashboardItemType, wheelPart = 0, wheelWhole = 0, wheelLabel = "", wheelIndicator?: boolean) => {
+const getChart = (type: DashboardItemType, wheelPart = 0, wheelWhole = 0, wheelPercentage = 0, wheelLabel = "", wheelIndicator?: boolean, inverted?: boolean) => {
     let chart;
     if (type === "wheel") {
-        chart = <MetricsWheel part={wheelPart} whole={wheelWhole} label={wheelLabel} indicator={wheelIndicator} className="block mx-auto" /> 
+        chart = <MetricsWheel part={wheelPart} whole={wheelWhole} percentage={wheelPercentage} label={wheelLabel} indicator={wheelIndicator} className="block mx-auto" inverted={inverted} /> 
     }
     return chart
 }
@@ -122,7 +116,7 @@ const MetricsBoardProps: FC<MetricsBoardProps> = ({ className }) => {
     return (
         <div className={className}>
             <div className="grid grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-4">
-                {dashboardItems.map(({title, icon, description, seeAll, seeAllLink, type, wheelPart, wheelWhole, wheelLabel, wheelIndicator}: DashboardItem, i) => (
+                {dashboardItems.map(({title, icon, description, seeAll, seeAllLink, type, wheelPart, wheelWhole, wheelPercentage, wheelLabel, wheelIndicator, inverted}: DashboardItem, i) => (
                     <Tile key={i} className="rounded-md w-full min-w-80 max-w-[416px] p-3 flex flex-col justify-between">
                         <div className="flex justify-between">
                             <div className="flex flex-col gap-1">
@@ -132,7 +126,7 @@ const MetricsBoardProps: FC<MetricsBoardProps> = ({ className }) => {
                             </div>
                             {icon}
                         </div>
-                        {getChart(type, wheelPart, wheelWhole, wheelLabel, wheelIndicator)}
+                        {getChart(type, wheelPart, wheelWhole, wheelPercentage, wheelLabel, wheelIndicator, inverted)}
                     </Tile>
                     
                 ))}
