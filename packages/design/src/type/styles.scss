@@ -1,0 +1,105 @@
+@use 'sass:map';
+@use 'sass:math';
+
+@use '../config.scss' as config;
+@use './scale.scss' as scale;
+@use './font-family.scss' as font-family;
+
+$heading-01: (
+  'font-size': scale.type-scale(2),
+  'font-weight': font-family.font-weight('semibold'),
+  'line-height': 1.42857,
+  'letter-spacing': 0.16px,
+);
+
+$heading-02: (
+  'font-size': scale.type-scale(3),
+  'font-weight': font-family.font-weight('semibold'),
+  'line-height': 1.5,
+  'letter-spacing': 0,
+);
+
+$heading-03: (
+  'font-size': scale.type-scale(5),
+  'font-weight': font-family.font-weight('regular'),
+  'line-height': 1.4,
+  'letter-spacing': 0,
+);
+
+$heading-04: (
+  'font-size': scale.type-scale(7),
+  'font-weight': font-family.font-weight('regular'),
+  'line-height': 1.28572,
+  'letter-spacing': 0,
+);
+
+$heading-05: (
+  'font-size': scale.type-scale(8),
+  'font-weight': font-family.font-weight('regular'),
+  'line-height': 1.25,
+  'letter-spacing': 0,
+);
+
+$heading-06: (
+  'font-size': scale.type-scale(10),
+  'font-weight': font-family.font-weight('light'),
+  'line-height': 1.199,
+  'letter-spacing': 0,
+);
+
+$heading-07: (
+  'font-size': scale.type-scale(12),
+  'font-weight': font-family.font-weight('light'),
+  'line-heig' ht: 1.19,
+  'letter-spacing': 0,
+);
+
+$body-01: (
+  'font-size': scale.type-scale(2),
+  'font-weight': font-family.font-weight('regular'),
+  'line-height': 1.42857,
+  'letter-spacing': 0.16px,
+);
+
+$body-02: (
+  'font-size': scale.type-scale(3),
+  'font-weight': font-family.font-weight('regular'),
+  'line-height': 1.5,
+  'letter-spacing': 0,
+);
+
+$code-01: (
+  'font-family': font-family.font-family('mono'),
+  'font-size': scale.type-scale(1),
+  'font-weight': font-family.font-weight('regular'),
+  'line-height': 1.33333,
+  'letter-spacing': 0.32px,
+);
+
+$tokens: (
+  'heading-01': $heading-01,
+  'heading-02': $heading-02,
+  'heading-03': $heading-03,
+  'heading-04': $heading-04,
+  'heading-05': $heading-05,
+  'heading-06': $heading-06,
+  'heading-07': $heading-07,
+  'body-01': $body-01,
+  'body-02': $body-02,
+  'code-01': $code-01,
+);
+
+@mixin custom-properties($name, $value) {
+  @each $property, $value in $value {
+    #{$property}: var(--#{config.$prefix}-#{$name}-#{$property}, #{$value});
+  }
+}
+
+@mixin type-style($name) {
+  @if not map.has-key($tokens, $name) {
+    @error 'Unable to find a token with the name: `#{$name}`';
+  }
+
+  $token: map.get($tokens, $name);
+  @include custom-properties($name, $token);
+}

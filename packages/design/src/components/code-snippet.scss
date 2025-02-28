@@ -1,38 +1,36 @@
-@use '../config.scss' as c;
+@use '../config.scss' as *;
+@use '../utilities/css-variable.scss' as cv;
+@use '../type/styles.scss' as type;
 
-.#{c.$prefix}-code-snippet {
-  background-color: var(--#{c.$prefix}-layer);
-  color: var(--#{c.$prefix}-text-primary);
+.#{$prefix}-code-snippet {
+  background-color: cv.get-var('layer');
+  color: cv.get-var('text-primary');
   position: relative;
 }
 
 /// Base
-.#{c.$prefix}-code-snippet code {
-  font-family: var(--#{c.$prefix}-font-family-mono);
-  font-size: var(--#{c.$prefix}-code-01-font-size, 0.75rem);
-  font-weight: var(--#{c.$prefix}-code-01-font-weight, 400);
-  line-height: var(--#{c.$prefix}-code-01-line-height, 1.33333);
-  letter-spacing: var(--#{c.$prefix}-code-01-letter-spacing, 0.32px);
+.#{$prefix}-code-snippet code {
+  @include type.type-style('code-01');
 }
 
-.#{c.$prefix}-code-snippet pre {
+.#{$prefix}-code-snippet pre {
   margin: 0;
 }
 
-.#{c.$prefix}-code-snippet__overflow-indicator--right {
+.#{$prefix}-code-snippet__overflow-indicator--right {
   order: 2;
-  background-image: linear-gradient(to right, transparent, var(--#{c.$prefix}-layer));
+  background-image: linear-gradient(to right, transparent, cv.get-var('layer'));
   margin-inline-start: -1rem;
 }
 
-.#{c.$prefix}-code-snippet__overflow-indicator--left,
-.#{c.$prefix}-code-snippet__overflow-indicator--right {
+.#{$prefix}-code-snippet__overflow-indicator--left,
+.#{$prefix}-code-snippet__overflow-indicator--right {
   z-index: 1;
   flex: 1 0 auto;
   inline-size: 1rem;
 }
 
-.#{c.$prefix}-code-snippet__copy-btn {
+.#{$prefix}-code-snippet__copy-btn {
   position: absolute;
   inset-block-start: 0;
   inset-inline-end: 0;
@@ -40,7 +38,7 @@
 }
 
 /// Inline
-.#{c.$prefix}-code-snippet--inline {
+.#{$prefix}-code-snippet--inline {
   position: relative;
   display: inline;
   padding: 0;
@@ -49,7 +47,7 @@
   cursor: pointer;
 }
 
-.#{c.$prefix}-code-snippet--inline.#{c.$prefix}-btn {
+.#{$prefix}-code-snippet--inline.#{$prefix}-btn {
   block-size: 1.25rem;
   inline-size: initial;
   max-inline-size: unset;
@@ -57,12 +55,12 @@
   padding-inline: 0;
 }
 
-.#{c.$prefix}-code-snippet--inline code {
+.#{$prefix}-code-snippet--inline code {
   padding-inline: 0.5rem;
 }
 
 /// Single
-.#{c.$prefix}-code-snippet--single {
+.#{$prefix}-code-snippet--single {
   position: relative;
   inline-size: 100%;
   max-inline-size: 48rem;
@@ -73,7 +71,7 @@
   border-radius: 0.125rem;
 }
 
-.#{c.$prefix}-code-snippet--single .#{c.$prefix}-code-snippet__container {
+.#{$prefix}-code-snippet--single .#{$prefix}-code-snippet__container {
   position: relative;
   display: flex;
   align-items: center;
@@ -83,32 +81,32 @@
   scrollbar-width: none;
 }
 
-.#{c.$prefix}-code-snippet--single .#{c.$prefix}-code-snippet__overflow-indicator--right {
+.#{$prefix}-code-snippet--single .#{$prefix}-code-snippet__overflow-indicator--right {
   inset-inline-end: 2.5rem;
 }
 
-.#{c.$prefix}-code-snippet--single .#{c.$prefix}-code-snippet__overflow-indicator--right,
-.#{c.$prefix}-code-snippet--single .#{c.$prefix}-code-snippet__overflow-indicator--left {
+.#{$prefix}-code-snippet--single .#{$prefix}-code-snippet__overflow-indicator--right,
+.#{$prefix}-code-snippet--single .#{$prefix}-code-snippet__overflow-indicator--left {
   position: absolute;
   block-size: calc(100% - 0.25rem);
   inline-size: 2rem;
 }
 
-.#{c.$prefix}-code-snippet--single pre,
-.#{c.$prefix}-code-snippet--inline code {
+.#{$prefix}-code-snippet--single pre,
+.#{$prefix}-code-snippet--inline code {
   white-space: pre;
 }
 
-.#{c.$prefix}-code-snippet--single pre {
+.#{$prefix}-code-snippet--single pre {
   padding-inline-end: 0.5rem;
 }
 
 /// Multi
-.#{c.$prefix}-code-snippet--multi {
+.#{$prefix}-code-snippet--multi {
   padding: 1rem;
 }
 
-.#{c.$prefix}-code-snippet--multi .#{c.$prefix}-code-snippet__container {
+.#{$prefix}-code-snippet--multi .#{$prefix}-code-snippet__container {
   position: relative;
   order: 1;
   overflow: auto;

@@ -1,4 +1,6 @@
 @use '../config.scss' as c;
+@use '../type/styles.scss' as types;
+@use '../utilities/css-variable.scss' as cv;
 
 .#{c.$prefix}-breadcrumb {
   box-sizing: border-box;
@@ -8,10 +10,7 @@
   font-family: inherit;
   font-size: 100%;
   vertical-align: baseline;
-  font-size: var(--cds-body-compact-01-font-size, 0.875rem);
-  font-weight: var(--cds-body-compact-01-font-weight, 400);
-  line-height: var(--cds-body-compact-01-line-height, 1.28572);
-  letter-spacing: var(--cds-body-compact-01-letter-spacing, 0.16px);
+  @include types.type-style('body-01');
   display: inline;
 }
 
@@ -23,7 +22,7 @@
 
   &::after {
     box-sizing: inherit;
-    color: var(--#{c.$prefix}-text-secondary);
+    color: cv.get-var('text-secondary');
     content: '/';
     margin-inline-start: 0.5rem;
   }
@@ -41,18 +40,15 @@
   font-family: inherit;
   font-size: 100%;
   vertical-align: baseline;
-  font-size: var(--cds-body-compact-01-font-size, 0.875rem);
-  font-weight: var(--cds-body-compact-01-font-weight, 400);
-  line-height: var(--cds-body-compact-01-line-height, 1.28572);
-  letter-spacing: var(--cds-body-compact-01-letter-spacing, 0.16px);
+  @include types.type-style('body-01');
   display: inline-flex;
-  color: var(--#{c.$prefix}-text-primary);
+  color: cv.get-var('text-primary');
   outline: none;
   text-decoration: none;
   transition: color 70ms cubic-bezier(0.2, 0, 0.38, 0.9);
 
   &[href] {
-    color: var(--#{c.$prefix}-link-primary);
+    color: cv.get-var('link-primary');
   }
 }
 

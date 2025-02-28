@@ -1,5 +1,6 @@
 @use 'sass:meta';
-@use './tokens/font-family.scss' as *;
+@use './type/font-family.scss' as *;
+@use './type/styles.scss' as *;
 
 @layer base {
   *,
@@ -9,12 +10,36 @@
   }
 
   html {
-    font-family: #{meta.inspect($font-family-system)};
+    @include font-family('system');
   }
 
   html,
   body {
     height: 100%;
+  }
+
+  h1 {
+    @include type-style('heading-06');
+  }
+
+  h2 {
+    @include type-style('heading-05');
+  }
+
+  h3 {
+    @include type-style('heading-04');
+  }
+
+  h4 {
+    @include type-style('heading-03');
+  }
+
+  h5 {
+    @include type-style('heading-02');
+  }
+
+  h6 {
+    @include type-style('heading-01');
   }
 
   span,
