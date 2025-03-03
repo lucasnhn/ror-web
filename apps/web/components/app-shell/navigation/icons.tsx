@@ -230,9 +230,9 @@ export const HardDriveIcon = (
     viewBox="0 0 24 24" 
     fill="none" 
     stroke="currentColor" 
-    stroke-width="2" 
-    stroke-linecap="round" 
-    stroke-linejoin="round" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round" 
     className="lucide lucide-hard-drive"
   >
     <line x1="22" x2="2" y1="12" y2="12"/>

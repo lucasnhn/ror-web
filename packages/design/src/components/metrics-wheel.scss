@@ -25,10 +25,10 @@
         letter-spacing: 0.16px;
     }
 
-    // &--indicator {
-    //     .#{c.$prefix}-metrics-wheel__circle {
-    //         // stroke: var(--#{c.$prefix}-indicator-color, red);
-    //         // stroke: red;
-    //     }
-    // }
+    &--indicator {
+        .#{c.$prefix}-metrics-wheel__circle {
+            // stroke: var(--#{c.$prefix}-indicator-color, red);
+            // stroke: red;
+        }
+    }
 }

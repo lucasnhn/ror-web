@@ -19,17 +19,17 @@ export interface MetricsWheelProps extends HTMLAttributes<HTMLElement> {
     /**
      * What should the "part" number be?
      */
-    part: number
+    part?: number
 
     /**
      * What should the "whole"/full number be?
      */
-    whole: number
+    whole?: number
 
     /**
      * Wheel is decided by a percentage instead
      */
-    percentage: number
+    percentage?: number
 
     /**
      * What should the label be?
@@ -59,7 +59,12 @@ const getCircumference = (r: number) => {
     return 2 * Math.PI * r
 }
 
-const getRatio = (part: number, whole: number) => part / whole;
+const getRatio = (part = 0, whole = 0, percentage = 0) => {
+    if (percentage === 0) {
+        return part / whole;
+    } 
+    return percentage / 100
+}
 
 const getText = (label: string) => {
     const text = label.split(" ")
@@ -80,8 +85,7 @@ const getText = (label: string) => {
     }
 }
 
-const getColor = (part: number, whole: number, inverted: boolean) => {
-    const ratio = getRatio(part, whole);
+const getColor = (ratio: number, inverted = false) => {
     const nonInvertedThresholds: [number, string][] = [
         [6 / 7, "emerald-500"],
         [5 / 7, "green-500"],
@@ -109,17 +113,17 @@ const getColor = (part: number, whole: number, inverted: boolean) => {
 };
 
 const colorMap: Record<string, string> = {
-    "emerald-500": "text-emerald-500",
-    "green-500": "text-green-500",
-    "lime-500": "text-lime-500",
-    "yellow-500": "text-yellow-500",
-    "amber-500": "text-amber-500",
-    "orange-500": "text-orange-500",
-    "red-500": "text-red-500",
+    "emerald-500": "#7db664",
+    "green-500": "#97b14c",
+    "lime-500": "#b0aa39",
+    "yellow-500": "#c5a231",
+    "amber-500": "#db9640",
+    "orange-500": "#e98d61",
+    "red-500": "#ec8786",
 };
 
-const getTextColor = (part: number, whole: number, inverted: boolean) => {
-    return colorMap[getColor(part, whole, inverted)];
+const getTextColor = (ratio: number, inverted: boolean) => {
+    return colorMap[getColor(ratio, inverted)];
 };
 
 export function MetricsWheel({ part, whole, percentage, label="", indicator=false, inverted=false, className="", ...rest }: MetricsWheelProps) {
@@ -128,16 +132,17 @@ export function MetricsWheel({ part, whole, percentage, label="", indicator=fals
         className, 
         {...rest}
     )
-    const ratio = (part === 0 && whole === 0) ? percentage / 100 : part / whole
+    const ratio = getRatio(part, whole, percentage)
     const radius = 40
-    const color = indicator ? getTextColor(part, whole, inverted) : "text-blue-500"
+    const color = indicator ? getTextColor(ratio, inverted) : "#58acf2"
+    console.log(color)
     const circumference = getCircumference(radius)
     console.log("indicator", indicator)
     return (
         <div className={classes} {...rest}>
             <svg className={`w-28 h-28 ${className}`} viewBox="0 0 100 100">
                 <circle
-                    className={`${color} stroke-current`}
+                    stroke={color}
                     strokeWidth="10"
                     strokeLinecap="round"
                     cx="50"
