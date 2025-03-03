@@ -1,16 +1,67 @@
-@use '../config.scss' as c;
+@use '../config.scss' as *;
+@use '../utilities/css-variable.scss' as cv;
+@use '../type/styles.scss' as type;
 
-.#{c.$prefix}-code-snippet code {
-  font-family: var(--#{c.$prefix}-font-family-mono);
-  font-size: var(--#{c.$prefix}-code-01-font-size, 0.75rem);
-  font-weight: var(--#{c.$prefix}-code-01-font-weight, 400);
-  line-height: var(--#{c.$prefix}-code-01-line-height, 1.33333);
-  letter-spacing: var(--#{c.$prefix}-code-01-letter-spacing, 0.32px);
+.#{$prefix}-code-snippet {
+  background-color: cv.get-var('layer');
+  color: cv.get-var('text-primary');
+  position: relative;
 }
 
-.#{c.$prefix}-code-snippet--single {
+/// Base
+.#{$prefix}-code-snippet code {
+  @include type.type-style('code-01');
+}
+
+.#{$prefix}-code-snippet pre {
+  margin: 0;
+}
+
+.#{$prefix}-code-snippet__overflow-indicator--right {
+  order: 2;
+  background-image: linear-gradient(to right, transparent, cv.get-var('layer'));
+  margin-inline-start: -1rem;
+}
+
+.#{$prefix}-code-snippet__overflow-indicator--left,
+.#{$prefix}-code-snippet__overflow-indicator--right {
+  z-index: 1;
+  flex: 1 0 auto;
+  inline-size: 1rem;
+}
+
+.#{$prefix}-code-snippet__copy-btn {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-end: 0;
+  border-radius: 0;
+}
+
+/// Inline
+.#{$prefix}-code-snippet--inline {
   position: relative;
-  background-color: var(--#{c.$prefix}-layer);
+  display: inline;
+  padding: 0;
+  border: 1px solid rgba(0, 0, 0, 0);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.#{$prefix}-code-snippet--inline.#{$prefix}-btn {
+  block-size: 1.25rem;
+  inline-size: initial;
+  max-inline-size: unset;
+  min-block-size: 1.25rem;
+  padding-inline: 0;
+}
+
+.#{$prefix}-code-snippet--inline code {
+  padding-inline: 0.5rem;
+}
+
+/// Single
+.#{$prefix}-code-snippet--single {
+  position: relative;
   inline-size: 100%;
   max-inline-size: 48rem;
   display: flex;
@@ -20,7 +71,7 @@
   border-radius: 0.125rem;
 }
 
-.#{c.$prefix}-code-snippet--single .#{c.$prefix}-code-snippet__container {
+.#{$prefix}-code-snippet--single .#{$prefix}-code-snippet__container {
   position: relative;
   display: flex;
   align-items: center;
@@ -30,42 +81,36 @@
   scrollbar-width: none;
 }
 
-.#{c.$prefix}-code-snippet--single .#{c.$prefix}-code-snippet__overflow-indicator--right {
+.#{$prefix}-code-snippet--single .#{$prefix}-code-snippet__overflow-indicator--right {
   inset-inline-end: 2.5rem;
 }
 
-.#{c.$prefix}-code-snippet--single .#{c.$prefix}-code-snippet__overflow-indicator--right,
-.#{c.$prefix}-code-snippet--single .#{c.$prefix}-code-snippet__overflow-indicator--left {
+.#{$prefix}-code-snippet--single .#{$prefix}-code-snippet__overflow-indicator--right,
+.#{$prefix}-code-snippet--single .#{$prefix}-code-snippet__overflow-indicator--left {
   position: absolute;
   block-size: calc(100% - 0.25rem);
   inline-size: 2rem;
 }
 
-.#{c.$prefix}-code-snippet__overflow-indicator--right {
-  order: 2;
-  background-image: linear-gradient(to right, transparent, var(--#{c.$prefix}-layer));
-  margin-inline-start: -1rem;
-}
-
-.#{c.$prefix}-code-snippet__overflow-indicator--left,
-.#{c.$prefix}-code-snippet__overflow-indicator--right {
-  z-index: 1;
-  flex: 1 0 auto;
-  inline-size: 1rem;
-}
-
-.#{c.$prefix}-code-snippet__copy-btn {
-  position: absolute;
-  inset-block-start: 0;
-  inset-inline-end: 0;
-  border-radius: 0;
-}
-
-.#{c.$prefix}-code-snippet--single pre,
-.#{c.$prefix}-code-snippet--inline code {
+.#{$prefix}-code-snippet--single pre,
+.#{$prefix}-code-snippet--inline code {
   white-space: pre;
 }
 
-.#{c.$prefix}-code-snippet--single pre {
+.#{$prefix}-code-snippet--single pre {
   padding-inline-end: 0.5rem;
+}
+
+/// Multi
+.#{$prefix}-code-snippet--multi {
+  padding: 1rem;
+}
+
+.#{$prefix}-code-snippet--multi .#{$prefix}-code-snippet__container {
+  position: relative;
+  order: 1;
+  overflow: auto;
+  max-block-size: 100%;
+  min-block-size: 100%;
+  max-height: 16rem;
 }

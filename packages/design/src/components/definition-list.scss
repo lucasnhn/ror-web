@@ -1,6 +1,8 @@
-@use '../config.scss' as c;
+@use '../config.scss' as *;
+@use '../type/styles.scss' as *;
+@use '../utilities/css-variable.scss' as cv;
 
-.#{c.$prefix}-dl {
+.#{$prefix}-dl {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   row-gap: 1rem;
@@ -9,20 +11,14 @@
   inline-size: 100%;
 }
 
-.#{c.$prefix}-dl__term {
+.#{$prefix}-dl__term {
   margin: 0;
-  color: var(--#{c.$prefix}-text-secondary);
-  font-size: var(--#{c.$prefix}-heading-compact-01-font-size, 0.875rem);
-  font-weight: var(--#{c.$prefix}-heading-compact-01-font-weight, 400);
-  line-height: var(--#{c.$prefix}-heading-compact-01-line-height, 1.28572);
-  letter-spacing: var(--#{c.$prefix}-heading-compact-01-letter-spacing, 0.16px);
+  @include type-style('heading-01');
+  color: cv.get-var('text-secondary');
 }
 
-.#{c.$prefix}-dl__description {
+.#{$prefix}-dl__description {
   font-style: normal;
   margin: 0;
-  font-size: var(--#{c.$prefix}-body-compact-01-font-size, 0.875rem);
-  font-weight: var(--#{c.$prefix}-body-compact-01-font-weight, 400);
-  line-height: var(--#{c.$prefix}-body-compact-01-line-height, 1.125);
-  letter-spacing: var(--#{c.$prefix}-heading-compact-01-letter-spacing, 0.16px);
+  @include type-style('body-01');
 }

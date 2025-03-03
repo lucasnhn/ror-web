@@ -10,6 +10,13 @@ const meta = {
     layout: 'centered',
   },
   tags: ['autodocs'],
+  decorators: [
+    (Story) => (
+      <TooltipProvider>
+        <Story />
+      </TooltipProvider>
+    ),
+  ],
 } satisfies Meta<typeof CopyButton>
 
 export default meta

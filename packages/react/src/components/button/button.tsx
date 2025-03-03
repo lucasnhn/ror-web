@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes, ReactElement, ReactNode } from 'react'
+import { isValidElement, type ButtonHTMLAttributes, type ReactElement, type ReactNode } from 'react'
 import { BaseButton } from './button-base'
 import { ButtonWithIconOnlyProps, IconOnlyButton } from './button-icon-only'
 import { ButtonSize, ButtonVariant } from './constants'
@@ -50,14 +50,14 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 function isButtonIconOnly(props: ButtonProps): props is ButtonWithIconOnlyProps {
-  return 'iconOnly' in props && props.iconOnly === true
+  return 'iconOnly' in props && props.iconOnly === true && isValidElement(props.icon)
 }
 
 export function Button(props: ButtonProps) {
-  // Make sure label is provided when iconOnly is true
+  const { iconOnly, ...rest } = props
   if (isButtonIconOnly(props)) {
-    return <IconOnlyButton {...props} />
+    return <IconOnlyButton icon={props.icon} {...rest} />
   }
 
-  return <BaseButton {...props} />
+  return <BaseButton {...rest} />
 }

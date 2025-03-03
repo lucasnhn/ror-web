@@ -1,6 +1,6 @@
-/// Tokens
-@forward 'tokens/variables.scss';
-@forward 'tokens/contextual-variables.scss';
+/// CSS Variables
+@forward 'css-variables/variables.scss';
+@forward 'css-variables/layer.scss';
 
 /// Components
 @forward 'components/breadcrumb.scss';

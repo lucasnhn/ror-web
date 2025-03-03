@@ -1,0 +1,71 @@
+@use "sass:map";
+@use 'sass:meta';
+
+$font-family-system:
+  var(--r-font-family-system),
+  -apple-system,
+  'system-ui',
+  'Segoe UI',
+  'Noto Sans',
+  Helvetica,
+  Arial,
+  sans-serif,
+  'Apple Color Emoji',
+  'Segoe UI Emoji';
+
+$font-family-mono:
+  var(--r-font-family-mono), 'SFMono-Regular', Menlo, Consolas, 'Liberation Mono', 'Courier New', monospace;
+
+$font-family-sans:
+  var(--r-font-family-sans),
+  'Inter',
+  -apple-system,
+  'system-ui',
+  'Segoe UI',
+  'Noto Sans',
+  Helvetica,
+  sans-serif,
+  'Apple Color Emoji',
+  'Segoe UI Emoji';
+
+$font-families: (
+  'system': $font-family-system,
+  'mono': $font-family-mono,
+  'sans': $font-family-sans,
+) !default;
+
+/// Retrieve the font-family value for a given name
+/// @param {String} $name
+/// @return {String}
+@function font-family($name) {
+  @return map.get($font-families, $name);
+}
+
+/// Set the `font-family` property with the value for a given name
+/// @param {String} $name
+@mixin font-family($name) {
+  font-family: font-family($name);
+}
+
+/// Suggested font weights to be used in product
+/// @type Map
+/// @access public
+/// @group @carbon/type
+$font-weights: (
+  'light': 300,
+  'regular': 400,
+  'semibold': 500,
+) !default;
+
+/// Retrieve the font-weight value for a given name
+/// @param {String} $weight
+/// @return {Number}
+@function font-weight($weight) {
+  @return map.get($font-weights, $weight);
+}
+
+/// Set the `font-weight` property with the value for a given name
+/// @param {String} $weight
+@mixin font-weight($weight) {
+  font-weight: font-weight($weight);
+}

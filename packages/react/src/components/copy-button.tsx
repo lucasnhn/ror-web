@@ -2,7 +2,7 @@
 import { Button } from './button'
 import { Copy } from 'lucide-react'
 import { Tooltip } from './tooltip'
-import { useEffect, useRef, useState } from 'react'
+import { ReactNode, useEffect, useRef, useState } from 'react'
 import { clsx } from 'clsx'
 
 export interface CopyButtonProps {
@@ -30,6 +30,11 @@ export interface CopyButtonProps {
    * Specify an optional className to be applied to the button
    */
   className?: string
+
+  /**
+   * You can specify a child to be rendered inside the button as a replacement for the default copy icon
+   */
+  children?: ReactNode
 }
 
 const DEFAULT_TOOLTIP_LABEL = 'Copy to clipboard'
@@ -42,6 +47,7 @@ export function CopyButton({
   feedbackTimeout = DEFAULT_FEEDBACK_TIMEOUT,
   onClick,
   className,
+  children,
 }: CopyButtonProps) {
   const timeoutRef = useRef<NodeJS.Timeout | null>(null)
   const [tooltipOpen, setTooltipOpen] = useState(false)
@@ -66,7 +72,6 @@ export function CopyButton({
 
     timeoutRef.current = setTimeout(() => {
       setShowFeedback(false)
-      setTooltipOpen(false)
     }, feedbackTimeout)
   }
 
@@ -90,7 +95,9 @@ export function CopyButton({
         onMouseLeave={handleOnMouseLeave}
         onClick={handleOnClick}
         className={classes}
-      />
+      >
+        {children}
+      </Button>
     </Tooltip>
   )
 }
