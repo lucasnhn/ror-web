@@ -16,14 +16,12 @@ const meta = {
         label: { control: { type: 'text' }, description: 'Text label inside the wheel' },
         indicator: { control: { type: 'boolean' }, description: 'Enables color-based indicators' },
         inverted: { control: { type: 'boolean' }, description: 'Inverts the indicator color logic' },
-        className: { control: { type: 'text' }, description: 'Custom CSS class' },
     }
 
 } satisfies Meta<typeof MetricsWheel>
 
 export default meta
 type Story = StoryObj<typeof meta>
-
 
 /**
  * Default MetricsWheel story
@@ -36,7 +34,6 @@ export const Default: Story = {
         label: '3 of 5',
         indicator: false,
         inverted: false,
-        className: '',
     },
 };
 

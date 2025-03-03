@@ -1,8 +1,8 @@
 "use client"
 
 import { Button, Tag, Tile, MetricsWheel} from "@ror/react";
-import { FC, JSX } from "react";
-import { BriefcaseBusinessIcon, DataCenterIcon, BoxesIcon, BoxIcon, CpuIcon, HardDriveIcon } from "./navigation/icons";
+import { FC, JSX, useState } from "react";
+import { BriefcaseBusinessIcon, DataCenterIcon, BoxesIcon, BoxIcon, CpuIcon, HardDriveIcon, PencilIcon, PencilOffIcon, PlusIcon } from "./navigation/icons";
 
 interface MetricsBoardProps {
     className?: string;
@@ -40,7 +40,7 @@ interface DashboardItem {
 const dashboardItems: DashboardItem[] = [
     {
         title: "DATA CENTERS",
-        icon: DataCenterIcon,
+        icon: <DataCenterIcon />,
         description: "Data centers with data",
         seeAll: true,
         seeAllLink: "#",
@@ -51,7 +51,7 @@ const dashboardItems: DashboardItem[] = [
     },
     {
         title: "WORKSPACES",
-        icon: BriefcaseBusinessIcon,
+        icon: <BriefcaseBusinessIcon />,
         description: "Workspaces with data",
         seeAll: true,
         seeAllLink: "#",
@@ -63,7 +63,7 @@ const dashboardItems: DashboardItem[] = [
     },
     {
         title: "CLUSTERS",
-        icon: BoxesIcon,
+        icon: <BoxesIcon />,
         description: "Active clusters",
         type: "wheel",
         wheelPart: 255,
@@ -73,7 +73,7 @@ const dashboardItems: DashboardItem[] = [
     },
     {
         title: "NODES",
-        icon: BoxIcon,
+        icon: <BoxIcon />,
         description: "Active nodes",
         type: "wheel",
         wheelPart: 838,
@@ -83,7 +83,7 @@ const dashboardItems: DashboardItem[] = [
     },
     {
         title: "CPU",
-        icon: CpuIcon,
+        icon: <CpuIcon />,
         description: "Utilized CPU power",
         type: "wheel",
         wheelPercentage: 13,
@@ -93,7 +93,7 @@ const dashboardItems: DashboardItem[] = [
     },
     {
         title: "MEMORY",
-        icon: HardDriveIcon,
+        icon: <HardDriveIcon />,
         description: "Utilized memory",
         type: "wheel",
         wheelPercentage: 37,
@@ -112,22 +112,38 @@ const getChart = (type: DashboardItemType, wheelPart = 0, wheelWhole = 0, wheelP
 }
 
 const MetricsBoardProps: FC<MetricsBoardProps> = ({ className }) => {
+    const [shouldEdit, setShouldEdit] = useState<boolean>(false)
 
     return (
-        <div className={`flex flex-wrap justify-center gap-4 ${className}`}>
-            {dashboardItems.map(({title, icon, description, seeAll, seeAllLink, type, wheelPart, wheelWhole, wheelPercentage, wheelLabel, wheelIndicator, inverted}: DashboardItem, i) => (
-                <Tile key={i} className="rounded-md w-full max-w-[416px] p-3 flex flex-col justify-between">
-                    <div className="flex justify-between">
-                        <div className="flex flex-col gap-1">
-                            <h3 className="text-lg font-bold">{title}</h3>
-                            <p className="text-sm">{description}</p>
-                            {seeAll && <p className="hover:underline"><a href={seeAllLink}>See all</a></p>}
+        <div className={`flex flex-col gap-8 ${className}`}>
+            <div className="flex flex-row justify-between items-center">
+                <h1>Dashboard</h1>
+                <Button className="flex gap-3 text-lg" onClick={() => setShouldEdit(!shouldEdit)}>
+                    {shouldEdit ? <PencilOffIcon /> : <PencilIcon />} Edit
+                </Button>
+            </div>
+            <hr className="border-slate-500" />
+            <div className={`flex flex-wrap justify-center gap-4`}>
+                {dashboardItems.map(({title, icon, description, seeAll, seeAllLink, type, wheelPart, wheelWhole, wheelPercentage, wheelLabel, wheelIndicator, inverted}: DashboardItem, i) => (
+                    <Tile key={i} className="rounded-md w-full max-w-[416px] p-3 flex flex-col justify-between">
+                        <div className="flex justify-between">
+                            <div className="flex flex-col gap-1">
+                                <h3 className="text-lg font-bold">{title}</h3>
+                                <p className="text-sm">{description}</p>
+                                {seeAll && <p className="hover:underline"><a href={seeAllLink}>See all</a></p>}
+                            </div>
+                            {icon}
                         </div>
-                        {icon}
-                    </div>
-                    {getChart(type, wheelPart, wheelWhole, wheelPercentage, wheelLabel, wheelIndicator, inverted)}
-                </Tile>
-            ))}
+                        {getChart(type, wheelPart, wheelWhole, wheelPercentage, wheelLabel, wheelIndicator, inverted)}
+                    </Tile>
+                ))}
+                {shouldEdit && 
+                    <Tile className="rounded-md w-full max-w-[416px] p-3 flex flex-col gap-2 items-center justify-center">
+                        <h3 className="text-lg font-bold">ADD NEW DASHBOARD ITEM</h3>
+                        <PlusIcon className="w-16 h-16" />
+                    </Tile>
+                }
+            </div>
         </div>
     )
 }
