@@ -1,4 +1,5 @@
 @use '../config.scss' as *;
+@use '../utilities/css-variable.scss' as cv;
 
 .#{$prefix}-copy-btn {
   display: flex;
@@ -6,15 +7,15 @@
   justify-content: center;
   padding: 0;
   border: none;
-  background-color: var(--#{$prefix}-layer);
+  background-color: cv.get-var('layer');
   cursor: pointer;
   outline: none;
 
   &:hover {
-    background-color: var(--#{$prefix}-layer-hover);
+    background-color: cv.get-var('layer-hover');
   }
 
   &:active {
-    background-color: var(--#{$prefix}-layer-active);
+    background-color: cv.get-var('layer-active');
   }
 }

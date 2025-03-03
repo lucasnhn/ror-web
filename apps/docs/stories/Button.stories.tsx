@@ -73,5 +73,6 @@ export const IconOnly: Story = {
     icon: <Plus />,
     iconOnly: true,
     variant: 'ghost',
+    children: null,
   },
 }

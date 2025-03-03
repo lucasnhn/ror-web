@@ -1,0 +1,152 @@
+@use 'sass:map';
+@use 'sass:meta';
+@use '../config' as *;
+@use '../colors/theme' as *;
+@use '../utilities/css-variable' as cv;
+
+/// Set CSS variable with a light-dark value
+/// @param {String} $property-name - The CSS property to set
+/// @param {Color} $light-value - The value to use in light mode
+/// @param {Color} $dark-value - The value to use in dark mode
+@mixin light-dark($property-name, $light-value, $dark-value) {
+  $value: light-dark($light-value, $dark-value);
+  @include cv.declaration($property-name, $value);
+}
+
+/// The core tokens are global colors that are used across components.
+/// Naming is heavily based on the Carbon Design System.
+/// For reference see https://carbondesignsystem.com/elements/color/tokens/
+:root {
+  @include cv.declaration('color-white', get-color('white', '100', 'rgb'));
+
+  /// Backgrounds
+  @include light-dark('background', cv.get-var('color-white'), rgb-color('neutral', '950'));
+  @include light-dark('background-hover', rgb-color('neutral', '100'), rgb-color('neutral', '900'));
+  @include light-dark('background-active', rgb-color('neutral', '200'), rgb-color('neutral', '800'));
+  @include light-dark('background-selected', rgb-color('neutral', '300'), rgb-color('neutral', '700'));
+  @include light-dark('background-selected-hover', rgb-color('neutral', '400'), rgb-color('neutral', '600'));
+  @include light-dark('background-inverse', rgb-color('neutral', '950'), rgb-color('neutral', '50'));
+  @include light-dark('background-inverse-hover', rgb-color('neutral', '500'), rgb-color('neutral', '100'));
+
+  /// Layer
+  @include light-dark('layer-01', rgb-color('neutral', '100'), rgb-color('neutral', '900'));
+  @include light-dark('layer-02', rgb-color('neutral', '200'), rgb-color('neutral', '800'));
+  @include light-dark('layer-03', rgb-color('neutral', '100'), rgb-color('neutral', '700'));
+  @include light-dark('layer-hover-01', rgb-color('neutral', '200'), rgb-color('neutral', '800'));
+  @include light-dark('layer-hover-02', rgb-color('neutral', '300'), rgb-color('neutral', '700'));
+  @include light-dark('layer-hover-03', rgb-color('neutral', '200'), rgb-color('neutral', '600'));
+  @include light-dark('layer-active-01', rgb-color('neutral', '300'), rgb-color('neutral', '700'));
+  @include light-dark('layer-active-02', rgb-color('neutral', '400'), rgb-color('neutral', '600'));
+  @include light-dark('layer-active-03', rgb-color('neutral', '300'), rgb-color('neutral', '500'));
+
+  /// Layer Accent - Tertiary background paired with $layer-X
+  @include light-dark('layer-accent-01', rgb-color('neutral', '200'), rgb-color('neutral', '800'));
+  @include light-dark('layer-accent-02', rgb-color('neutral', '200'), rgb-color('neutral', '700'));
+  @include light-dark('layer-accent-03', rgb-color('neutral', '200'), rgb-color('neutral', '600'));
+  @include light-dark('layer-accent-hover-01', rgb-color('neutral', '300'), rgb-color('neutral', '700'));
+  @include light-dark('layer-accent-hover-02', rgb-color('neutral', '300'), rgb-color('neutral', '600'));
+  @include light-dark('layer-accent-hover-03', rgb-color('neutral', '300'), rgb-color('neutral', '500'));
+  @include light-dark('layer-accent-active-01', rgb-color('neutral', '400'), rgb-color('neutral', '700'));
+  @include light-dark('layer-accent-active-02', rgb-color('neutral', '400'), rgb-color('neutral', '500'));
+  @include light-dark('layer-accent-active-03', rgb-color('neutral', '400'), rgb-color('neutral', '800'));
+
+  /// Borders
+  /// 00 - Paired with $background
+  @include light-dark('border-subtle-00', rgb-color('neutral', '200'), rgb-color('neutral', '800'));
+  /// 01 - Paired with $layer-01
+  @include light-dark('border-subtle-01', rgb-color('neutral', '300'), rgb-color('neutral', '700'));
+  /// 02 - Paired with $layer-02
+  @include light-dark('border-subtle-02', rgb-color('neutral', '200'), rgb-color('neutral', '800'));
+  /// 03 - Paired with $layer-03
+  @include light-dark('border-subtle-03', rgb-color('neutral', '300'), rgb-color('neutral', '700'));
+
+  /// Text
+  @include light-dark('text-primary', rgb-color('neutral', '950'), rgb-color('neutral', '100'));
+  @include light-dark('text-secondary', rgb-color('neutral', '700'), rgb-color('neutral', '300'));
+  @include light-dark('text-placeholder', rgb-color('neutral', '400'), rgb-color('neutral', '600'));
+  @include light-dark('text-on-color', rgb-color('teal', '950'), rgb-color('teal', '200'));
+  @include light-dark('text-inverse', rgb-color('neutral', '100'), rgb-color('neutral', '950'));
+
+  /// Button
+  @include light-dark('button-primary', rgb-color('teal', '500'), rgb-color('teal', '800'));
+  @include light-dark('button-primary-border', rgb-color('teal', '600'), rgb-color('teal', '700'));
+  @include light-dark('button-secondary', rgb-color('neutral', '300'), rgb-color('neutral', '800'));
+  @include light-dark('button-secondary-border', rgb-color('neutral', '400'), rgb-color('neutral', '900'));
+
+  /// Icons
+  @include light-dark('icon-primary', rgb-color('neutral', '950'), rgb-color('neutral', '100'));
+  @include light-dark('icon-secondary', rgb-color('neutral', '700'), rgb-color('neutral', '300'));
+
+  /// Links
+  @include light-dark('link-primary', rgb-color('teal', '500'), rgb-color('teal', '400'));
+  @include light-dark('link-primary-hover', rgb-color('teal', '600'), rgb-color('teal', '300'));
+}
+
+@supports (color: oklch(0% 0 0)) {
+  @media (color-gamut: p3) {
+    :root {
+      @include cv.declaration('color-white', get-color('white', '100', 'p3'));
+      /// Backgrounds
+      @include light-dark('background', cv.get-var('color-white'), p3-color('neutral', '950'));
+      @include light-dark('background-hover', p3-color('neutral', '100'), p3-color('neutral', '900'));
+      @include light-dark('background-active', p3-color('neutral', '200'), p3-color('neutral', '800'));
+      @include light-dark('background-selected', p3-color('neutral', '300'), p3-color('neutral', '700'));
+      @include light-dark('background-selected-hover', p3-color('neutral', '400'), p3-color('neutral', '600'));
+      @include light-dark('background-inverse', p3-color('neutral', '950'), p3-color('neutral', '50'));
+      @include light-dark('background-inverse-hover', p3-color('neutral', '500'), p3-color('neutral', '100'));
+
+      /// Layer
+      @include light-dark('layer-01', p3-color('neutral', '100'), p3-color('neutral', '900'));
+      @include light-dark('layer-02', p3-color('neutral', '200'), p3-color('neutral', '800'));
+      @include light-dark('layer-03', p3-color('neutral', '100'), p3-color('neutral', '700'));
+      @include light-dark('layer-hover-01', p3-color('neutral', '200'), p3-color('neutral', '800'));
+      @include light-dark('layer-hover-02', p3-color('neutral', '300'), p3-color('neutral', '700'));
+      @include light-dark('layer-hover-03', p3-color('neutral', '200'), p3-color('neutral', '600'));
+      @include light-dark('layer-active-01', p3-color('neutral', '300'), p3-color('neutral', '700'));
+      @include light-dark('layer-active-02', p3-color('neutral', '400'), p3-color('neutral', '600'));
+      @include light-dark('layer-active-03', p3-color('neutral', '300'), p3-color('neutral', '500'));
+
+      /// Layer Accent - Tertiary background paired with $layer-X
+      @include light-dark('layer-accent-01', p3-color('neutral', '200'), p3-color('neutral', '800'));
+      @include light-dark('layer-accent-02', p3-color('neutral', '200'), p3-color('neutral', '700'));
+      @include light-dark('layer-accent-03', p3-color('neutral', '200'), p3-color('neutral', '600'));
+      @include light-dark('layer-accent-hover-01', p3-color('neutral', '300'), p3-color('neutral', '700'));
+      @include light-dark('layer-accent-hover-02', p3-color('neutral', '300'), p3-color('neutral', '600'));
+      @include light-dark('layer-accent-hover-03', p3-color('neutral', '300'), p3-color('neutral', '500'));
+      @include light-dark('layer-accent-active-01', p3-color('neutral', '400'), p3-color('neutral', '700'));
+      @include light-dark('layer-accent-active-02', p3-color('neutral', '400'), p3-color('neutral', '500'));
+      @include light-dark('layer-accent-active-03', p3-color('neutral', '400'), p3-color('neutral', '800'));
+
+      /// Borders
+      /// 00 - Paired with $background
+      @include light-dark('border-subtle-00', p3-color('neutral', '200'), p3-color('neutral', '800'));
+      /// 01 - Paired with $layer-01
+      @include light-dark('border-subtle-01', p3-color('neutral', '300'), p3-color('neutral', '700'));
+      /// 02 - Paired with $layer-02
+      @include light-dark('border-subtle-02', p3-color('neutral', '200'), p3-color('neutral', '800'));
+      /// 03 - Paired with $layer-03
+      @include light-dark('border-subtle-03', p3-color('neutral', '300'), p3-color('neutral', '700'));
+
+      /// Text
+      @include light-dark('text-primary', p3-color('neutral', '950'), p3-color('neutral', '100'));
+      @include light-dark('text-secondary', p3-color('neutral', '700'), p3-color('neutral', '300'));
+      @include light-dark('text-placeholder', p3-color('neutral', '400'), p3-color('neutral', '600'));
+      @include light-dark('text-on-color', p3-color('teal', '950'), p3-color('teal', '200'));
+      @include light-dark('text-inverse', p3-color('neutral', '100'), p3-color('neutral', '950'));
+
+      /// Button
+      @include light-dark('button-primary', p3-color('teal', '500'), p3-color('teal', '800'));
+      @include light-dark('button-primary-border', p3-color('teal', '600'), p3-color('teal', '700'));
+      @include light-dark('button-secondary', p3-color('neutral', '300'), p3-color('neutral', '800'));
+      @include light-dark('button-secondary-border', p3-color('neutral', '400'), p3-color('neutral', '900'));
+
+      /// Icons
+      @include light-dark('icon-primary', p3-color('neutral', '950'), p3-color('neutral', '100'));
+      @include light-dark('icon-secondary', p3-color('neutral', '700'), p3-color('neutral', '300'));
+
+      /// Links
+      @include light-dark('link-primary', p3-color('teal', '500'), p3-color('teal', '400'));
+      @include light-dark('link-primary-hover', p3-color('teal', '600'), p3-color('teal', '300'));
+    }
+  }
+}

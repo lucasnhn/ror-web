@@ -1,10 +1,9 @@
 @use '../config.scss' as *;
+@use '../type/styles.scss' as types;
+@use '../utilities/css-variable.scss' as cv;
 
 .#{$prefix}-tile {
-  font-size: var(--r-body-compact-01-font-size, 0.875rem);
-  font-weight: var(--r-body-compact-01-font-weight, 400);
-  line-height: var(--r-body-compact-01-line-height, 1.28572);
-  letter-spacing: var(--r-body-compact-01-letter-spacing, 0.16px);
+  @include types.type-style('body-01');
   position: relative;
   display: block;
   padding: 1rem;
@@ -12,6 +11,6 @@
   min-inline-size: 8rem;
   outline: 2px solid rgba(0, 0, 0, 0);
   outline-offset: -2px;
-  background-color: var(--#{$prefix}-layer);
+  background-color: cv.get-var('layer');
   border-radius: 0.25rem;
 }

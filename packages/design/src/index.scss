@@ -1,6 +1,6 @@
-/// Tokens
-@forward 'tokens/variables.scss';
-@forward 'tokens/contextual-variables.scss';
+/// CSS Variables
+@forward 'css-variables/variables.scss';
+@forward 'css-variables/layer.scss';
 
 /// Components
 @forward 'components/breadcrumb.scss';
@@ -8,7 +8,5 @@
 @forward 'components/code-snippet.scss';
 @forward 'components/copy-button.scss';
 @forward 'components/definition-list.scss';
-@forward 'components/headings.scss';
-@forward 'components/layer.scss';
 @forward 'components/tile.scss';
 @forward 'components/tooltip.scss';
