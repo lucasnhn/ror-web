@@ -29,7 +29,12 @@ export function createPaginationSchema<T extends z.ZodType>(itemSchema: T) {
     totalCount: z.number(),
     dataCount: z.number(),
     offset: z.number(),
-    data: z.array(itemSchema),
+    data: z
+      .array(itemSchema)
+      // The ROR API may respond with a null for an empty list
+      .nullable()
+      // Transform null to empty array
+      .transform((data) => (data === null ? [] : Array.isArray(data) ? data : [])),
   })
 }
 
