@@ -7,8 +7,8 @@
     justify-content: center;
 
     svg {
-        width: 7rem;
-        height: 7rem;
+        width: 9rem;
+        height: 9rem;
     }
 
     &__circle {
@@ -19,6 +19,8 @@
     }
 
     &__label {
+        // color: get-var('text-primary');
+        color: "red";
         font-weight: bold;
         text-anchor: middle;
         dominant-baseline: middle;

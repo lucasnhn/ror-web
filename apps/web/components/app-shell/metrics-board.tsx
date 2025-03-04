@@ -15,7 +15,6 @@ interface DashboardItem {
     id: string;
     typeId: number;
     title: string;
-    icon?: JSX.Element; 
     description?: string;
     seeAll?: boolean;
     seeAllLink?: string;
@@ -31,8 +30,7 @@ interface DashboardItem {
 const metricTypes: Omit<DashboardItem, "id">[] = [
     {
         typeId: 1,
-        title: "DATA CENTERS",
-        icon: <DataCenterIcon />,
+        title: "Data centers",
         description: "Data centers with data",
         seeAll: true,
         seeAllLink: "#",
@@ -43,8 +41,7 @@ const metricTypes: Omit<DashboardItem, "id">[] = [
     },
     {
         typeId: 2,
-        title: "WORKSPACES",
-        icon: <BriefcaseBusinessIcon />,
+        title: "Workspaces",
         description: "Workspaces with data",
         seeAll: true,
         seeAllLink: "#",
@@ -56,8 +53,7 @@ const metricTypes: Omit<DashboardItem, "id">[] = [
     },
     {
         typeId: 3,
-        title: "CLUSTERS",
-        icon: <BoxesIcon />,
+        title: "Clusters",
         description: "Active clusters",
         type: "wheel",
         wheelPart: 255,
@@ -67,8 +63,7 @@ const metricTypes: Omit<DashboardItem, "id">[] = [
     },
     {
         typeId: 4,
-        title: "NODES",
-        icon: <BoxIcon />,
+        title: "Nodes",
         description: "Active nodes",
         type: "wheel",
         wheelPart: 838,
@@ -79,7 +74,6 @@ const metricTypes: Omit<DashboardItem, "id">[] = [
     {
         typeId: 5,
         title: "CPU",
-        icon: <CpuIcon />,
         description: "Utilized CPU power",
         type: "wheel",
         wheelPercentage: 13,
@@ -89,8 +83,7 @@ const metricTypes: Omit<DashboardItem, "id">[] = [
     },
     {
         typeId: 6,
-        title: "MEMORY",
-        icon: <HardDriveIcon />,
+        title: "Memory",
         description: "Utilized memory",
         type: "wheel",
         wheelPercentage: 37,
@@ -165,7 +158,7 @@ const MetricsBoardProps: FC<MetricsBoardProps> = ({ className }) => {
     return (
         <div className={`flex flex-col gap-8 ${className}`}>
             <div className="flex flex-row justify-between items-center">
-                <h1 className="text-4xl font-bold">DASHBOARD</h1>
+                <h1>Dashboard</h1>
                 {shouldEdit ? (
                     <div className="flex gap-3">
                         <Button variant="primary" onClick={() => saveIds()}>Save</Button>
@@ -180,32 +173,28 @@ const MetricsBoardProps: FC<MetricsBoardProps> = ({ className }) => {
 
             <div className={`flex flex-wrap justify-center gap-4`}>
                 {metrics.map((item: DashboardItem, i) => (
-                    <Tile key={i} className="rounded-md w-full min-h-48 max-w-[416px] p-3 flex flex-col justify-between">
-                        <div className="flex justify-between">
+                    <Tile key={i} className="rounded-md w-full min-h-40 max-w-[416px] p-3 flex flex-row gap-2">
+                        <div className="flex justify-between w-full">
                             <div className="flex flex-col gap-1">
-                                <h3 className="text-lg font-bold">{item.title}</h3>
-                                <p className="text-sm">{item.description}</p>
+                                <h3>{item.title}</h3>
+                                <p>{item.description}</p>
                                 {item.seeAll && <p className="hover:underline"><a href={item.seeAllLink}>See all</a></p>}
                             </div>
-                            {shouldEdit ? (
-                                <button onClick={() => removeMetric(item.id)}  className="text-red-500 hover:text-red-600 h-fit">
-                                    <CrossIcon /> 
-                                </button>
-                            ) : (
-                                item.icon
-                            )}
+                                
+                            <span>{getChart(item)}</span>
                         </div>
-                        {getChart(item)}
+                        {shouldEdit && (
+                            <button onClick={() => removeMetric(item.id)}  className="text-red-500 hover:text-red-600 h-fit">
+                                <CrossIcon /> 
+                            </button>
+                        )}
                     </Tile>
                 ))}
                 {shouldEdit && 
                     <Tile className="rounded-md w-full min-h-48 max-w-[416px] p-3 flex flex-col justify-between border border-transparent hover:border-neutral-200 transition-colors duration-150">
-                        <div className="flex flex-col  gap-2">
-                            <div className="flex justify-between">
-                                <div className="flex flex-col gap-1">
-                                    <h3 className="text-lg font-bold">ADD NEW METRIC</h3>
-                                </div>
-                                <PlusIcon />
+                        <div className="flex flex-col gap-2">
+                            <div className="flex flex-col gap-1">
+                                <h3>Add new metric</h3>
                             </div>
                             <p>What metric do you want to add?</p>
                         </div>

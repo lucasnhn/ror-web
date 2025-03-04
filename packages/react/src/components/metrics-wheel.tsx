@@ -66,15 +66,15 @@ const getText = (label: string) => {
     const secondLine = text.slice(midIndex).join(" ");
     if (label.length > 10) {
         return [
-            <text key="line1" x="50" y="45" fontSize={10} textAnchor="middle" dominantBaseline="middle" className="fill-current font-semibold">
+            <text key="line1" x="50" y="45" fontSize={10} textAnchor="middle" dominantBaseline="middle" fill="currentColor">
                 {firstLine}
             </text>,
-            <text key="line2" x="50" y="55" fontSize={10} textAnchor="middle" dominantBaseline="middle" className="fill-current font-semibold">
+            <text key="line2" x="50" y="55" fontSize={10} textAnchor="middle" dominantBaseline="middle" fill="currentColor">
                 {secondLine}
             </text>
         ]
     } else {
-        return <text x="50" y="50" fontSize={Math.max(10, 20 - label.length)} textAnchor="middle" dominantBaseline="middle" className="fill-current font-semibold">{label}</text>
+        return <text x="50" y="50" fontSize={Math.max(10, 20 - label.length)} textAnchor="middle" dominantBaseline="middle" fill="currentColor">{label}</text>
     }
 }
 
