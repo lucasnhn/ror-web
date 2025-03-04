@@ -6,5 +6,18 @@ export { CodeSnippet } from './components/code-snippet.tsx'
 export { DefinitionList, DefinitionTerm, DefinitionDescription } from './components/definition-list.tsx'
 export type { DefinitionListProps } from './components/definition-list.tsx'
 export { Layer } from './components/layer.tsx'
+export {
+  TableContainer,
+  TableTitle,
+  TableSubtitle,
+  TableActions,
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableHeader,
+  TableSortHeader,
+  TableCell,
+} from './components/table/index.tsx'
 export { Tile } from './components/tile.tsx'
 export { Tooltip, TooltipProvider } from './components/tooltip.tsx'

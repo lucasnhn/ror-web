@@ -6,6 +6,17 @@ import { AppShell } from '@/components/app-shell/app-shell'
 import { Providers } from './providers'
 import { getDarkModePreferenceAction } from '@/utils/dark-mode.actions'
 import { getLeftPanelPreferenceAction } from '@/components/app-shell/app-shell-actions'
+import { onUnhandledRequest } from '@/__mocks__/utils/on-unhandled-request'
+
+/**
+ * Register the server-side mock server
+ */
+if (process.env.NEXT_RUNTIME === 'nodejs' && process.env.NODE_ENV === 'development') {
+  const { server } = require('@/__mocks__/node')
+  server.listen({
+    onUnhandledRequest: onUnhandledRequest,
+  })
+}
 
 const inter = Inter({
   subsets: ['latin'],
