@@ -11,7 +11,6 @@
 */
 @layer base {
   @import '@ror/design/reset.css';
-  @import '@ror/design/style.css';
 
   *,
   ::after,
@@ -39,13 +38,10 @@
   html[data-color-scheme='system'] {
     color-scheme: light dark;
   }
+}
 
-  body {
-    color: var(--r-text-primary);
-    background: var(--r-background);
-    font-family: var(--r-font-family-sans);
-    -webkit-font-smoothing: antialiased;
-  }
+@layer components {
+  @import '@ror/design/style.css';
 }
 
 @layer utilities {

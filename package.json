@@ -22,6 +22,11 @@
     "prettier": "3.5.0",
     "turbo": "^2.3.4"
   },
+  "msw": {
+    "workerDirectory": [
+      "./apps/web/public"
+    ]
+  },
   "dependencies": {
     "@evilmartians/harmony": "1.4.0",
     "react-circular-progressbar": "2.2.0",
