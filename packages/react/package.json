@@ -19,12 +19,24 @@
       "import": "./dist/components/button/index.js",
       "types": "./dist/components/button/index.d.ts"
     },
+    "./components/table": {
+      "import": "./dist/components/table/index.js",
+      "types": "./dist/components/table/index.d.ts"
+    },
     "./src/components/*": {
       "import": "./src/components/*.tsx"
     },
     "./src/components/button": {
       "import": "./src/components/button/index.tsx",
       "types": "./src/components/button/index.d.ts"
+    },
+    "./components/src/table": {
+      "import": "./src/components/table/index.js",
+      "types": "./src/components/table/index.d.ts"
+    },
+    "./utils/sorting": {
+      "import": "./dist/utils/sorting.js",
+      "types": "./dist/utils/sorting.d.ts"
     }
   },
   "scripts": {

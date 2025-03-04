@@ -1,4 +1,4 @@
-@use "sass:map";
+@use 'sass:map';
 @use 'sass:meta';
 
 $font-family-system:
@@ -55,6 +55,7 @@ $font-weights: (
   'light': 300,
   'regular': 400,
   'semibold': 500,
+  'bold': 700,
 ) !default;
 
 /// Retrieve the font-weight value for a given name

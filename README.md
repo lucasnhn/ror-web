@@ -20,6 +20,7 @@ AUTH_CLIENT_ID=
 AUTH_CLIENT_SECRET=
 AUTH_TRUST_HOST=true
 NEXT_PUBLIC_ROR_API_URL=
+NEXT_PUBLICK_MOCKING_ENABLED=false
 ```
 
 **Note**: Environmental variables will be validated running runtime and mapped to a different naming convention. See `/env.ts` for implementation details.
@@ -49,6 +50,10 @@ npm run dev
 ```
 
 Your application will be available at `http://localhost:11000`.
+
+## Mocking
+The web application uses [mswjs](https://mswjs.io/) to mock API requests. To enable mocking, set `NEXT_PUBLICK_MOCKING_ENABLED` to `true` in the appropriate environment file.
+Further configuration and which requests that are mocked can be found in `/apps/web/__mocks__/handlers.ts`.
 
 ## Building for Production
 

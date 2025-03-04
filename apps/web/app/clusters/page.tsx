@@ -2,11 +2,13 @@ import { rorApiClient } from '@/services/ror-api'
 import { authGuard } from '../auth-guard'
 import { Breadcrumb, BreadcrumbItem } from '@ror/react/components/breadcrumb'
 import { Tile } from '@ror/react/components/tile'
+import { ClustersTable } from './cluster-table'
 
 export default async function ClustersPage() {
   const session = await authGuard()
   const client = rorApiClient(session.accessToken)
-  const clusters = await client.clusters.filter()
+  const clustersResponse = await client.clusters.filter()
+
   return (
     <div className='p-10'>
       <header className='mb-8'>
@@ -16,9 +18,11 @@ export default async function ClustersPage() {
         <h1>Clusters</h1>
       </header>
 
-      <Tile>
+      <ClustersTable data={clustersResponse.data} />
+
+      <Tile className='mt-10'>
         <code>
-          <pre>{JSON.stringify(clusters, null, 2)}</pre>
+          <pre>{JSON.stringify(clustersResponse, null, 2)}</pre>
         </code>
       </Tile>
     </div>

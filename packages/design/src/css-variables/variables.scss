@@ -2,6 +2,7 @@
 @use 'sass:meta';
 @use '../config' as *;
 @use '../colors/theme' as *;
+@use '../spacing' as *;
 @use '../utilities/css-variable' as cv;
 
 /// Set CSS variable with a light-dark value
@@ -38,6 +39,12 @@
   @include light-dark('layer-active-01', rgb-color('neutral', '300'), rgb-color('neutral', '700'));
   @include light-dark('layer-active-02', rgb-color('neutral', '400'), rgb-color('neutral', '600'));
   @include light-dark('layer-active-03', rgb-color('neutral', '300'), rgb-color('neutral', '500'));
+  @include light-dark('layer-selected-01', rgb-color('neutral', '200'), rgb-color('neutral', '800'));
+  @include light-dark('layer-selected-02', rgb-color('neutral', '200'), rgb-color('neutral', '700'));
+  @include light-dark('layer-selected-03', rgb-color('neutral', '200'), rgb-color('neutral', '600'));
+  @include light-dark('layer-selected-hover-01', rgb-color('neutral', '300'), rgb-color('neutral', '700'));
+  @include light-dark('layer-selected-hover-02', rgb-color('neutral', '300'), rgb-color('neutral', '600'));
+  @include light-dark('layer-selected-hover-03', rgb-color('neutral', '300'), rgb-color('neutral', '500'));
 
   /// Layer Accent - Tertiary background paired with $layer-X
   @include light-dark('layer-accent-01', rgb-color('neutral', '200'), rgb-color('neutral', '800'));
@@ -80,6 +87,9 @@
   /// Links
   @include light-dark('link-primary', rgb-color('teal', '500'), rgb-color('teal', '400'));
   @include light-dark('link-primary-hover', rgb-color('teal', '600'), rgb-color('teal', '300'));
+
+  // Spacing
+  @include spacing-custom-properties();
 }
 
 @supports (color: oklch(0% 0 0)) {
@@ -105,6 +115,12 @@
       @include light-dark('layer-active-01', p3-color('neutral', '300'), p3-color('neutral', '700'));
       @include light-dark('layer-active-02', p3-color('neutral', '400'), p3-color('neutral', '600'));
       @include light-dark('layer-active-03', p3-color('neutral', '300'), p3-color('neutral', '500'));
+      @include light-dark('layer-selected-01', p3-color('neutral', '200'), p3-color('neutral', '800'));
+      @include light-dark('layer-selected-02', p3-color('neutral', '200'), p3-color('neutral', '700'));
+      @include light-dark('layer-selected-03', p3-color('neutral', '200'), p3-color('neutral', '600'));
+      @include light-dark('layer-selected-hover-01', p3-color('neutral', '300'), p3-color('neutral', '700'));
+      @include light-dark('layer-selected-hover-02', p3-color('neutral', '300'), p3-color('neutral', '600'));
+      @include light-dark('layer-selected-hover-03', p3-color('neutral', '300'), p3-color('neutral', '500'));
 
       /// Layer Accent - Tertiary background paired with $layer-X
       @include light-dark('layer-accent-01', p3-color('neutral', '200'), p3-color('neutral', '800'));

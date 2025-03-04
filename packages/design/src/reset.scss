@@ -1,90 +1,89 @@
 @use 'sass:meta';
 @use './type/font-family.scss' as *;
 @use './type/styles.scss' as *;
+@use './utilities/css-variable.scss' as *;
 
-@layer base {
-  *,
-  *::after,
-  *::before {
-    box-sizing: border-box;
-  }
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+}
 
-  html {
-    @include font-family('system');
-  }
+html,
+body {
+  height: 100%;
+}
 
-  html,
-  body {
-    height: 100%;
-  }
+body {
+  color: get-var('text-primary');
+  background: get-var('background');
+  @include font-family('sans');
+  -webkit-font-smoothing: antialiased;
+}
 
-  h1 {
-    @include type-style('heading-06');
-  }
+h1 {
+  @include type-style('heading-06');
+}
 
-  h2 {
-    @include type-style('heading-05');
-  }
+h2 {
+  @include type-style('heading-05');
+}
 
-  h3 {
-    @include type-style('heading-04');
-  }
+h3 {
+  @include type-style('heading-04');
+}
 
-  h4 {
-    @include type-style('heading-03');
-  }
+h4 {
+  @include type-style('heading-03');
+}
 
-  h5 {
-    @include type-style('heading-02');
-  }
+h5 {
+  @include type-style('heading-02');
+}
 
-  h6 {
-    @include type-style('heading-01');
-  }
+h6 {
+  @include type-style('heading-01');
+}
 
-  span,
-  a,
-  img,
-  label,
-  button,
-  input {
-    display: inline-block;
-    width: auto;
-    overflow: hidden;
-  }
+span,
+a,
+img,
+label,
+button,
+input {
+  display: inline-block;
+  width: auto;
+  overflow: hidden;
+}
 
-  button,
-  select,
-  textarea,
-  input {
-    padding: 5px;
-    outline: none;
-    font-size: 1rem;
-    font-weight: 500;
-    color: black;
-    background-color: white;
-  }
+button,
+select,
+textarea,
+input {
+  padding: 0;
+  outline: none;
+  font-size: 1rem;
+}
 
-  button {
-    padding: 0; /* special */
-    cursor: pointer;
-  }
+button {
+  padding: 0; /* special */
+  cursor: pointer;
+}
 
-  textarea {
-    resize: none;
-  }
+textarea {
+  resize: none;
+}
 
-  img {
-    object-fit: cover;
-    object-position: center;
-  }
+img {
+  object-fit: cover;
+  object-position: center;
+}
 
-  a {
-    text-decoration: none;
-  }
+a {
+  text-decoration: none;
+}
 
-  hr {
-    height: 1px;
-    background-color: #dddddd;
-  }
+hr {
+  height: 1px;
+  background-color: #dddddd;
 }
