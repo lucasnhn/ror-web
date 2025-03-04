@@ -1,9 +1,13 @@
 "use client"
 
-import { Button, Tag, Tile, MetricsWheel} from "@ror/react";
-import { useForm, Controller } from "react-hook-form";
-import { FC, JSX, useEffect, useState } from "react";
-import { BriefcaseBusinessIcon, DataCenterIcon, BoxesIcon, BoxIcon, CpuIcon, HardDriveIcon, PencilIcon, PlusIcon, CrossIcon } from "./navigation/icons";
+import { Button, MetricsWheel, Tile } from "@ror/react";
+import { FC, useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { CrossIcon, PencilIcon } from "./navigation/icons";
+
+// TODO: Implement more types of dashboard items
+// TODO: Implement that user can't add the same metric twice
+// TODO: Convert MetricsCard to styleguide component
 
 interface MetricsBoardProps {
     className?: string;
@@ -191,7 +195,7 @@ const MetricsBoardProps: FC<MetricsBoardProps> = ({ className }) => {
                     </Tile>
                 ))}
                 {shouldEdit && 
-                    <Tile className="rounded-md w-full min-h-48 max-w-[416px] p-3 flex flex-col justify-between border border-transparent hover:border-neutral-200 transition-colors duration-150">
+                    <Tile className="rounded-md w-full min-h-40 max-w-[416px] p-3 flex flex-col gap-6 border border-transparent hover:border-neutral-200 transition-colors duration-150">
                         <div className="flex flex-col gap-2">
                             <div className="flex flex-col gap-1">
                                 <h3>Add new metric</h3>
@@ -199,7 +203,7 @@ const MetricsBoardProps: FC<MetricsBoardProps> = ({ className }) => {
                             <p>What metric do you want to add?</p>
                         </div>
 
-                        <form className="flex flex-col gap-2" onSubmit={handleSubmit(addMetric)}>
+                        <form className="flex flex-row gap-2" onSubmit={handleSubmit(addMetric)}>
                             <Controller
                                 name="metric"
                                 control={control}
