@@ -111,28 +111,38 @@ const getChart = (item: DashboardItem) => {
 
 const MetricsBoardProps: FC<MetricsBoardProps> = ({ className }) => {
     const [shouldEdit, setShouldEdit] = useState<boolean>(false)
-    const [metrics, setMetrics] = useState<DashboardItem[]>(() => {
-        const stored = localStorage.getItem("dashboardIds");
-    
-        try {
-            if (!stored) {
-                return metricTypes.map((metric) => ({ ...metric, id: crypto.randomUUID() }));
+    const [metrics, setMetrics] = useState<DashboardItem[]>([]);
+
+        useEffect(() => {
+            if (typeof window !== "undefined") {
+                const stored = localStorage.getItem("dashboardIds");
+                try {
+                    if (!stored) {
+                        setMetrics(metricTypes.map((metric) => ({ ...metric, id: crypto.randomUUID() })));
+                        return;
+                    }
+
+                    const parsed = JSON.parse(stored);
+                    if (!Array.isArray(parsed)) {
+                        setMetrics(metricTypes.map((metric) => ({ ...metric, id: crypto.randomUUID() })));
+                        return;
+                    }
+
+                    const loadedMetrics = parsed
+                        .map(({ metricId, typeId }: { metricId: string; typeId: number }) => {
+                            const matchedMetric = metricTypes.find((type) => type.typeId === typeId);
+                            return matchedMetric ? { id: metricId, ...matchedMetric } : null;
+                        })
+                        .filter(Boolean) as DashboardItem[];
+
+                    setMetrics(loadedMetrics);
+                } catch (error) {
+                    console.error("Error parsing stored metrics:", error);
+                    setMetrics(metricTypes.map((metric) => ({ ...metric, id: crypto.randomUUID() })));
+                }
             }
-    
-            const parsed = JSON.parse(stored);
-            if (!Array.isArray(parsed)) {
-                return metricTypes.map((metric) => ({ ...metric, id: crypto.randomUUID() }));
-            }
-    
-            return parsed
-                .map(({ metricId, typeId }: { metricId: string; typeId: number }) => {
-                    const matchedMetric = metricTypes.find((type) => type.typeId === typeId);
-                    return matchedMetric ? { id: metricId, ...matchedMetric } : null;
-                }) as DashboardItem[]; 
-        } catch (error) {
-            return metricTypes.map((metric) => ({ ...metric, id: crypto.randomUUID() }));
-        }
-    });
+        }, []);
+
     
     
     const { control, handleSubmit } = useForm<{ metric: string }>({ defaultValues: { metric: metricTypes[0]?.title || "" } });
