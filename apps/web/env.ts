@@ -1,5 +1,6 @@
 import { createEnv } from '@t3-oss/env-nextjs'
 import { z } from 'zod'
+import { env as windowEnv } from 'next-runtime-env'
 
 /**
  * Hack to circumvent how @t3-oss/env-nextjs handles client facing environment variables
@@ -23,9 +24,9 @@ const readVariable = (key: string | undefined) => {
   }
   /**
    * Load environment variables from the client if we're in the browser.
+   * using `next-runtime-env` that has loaded the NEXT_PUBLIC_ prefixed variables into the window object.
    */
-  // @ts-expect-error - __ENV is injected by next.js
-  return window.__ENV[key]
+  return windowEnv(key)
 }
 
 export const env = createEnv({

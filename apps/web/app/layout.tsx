@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter, Ubuntu_Mono } from 'next/font/google'
 import { clsx } from 'clsx'
+import { PublicEnvScript } from 'next-runtime-env'
 import './globals.css'
 import { AppShell } from '@/components/app-shell/app-shell'
 import { Providers } from './providers'
@@ -11,7 +12,7 @@ import { onUnhandledRequest } from '@/__mocks__/utils/on-unhandled-request'
 /**
  * Register the server-side mock server
  */
-if (process.env.NEXT_RUNTIME === 'nodejs' && process.env.NODE_ENV === 'development') {
+if (process.env.NEXT_PUBLIC_MOCKING_ENABLED === 'true') {
   const { server } = await import('@/__mocks__/node')
   server.listen({
     onUnhandledRequest: onUnhandledRequest,
@@ -52,6 +53,9 @@ export default async function RootLayout({
 
   return (
     <html lang='en' className={classes} data-color-scheme={theme}>
+      <head>
+        <PublicEnvScript />
+      </head>
       <body>
         <Providers defaultSidebarOpen={defaultSidebarOpen}>
           <AppShell>{children}</AppShell>
