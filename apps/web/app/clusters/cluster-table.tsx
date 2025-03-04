@@ -3,7 +3,8 @@ import { format } from 'date-fns'
 import { DataTable, DataTableColumnDef } from '@/components/common/data-table'
 import { convertBytes } from '@/utils/bytes'
 import { createColumnHelper } from '@tanstack/react-table'
-import type { Cluster } from '@ror/js-api-client'
+import { Health, type Cluster } from '@ror/js-api-client'
+import { IconIndicator } from '@ror/react/components/icon-indicator'
 
 import Link from 'next/link'
 
@@ -16,16 +17,30 @@ const dataTableColumns = [
       const clusterName = info.getValue()
       const rowOriginal = info.row.original
       const clusterId = rowOriginal.clusterId
-      return <Link href={`/clusters/${clusterId}`}>{clusterName}</Link>
+      return (
+        <Link href={`/clusters/${clusterId}`} className='pr-2 text-(--r-link-primary) underline'>
+          {clusterName}
+        </Link>
+      )
     },
   }),
   columnHelper.accessor('healthStatus.health', {
     header: 'Status',
     cell: (info) => {
       const value = info.getValue()
-      return (
-        <span className={value === 1 ? 'text-green-500' : 'text-red-500'}>{value === 1 ? 'Healthy' : 'Unhealthy'}</span>
-      )
+
+      switch (value) {
+        case Health.Healthy:
+          return <IconIndicator kind='succeeded' label='Operational' className='-translate-x-7' />
+        case Health.Unhealthy:
+          return <IconIndicator kind='caution-minor' label='Unhealthy' className='-translate-x-7' />
+        case Health.Bad:
+          return <IconIndicator kind='caution-major' label='Smelly' className='-translate-x-7' />
+        case Health.Unknown:
+          return <IconIndicator kind='unknown' label='Unknown status' className='-translate-x-7' />
+        default:
+          return <span>N/A</span>
+      }
     },
   }),
   columnHelper.accessor('metrics.cpuPercentage', {

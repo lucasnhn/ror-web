@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { HealthSchema } from '../generic-models/health'
 
 const NhnToolingModel = z.object({
   version: z.string(),
@@ -21,7 +22,7 @@ export const Cluster = z
     clusterId: z.string(),
     clusterName: z.string(),
     healthStatus: z.object({
-      health: z.number(),
+      health: HealthSchema,
     }),
     metrics: z.object({
       cpu: z.number(),
