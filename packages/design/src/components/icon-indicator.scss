@@ -11,14 +11,14 @@
   color: get-var('text-primary');
 }
 
-.#{$prefix}-icon-indicator--sm {
-  --icon-size: #{convert.to-rem(16px)};
-  @include type.type-style('body-01');
-}
-
 .#{$prefix}-icon-indicator--md {
   --icon-size: #{convert.to-rem(20px)};
   @include type.type-style('body-01');
+}
+
+.#{$prefix}-icon-indicator--lg {
+  --icon-size: #{convert.to-rem(24px)};
+  @include type.type-style('body-02');
 }
 
 .#{$prefix}-icon-indicator__icon {

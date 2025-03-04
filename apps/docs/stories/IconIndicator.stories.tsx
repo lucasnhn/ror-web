@@ -9,6 +9,8 @@ const meta = {
     layout: 'centered',
   },
   args: {
+    kind: 'succeeded',
+    label: 'Label',
     size: 'md',
   },
   argTypes: {
@@ -24,7 +26,7 @@ const meta = {
       control: {
         type: 'select',
       },
-      options: ['sm', 'md', 'lg'],
+      options: ['md', 'lg'],
     },
   },
   tags: ['autodocs'],
@@ -43,18 +45,18 @@ export const Default: Story = {
           rowGap: '.5rem',
         }}
       >
-        <IconIndicator kind='failed' label='Failed' {...props} />
-        <IconIndicator kind='caution-major' label='Caution major' {...props} />
-        <IconIndicator kind='caution-minor' label='Caution minor' {...props} />
-        <IconIndicator kind='undefined' label='Undefined' {...props} />
-        <IconIndicator kind='succeeded' label='Succeeded' {...props} />
-        <IconIndicator kind='normal' label='Normal' {...props} />
-        <IconIndicator kind='in-progress' label='In progress' {...props} />
-        <IconIndicator kind='incomplete' label='Incomplete' {...props} />
-        <IconIndicator kind='not-started' label='Not started' {...props} />
-        <IconIndicator kind='pending' label='Pending' {...props} />
-        <IconIndicator kind='unknown' label='Unknown' {...props} />
-        <IconIndicator kind='informative' label='Informative' {...props} />
+        <IconIndicator {...props} kind='failed' label='Failed' />
+        <IconIndicator {...props} kind='caution-major' label='Caution major' />
+        <IconIndicator {...props} kind='caution-minor' label='Caution minor' />
+        <IconIndicator {...props} kind='undefined' label='Undefined' />
+        <IconIndicator {...props} kind='succeeded' label='Succeeded' />
+        <IconIndicator {...props} kind='normal' label='Normal' />
+        <IconIndicator {...props} kind='in-progress' label='In progress' />
+        <IconIndicator {...props} kind='incomplete' label='Incomplete' />
+        <IconIndicator {...props} kind='not-started' label='Not started' />
+        <IconIndicator {...props} kind='pending' label='Pending' />
+        <IconIndicator {...props} kind='unknown' label='Unknown' />
+        <IconIndicator {...props} kind='informative' label='Informative' />
       </div>
     )
   },
