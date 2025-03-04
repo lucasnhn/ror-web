@@ -173,6 +173,16 @@
       /// Links
       @include light-dark('link-primary', p3-color('teal', '500'), p3-color('teal', '400'));
       @include light-dark('link-primary-hover', p3-color('teal', '600'), p3-color('teal', '300'));
+
+      /// Indicators
+      @include light-dark('indicator-blue', p3-color('blue', '400'), p3-color('blue', '500'));
+      @include light-dark('indicator-red', p3-color('red', '400'), p3-color('red', '500'));
+      @include light-dark('indicator-amber', p3-color('amber', '400'), p3-color('amber', '500'));
+      @include light-dark('indicator-orange', p3-color('orange', '400'), p3-color('orange', '500'));
+      @include light-dark('indicator-yellow', p3-color('yellow', '400'), p3-color('yellow', '500'));
+      @include light-dark('indicator-lime', p3-color('lime', '400'), p3-color('lime', '500'));
+      @include light-dark('indicator-green', p3-color('green', '400'), p3-color('green', '500'));
+      @include light-dark('indicator-emerald', p3-color('emerald', '400'), p3-color('emerald', '500'));
     }
   }
 }
