@@ -1,34 +1,25 @@
 "use client"
 
 import { Button, Tag, Tile, MetricsWheel} from "@ror/react";
-import { FC, JSX, useState } from "react";
-import { BriefcaseBusinessIcon, DataCenterIcon, BoxesIcon, BoxIcon, CpuIcon, HardDriveIcon, PencilIcon, PencilOffIcon, PlusIcon } from "./navigation/icons";
+import { useForm, Controller } from "react-hook-form";
+import { FC, JSX, useEffect, useState } from "react";
+import { BriefcaseBusinessIcon, DataCenterIcon, BoxesIcon, BoxIcon, CpuIcon, HardDriveIcon, PencilIcon, PlusIcon, CrossIcon } from "./navigation/icons";
 
 interface MetricsBoardProps {
     className?: string;
 }
 
-interface MetricsData {
-    cpu: number;
-    cpuConsumed: number;
-    memory: number;
-    memoryConsumed: number;
-    clusterCount: number;
-    nodeCount: number;
-    nodePoolCount: number;
-    workspaceCount: number;
-    datacenterCount: number;
-}
-
-type DashboardItemType = "wheel" 
+type MetricType = "" | "wheel" 
 
 interface DashboardItem {
+    id: string;
+    typeId: number;
     title: string;
     icon?: JSX.Element; 
     description?: string;
     seeAll?: boolean;
     seeAllLink?: string;
-    type: DashboardItemType;
+    type: MetricType;
     wheelPart?: number;
     wheelWhole?: number;
     wheelPercentage?: number;
@@ -37,8 +28,9 @@ interface DashboardItem {
     inverted?: boolean;
 }
 
-const dashboardItems: DashboardItem[] = [
+const metricTypes: Omit<DashboardItem, "id">[] = [
     {
+        typeId: 1,
         title: "DATA CENTERS",
         icon: <DataCenterIcon />,
         description: "Data centers with data",
@@ -50,6 +42,7 @@ const dashboardItems: DashboardItem[] = [
         wheelLabel: "5 of 6",
     },
     {
+        typeId: 2,
         title: "WORKSPACES",
         icon: <BriefcaseBusinessIcon />,
         description: "Workspaces with data",
@@ -62,6 +55,7 @@ const dashboardItems: DashboardItem[] = [
         wheelIndicator: true,
     },
     {
+        typeId: 3,
         title: "CLUSTERS",
         icon: <BoxesIcon />,
         description: "Active clusters",
@@ -72,6 +66,7 @@ const dashboardItems: DashboardItem[] = [
         wheelIndicator: true,
     },
     {
+        typeId: 4,
         title: "NODES",
         icon: <BoxIcon />,
         description: "Active nodes",
@@ -82,6 +77,7 @@ const dashboardItems: DashboardItem[] = [
         wheelIndicator: true,
     },
     {
+        typeId: 5,
         title: "CPU",
         icon: <CpuIcon />,
         description: "Utilized CPU power",
@@ -92,6 +88,7 @@ const dashboardItems: DashboardItem[] = [
         inverted: true,
     },
     {
+        typeId: 6,
         title: "MEMORY",
         icon: <HardDriveIcon />,
         description: "Utilized memory",
@@ -103,44 +100,120 @@ const dashboardItems: DashboardItem[] = [
     },
 ]
 
-const getChart = (type: DashboardItemType, wheelPart = 0, wheelWhole = 0, wheelPercentage = 0, wheelLabel = "", wheelIndicator?: boolean, inverted?: boolean) => {
-    let chart;
-    if (type === "wheel") {
-        chart = <MetricsWheel part={wheelPart} whole={wheelWhole} percentage={wheelPercentage} label={wheelLabel} indicator={wheelIndicator} className="block mx-auto" inverted={inverted} /> 
+const getChart = (item: DashboardItem) => {
+    switch (item.type) {
+      case "wheel":
+        return <MetricsWheel part={item.wheelPart} whole={item.wheelWhole} percentage={item.wheelPercentage} label={item.wheelLabel} indicator={item.wheelIndicator} className="block mx-auto" inverted={item.inverted} />;
+      default:
+        return null;
     }
-    return chart
-}
+  };
 
 const MetricsBoardProps: FC<MetricsBoardProps> = ({ className }) => {
     const [shouldEdit, setShouldEdit] = useState<boolean>(false)
+    const [metrics, setMetrics] = useState<DashboardItem[]>(() => {
+        const stored = localStorage.getItem("dashboardIds");
+    
+        try {
+            if (!stored) {
+                return metricTypes.map((metric) => ({ ...metric, id: crypto.randomUUID() }));
+            }
+    
+            const parsed = JSON.parse(stored);
+            if (!Array.isArray(parsed)) {
+                return metricTypes.map((metric) => ({ ...metric, id: crypto.randomUUID() }));
+            }
+    
+            return parsed
+                .map(({ metricId, typeId }: { metricId: string; typeId: number }) => {
+                    const matchedMetric = metricTypes.find((type) => type.typeId === typeId);
+                    return matchedMetric ? { id: metricId, ...matchedMetric } : null;
+                }) as DashboardItem[]; 
+        } catch (error) {
+            return metricTypes.map((metric) => ({ ...metric, id: crypto.randomUUID() }));
+        }
+    });
+    
+    
+    const { control, handleSubmit } = useForm<{ metric: string }>({ defaultValues: { metric: metricTypes[0]?.title || "" } });
+
+    const removeMetric = (id: string) => setMetrics((prevMetrics) => prevMetrics.filter((metric) => metric.id !== id));
+
+    const addMetric = (data: { metric: string }) => {
+        const newMetric = metricTypes.find(metric => metric.title === data.metric);
+        if (newMetric) {
+            setMetrics((prevMetrics) => [...prevMetrics, { ...newMetric, id: crypto.randomUUID() }]);
+        }
+    }
+
+    const saveIds = () => {
+        const dashboardIds = metrics.map(({ id, typeId }) => ({ metricId: id, typeId }));
+        localStorage.setItem("dashboardIds", JSON.stringify(dashboardIds));
+        setShouldEdit(false);
+    }
 
     return (
         <div className={`flex flex-col gap-8 ${className}`}>
             <div className="flex flex-row justify-between items-center">
-                <h1>Dashboard</h1>
-                <Button className="flex gap-3 text-lg" onClick={() => setShouldEdit(!shouldEdit)}>
-                    {shouldEdit ? <PencilOffIcon /> : <PencilIcon />} Edit
-                </Button>
+                <h1 className="text-4xl font-bold">DASHBOARD</h1>
+                {shouldEdit ? (
+                    <div className="flex gap-3">
+                        <Button variant="primary" onClick={() => saveIds()}>Save</Button>
+                        <Button variant="secondary" onClick={() => setShouldEdit(false)}>Cancel</Button>
+                    </div>
+                ) : (
+                    <Button className="flex gap-2" onClick={() => setShouldEdit(true)}><PencilIcon className="h-5 w-5"/> Edit</Button>
+                )}
             </div>
+
             <hr className="border-slate-500" />
+
             <div className={`flex flex-wrap justify-center gap-4`}>
-                {dashboardItems.map(({title, icon, description, seeAll, seeAllLink, type, wheelPart, wheelWhole, wheelPercentage, wheelLabel, wheelIndicator, inverted}: DashboardItem, i) => (
-                    <Tile key={i} className="rounded-md w-full max-w-[416px] p-3 flex flex-col justify-between">
+                {metrics.map((item: DashboardItem, i) => (
+                    <Tile key={i} className="rounded-md w-full min-h-48 max-w-[416px] p-3 flex flex-col justify-between">
                         <div className="flex justify-between">
                             <div className="flex flex-col gap-1">
-                                <h3 className="text-lg font-bold">{title}</h3>
-                                <p className="text-sm">{description}</p>
-                                {seeAll && <p className="hover:underline"><a href={seeAllLink}>See all</a></p>}
+                                <h3 className="text-lg font-bold">{item.title}</h3>
+                                <p className="text-sm">{item.description}</p>
+                                {item.seeAll && <p className="hover:underline"><a href={item.seeAllLink}>See all</a></p>}
                             </div>
-                            {icon}
+                            {shouldEdit ? (
+                                <button onClick={() => removeMetric(item.id)}  className="text-red-500 hover:text-red-600 h-fit">
+                                    <CrossIcon /> 
+                                </button>
+                            ) : (
+                                item.icon
+                            )}
                         </div>
-                        {getChart(type, wheelPart, wheelWhole, wheelPercentage, wheelLabel, wheelIndicator, inverted)}
+                        {getChart(item)}
                     </Tile>
                 ))}
                 {shouldEdit && 
-                    <Tile className="rounded-md w-full max-w-[416px] p-3 flex flex-col gap-2 items-center justify-center">
-                        <h3 className="text-lg font-bold">ADD NEW DASHBOARD ITEM</h3>
-                        <PlusIcon className="w-16 h-16" />
+                    <Tile className="rounded-md w-full min-h-48 max-w-[416px] p-3 flex flex-col justify-between border border-transparent hover:border-neutral-200 transition-colors duration-150">
+                        <div className="flex flex-col  gap-2">
+                            <div className="flex justify-between">
+                                <div className="flex flex-col gap-1">
+                                    <h3 className="text-lg font-bold">ADD NEW METRIC</h3>
+                                </div>
+                                <PlusIcon />
+                            </div>
+                            <p>What metric do you want to add?</p>
+                        </div>
+
+                        <form className="flex flex-col gap-2" onSubmit={handleSubmit(addMetric)}>
+                            <Controller
+                                name="metric"
+                                control={control}
+                                render={({ field }) => (
+                                    <select {...field} className="w-fit rounded-md bg-neutral-800 border border-neutral-200 py-2 px-4">
+                                        {metricTypes.map((type) => (
+                                            <option key={type.typeId} value={type.title}>{type.title}</option>
+                                        ))}
+                                    </select>
+                                )}
+                            />
+                            <Button type="submit" className="max-h-9">Add</Button>
+                        </form>
                     </Tile>
                 }
             </div>

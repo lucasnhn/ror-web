@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@evilmartians/harmony": "1.4.0",
-    "react-circular-progressbar": "2.2.0"
+    "react-circular-progressbar": "2.2.0",
+    "react-hook-form": "7.54.2"
   }
 }

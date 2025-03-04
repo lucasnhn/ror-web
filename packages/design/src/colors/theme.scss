@@ -2,6 +2,14 @@
 @use './white.scss' as *;
 @use './neutral.scss' as *;
 @use './teal.scss' as *;
+@use './blue.scss' as *;
+@use './red.scss' as *;
+@use './amber.scss' as *;
+@use './orange.scss' as *;
+@use './yellow.scss' as *;
+@use './lime.scss' as *;
+@use './green.scss' as *;
+@use './emerald.scss' as *;
 
 $colors: (
   'white': (
@@ -16,6 +24,39 @@ $colors: (
     'p3': $teal-p3,
     'rgb': $teal-rgb,
   ),
+  'blue': (
+    'p3': $blue-p3,
+    'rgb': $blue-rgb,
+  ),
+  'red': (
+    'p3': $red-p3,
+    'rgb': $red-rgb,
+  ),
+  'amber': (
+    'p3': $amber-p3,
+    'rgb': $amber-rgb,
+  ),
+  'orange': (
+    'p3': $orange-p3,
+    'rgb': $orange-rgb,
+  ),
+  'yellow': (
+    'p3': $yellow-p3,
+    'rgb': $yellow-rgb,
+  ),
+  'lime': (
+    'p3': $lime-p3,
+    'rgb': $lime-rgb,
+  ),
+  'green': (
+    'p3': $green-p3,
+    'rgb': $green-rgb,
+  ),
+  'emerald': (
+    'p3': $emerald-p3,
+    'rgb': $emerald-rgb,
+  ),
+
 );
 
 /// Gets a color from the design system color palette

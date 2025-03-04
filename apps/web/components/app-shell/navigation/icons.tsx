@@ -188,7 +188,6 @@ export const BoxIcon: React.FC<{ className?: string }> = ({ className }) => (
     strokeWidth="2" 
     strokeLinecap="round" 
     strokeLinejoin="round" 
-    className="lucide lucide-box"
     className={`lucide lucide-box ${className}`} 
   >
     <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/>
@@ -269,9 +268,9 @@ export const PencilOffIcon: React.FC<{ className?: string }> = ({ className }) =
     viewBox="0 0 24 24" 
     fill="none" 
     stroke="currentColor" 
-    stroke-width="2" 
-    stroke-linecap="round" 
-    stroke-linejoin="round" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round" 
     className={`lucide lucide-pencil-off ${className}`} 
   >
     <path d="m10 10-6.157 6.162a2 2 0 0 0-.5.833l-1.322 4.36a.5.5 0 0 0 .622.624l4.358-1.323a2 2 0 0 0 .83-.5L14 13.982"/>
@@ -296,5 +295,23 @@ export const PlusIcon: React.FC<{ className?: string }> = ({ className }) => (
   >
     <path d="M5 12h14"/>
     <path d="M12 5v14"/>
+  </svg>
+)
+
+export const CrossIcon: React.FC<{ className?: string }> = ({ className }) => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    width="24" 
+    height="24" 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round" 
+    className={`lucide lucide-x ${className}`} 
+  >
+    <path d="M18 6 6 18"/>
+    <path d="m6 6 12 12"/>
   </svg>
 )

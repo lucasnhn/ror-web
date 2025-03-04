@@ -80,6 +80,16 @@
   /// Links
   @include light-dark('link-primary', rgb-color('teal', '500'), rgb-color('teal', '400'));
   @include light-dark('link-primary-hover', rgb-color('teal', '600'), rgb-color('teal', '300'));
+
+  /// Indicators
+  @include light-dark('indicator-blue', rgb-color('blue', '400'), rgb-color('blue', '500'));
+  @include light-dark('indicator-red', rgb-color('red', '400'), rgb-color('red', '500'));
+  @include light-dark('indicator-amber', rgb-color('amber', '400'), rgb-color('amber', '500'));
+  @include light-dark('indicator-orange', rgb-color('orange', '400'), rgb-color('orange', '500'));
+  @include light-dark('indicator-yellow', rgb-color('yellow', '400'), rgb-color('yellow', '500'));
+  @include light-dark('indicator-lime', rgb-color('lime', '400'), rgb-color('lime', '500'));
+  @include light-dark('indicator-green', rgb-color('green', '400'), rgb-color('green', '500'));
+  @include light-dark('indicator-emerald', rgb-color('emerald', '400'), rgb-color('emerald', '500'));
 }
 
 @supports (color: oklch(0% 0 0)) {

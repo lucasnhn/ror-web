@@ -1,4 +1,5 @@
 @use '../config.scss' as c;
+@use '../utilities/css-variable.scss' as cv;
 
 .#{c.$prefix}-metrics-wheel {
     display: flex;
@@ -25,10 +26,9 @@
         letter-spacing: 0.16px;
     }
 
-    &--indicator {
-        .#{c.$prefix}-metrics-wheel__circle {
-            // stroke: var(--#{c.$prefix}-indicator-color, red);
-            // stroke: red;
+    @each $color in (blue, red, amber, orange, yellow, lime, green, emerald) {
+        .#{$color} {
+            stroke: cv.get-var("indicator-#{$color}");
         }
     }
 }
