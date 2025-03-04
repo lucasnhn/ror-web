@@ -5,6 +5,7 @@ export type { ButtonProps, ButtonSize, ButtonVariant } from './components/button
 export { CodeSnippet } from './components/code-snippet.tsx'
 export { DefinitionList, DefinitionTerm, DefinitionDescription } from './components/definition-list.tsx'
 export type { DefinitionListProps } from './components/definition-list.tsx'
+export { IconIndicator } from './components/icon-indicator.tsx'
 export { Layer } from './components/layer.tsx'
 export {
   TableContainer,
