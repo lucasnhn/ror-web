@@ -14,8 +14,11 @@ import type { TableProps } from '@ror/react/components/table'
 import { SortDirection } from '@ror/react/utils/sorting'
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 
-// Re-export of the ColumnDef type, that is typically used to define columns in a DataTable.
-export type { ColumnDef }
+/**
+ * DataTableColumnDef is a type that represents a column definition for a DataTable.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type DataTableColumnDef<TData> = ColumnDef<TData, any>
 
 export interface DataTableProps<TData> extends TableProps {
   /**
@@ -40,7 +43,7 @@ export interface DataTableProps<TData> extends TableProps {
    * @link [API Docs](https://tanstack.com/table/v8/docs/api/core/table#columns)
    * @link [Guide](https://tanstack.com/table/v8/docs/guide/tables)
    */
-  columns: ColumnDef<TData, unknown>[]
+  columns: ColumnDef<TData>[]
 }
 
 export function DataTable<TData>(props: DataTableProps<TData>) {
@@ -53,6 +56,7 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
   })
 
   const handleOnSort = (id: string, direction: Exclude<SortDirection, 'NONE'>) => {
+    // TODO: Implement sorting logic together with @tanstack/react-table
     console.log(`Sorting by ${id} in ${direction} order`)
   }
 

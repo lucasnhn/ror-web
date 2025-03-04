@@ -1,6 +1,6 @@
 'use client'
 import { format } from 'date-fns'
-import { DataTable } from '@/components/common/data-table'
+import { DataTable, DataTableColumnDef } from '@/components/common/data-table'
 import { convertBytes } from '@/utils/bytes'
 import { createColumnHelper } from '@tanstack/react-table'
 import type { Cluster } from '@ror/js-api-client'
@@ -83,7 +83,7 @@ const dataTableColumns = [
       return <span>{projectName ?? '-'}</span>
     },
   }),
-]
+] satisfies DataTableColumnDef<Cluster>[]
 
 interface ClusterTableProps<T> {
   data: T[]
