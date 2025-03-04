@@ -1,5 +1,5 @@
 .item {
-  --menu-item-hover-bg: var(--r-layer-01-hover);
+  --menu-item-hover-bg: var(--r-layer-hover);
   --menu-item-gap: calc(var(--spacing) * 3);
   --menu-item-x-padding: calc(var(--spacing) * 2);
   --menu-item-y-padding: calc(var(--spacing) * 1);
@@ -15,6 +15,8 @@
   min-width: 2rem;
   border-radius: var(--radius-sm);
   cursor: pointer;
+  background: transparent;
+  color: var(--r-text-primary);
 }
 
 .trigger:hover {
