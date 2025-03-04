@@ -6,8 +6,6 @@ import {
   TableCell,
   TableHead,
   TableTitle,
-  TableHeader,
-  TableActions,
   TableSubtitle,
   TableContainer,
   TableSortHeader,
@@ -42,7 +40,7 @@ export interface DataTableProps<TData> extends TableProps {
    * @link [API Docs](https://tanstack.com/table/v8/docs/api/core/table#columns)
    * @link [Guide](https://tanstack.com/table/v8/docs/guide/tables)
    */
-  columns: ColumnDef<TData, any>[]
+  columns: ColumnDef<TData, unknown>[]
 }
 
 export function DataTable<TData>(props: DataTableProps<TData>) {

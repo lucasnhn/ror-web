@@ -1,5 +1,5 @@
 'use client'
-import { intlFormatDistance, intlFormat, format } from 'date-fns'
+import { format } from 'date-fns'
 import { DataTable } from '@/components/common/data-table'
 import { convertBytes } from '@/utils/bytes'
 import { createColumnHelper } from '@tanstack/react-table'
@@ -57,7 +57,6 @@ const dataTableColumns = [
   columnHelper.accessor('lastObserved', {
     header: 'Last heartbeat',
     cell: (info) => {
-      const now = Date.now()
       const lastObserved = new Date(info.getValue())
       const formatted = format(lastObserved, 'dd LLL, yyyy - HH:mm:ss')
       return <span>{formatted}</span>

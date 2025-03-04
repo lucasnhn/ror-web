@@ -1,5 +1,4 @@
 import { authGuard } from '@/app/auth-guard'
-import { KubernetesLogo } from '@/components/common/kubernetes-logo'
 import { rorApiClient } from '@/services/ror-api'
 import { Breadcrumb, BreadcrumbItem } from '@ror/react/components/breadcrumb'
 import { Tile } from '@ror/react/components/tile'

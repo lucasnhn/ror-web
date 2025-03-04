@@ -12,7 +12,7 @@ import { onUnhandledRequest } from '@/__mocks__/utils/on-unhandled-request'
  * Register the server-side mock server
  */
 if (process.env.NEXT_RUNTIME === 'nodejs' && process.env.NODE_ENV === 'development') {
-  const { server } = require('@/__mocks__/node')
+  const { server } = await import('@/__mocks__/node')
   server.listen({
     onUnhandledRequest: onUnhandledRequest,
   })
