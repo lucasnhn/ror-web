@@ -1,9 +1,9 @@
 "use client"
 
 import { Button, MetricsWheel, Tile } from "@ror/react";
+import { CrossIcon, PencilIcon } from "lucide-react";
 import { FC, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { CrossIcon, PencilIcon } from "../../components/app-shell/navigation/icons";
 
 // TODO: Implement more types of dashboard items
 // TODO: Implement that user can't add the same metric twice
@@ -107,7 +107,7 @@ const getChart = (item: DashboardItem) => {
     }
   };
 
-const MetricsBoardProps: FC<MetricsBoardProps> = ({ className }) => {
+export const MetricsBoard = ({ className }: MetricsBoardProps) => {
     const [shouldEdit, setShouldEdit] = useState<boolean>(false)
     const [metrics, setMetrics] = useState<DashboardItem[]>([]);
 
@@ -224,5 +224,3 @@ const MetricsBoardProps: FC<MetricsBoardProps> = ({ className }) => {
         </div>
     )
 }
-
-export default MetricsBoardProps

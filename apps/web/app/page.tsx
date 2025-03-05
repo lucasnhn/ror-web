@@ -1,7 +1,7 @@
-import MetricsBoard from '@/app/clusters/metrics-board'
 import { Button, Tile } from '@ror/react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { MetricsBoard } from './clusters/metrics-board'
 
 export default function Home() {
   return (

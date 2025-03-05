@@ -1,5 +1,17 @@
+@use "sass:map";
 @use '../config.scss' as c;
 @use '../utilities/css-variable.scss' as cv;
+
+$metric-colors: (
+    "blue": cv.get-var("metrics-blue"),
+    "red": cv.get-var("metrics-red"),
+    "amber": cv.get-var("metrics-amber"),
+    "orange": cv.get-var("metrics-orange"),
+    "yellow": cv.get-var("metrics-yellow"),
+    "lime": cv.get-var("metrics-lime"),
+    "green": cv.get-var("metrics-green"),
+    "emerald": cv.get-var("metrics-emerald"),
+);
 
 .#{c.$prefix}-metrics-wheel {
     display: flex;
@@ -16,6 +28,12 @@
         stroke-linecap: round;
         fill: transparent;
         transition: stroke-dashoffset 0.5s ease-in-out;
+
+        @each $color, $value in $metric-colors {
+            &--#{"" + $color} {
+                stroke: $value;
+            }
+        }
     }
 
     &__label {
@@ -27,9 +45,4 @@
         letter-spacing: 0.16px;
     }
 
-    @each $color in (blue, red, amber, orange, yellow, lime, green, emerald) {
-        &--#{"" + $color} {
-            stroke: cv.get-var("metrics-#{$color}");
-        }
-    }
 }

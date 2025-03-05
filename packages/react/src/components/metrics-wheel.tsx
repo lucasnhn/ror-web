@@ -112,7 +112,7 @@ export function MetricsWheel({ part, whole, percentage, label="", indicator=fals
         <div className={classes} {...rest}>
             <svg className={`w-28 h-28 ${className}`} viewBox="0 0 100 100">
                 <circle
-                    className={color}
+                    className={`r-metrics-wheel__circle r-metrics-wheel__circle--${color}`}
                     strokeWidth="10"
                     strokeLinecap="round"
                     cx="50"
