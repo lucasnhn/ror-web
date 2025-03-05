@@ -2,7 +2,6 @@
 
 import clsx from "clsx";
 import React, { AriaAttributes, HTMLAttributes } from "react";
-import "react-circular-progressbar/dist/styles.css";
 
 export interface MetricsWheelProps extends HTMLAttributes<HTMLElement> {
     /**

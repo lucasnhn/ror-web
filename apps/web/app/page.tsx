@@ -1,4 +1,4 @@
-import MetricsBoard from '@/components/app-shell/metrics-board'
+import MetricsBoard from '@/app/clusters/metrics-board'
 import { Button, Tile } from '@ror/react'
 import Image from 'next/image'
 import Link from 'next/link'

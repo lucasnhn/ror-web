@@ -1,5 +1,7 @@
 @use '../config.scss' as c;
 
+// TODO: Finish tag component
+
 .#{c.$prefix}-tag {
   display: inline-flex;
   align-items: center;

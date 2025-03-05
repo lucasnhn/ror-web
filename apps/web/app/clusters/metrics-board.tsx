@@ -3,11 +3,12 @@
 import { Button, MetricsWheel, Tile } from "@ror/react";
 import { FC, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { CrossIcon, PencilIcon } from "./navigation/icons";
+import { CrossIcon, PencilIcon } from "../../components/app-shell/navigation/icons";
 
 // TODO: Implement more types of dashboard items
 // TODO: Implement that user can't add the same metric twice
 // TODO: Convert MetricsCard to styleguide component
+// TODO: Simplify component
 
 interface MetricsBoardProps {
     className?: string;

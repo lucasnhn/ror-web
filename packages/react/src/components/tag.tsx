@@ -5,6 +5,8 @@ import { AriaAttributes, HTMLAttributes } from "react";
 export type TagVariant = 'readonly' | 'dismissible' | 'operational' | 'selectable' 
 export type SizeVariant = 'small' | 'medium' | 'large'
 
+// TODO: Finish tag component
+
 export interface TagProps extends HTMLAttributes<HTMLElement> {
     /**
      * Specify the label for the breadcrumb container
