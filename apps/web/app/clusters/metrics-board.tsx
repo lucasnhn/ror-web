@@ -2,7 +2,7 @@
 
 import { Button, MetricsWheel, Tile } from '@ror/react'
 import { CrossIcon, PencilIcon } from 'lucide-react'
-import { FC, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 
 // TODO: Implement more types of dashboard items
