@@ -1,4 +1,4 @@
-@use "sass:map";
+@use 'sass:map';
 @use './white.scss' as *;
 @use './neutral.scss' as *;
 @use './teal.scss' as *;
@@ -10,6 +10,7 @@
 @use './lime.scss' as *;
 @use './green.scss' as *;
 @use './emerald.scss' as *;
+@use './purple.scss' as *;
 
 $colors: (
   'white': (
@@ -56,7 +57,10 @@ $colors: (
     'p3': $emerald-p3,
     'rgb': $emerald-rgb,
   ),
-
+  'purple': (
+    'p3': $purple-p3,
+    'rgb': $purple-rgb,
+  ),
 );
 
 /// Gets a color from the design system color palette
