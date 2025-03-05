@@ -1,7 +1,7 @@
 "use client"
 
 import clsx from "clsx";
-import React, { AriaAttributes, HTMLAttributes } from "react";
+import { AriaAttributes, HTMLAttributes } from "react";
 
 export interface MetricsWheelProps extends HTMLAttributes<HTMLElement> {
     /**
