@@ -1,6 +1,6 @@
 import { SVGProps } from 'react'
 
-type RorLogoProps = SVGProps<SVGSVGElement>;
+type RorLogoProps = SVGProps<SVGSVGElement>
 
 export function RorLogo(props: RorLogoProps) {
   return (
