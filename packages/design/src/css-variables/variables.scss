@@ -5,6 +5,8 @@
 @use '../spacing' as *;
 @use '../utilities/css-variable' as cv;
 
+// TODO: Split into core-tokens and component-tokens
+
 /// Set CSS variable with a light-dark value
 /// @param {String} $property-name - The CSS property to set
 /// @param {Color} $light-value - The value to use in light mode
@@ -88,15 +90,15 @@
   @include light-dark('link-primary', rgb-color('teal', '500'), rgb-color('teal', '400'));
   @include light-dark('link-primary-hover', rgb-color('teal', '600'), rgb-color('teal', '300'));
 
-  /// Indicators
-  @include light-dark('indicator-blue', rgb-color('blue', '400'), rgb-color('blue', '500'));
-  @include light-dark('indicator-red', rgb-color('red', '400'), rgb-color('red', '500'));
-  @include light-dark('indicator-amber', rgb-color('amber', '400'), rgb-color('amber', '500'));
-  @include light-dark('indicator-orange', rgb-color('orange', '400'), rgb-color('orange', '500'));
-  @include light-dark('indicator-yellow', rgb-color('yellow', '400'), rgb-color('yellow', '500'));
-  @include light-dark('indicator-lime', rgb-color('lime', '400'), rgb-color('lime', '500'));
-  @include light-dark('indicator-green', rgb-color('green', '400'), rgb-color('green', '500'));
-  @include light-dark('indicator-emerald', rgb-color('emerald', '400'), rgb-color('emerald', '500'));
+  /// Metrics
+  @include light-dark('metrics-blue', rgb-color('blue', '400'), rgb-color('blue', '500'));
+  @include light-dark('metrics-red', rgb-color('red', '400'), rgb-color('red', '500'));
+  @include light-dark('metrics-amber', rgb-color('amber', '400'), rgb-color('amber', '500'));
+  @include light-dark('metrics-orange', rgb-color('orange', '400'), rgb-color('orange', '500'));
+  @include light-dark('metrics-yellow', rgb-color('yellow', '400'), rgb-color('yellow', '500'));
+  @include light-dark('metrics-lime', rgb-color('lime', '400'), rgb-color('lime', '500'));
+  @include light-dark('metrics-green', rgb-color('green', '400'), rgb-color('green', '500'));
+  @include light-dark('metrics-emerald', rgb-color('emerald', '400'), rgb-color('emerald', '500'));
 
   /// Status
   @include light-dark('support-error', rgb-color('red', '500'), rgb-color('red', '400'));
@@ -182,6 +184,16 @@
       /// Links
       @include light-dark('link-primary', p3-color('teal', '500'), p3-color('teal', '400'));
       @include light-dark('link-primary-hover', p3-color('teal', '600'), p3-color('teal', '300'));
+
+      /// Metrics
+      @include light-dark('metrics-blue', p3-color('blue', '400'), p3-color('blue', '500'));
+      @include light-dark('metrics-red', p3-color('red', '400'), p3-color('red', '500'));
+      @include light-dark('metrics-amber', p3-color('amber', '400'), p3-color('amber', '500'));
+      @include light-dark('metrics-orange', p3-color('orange', '400'), p3-color('orange', '500'));
+      @include light-dark('metrics-yellow', p3-color('yellow', '400'), p3-color('yellow', '500'));
+      @include light-dark('metrics-lime', p3-color('lime', '400'), p3-color('lime', '500'));
+      @include light-dark('metrics-green', p3-color('green', '400'), p3-color('green', '500'));
+      @include light-dark('metrics-emerald', p3-color('emerald', '400'), p3-color('emerald', '500'));
 
       /// Status
       @include light-dark('support-error', p3-color('red', '500'), p3-color('red', '400'));
