@@ -88,6 +88,25 @@
   @include light-dark('link-primary', rgb-color('teal', '500'), rgb-color('teal', '400'));
   @include light-dark('link-primary-hover', rgb-color('teal', '600'), rgb-color('teal', '300'));
 
+  /// Indicators
+  @include light-dark('indicator-blue', rgb-color('blue', '400'), rgb-color('blue', '500'));
+  @include light-dark('indicator-red', rgb-color('red', '400'), rgb-color('red', '500'));
+  @include light-dark('indicator-amber', rgb-color('amber', '400'), rgb-color('amber', '500'));
+  @include light-dark('indicator-orange', rgb-color('orange', '400'), rgb-color('orange', '500'));
+  @include light-dark('indicator-yellow', rgb-color('yellow', '400'), rgb-color('yellow', '500'));
+  @include light-dark('indicator-lime', rgb-color('lime', '400'), rgb-color('lime', '500'));
+  @include light-dark('indicator-green', rgb-color('green', '400'), rgb-color('green', '500'));
+  @include light-dark('indicator-emerald', rgb-color('emerald', '400'), rgb-color('emerald', '500'));
+
+  /// Status
+  @include light-dark('support-error', rgb-color('red', '500'), rgb-color('red', '400'));
+  @include light-dark('support-success', rgb-color('green', '500'), rgb-color('green', '400'));
+  @include light-dark('support-warning', rgb-color('yellow', '500'), rgb-color('yellow', '400'));
+  @include light-dark('support-info', rgb-color('blue', '500'), rgb-color('blue', '400'));
+  @include light-dark('support-cuation-minor', rgb-color('yellow', '500'), rgb-color('yellow', '400'));
+  @include light-dark('support-cuation-major', rgb-color('orange', '500'), rgb-color('orange', '400'));
+  @include light-dark('support-cuation-undefined', rgb-color('purple', '500'), rgb-color('purple', '400'));
+
   // Spacing
   @include spacing-custom-properties();
 }
@@ -163,6 +182,15 @@
       /// Links
       @include light-dark('link-primary', p3-color('teal', '500'), p3-color('teal', '400'));
       @include light-dark('link-primary-hover', p3-color('teal', '600'), p3-color('teal', '300'));
+
+      /// Status
+      @include light-dark('support-error', p3-color('red', '500'), p3-color('red', '400'));
+      @include light-dark('support-success', p3-color('green', '500'), p3-color('green', '400'));
+      @include light-dark('support-warning', p3-color('yellow', '500'), p3-color('yellow', '400'));
+      @include light-dark('support-info', p3-color('blue', '500'), p3-color('blue', '400'));
+      @include light-dark('support-cuation-minor', p3-color('yellow', '500'), p3-color('yellow', '400'));
+      @include light-dark('support-cuation-major', p3-color('orange', '500'), p3-color('orange', '400'));
+      @include light-dark('support-cuation-undefined', p3-color('purple', '500'), p3-color('purple', '400'));
     }
   }
 }
