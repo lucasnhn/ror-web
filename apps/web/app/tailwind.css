@@ -1,0 +1,124 @@
+@import '@evilmartians/harmony/tailwind.css';
+@import 'tailwindcss';
+
+/**
+ * Configure theme variables for tailwind
+ */
+@theme {
+  /* Override spacing to use our spacing tokens from @ror/styles */
+  --spacing: inherit; /* for reference purposed this used to be 0.25rem/4px */
+  --spacing-1: var(--r-spacing-01); /* 2px */
+  --spacing-2: var(--r-spacing-02); /* 4px */
+  --spacing-3: var(--r-spacing-03); /* 8px */
+  --spacing-4: var(--r-spacing-04); /* 12px */
+  --spacing-5: var(--r-spacing-05); /* 16px */
+  --spacing-6: var(--r-spacing-06); /* 24px */
+  --spacing-7: var(--r-spacing-07); /* 32px */
+  --spacing-8: var(--r-spacing-08); /* 40px */
+  --spacing-9: var(--r-spacing-09); /* 48px */
+  --spacing-10: var(--r-spacing-10); /* 64px */
+  --spacing-11: var(--r-spacing-11); /* 80px */
+  --spacing-12: var(--r-spacing-12); /* 96px */
+  --spacing-13: var(--r-spacing-13); /* 128px */
+  --spacing-14: var(--r-spacing-14); /* 160px */
+}
+
+/**
+* Create custom utility classes making use of our different tokens from @ror/styles
+*/
+
+@layer utilities {
+  /* Background Utilities */
+  .bg-background {
+    background-color: var(--r-background);
+  }
+  .bg-background-hover {
+    background-color: var(--r-background-hover);
+  }
+  .bg-background-active {
+    background-color: var(--r-background-active);
+  }
+  .bg-background-selected {
+    background-color: var(--r-background-selected);
+  }
+  .bg-background-selected-hover {
+    background-color: var(--r-background-selected-hover);
+  }
+  .bg-background-inverse {
+    background-color: var(--r-background-inverse);
+  }
+  .bg-background-inverse-hover {
+    background-color: var(--r-background-inverse-hover);
+  }
+
+  /* Layer Utilities */
+  .bg-layer {
+    background-color: var(--r-layer);
+  }
+  .bg-layer-hover {
+    background-color: var(--r-layer-hover);
+  }
+  .bg-layer-active {
+    background-color: var(--r-layer-active);
+  }
+  .bg-layer-selected {
+    background-color: var(--r-layer-selected);
+  }
+  .bg-layer-selected-hover {
+    background-color: var(--r-layer-selected-hover);
+  }
+  .bg-layer-accent {
+    background-color: var(--r-layer-accent);
+  }
+  .bg-layer-accent-hover {
+    background-color: var(--r-layer-accent-hover);
+  }
+  .bg-layer-accent-active {
+    background-color: var(--r-layer-accent-active);
+  }
+
+  /* Field Utilities */
+  .bg-field {
+    background-color: var(--r-field);
+  }
+  .bg-field-hover {
+    background-color: var(--r-field-hover);
+  }
+
+  /* Border Utilities */
+  .border-interactive {
+    border-color: var(--r-border-interactive);
+  }
+  .border-subtle {
+    border-color: var(--r-border-subtle);
+  }
+  .border-subtle-selected {
+    border-color: var(--r-border-subtle-selected);
+  }
+  .border-strong {
+    border-color: var(--r-border-strong);
+  }
+
+  /* Text Utilities */
+  .text-primary {
+    color: var(--r-text-primary);
+  }
+  .text-secondary {
+    color: var(--r-text-secondary);
+  }
+  .text-placeholder {
+    color: var(--r-text-placeholder);
+  }
+  .text-on-color {
+    color: var(--r-text-on-color);
+  }
+  .text-inverse {
+    color: var(--r-text-inverse);
+  }
+
+  /* Visual Utilities */
+  .hide-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+}
