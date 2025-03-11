@@ -197,8 +197,8 @@ export const MetricsBoard = ({ className }: MetricsBoardProps) => {
           <MetricsCard key={i} item={item} shouldEdit={shouldEdit} onRemove={() => removeMetric(item.id)} />
         ))}
         {shouldEdit && (
-          <MetricsCard className='flex-col gap-6 border border-transparent hover:border-neutral-200 transition-colors duration-150'>
-            <>
+          <MetricsCard className='border border-transparent hover:border-neutral-200 transition-colors duration-150'>
+            <div className='flex flex-col gap-6 '>
               <div className='flex flex-col gap-2'>
                 <div className='flex flex-col gap-1'>
                   <h3>Add new metric</h3>
@@ -224,7 +224,7 @@ export const MetricsBoard = ({ className }: MetricsBoardProps) => {
                   Add
                 </Button>
               </form>
-            </>
+            </div>
           </MetricsCard>
         )}
       </div>
