@@ -120,6 +120,9 @@
 
   // Spacing
   @include spacing-custom-properties();
+
+  // Hover colors
+  @include light-dark('hover-red', rgb-color('red', '500'), rgb-color('red', '600'));
 }
 
 @supports (color: oklch(0% 0 0)) {
