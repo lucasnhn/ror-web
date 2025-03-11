@@ -9,7 +9,7 @@ interface BaseMetricsCardProps extends HTMLAttributes<HTMLElement> {
   /**
    * Specify the label for the metrics card
    */
-  'aria-label'?: AriaAttributes['aria-label']
+  'ariaLabel'?: AriaAttributes['aria-label']
 
   /**
    * Specify an optional className to be applied to the container node
@@ -46,7 +46,7 @@ interface MetricsCardWithChildrenProps {
   children: ReactNode
 }
 
-type MetricsCardProps = BaseMetricsCardProps & (MetricsCardWithItemProps | MetricsCardWithChildrenProps)
+export type MetricsCardProps = BaseMetricsCardProps & (MetricsCardWithItemProps | MetricsCardWithChildrenProps)
 
 function isMetricsCardWithItemProps(props: MetricsCardProps): props is BaseMetricsCardProps & MetricsCardWithItemProps {
   return 'item' in props && props.item !== undefined
@@ -56,7 +56,7 @@ function isMetricsCardWithChildrenProps(props: MetricsCardProps): props is BaseM
   return 'children' in props && isValidElement(props.children)
 }
 
-type MetricType = 'wheel' | 'removelaterwhenyouhavemore'
+export type MetricType = 'wheel' | 'removelaterwhenyouhavemore'
 
 export interface MetricsCardItem {
   id: string
