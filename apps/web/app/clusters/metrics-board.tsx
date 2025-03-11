@@ -1,7 +1,8 @@
 'use client'
 
-import { CrossIcon, PencilIcon } from '@/components/icons'
+import { PencilIcon } from '@/components/icons'
 import { Button, MetricsWheel, Tile, MetricsCard } from '@ror/react'
+import type { MetricsCardItem } from '@ror/react'
 import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 
@@ -14,30 +15,12 @@ interface MetricsBoardProps {
   className?: string
 }
 
-type MetricType = '' | 'wheel'
-
-interface DashboardItem {
-  id: string
-  typeId: number
-  title: string
-  description?: string
-  linkText?: string
-  linkPath?: string
-  type: MetricType
-  wheelPart?: number
-  wheelWhole?: number
-  wheelPercentage?: number
-  wheelLabel?: string
-  wheelIndicator?: boolean
-  inverted?: boolean
-}
-
-const metricTypes: Omit<DashboardItem, 'id'>[] = [
+const metricTypes: Omit<MetricsCardItem, 'id'>[] = [
   {
     typeId: 1,
     title: 'Data centers',
     description: 'Data centers with data',
-    linkText: "See all",
+    linkText: 'See all',
     linkPath: '#',
     type: 'wheel',
     wheelPart: 5,
@@ -48,7 +31,7 @@ const metricTypes: Omit<DashboardItem, 'id'>[] = [
     typeId: 2,
     title: 'Workspaces',
     description: 'Workspaces with data',
-    linkText: "See all",
+    linkText: 'See all',
     linkPath: '#',
     type: 'wheel',
     wheelPart: 142,
@@ -98,7 +81,7 @@ const metricTypes: Omit<DashboardItem, 'id'>[] = [
   },
 ]
 
-const getChart = (item: DashboardItem) => {
+const getChart = (item: MetricsCardItem) => {
   switch (item.type) {
     case 'wheel':
       return (
@@ -119,7 +102,7 @@ const getChart = (item: DashboardItem) => {
 
 export const MetricsBoard = ({ className }: MetricsBoardProps) => {
   const [shouldEdit, setShouldEdit] = useState<boolean>(false)
-  const [metrics, setMetrics] = useState<DashboardItem[]>([])
+  const [metrics, setMetrics] = useState<MetricsCardItem[]>([])
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -141,7 +124,7 @@ export const MetricsBoard = ({ className }: MetricsBoardProps) => {
             const matchedMetric = metricTypes.find((type) => type.typeId === typeId)
             return matchedMetric ? { id: metricId, ...matchedMetric } : null
           })
-          .filter(Boolean) as DashboardItem[]
+          .filter(Boolean) as MetricsCardItem[]
 
         setMetrics(loadedMetrics)
       } catch (error) {
@@ -193,12 +176,12 @@ export const MetricsBoard = ({ className }: MetricsBoardProps) => {
       <hr className='border-slate-500' />
 
       <div className={`flex flex-wrap justify-start gap-4`}>
-        {metrics.map((item: DashboardItem, i) => (
+        {metrics.map((item: MetricsCardItem, i) => (
           <MetricsCard key={i} item={item} shouldEdit={shouldEdit} onRemove={() => removeMetric(item.id)} />
         ))}
         {shouldEdit && (
           <MetricsCard className='border border-transparent hover:border-neutral-200 transition-colors duration-150'>
-            <div className='flex flex-col gap-6 '>
+            <div className='flex flex-col gap-6'>
               <div className='flex flex-col gap-2'>
                 <div className='flex flex-col gap-1'>
                   <h3>Add new metric</h3>
@@ -220,9 +203,7 @@ export const MetricsBoard = ({ className }: MetricsBoardProps) => {
                     </select>
                   )}
                 />
-                <Button type='submit'>
-                  Add
-                </Button>
+                <Button type='submit'>Add</Button>
               </form>
             </div>
           </MetricsCard>
