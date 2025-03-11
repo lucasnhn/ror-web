@@ -28,7 +28,7 @@ export interface MetricsCardProps extends HTMLAttributes<HTMLElement> {
      * Specify children if you want to override default layout
      * @default null
      */
-    children?: ReactNode | undefined
+    children?: ReactNode 
 
     /**
      * Indicates whether the card is in edit mode
