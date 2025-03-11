@@ -8,8 +8,6 @@ import { Controller, useForm } from 'react-hook-form'
 
 // TODO: Implement more types of dashboard items
 // TODO: Implement that user can't add the same metric twice
-// TODO: Convert MetricsCard to styleguide component
-// TODO: Simplify component
 
 interface MetricsBoardProps {
   className?: string
@@ -19,7 +17,7 @@ const metricTypes: Omit<MetricsCardItem, 'id'>[] = [
   {
     typeId: 1,
     title: 'Data centers',
-    description: 'Data centers with data',
+    description: 'Data centers you have access to',
     linkText: 'See all',
     linkPath: '#',
     type: 'wheel',
@@ -30,7 +28,7 @@ const metricTypes: Omit<MetricsCardItem, 'id'>[] = [
   {
     typeId: 2,
     title: 'Workspaces',
-    description: 'Workspaces with data',
+    description: 'Workspaces you have access to',
     linkText: 'See all',
     linkPath: '#',
     type: 'wheel',
@@ -42,7 +40,7 @@ const metricTypes: Omit<MetricsCardItem, 'id'>[] = [
   {
     typeId: 3,
     title: 'Clusters',
-    description: 'Active clusters',
+    description: 'Clusters you have access to',
     type: 'wheel',
     wheelPart: 255,
     wheelWhole: 255,
@@ -52,7 +50,7 @@ const metricTypes: Omit<MetricsCardItem, 'id'>[] = [
   {
     typeId: 4,
     title: 'Nodes',
-    description: 'Active nodes',
+    description: 'Nodes you have access to',
     type: 'wheel',
     wheelPart: 838,
     wheelWhole: 838,
@@ -175,7 +173,7 @@ export const MetricsBoard = ({ className }: MetricsBoardProps) => {
 
       <hr className='border-slate-500' />
 
-      <div className={`flex flex-wrap justify-start gap-4`}>
+      <div className={`flex flex-wrap justify-center gap-4`}>
         {metrics.map((item: MetricsCardItem, i) => (
           <MetricsCard key={i} item={item} shouldEdit={shouldEdit} onRemove={() => removeMetric(item.id)} />
         ))}
@@ -194,7 +192,8 @@ export const MetricsBoard = ({ className }: MetricsBoardProps) => {
                   name='metric'
                   control={control}
                   render={({ field }) => (
-                    <select {...field} className='w-fit rounded-md bg-neutral-800 border border-neutral-200 py-2 px-4 h-9'>
+                    // TODO: Fix styling of select
+                    <select {...field} className='w-fit rounded-md border-2 border-neutral-200 py-2 px-4 h-9'>
                       {metricTypes.map((type) => (
                         <option key={type.typeId} value={type.title}>
                           {type.title}
