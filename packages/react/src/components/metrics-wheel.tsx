@@ -5,7 +5,7 @@ import { AriaAttributes, HTMLAttributes } from 'react'
 
 export interface MetricsWheelProps extends HTMLAttributes<HTMLElement> {
   /**
-   * Specify the label for the breadcrumb container
+   * Specify the label for the metrics wheel
    */
   'aria-label'?: AriaAttributes['aria-label']
 

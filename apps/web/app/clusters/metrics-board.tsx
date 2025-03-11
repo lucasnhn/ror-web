@@ -1,7 +1,7 @@
 'use client'
 
-import { Button, MetricsWheel, Tile } from '@ror/react'
-import { CrossIcon, PencilIcon } from 'lucide-react'
+import { CrossIcon, PencilIcon } from '@/components/icons'
+import { Button, MetricsWheel, Tile, MetricsCard } from '@ror/react'
 import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 
@@ -21,8 +21,8 @@ interface DashboardItem {
   typeId: number
   title: string
   description?: string
-  seeAll?: boolean
-  seeAllLink?: string
+  linkText?: string
+  linkPath?: string
   type: MetricType
   wheelPart?: number
   wheelWhole?: number
@@ -37,8 +37,8 @@ const metricTypes: Omit<DashboardItem, 'id'>[] = [
     typeId: 1,
     title: 'Data centers',
     description: 'Data centers with data',
-    seeAll: true,
-    seeAllLink: '#',
+    linkText: "See all",
+    linkPath: '#',
     type: 'wheel',
     wheelPart: 5,
     wheelWhole: 6,
@@ -48,8 +48,8 @@ const metricTypes: Omit<DashboardItem, 'id'>[] = [
     typeId: 2,
     title: 'Workspaces',
     description: 'Workspaces with data',
-    seeAll: true,
-    seeAllLink: '#',
+    linkText: "See all",
+    linkPath: '#',
     type: 'wheel',
     wheelPart: 142,
     wheelWhole: 172,
@@ -192,57 +192,40 @@ export const MetricsBoard = ({ className }: MetricsBoardProps) => {
 
       <hr className='border-slate-500' />
 
-      <div className={`flex flex-wrap justify-center gap-4`}>
+      <div className={`flex flex-wrap justify-start gap-4`}>
         {metrics.map((item: DashboardItem, i) => (
-          <Tile key={i} className='rounded-md w-full min-h-40 max-w-[416px] p-3 flex flex-row gap-2'>
-            <div className='flex justify-between w-full'>
-              <div className='flex flex-col gap-1'>
-                <h3>{item.title}</h3>
-                <p>{item.description}</p>
-                {item.seeAll && (
-                  <p className='hover:underline'>
-                    <a href={item.seeAllLink}>See all</a>
-                  </p>
-                )}
-              </div>
-
-              <span>{getChart(item)}</span>
-            </div>
-            {shouldEdit && (
-              <button onClick={() => removeMetric(item.id)} className='text-red-500 hover:text-red-600 h-fit'>
-                <CrossIcon />
-              </button>
-            )}
-          </Tile>
+          <MetricsCard key={i} item={item} shouldEdit={shouldEdit} onRemove={() => removeMetric(item.id)} />
         ))}
         {shouldEdit && (
-          <Tile className='rounded-md w-full min-h-40 max-w-[416px] p-3 flex flex-col gap-6 border border-transparent hover:border-neutral-200 transition-colors duration-150'>
-            <div className='flex flex-col gap-2'>
-              <div className='flex flex-col gap-1'>
-                <h3>Add new metric</h3>
+          <MetricsCard className='flex-col gap-6 border border-transparent hover:border-neutral-200 transition-colors duration-150'>
+            <>
+              <div className='flex flex-col gap-2'>
+                <div className='flex flex-col gap-1'>
+                  <h3>Add new metric</h3>
+                </div>
+                <p>What metric do you want to add?</p>
               </div>
-              <p>What metric do you want to add?</p>
-            </div>
 
-            <form className='flex flex-row gap-2' onSubmit={handleSubmit(addMetric)}>
-              <Controller
-                name='metric'
-                control={control}
-                render={({ field }) => (
-                  <select {...field} className='w-fit rounded-md bg-neutral-800 border border-neutral-200 py-2 px-4'>
-                    {metricTypes.map((type) => (
-                      <option key={type.typeId} value={type.title}>
-                        {type.title}
-                      </option>
-                    ))}
-                  </select>
-                )}
-              />
-              <Button type='submit' className='max-h-9'>
-                Add
-              </Button>
-            </form>
-          </Tile>
+              <form className='flex flex-row gap-2 items-center' onSubmit={handleSubmit(addMetric)}>
+                <Controller
+                  name='metric'
+                  control={control}
+                  render={({ field }) => (
+                    <select {...field} className='w-fit rounded-md bg-neutral-800 border border-neutral-200 py-2 px-4'>
+                      {metricTypes.map((type) => (
+                        <option key={type.typeId} value={type.title}>
+                          {type.title}
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                />
+                <Button type='submit'>
+                  Add
+                </Button>
+              </form>
+            </>
+          </MetricsCard>
         )}
       </div>
     </div>
