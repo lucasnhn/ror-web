@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { MetricsCard, MetricsCardProps, MetricType } from '@ror/react/src/components/metrics-card'
+import { MetricsCard, MetricsCardItem, MetricsCardProps, MetricType } from '@ror/react/src/components/metrics-card'
 import { ComponentType } from 'react'
 import { Button } from '@ror/react'
 
@@ -20,7 +20,7 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-const dashboardItem = {
+const dashboardItem: MetricsCardItem = {
     id: "1",
     typeId: 1,
     title: 'Data centers',
@@ -56,6 +56,13 @@ export const Default: Story = {
     args: {
         item: dashboardItem
     },
+    decorators: [
+        (Story) => (
+          <div style={{ width: '416px' }}> 
+            <Story />
+          </div>
+        ),
+    ],
 }
 
 /**
@@ -65,6 +72,13 @@ export const WithCustomContent: Story = {
     args: {
         children: customContent
     },
+    decorators: [
+        (Story) => (
+          <div style={{ width: '416px' }}> 
+            <Story />
+          </div>
+        ),
+    ],
 }
 
 /**
@@ -75,4 +89,11 @@ export const WithShouldEdit: Story = {
         item: dashboardItem,
         shouldEdit: true
     },
+    decorators: [
+        (Story) => (
+          <div style={{ width: '416px' }}> 
+            <Story />
+          </div>
+        ),
+    ],
 }

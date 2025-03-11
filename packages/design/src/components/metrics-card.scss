@@ -29,7 +29,12 @@ $card-colors: (
         display: flex;
         flex-direction: column;
         gap: 0.25rem;
+
+        & > * {
+            margin: 0;
+        }
     }
+
     &__linkText {
         width: fit-content;
     
