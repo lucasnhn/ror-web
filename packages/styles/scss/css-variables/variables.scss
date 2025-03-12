@@ -112,9 +112,9 @@
   @include light-dark('support-success', rgb-color('green', '500'), rgb-color('green', '400'));
   @include light-dark('support-warning', rgb-color('yellow', '500'), rgb-color('yellow', '400'));
   @include light-dark('support-info', rgb-color('blue', '500'), rgb-color('blue', '400'));
-  @include light-dark('support-cuation-minor', rgb-color('yellow', '500'), rgb-color('yellow', '400'));
-  @include light-dark('support-cuation-major', rgb-color('orange', '500'), rgb-color('orange', '400'));
-  @include light-dark('support-cuation-undefined', rgb-color('purple', '500'), rgb-color('purple', '400'));
+  @include light-dark('support-caution-minor', rgb-color('yellow', '500'), rgb-color('yellow', '400'));
+  @include light-dark('support-caution-major', rgb-color('orange', '500'), rgb-color('orange', '400'));
+  @include light-dark('support-caution-undefined', rgb-color('purple', '500'), rgb-color('purple', '400'));
 
   // Spacing  
   @include spacing.emit-spacing-custom-properties();

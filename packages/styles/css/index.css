@@ -69,9 +69,9 @@
   --r-support-success: light-dark(#97b14c, #afc37a);
   --r-support-warning: light-dark(#c5a231, #d1b86c);
   --r-support-info: light-dark(#2caff9, #6fc2fa);
-  --r-support-cuation-minor: light-dark(#c5a231, #d1b86c);
-  --r-support-cuation-major: light-dark(#e98d61, #efa987);
-  --r-support-cuation-undefined: light-dark(#b992fb, #c9acfc);
+  --r-support-caution-minor: light-dark(#c5a231, #d1b86c);
+  --r-support-caution-major: light-dark(#e98d61, #efa987);
+  --r-support-caution-undefined: light-dark(#b992fb, #c9acfc);
   --r-spacing-01: 0.125rem;
   --r-spacing-02: 0.25rem;
   --r-spacing-03: 0.5rem;
@@ -679,6 +679,9 @@ hr {
 .r-metrics-card__remove-button:hover {
   color: var(--r-hover-red);
 }
+.r-metrics-card select {
+  background-color: var(--r-layer-02);
+}
 
 .r-metrics-wheel {
   display: flex;
@@ -726,6 +729,62 @@ hr {
   dominant-baseline: middle;
   font-size: 0.875rem;
   letter-spacing: 0.16px;
+}
+
+.r-stack--vertical {
+  display: grid;
+  grid-auto-flow: row;
+  row-gap: var(--r-stack-gap, 0);
+}
+.r-stack--horizontal {
+  display: inline-grid;
+  column-gap: var(--r-stack-gap, 0);
+  grid-auto-flow: column;
+}
+.r-stack > * {
+  min-inline-size: 0;
+}
+.r-stack--scale-1 {
+  --r-stack-gap: 0.125rem;
+}
+.r-stack--scale-2 {
+  --r-stack-gap: 0.25rem;
+}
+.r-stack--scale-3 {
+  --r-stack-gap: 0.5rem;
+}
+.r-stack--scale-4 {
+  --r-stack-gap: 0.75rem;
+}
+.r-stack--scale-5 {
+  --r-stack-gap: 1rem;
+}
+.r-stack--scale-6 {
+  --r-stack-gap: 1.5rem;
+}
+.r-stack--scale-7 {
+  --r-stack-gap: 2rem;
+}
+.r-stack--scale-8 {
+  --r-stack-gap: 2.5rem;
+}
+.r-stack--scale-9 {
+  --r-stack-gap: 3rem;
+}
+.r-stack--scale-10 {
+  --r-stack-gap: 4rem;
+}
+.r-stack--scale-11 {
+  --r-stack-gap: 5rem;
+}
+.r-stack--scale-12 {
+  --r-stack-gap: 6rem;
+}
+.r-stack--scale-13 {
+  --r-stack-gap: 8rem;
+}
+.r-stack--scale-14 {
+  --r-stack-gap: 10rem;
 }
 
 .r-tag {
@@ -799,15 +858,15 @@ hr {
 }
 
 .r-icon-indicator--caution-major {
-  --icon-color: var(--r-support-cuation-major);
+  --icon-color: var(--r-support-caution-major);
 }
 
 .r-icon-indicator--caution-minor {
-  --icon-color: var(--r-support-cuation-minor);
+  --icon-color: var(--r-support-caution-minor);
 }
 
 .r-icon-indicator--undefined {
-  --icon-color: var(--r-support-cuation-undefined);
+  --icon-color: var(--r-support-caution-undefined);
 }
 
 .r-icon-indicator--succeeded {

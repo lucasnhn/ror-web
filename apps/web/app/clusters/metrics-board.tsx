@@ -271,7 +271,7 @@ export const MetricsBoard = ({ className }: MetricsBoardProps) => {
           <MetricsCard key={i} item={item} shouldEdit={shouldEdit} onRemove={() => removeMetric(item.id)} />
         ))}
         {shouldEdit && (
-          <MetricsCard className='border border-transparent hover:border-neutral-200 transition-colors duration-150'>
+          <MetricsCard>
             <div className='flex flex-col gap-8'>
               <div className='flex flex-col gap-2'>
                 <div className='flex flex-col gap-1'>
@@ -285,8 +285,7 @@ export const MetricsBoard = ({ className }: MetricsBoardProps) => {
                   name='metric'
                   control={control}
                   render={({ field }) => (
-                    // TODO: Fix styling of select
-                    <select {...field} className='w-fit rounded-md border-2 border-neutral-200 py-2 px-4 h-9'>
+                    <select {...field} className='w-fit rounded-md py-2 px-4 h-9'>
                       {metricTypes.map((type) => (
                         <option key={type.typeId} value={type.title}>
                           {type.title}

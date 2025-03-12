@@ -5,6 +5,7 @@
 $card-colors: (
   'red': cv.get-var('metrics-red'),
   'hoverRed': cv.get-var('hover-red'),
+  'selectColor': cv.get-var('layer-02'),
 );
 
 .#{c.$prefix}-metrics-card {
@@ -53,4 +54,7 @@ $card-colors: (
         }
     }
     
+    select {
+        background-color: map.get($card-colors, 'selectColor'); 
+    }
 }
