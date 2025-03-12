@@ -172,25 +172,6 @@ const metricTypes: Omit<MetricsCardItem, 'id'>[] = [
   },
 ]
 
-// const getChart = (item: MetricsCardItem) => {
-//   switch (item.type) {
-//     case 'wheel':
-//       return (
-//         <MetricsWheel
-//           part={item.wheelPart}
-//           whole={item.wheelWhole}
-//           percentage={item.wheelPercentage}
-//           label={item.wheelLabel}
-//           indicator={item.wheelIndicator}
-//           className='block mx-auto'
-//           inverted={item.inverted}
-//         />
-//       )
-//     default:
-//       return null
-//   }
-// }
-
 export const MetricsBoard = ({ className }: MetricsBoardProps) => {
   const [shouldEdit, setShouldEdit] = useState<boolean>(false)
   const [metrics, setMetrics] = useState<MetricsCardItem[]>([])
