@@ -1,7 +1,7 @@
 'use client'
 
 import { PencilIcon } from 'lucide-react'
-import { Button, MetricsWheel, Tile, MetricsCard } from '@ror/react'
+import { Button, MetricsCard } from '@ror/react'
 import type { MetricsCardItem } from '@ror/react'
 import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
@@ -79,24 +79,24 @@ const metricTypes: Omit<MetricsCardItem, 'id'>[] = [
   },
 ]
 
-const getChart = (item: MetricsCardItem) => {
-  switch (item.type) {
-    case 'wheel':
-      return (
-        <MetricsWheel
-          part={item.wheelPart}
-          whole={item.wheelWhole}
-          percentage={item.wheelPercentage}
-          label={item.wheelLabel}
-          indicator={item.wheelIndicator}
-          className='block mx-auto'
-          inverted={item.inverted}
-        />
-      )
-    default:
-      return null
-  }
-}
+// const getChart = (item: MetricsCardItem) => {
+//   switch (item.type) {
+//     case 'wheel':
+//       return (
+//         <MetricsWheel
+//           part={item.wheelPart}
+//           whole={item.wheelWhole}
+//           percentage={item.wheelPercentage}
+//           label={item.wheelLabel}
+//           indicator={item.wheelIndicator}
+//           className='block mx-auto'
+//           inverted={item.inverted}
+//         />
+//       )
+//     default:
+//       return null
+//   }
+// }
 
 export const MetricsBoard = ({ className }: MetricsBoardProps) => {
   const [shouldEdit, setShouldEdit] = useState<boolean>(false)

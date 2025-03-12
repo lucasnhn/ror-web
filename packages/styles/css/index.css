@@ -86,6 +86,7 @@
   --r-spacing-12: 6rem;
   --r-spacing-13: 8rem;
   --r-spacing-14: 10rem;
+  --r-hover-red: light-dark(#fc8083, #cd6265);
 }
 
 @supports (color: oklch(0% 0 0deg)) {
@@ -152,9 +153,9 @@
       --r-support-success: light-dark(oklch(71.4844% 0.151562 123.333deg), oklch(78.125% 0.114063 123.333deg));
       --r-support-warning: light-dark(oklch(72.6563% 0.151562 90deg), oklch(78.9063% 0.114063 90deg));
       --r-support-info: light-dark(oklch(71.875% 0.151562 240deg), oklch(78.3203% 0.114063 240deg));
-      --r-support-cuation-minor: light-dark(oklch(72.6563% 0.151562 90deg), oklch(78.9063% 0.114063 90deg));
-      --r-support-cuation-major: light-dark(oklch(73.8281% 0.151562 43.3333deg), oklch(79.8828% 0.114063 43.3333deg));
-      --r-support-cuation-undefined: light-dark(oklch(73.8281% 0.151562 300deg), oklch(79.8828% 0.114063 300deg));
+      --r-support-caution-minor: light-dark(oklch(72.6563% 0.151562 90deg), oklch(78.9063% 0.114063 90deg));
+      --r-support-caution-major: light-dark(oklch(73.8281% 0.151562 43.3333deg), oklch(79.8828% 0.114063 43.3333deg));
+      --r-support-caution-undefined: light-dark(oklch(73.8281% 0.151562 300deg), oklch(79.8828% 0.114063 300deg));
     }
   }
 }
