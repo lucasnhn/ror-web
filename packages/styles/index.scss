@@ -1,0 +1,12 @@
+// Forward configuration
+@forward 'scss/config';
+
+// Use CSS variables
+@use 'scss/css-variables/variables.scss';
+@use 'scss/layer';
+
+/// Add reset styles (can be overriden with configuration)
+@use 'scss/reset';
+
+/// Add the components styles
+@use 'scss/components';

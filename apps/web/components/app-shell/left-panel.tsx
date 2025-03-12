@@ -8,19 +8,20 @@ interface AppShellLeftPanelProps {
   children: ReactNode
 }
 
+// The variants add 1px to account for the border width
 const variants = {
   expanded: {
-    '--left-panel-width': '16rem',
+    '--left-panel-width': 'calc(16rem + 1px)',
   },
   collapsed: {
-    '--left-panel-width': '3rem',
+    '--left-panel-width': 'calc(3rem + 1px)',
   },
 }
 
 export function AppShellLeftPanel({ children }: AppShellLeftPanelProps) {
   const { leftPanelExpanded } = useAppShellContext()
   const classes = clsxm(
-    '@container w-(--left-panel-width) bg-(--r-background) text-(--r-background-inverse) h-screen border-r border-(--r-border-subtle-00) transition-width duration-200 hide-scrollbar overflow-y-auto'
+    '@container w-(--left-panel-width) bg-background text-primary h-screen border-r border-subtle transition-width duration-200 hide-scrollbar overflow-y-auto'
   )
   return (
     <motion.div

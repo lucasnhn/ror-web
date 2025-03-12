@@ -2,10 +2,8 @@
 @use 'sass:meta';
 @use '../config' as *;
 @use '../colors/theme' as *;
-@use '../spacing' as *;
-@use '../utilities/css-variable' as cv;
-
-// TODO: Split into core-tokens and component-tokens
+@use '../spacing' as spacing;
+@use '../utilities/custom-properties.scss' as cv;
 
 /// Set CSS variable with a light-dark value
 /// @param {String} $property-name - The CSS property to set
@@ -118,8 +116,8 @@
   @include light-dark('support-cuation-major', rgb-color('orange', '500'), rgb-color('orange', '400'));
   @include light-dark('support-cuation-undefined', rgb-color('purple', '500'), rgb-color('purple', '400'));
 
-  // Spacing
-  @include spacing-custom-properties();
+  // Spacing  
+  @include spacing.emit-spacing-custom-properties();
 
   // Hover colors
   @include light-dark('hover-red', rgb-color('red', '500'), rgb-color('red', '600'));
@@ -212,9 +210,9 @@
       @include light-dark('support-success', p3-color('green', '500'), p3-color('green', '400'));
       @include light-dark('support-warning', p3-color('yellow', '500'), p3-color('yellow', '400'));
       @include light-dark('support-info', p3-color('blue', '500'), p3-color('blue', '400'));
-      @include light-dark('support-cuation-minor', p3-color('yellow', '500'), p3-color('yellow', '400'));
-      @include light-dark('support-cuation-major', p3-color('orange', '500'), p3-color('orange', '400'));
-      @include light-dark('support-cuation-undefined', p3-color('purple', '500'), p3-color('purple', '400'));
+      @include light-dark('support-caution-minor', p3-color('yellow', '500'), p3-color('yellow', '400'));
+      @include light-dark('support-caution-major', p3-color('orange', '500'), p3-color('orange', '400'));
+      @include light-dark('support-caution-undefined', p3-color('purple', '500'), p3-color('purple', '400'));
     }
   }
 }
