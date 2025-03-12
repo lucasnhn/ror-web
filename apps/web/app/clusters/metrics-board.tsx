@@ -1,6 +1,6 @@
 'use client'
 
-import { PencilIcon } from '@/components/icons'
+import { PencilIcon } from 'lucide-react'
 import { Button, MetricsWheel, Tile, MetricsCard } from '@ror/react'
 import type { MetricsCardItem } from '@ror/react'
 import { useEffect, useState } from 'react'
@@ -60,7 +60,7 @@ const metricTypes: Omit<MetricsCardItem, 'id'>[] = [
   {
     typeId: 5,
     title: 'CPU',
-    description: 'Utilized CPU power',
+    description: 'Average utilized CPU power',
     type: 'wheel',
     wheelPercentage: 13,
     wheelLabel: '13% - 2948',
@@ -70,7 +70,7 @@ const metricTypes: Omit<MetricsCardItem, 'id'>[] = [
   {
     typeId: 6,
     title: 'Memory',
-    description: 'Utilized memory',
+    description: 'Average utilized memory',
     type: 'wheel',
     wheelPercentage: 37,
     wheelLabel: '37% - 13.96 TiB',
