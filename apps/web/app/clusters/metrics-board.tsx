@@ -9,6 +9,99 @@ import { Controller, useForm } from 'react-hook-form'
 // TODO: Implement more types of dashboard items
 // TODO: Implement that user can't add the same metric twice
 
+// TODO: Consider implementing these types of dashboard items
+/** 
+ * SWAGGER LINK: https://api.ror.nhn.no/swagger/index.html#/
+ * 
+ * ----------
+ * 
+ * get /v1/cluster/{clusterId}
+ * Get a cluster by ID
+ * 
+ * OTHER THINGS WITH CLUSTERS
+ * 
+ * ----------
+ * 
+ * get /v1/datacenters 
+ * Get datacenters
+ * 
+ * get /v1/datacenter/id/{id}
+ * Get datacenter by ID
+ * 
+ * ----------
+ * 
+ * Everything we already have with metrics
+ * 
+ * ----------
+ * 
+ * Consider something with Compliance reports?
+ * 
+ * ----------
+ * 
+ * Consider something with Vulnerability reports?
+ * 
+ * ----------
+ * 
+ * Consider something with Policy reports?
+ * 
+ * ----------
+ * 
+ * Consider something with Desired versions?
+ * 
+ * ----------
+ * 
+ * Consider something with Server sent events?
+ * 
+ * ----------
+ * 
+ * get /v1/prices
+ * Get prices
+ * 
+ * get /v1/prices/provider/{providerName}
+ * Get prices by provider
+ * 
+ * ----------
+ * 
+ * get /v1/projects/filter
+ * Get projects by filter
+ * 
+ * get /v1/projects/{projectId}
+ * Get projects by ID
+ * 
+ * get /v1/projects/{projectId}/clusters
+ * Get clusters by projectID
+ * 
+ * ----------
+ * 
+ * get /v1/providers
+ * Get providers
+ * 
+ * ----------
+ * 
+ * A lot with resources
+ * 
+ * ----------
+ * 
+ * get /v1/users/self
+ * Get user
+ * 
+ * get /v2/self
+ * Get self
+ * 
+ * ----------
+ * 
+ * get /v1/workspaces
+ * Get workspaces
+ * 
+ * get /v1/workspaces/id/{workspaceName}
+ * Get a workspace by id
+ * 
+ * get /v1/workspaces/{workspaceName}
+ * Get a workspace
+ * 
+ * ----------
+ */
+
 interface MetricsBoardProps {
   className?: string
 }
