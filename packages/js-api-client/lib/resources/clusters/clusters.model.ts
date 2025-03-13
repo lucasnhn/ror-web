@@ -99,4 +99,14 @@ export const Cluster = z
   })
   .passthrough()
 
+export const ClusterListItem = Cluster.extend({
+  topology: TopologyModel.extend({
+    controlPlane: z.object({
+      // Nodes are nullable when fetched from the "filter" endpoint
+      nodes: z.array(ControlPaneNodeModel).nullable(),
+    }),
+  }),
+})
+
 export type ClusterType = z.infer<typeof Cluster>
+export type ClusterListItemType = z.infer<typeof ClusterListItem>

@@ -1,9 +1,10 @@
 import { createResource, type ResourceClient } from '../create-resource'
 import { PaginationRequestParams } from '../../types'
 import { createPaginationSchema, PaginationResponse } from '../paginated-response.model'
-import { Cluster, type ClusterType } from './clusters.model'
+import { Cluster, ClusterListItem } from './clusters.model'
+import type { ClusterType, ClusterListItemType } from './cluster.types'
 export interface ClustersResource {
-  filter: (params?: PaginationRequestParams) => Promise<PaginationResponse<ClusterType>>
+  filter: (params?: PaginationRequestParams) => Promise<PaginationResponse<ClusterListItemType>>
   get: (id: string) => Promise<ClusterType>
 }
 
@@ -17,7 +18,7 @@ export const createClustersResource = (client: ResourceClient): ClustersResource
         limit: params?.limit ?? 25,
         skip: params?.skip ?? 0,
       })
-      const schema = createPaginationSchema(Cluster)
+      const schema = createPaginationSchema(ClusterListItem)
       const validatedData = schema.parse(response)
       return validatedData
     },
