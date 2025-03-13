@@ -1,7 +1,7 @@
 'use client'
 
 import { PencilIcon } from 'lucide-react'
-import { Button, MetricsCard } from '@ror/react'
+import { Button, Layer, MetricsCard } from '@ror/react'
 import type { MetricsCardItem } from '@ror/react'
 import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
@@ -262,23 +262,26 @@ export const MetricsBoard = ({ className }: MetricsBoardProps) => {
               </div>
 
               <form className='flex flex-row gap-3 items-center' onSubmit={handleSubmit(addMetric)}>
-                <Controller
-                  name='metric'
-                  control={control}
-                  render={({ field }) => (
-                    <select {...field} className='w-fit rounded-md py-2 px-4 h-9'>
-                      {metricTypes.map((type) => (
-                        <option key={type.typeId} value={type.title}>
-                          {type.title}
-                        </option>
-                      ))}
-                    </select>
-                  )}
-                />
+                <Layer layer={1}>
+                  <Controller
+                    name='metric'
+                    control={control}
+                    render={({ field }) => (
+                      <select {...field} className='w-fit rounded-md py-2 px-4 h-9'>
+                        {metricTypes.map((type) => (
+                          <option key={type.typeId} value={type.title}>
+                            {type.title}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  />
+                </Layer>
                 <Button type='submit' className='h-9'>Add</Button>
               </form>
             </div>
           </MetricsCard>
+
         )}
       </div>
     </div>

@@ -106,6 +106,7 @@
   @include light-dark('metrics-lime', rgb-color('lime', '400'), rgb-color('lime', '500'));
   @include light-dark('metrics-green', rgb-color('green', '400'), rgb-color('green', '500'));
   @include light-dark('metrics-emerald', rgb-color('emerald', '400'), rgb-color('emerald', '500'));
+  @include light-dark('metric-hover-red', rgb-color('red', '500'), rgb-color('red', '600'));
 
   /// Status
   @include light-dark('support-error', rgb-color('red', '500'), rgb-color('red', '400'));
@@ -118,9 +119,6 @@
 
   // Spacing  
   @include spacing.emit-spacing-custom-properties();
-
-  // Hover colors
-  @include light-dark('hover-red', rgb-color('red', '500'), rgb-color('red', '600'));
 }
 
 @supports (color: oklch(0% 0 0)) {
@@ -204,6 +202,7 @@
       @include light-dark('metrics-lime', p3-color('lime', '400'), p3-color('lime', '500'));
       @include light-dark('metrics-green', p3-color('green', '400'), p3-color('green', '500'));
       @include light-dark('metrics-emerald', p3-color('emerald', '400'), p3-color('emerald', '500'));
+      @include light-dark('metric-hover-red', p3-color('red', '500'), p3-color('red', '600'));
 
       /// Status
       @include light-dark('support-error', p3-color('red', '500'), p3-color('red', '400'));

@@ -11,10 +11,17 @@ const meta = {
     },
     tags: ['autodocs'],
     argTypes: {
-        item: { control: { type: 'object' }, description: 'Specify the item for the metrics card' },
-        children: { control: { type: 'object' }, description: 'Specify children if you want to override default layout' },
-        shouldEdit: { control: { type: 'boolean' }, description: 'Indicates whether the card is in edit mode' },
+        item: { control: { type: 'object' }, description: 'Specify the item for the metrics card. Item should conform to type MetricsCardItem.' },
+        children: { control: false, description: 'Specify children if you want to override default layout.' },
+        shouldEdit: { control: { type: 'boolean' }, description: 'Indicates whether the card is in edit mode.' },
     },
+    decorators: [
+        (Story) => (
+          <div style={{ width: '416px' }}> 
+            <Story />
+          </div>
+        ),
+    ],
 } satisfies Meta<typeof MetricsCard>
 
 export default meta
@@ -54,15 +61,8 @@ const customContent = (
  */
 export const Default: Story = {
     args: {
-        item: dashboardItem
+        item: dashboardItem,
     },
-    decorators: [
-        (Story) => (
-          <div style={{ width: '416px' }}> 
-            <Story />
-          </div>
-        ),
-    ],
 }
 
 /**
@@ -72,13 +72,6 @@ export const WithCustomContent: Story = {
     args: {
         children: customContent
     },
-    decorators: [
-        (Story) => (
-          <div style={{ width: '416px' }}> 
-            <Story />
-          </div>
-        ),
-    ],
 }
 
 /**
@@ -89,11 +82,4 @@ export const WithShouldEdit: Story = {
         item: dashboardItem,
         shouldEdit: true
     },
-    decorators: [
-        (Story) => (
-          <div style={{ width: '416px' }}> 
-            <Story />
-          </div>
-        ),
-    ],
 }

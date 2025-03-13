@@ -65,6 +65,7 @@
   --r-metrics-lime: light-dark(#c1be6f, #b0aa39);
   --r-metrics-green: light-dark(#afc37a, #97b14c);
   --r-metrics-emerald: light-dark(#9bc789, #7db664);
+  --r-metric-hover-red: light-dark(#fc8083, #cd6265);
   --r-support-error: light-dark(#fc8083, #ffa09f);
   --r-support-success: light-dark(#97b14c, #afc37a);
   --r-support-warning: light-dark(#c5a231, #d1b86c);
@@ -86,7 +87,6 @@
   --r-spacing-12: 6rem;
   --r-spacing-13: 8rem;
   --r-spacing-14: 10rem;
-  --r-hover-red: light-dark(#fc8083, #cd6265);
 }
 
 @supports (color: oklch(0% 0 0deg)) {
@@ -149,6 +149,7 @@
       --r-metrics-lime: light-dark(oklch(78.5156% 0.114063 106.667deg), oklch(72.0703% 0.151562 106.667deg));
       --r-metrics-green: light-dark(oklch(78.125% 0.114063 123.333deg), oklch(71.4844% 0.151562 123.333deg));
       --r-metrics-emerald: light-dark(oklch(77.7344% 0.114063 140deg), oklch(71.0938% 0.151562 140deg));
+      --r-metric-hover-red: light-dark(oklch(74.21875% 0.1515625 20deg), oklch(62.6953125% 0.1359375 20deg));
       --r-support-error: light-dark(oklch(74.21875% 0.1515625 20deg), oklch(80.078125% 0.1140625 20deg));
       --r-support-success: light-dark(oklch(71.4844% 0.151562 123.333deg), oklch(78.125% 0.114063 123.333deg));
       --r-support-warning: light-dark(oklch(72.6563% 0.151562 90deg), oklch(78.9063% 0.114063 90deg));
@@ -680,7 +681,7 @@ hr {
   color: var(--r-hover-red);
 }
 .r-metrics-card select {
-  background-color: var(--r-layer-02);
+  background-color: var(--r-layer);
 }
 
 .r-metrics-wheel {
