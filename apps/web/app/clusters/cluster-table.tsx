@@ -2,12 +2,12 @@
 import { format } from 'date-fns'
 import { convertBytes } from '@/utils/bytes'
 import { createColumnHelper } from '@tanstack/react-table'
-import type { Cluster } from '@ror/js-api-client'
+import type { ClusterListItem } from '@ror/js-api-client'
 import Link from 'next/link'
 import { DataTable, DataTableColumnDef } from '@/components/common/data-table'
 import { HealthStatus } from '@/components/common/health-status'
 
-const columnHelper = createColumnHelper<Cluster>()
+const columnHelper = createColumnHelper<ClusterListItem>()
 
 const dataTableColumns = [
   columnHelper.accessor('clusterName', {
@@ -85,13 +85,13 @@ const dataTableColumns = [
       return <span>{projectName ?? '-'}</span>
     },
   }),
-] satisfies DataTableColumnDef<Cluster>[]
+] satisfies DataTableColumnDef<ClusterListItem>[]
 
 interface ClusterTableProps<T> {
   data: T[]
 }
 
-export function ClustersTable<T extends Cluster>({ data }: ClusterTableProps<T>) {
+export function ClustersTable<T extends ClusterListItem>({ data }: ClusterTableProps<T>) {
   return (
     <div className='max-w-screen overflow-x-auto'>
       <DataTable data={data} columns={dataTableColumns} gridTemplateColumns={`repeat(8, minmax(max-content, 1fr))`} />

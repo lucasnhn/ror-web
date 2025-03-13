@@ -107,6 +107,3 @@ export const ClusterListItem = Cluster.extend({
     }),
   }),
 })
-
-export type ClusterType = z.infer<typeof Cluster>
-export type ClusterListItemType = z.infer<typeof ClusterListItem>
