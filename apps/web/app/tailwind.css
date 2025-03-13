@@ -121,4 +121,12 @@
     scrollbar-width: none;
     -ms-overflow-style: none;
   }
+
+  /* Hack to fix problem with popover layout being wrong inside of "@container" elements
+  * This occurs for instance with tooltips
+  * @see https://github.com/floating-ui/floating-ui/issues/3067
+  */
+  .\@container {
+    contain: layout;
+  }
 }

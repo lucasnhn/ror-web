@@ -3,6 +3,7 @@ import { authGuard } from '@/app/auth-guard'
 import { rorApiClient } from '@/services/ror-api'
 import { ClusterMetadataCard } from './metadata-card'
 import { ClusterToolsCard } from './tools-card'
+import { ClusterVersionsCard } from './versions-card'
 
 interface ClusterPageProps {
   params: Promise<{
@@ -22,9 +23,10 @@ export default async function ClusterPage({ params }: ClusterPageProps) {
   const cluster = await client.clusters.get(id)
 
   return (
-    <div className='grid grid-cols-6 gap-4'>
-      <ClusterMetadataCard cluster={cluster} className='col-span-4' />
-      <ClusterToolsCard cluster={cluster} user={session.user} />
+    <div className='grid grid-cols-12 gap-4 @container'>
+      <ClusterMetadataCard cluster={cluster} className='col-span-12 @5xl:col-span-6' />
+      <ClusterVersionsCard cluster={cluster} className='col-span-12 @2xl:col-span-6 @5xl:col-span-3' />
+      <ClusterToolsCard cluster={cluster} user={session.user} className='col-span-12 @2xl:col-span-6 @5xl:col-span-3' />
     </div>
   )
 }
