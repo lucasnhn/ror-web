@@ -1,7 +1,6 @@
 export { auth as middleware } from '@/app/auth'
 
 export const config = {
-  runtime: 'nodejs',
   matcher: [
     /*
      * Match all request paths except for the ones starting with:
