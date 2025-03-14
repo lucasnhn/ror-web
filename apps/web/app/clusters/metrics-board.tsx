@@ -1,44 +1,119 @@
 'use client'
 
-import { Button, MetricsWheel, Tile } from '@ror/react'
-import { CrossIcon, PencilIcon } from 'lucide-react'
+import { PencilIcon } from 'lucide-react'
+import { Button, MetricsCard } from '@ror/react'
+import { Layer } from '@ror/react/components/layer'
+import type { MetricsCardItem } from '@ror/react'
 import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 
 // TODO: Implement more types of dashboard items
 // TODO: Implement that user can't add the same metric twice
-// TODO: Convert MetricsCard to styleguide component
-// TODO: Simplify component
+
+// TODO: Consider implementing these types of dashboard items
+/** 
+ * SWAGGER LINK: https://api.ror.nhn.no/swagger/index.html#/
+ * 
+ * ----------
+ * 
+ * get /v1/cluster/{clusterId}
+ * Get a cluster by ID
+ * 
+ * OTHER THINGS WITH CLUSTERS
+ * 
+ * ----------
+ * 
+ * get /v1/datacenters 
+ * Get datacenters
+ * 
+ * get /v1/datacenter/id/{id}
+ * Get datacenter by ID
+ * 
+ * ----------
+ * 
+ * Everything we already have with metrics
+ * 
+ * ----------
+ * 
+ * Consider something with Compliance reports?
+ * 
+ * ----------
+ * 
+ * Consider something with Vulnerability reports?
+ * 
+ * ----------
+ * 
+ * Consider something with Policy reports?
+ * 
+ * ----------
+ * 
+ * Consider something with Desired versions?
+ * 
+ * ----------
+ * 
+ * Consider something with Server sent events?
+ * 
+ * ----------
+ * 
+ * get /v1/prices
+ * Get prices
+ * 
+ * get /v1/prices/provider/{providerName}
+ * Get prices by provider
+ * 
+ * ----------
+ * 
+ * get /v1/projects/filter
+ * Get projects by filter
+ * 
+ * get /v1/projects/{projectId}
+ * Get projects by ID
+ * 
+ * get /v1/projects/{projectId}/clusters
+ * Get clusters by projectID
+ * 
+ * ----------
+ * 
+ * get /v1/providers
+ * Get providers
+ * 
+ * ----------
+ * 
+ * A lot with resources
+ * 
+ * ----------
+ * 
+ * get /v1/users/self
+ * Get user
+ * 
+ * get /v2/self
+ * Get self
+ * 
+ * ----------
+ * 
+ * get /v1/workspaces
+ * Get workspaces
+ * 
+ * get /v1/workspaces/id/{workspaceName}
+ * Get a workspace by id
+ * 
+ * get /v1/workspaces/{workspaceName}
+ * Get a workspace
+ * 
+ * ----------
+ */
 
 interface MetricsBoardProps {
   className?: string
 }
 
-type MetricType = '' | 'wheel'
-
-interface DashboardItem {
-  id: string
-  typeId: number
-  title: string
-  description?: string
-  seeAll?: boolean
-  seeAllLink?: string
-  type: MetricType
-  wheelPart?: number
-  wheelWhole?: number
-  wheelPercentage?: number
-  wheelLabel?: string
-  wheelIndicator?: boolean
-  inverted?: boolean
-}
-
-const metricTypes: Omit<DashboardItem, 'id'>[] = [
+const metricTypes: Omit<MetricsCardItem, 'id'>[] = [
   {
     typeId: 1,
     title: 'Data centers',
-    description: 'Data centers with data',
-    seeAll: true,
-    seeAllLink: '#',
+    description: 'Data centers you have access to',
+    linkText: 'See all',
+    linkPath: '#',
     type: 'wheel',
     wheelPart: 5,
     wheelWhole: 6,
@@ -47,9 +122,9 @@ const metricTypes: Omit<DashboardItem, 'id'>[] = [
   {
     typeId: 2,
     title: 'Workspaces',
-    description: 'Workspaces with data',
-    seeAll: true,
-    seeAllLink: '#',
+    description: 'Workspaces you have access to',
+    linkText: 'See all',
+    linkPath: '#',
     type: 'wheel',
     wheelPart: 142,
     wheelWhole: 172,
@@ -59,7 +134,7 @@ const metricTypes: Omit<DashboardItem, 'id'>[] = [
   {
     typeId: 3,
     title: 'Clusters',
-    description: 'Active clusters',
+    description: 'Clusters you have access to',
     type: 'wheel',
     wheelPart: 255,
     wheelWhole: 255,
@@ -69,7 +144,7 @@ const metricTypes: Omit<DashboardItem, 'id'>[] = [
   {
     typeId: 4,
     title: 'Nodes',
-    description: 'Active nodes',
+    description: 'Nodes you have access to',
     type: 'wheel',
     wheelPart: 838,
     wheelWhole: 838,
@@ -79,7 +154,7 @@ const metricTypes: Omit<DashboardItem, 'id'>[] = [
   {
     typeId: 5,
     title: 'CPU',
-    description: 'Utilized CPU power',
+    description: 'Average utilized CPU power',
     type: 'wheel',
     wheelPercentage: 13,
     wheelLabel: '13% - 2948',
@@ -89,7 +164,7 @@ const metricTypes: Omit<DashboardItem, 'id'>[] = [
   {
     typeId: 6,
     title: 'Memory',
-    description: 'Utilized memory',
+    description: 'Average utilized memory',
     type: 'wheel',
     wheelPercentage: 37,
     wheelLabel: '37% - 13.96 TiB',
@@ -98,28 +173,9 @@ const metricTypes: Omit<DashboardItem, 'id'>[] = [
   },
 ]
 
-const getChart = (item: DashboardItem) => {
-  switch (item.type) {
-    case 'wheel':
-      return (
-        <MetricsWheel
-          part={item.wheelPart}
-          whole={item.wheelWhole}
-          percentage={item.wheelPercentage}
-          label={item.wheelLabel}
-          indicator={item.wheelIndicator}
-          className='block mx-auto'
-          inverted={item.inverted}
-        />
-      )
-    default:
-      return null
-  }
-}
-
 export const MetricsBoard = ({ className }: MetricsBoardProps) => {
   const [shouldEdit, setShouldEdit] = useState<boolean>(false)
-  const [metrics, setMetrics] = useState<DashboardItem[]>([])
+  const [metrics, setMetrics] = useState<MetricsCardItem[]>([])
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -141,7 +197,7 @@ export const MetricsBoard = ({ className }: MetricsBoardProps) => {
             const matchedMetric = metricTypes.find((type) => type.typeId === typeId)
             return matchedMetric ? { id: metricId, ...matchedMetric } : null
           })
-          .filter(Boolean) as DashboardItem[]
+          .filter(Boolean) as MetricsCardItem[]
 
         setMetrics(loadedMetrics)
       } catch (error) {
@@ -193,56 +249,40 @@ export const MetricsBoard = ({ className }: MetricsBoardProps) => {
       <hr className='border-slate-500' />
 
       <div className={`flex flex-wrap justify-center gap-4`}>
-        {metrics.map((item: DashboardItem, i) => (
-          <Tile key={i} className='rounded-md w-full min-h-40 max-w-[416px] p-3 flex flex-row gap-2'>
-            <div className='flex justify-between w-full'>
-              <div className='flex flex-col gap-1'>
-                <h3>{item.title}</h3>
-                <p>{item.description}</p>
-                {item.seeAll && (
-                  <p className='hover:underline'>
-                    <a href={item.seeAllLink}>See all</a>
-                  </p>
-                )}
-              </div>
-
-              <span>{getChart(item)}</span>
-            </div>
-            {shouldEdit && (
-              <button onClick={() => removeMetric(item.id)} className='text-red-500 hover:text-red-600 h-fit'>
-                <CrossIcon />
-              </button>
-            )}
-          </Tile>
+        {metrics.map((item: MetricsCardItem, i) => (
+          <MetricsCard key={i} item={item} shouldEdit={shouldEdit} onRemove={() => removeMetric(item.id)} />
         ))}
         {shouldEdit && (
-          <Tile className='rounded-md w-full min-h-40 max-w-[416px] p-3 flex flex-col gap-6 border border-transparent hover:border-neutral-200 transition-colors duration-150'>
-            <div className='flex flex-col gap-2'>
-              <div className='flex flex-col gap-1'>
-                <h3>Add new metric</h3>
+          <MetricsCard>
+            <div className='flex flex-col gap-8'>
+              <div className='flex flex-col gap-2'>
+                <div className='flex flex-col gap-1'>
+                  <h3>Add new metric</h3>
+                </div>
+                <p>What metric do you want to add?</p>
               </div>
-              <p>What metric do you want to add?</p>
-            </div>
 
-            <form className='flex flex-row gap-2' onSubmit={handleSubmit(addMetric)}>
-              <Controller
-                name='metric'
-                control={control}
-                render={({ field }) => (
-                  <select {...field} className='w-fit rounded-md bg-neutral-800 border border-neutral-200 py-2 px-4'>
-                    {metricTypes.map((type) => (
-                      <option key={type.typeId} value={type.title}>
-                        {type.title}
-                      </option>
-                    ))}
-                  </select>
-                )}
-              />
-              <Button type='submit' className='max-h-9'>
-                Add
-              </Button>
-            </form>
-          </Tile>
+              <form className='flex flex-row gap-3 items-center' onSubmit={handleSubmit(addMetric)}>
+                <Layer level={1}>
+                  <Controller
+                    name='metric'
+                    control={control}
+                    render={({ field }) => (
+                      <select {...field} className='w-fit rounded-md py-2 px-4 h-9'>
+                        {metricTypes.map((type) => (
+                          <option key={type.typeId} value={type.title}>
+                            {type.title}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  />
+                </Layer>
+                <Button type='submit' className='h-9'>Add</Button>
+              </form>
+            </div>
+          </MetricsCard>
+
         )}
       </div>
     </div>

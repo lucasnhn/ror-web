@@ -17,7 +17,6 @@
 /// The core tokens are global colors that are used across components.
 /// Naming is heavily based on the Carbon Design System.
 /// For reference see https://carbondesignsystem.com/elements/color/tokens/
-
 @layer theme {
   :root {
     @include cv.declaration('color-white', get-color('white', '100', 'rgb'));

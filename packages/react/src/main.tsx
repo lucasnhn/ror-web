@@ -9,6 +9,8 @@ export { DefinitionList, DefinitionTerm, DefinitionDescription } from './compone
 export type { DefinitionListProps } from './components/definition-list.tsx'
 export { IconIndicator } from './components/icon-indicator.tsx'
 export { Layer } from './components/layer.tsx'
+export { MetricsCard } from './components/metrics-card.tsx'
+export type { MetricsCardItem } from './components/metrics-card.tsx'
 export { MetricsWheel } from './components/metrics-wheel.tsx'
 export { Stack } from './components/stack.tsx'
 export {

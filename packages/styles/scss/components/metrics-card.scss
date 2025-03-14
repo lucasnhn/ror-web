@@ -1,0 +1,60 @@
+@use 'sass:map';
+@use '../config.scss' as c;
+@use '../utilities/custom-properties.scss' as cv;
+
+$card-colors: (
+  'red': cv.get-var('metrics-red'),
+  'hoverRed': cv.get-var('metrics-hover-red'),
+  'selectColor': cv.get-var('layer'),
+);
+
+.#{c.$prefix}-metrics-card {
+    padding: 0.75rem;
+    width: 100%;
+    max-width: 26rem;
+    min-height: 10rem;
+    gap: 0.5rem;
+
+    &__container {
+        display: flex;
+        flex-direction: row;
+    }
+
+    &__content {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    &__textContent {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+
+        & > * {
+            margin: 0;
+        }
+    }
+
+    &__linkText {
+        width: fit-content;
+    
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+    
+    &__remove-button {
+        color: map.get($card-colors, 'red');
+        transition: color 0.2s ease-in-out;
+        height: fit-content;
+    
+        &:hover {
+            color: map.get($card-colors, 'hoverRed');
+        }
+    }
+    
+    select {
+        background-color: map.get($card-colors, 'selectColor'); 
+    }
+}
