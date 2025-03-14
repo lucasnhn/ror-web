@@ -24,7 +24,7 @@ interface LayerProps {
 }
 
 export function Layer({ layer = 0, asChild = false, children }: LayerProps) {
-  const value = Math.max(MIN_LEVEL, Math.min(layer, MAX_LEVEL))
+  const value = Math.max(MIN_LEVEL, Math.min(layer, MAX_LEVEL)) as LayerLevel;
   const Comp = asChild ? Slot : 'div'
   const layerName = `r-layer--${levels[value]}`
   const classes = clsx({
