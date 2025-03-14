@@ -5,7 +5,7 @@ import { Button, Layer, MetricsCard } from '@ror/react'
 import type { MetricsCardItem } from '@ror/react'
 import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { LayerLevel } from '../../../../packages/react/dist/utils/layer'
+// import { LayerLevel } from '../../../../packages/react/dist/utils/layer'
 
 // TODO: Implement more types of dashboard items
 // TODO: Implement that user can't add the same metric twice
@@ -263,7 +263,8 @@ export const MetricsBoard = ({ className }: MetricsBoardProps) => {
               </div>
 
               <form className='flex flex-row gap-3 items-center' onSubmit={handleSubmit(addMetric)}>
-                <Layer layer={1 as LayerLevel}>
+                {/* <Layer layer={1 as LayerLevel}> */}
+                <Layer layer={1}>
                   <Controller
                     name='metric'
                     control={control}
