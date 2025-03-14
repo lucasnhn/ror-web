@@ -4,7 +4,7 @@
 
 $card-colors: (
   'red': cv.get-var('metrics-red'),
-  'hoverRed': cv.get-var('hover-red'),
+  'hoverRed': cv.get-var('metrics-hover-red'),
   'selectColor': cv.get-var('layer'),
 );
 
