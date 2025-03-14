@@ -1,17 +1,40 @@
 'use client'
 import type { Cluster } from '@ror/js-api-client'
 import clsxm from '@/utils/clsxm'
-import { Tile, CodeSnippet, Layer, DefinitionDescription, DefinitionList, DefinitionTerm } from '@ror/react'
+import { Tile, CodeSnippet, Layer, DefinitionDescription, DefinitionList, DefinitionTerm, Tag } from '@ror/react'
+import { format } from 'date-fns'
 
 interface ClusterMetadataCardProps {
   cluster: Cluster
   className?: string
 }
 
+function getHaClusterPlaneValue(cluster: Cluster) {
+  const nodes = cluster.topology.controlPlane.nodes
+  if (nodes.length > 1) {
+    return 'Yes'
+  } else if (nodes.length === 1) {
+    return 'No'
+  } else {
+    return ''
+  }
+}
+
+function formatObservationDate(date: string) {
+  if (!date || date === '0001-01-01T00:00:00Z' || date === '') {
+    return 'Missing…'
+  }
+  return format(date, 'yyyy-MM-dd HH:mm:ss')
+}
+
 export function ClusterMetadataCard({ cluster, className }: ClusterMetadataCardProps) {
   const { clusterId, clusterName, workspace, metadata } = cluster
 
   const classes = clsxm('p-5', className)
+
+  const firstObserved = formatObservationDate(cluster.firstObserved)
+  const lastObserved = formatObservationDate(cluster.lastObserved)
+  const created = formatObservationDate(cluster.created)
 
   return (
     <Tile className={classes}>
@@ -25,7 +48,7 @@ export function ClusterMetadataCard({ cluster, className }: ClusterMetadataCardP
           <div className='flex flex-col gap-1'>
             <DefinitionTerm>Cluster ID</DefinitionTerm>
             <DefinitionDescription>
-              <Layer layer={1}>
+              <Layer level={1}>
                 <CodeSnippet type='inline'>{clusterId}</CodeSnippet>
               </Layer>
             </DefinitionDescription>
@@ -45,6 +68,42 @@ export function ClusterMetadataCard({ cluster, className }: ClusterMetadataCardP
           <div className='flex flex-col gap-1'>
             <DefinitionTerm>Provider</DefinitionTerm>
             <DefinitionDescription>{workspace.datacenter.provider}</DefinitionDescription>
+          </div>
+          <div className='flex flex-col gap-1'>
+            <DefinitionTerm>HA control plane</DefinitionTerm>
+            <DefinitionDescription>{getHaClusterPlaneValue(cluster)}</DefinitionDescription>
+          </div>
+          <div className='flex flex-col gap-1'>
+            <DefinitionTerm>Environment</DefinitionTerm>
+            <DefinitionDescription>
+              <Tag size='small' variant='readonly'>
+                {cluster.environment}
+              </Tag>
+            </DefinitionDescription>
+          </div>
+          <div className='flex flex-col gap-1'>
+            <DefinitionTerm>Egress IP</DefinitionTerm>
+            <DefinitionDescription>
+              {typeof cluster.topology.egressIp === 'string' && cluster.topology.egressIp.length > 0 ? (
+                <Layer level={1}>
+                  <CodeSnippet type='inline'>{cluster.topology.egressIp}</CodeSnippet>
+                </Layer>
+              ) : (
+                'Missing…'
+              )}
+            </DefinitionDescription>
+          </div>
+          <div className='flex flex-col gap-1'>
+            <DefinitionTerm>First observed</DefinitionTerm>
+            <DefinitionDescription>{firstObserved}</DefinitionDescription>
+          </div>
+          <div className='flex flex-col gap-1'>
+            <DefinitionTerm>Last observed</DefinitionTerm>
+            <DefinitionDescription>{lastObserved}</DefinitionDescription>
+          </div>
+          <div className='flex flex-col gap-1'>
+            <DefinitionTerm>Created</DefinitionTerm>
+            <DefinitionDescription>{created}</DefinitionDescription>
           </div>
         </DefinitionList>
       </div>
