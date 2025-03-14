@@ -1,9 +1,10 @@
 import { Slot } from '@radix-ui/react-slot'
 import clsx from 'clsx'
+import { XIcon } from 'lucide-react'
 import { AriaAttributes, HTMLAttributes } from 'react'
 
 export type TagVariant = 'readonly' | 'dismissible' | 'operational' | 'selectable'
-export type SizeVariant = 'small' | 'medium' | 'large'
+export type SizeVariant = 'sm' | 'md' | 'lg'
 
 // TODO: Finish tag component
 
@@ -31,6 +32,12 @@ export interface TagProps extends HTMLAttributes<HTMLElement> {
   variant?: TagVariant
 
   /**
+   * What icon should be used?
+   * @default null
+   */
+  icon?: React.ReactNode
+
+  /**
    * Merge props onto its immediate child.
    * @docs {@link https://www.radix-ui.com/primitives/docs/utilities/slot}
    */
@@ -38,13 +45,15 @@ export interface TagProps extends HTMLAttributes<HTMLElement> {
 }
 
 export function Tag({
-  size = 'medium',
+  size = 'md',
   variant = 'readonly',
+  icon = null,
   className,
   children,
   asChild = false,
   ...rest
 }: TagProps) {
+  const hasIcon = icon !== null
   const classes = clsx(
     `r-tag r-tag--${size}`,
     {
@@ -52,14 +61,19 @@ export function Tag({
        * The readonly variant is the default and doesn't need a modifier class.
        */
       [`r-tag--${variant}`]: variant !== 'readonly',
+      'r-tag--has-icon': hasIcon,
     },
     className
   )
   const Comp = asChild ? Slot : 'span'
   return (
-    <div className='text-red-500'>
+    <div>
       <Comp className={classes} {...rest}>
+      {hasIcon && <span className='r-tag--icon-container'>{icon}</span>}
         {children}
+        {variant === 'dismissible' && (
+          <XIcon className='r-tag--x' />
+        )}
       </Comp>
     </div>
   )

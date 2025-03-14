@@ -1,7 +1,7 @@
 'use client'
 
-import { PencilIcon } from 'lucide-react'
-import { Button, MetricsCard } from '@ror/react'
+import { PencilIcon, SearchCodeIcon } from 'lucide-react'
+import { Button, MetricsCard, Tag } from '@ror/react'
 import { Layer } from '@ror/react/components/layer'
 import type { MetricsCardItem } from '@ror/react'
 import { useEffect, useState } from 'react'
@@ -230,6 +230,7 @@ export const MetricsBoard = ({ className }: MetricsBoardProps) => {
     <div className={`flex flex-col gap-8 ${className}`}>
       <div className='flex flex-row justify-between items-center'>
         <h1>Dashboard</h1>
+        
         {shouldEdit ? (
           <div className='flex gap-3'>
             <Button variant='primary' onClick={() => saveIds()}>
@@ -245,6 +246,44 @@ export const MetricsBoard = ({ className }: MetricsBoardProps) => {
           </Button>
         )}
       </div>
+
+      <div className='flex flex-col gap-2'>
+            <Tag size='sm' variant='readonly'>Hei på deg din gamle sei</Tag>
+            <Tag size='md' variant='readonly'>Hei på deg din gamle sei</Tag>
+            <Tag size='lg' variant='readonly'>Hei på deg din gamle sei</Tag>
+            
+            <Tag size='sm' variant='readonly' icon={<SearchCodeIcon />}>
+              
+              Hei på deg din gamle sei
+            </Tag>
+            
+            <Tag size='md' variant='readonly' icon={<SearchCodeIcon />}>
+              
+              Hei på deg din gamle sei
+            </Tag>
+            
+            <Tag size='lg' variant='readonly' icon={<SearchCodeIcon />}>
+              
+              Hei på deg din gamle sei
+            </Tag>
+            
+            <Tag size='sm' variant='dismissible'>Hei på deg din gamle sei</Tag>
+            <Tag size='md' variant='dismissible'>Hei på deg din gamle sei</Tag>
+            <Tag size='lg' variant='dismissible'>Hei på deg din gamle sei</Tag>
+            
+            <Tag size='sm' variant='dismissible' icon={<SearchCodeIcon />}>
+              Hei på deg din gamle sei
+            </Tag>
+            
+            <Tag size='md' variant='dismissible' icon={<SearchCodeIcon />}>
+              Hei på deg din gamle sei
+            </Tag>
+            
+            <Tag size='lg' variant='dismissible' icon={<SearchCodeIcon />}>
+              Hei på deg din gamle sei
+            </Tag>
+      </div>
+
 
       <hr className='border-slate-500' />
 

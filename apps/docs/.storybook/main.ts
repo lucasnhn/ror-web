@@ -8,7 +8,8 @@ import { fileURLToPath } from 'url'
  * It is needed in projects that use Yarn PnP or are set up within a monorepo.
  */
 function getAbsolutePath(value: string): string {
-  return dirname(fileURLToPath(import.meta.resolve(join(value, 'package.json'))))
+  // return dirname(fileURLToPath(import.meta.resolve(join(value, 'package.json'))))
+  return dirname(require.resolve(join(value, 'package.json')))
 }
 
 const config: StorybookConfig = {
