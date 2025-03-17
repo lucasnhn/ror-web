@@ -1,7 +1,9 @@
+"use client"
+
 import { Slot } from '@radix-ui/react-slot'
 import clsx from 'clsx'
 import { XIcon } from 'lucide-react'
-import { AriaAttributes, HTMLAttributes } from 'react'
+import { AriaAttributes, HTMLAttributes, useState } from 'react'
 
 export type TagVariant = 'readonly' | 'dismissible' | 'operational' | 'selectable'
 export type SizeVariant = 'sm' | 'md' | 'lg'
@@ -60,6 +62,7 @@ export function Tag({
   asChild = false,
   ...rest
 }: TagProps) {
+  const [isActive, setIsActive] = useState<boolean>(true);
   const hasIcon = icon !== null
   const classes = clsx(
     `r-tag r-tag--${size} r-tag--${severity}`,
@@ -69,13 +72,18 @@ export function Tag({
        */
       [`r-tag--${variant}`]: variant !== 'readonly',
       'r-tag--has-icon': hasIcon,
+      [`r-tag--${severity}--inactive`]: variant === 'selectable' && !isActive,
     },
     className,
   )
   const Comp = asChild ? Slot : 'span'
 
+  const handleClick = () => {
+    setIsActive((prev) => !prev);
+  }
+ 
   return (
-    <div>
+    <div onClick={handleClick}>
       <Comp className={classes} {...rest}>
       {hasIcon && <span className='r-tag--icon-container'>{icon}</span>}
         {children}

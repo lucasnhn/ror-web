@@ -51,5 +51,20 @@ $sizes: (
       background-color: #{get-var('support-#{$severity}')};
       color: #{get-var('text-support-#{$severity}')};
     }
+    &.r-tag--#{$severity}--inactive {
+      background-color: #{get-var('text-support-#{$severity}')}; 
+      color: #{get-var('support-#{$severity}')}; 
+    }
   }
+
+  &--selectable {
+    box-sizing: border-box;
+    border-width: 1px;
+    cursor: pointer;
+  
+    &:hover {
+      border-width: 2px;
+    }
+  }
+
 }
