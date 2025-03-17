@@ -1,10 +1,9 @@
 'use client'
 import { ContentSwitch, Switch } from '@ror/react/components/content-switch'
-import { useRouter, usePathname, useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 export function ClusterPageViewSwitch() {
   const router = useRouter()
-  const path = usePathname()
   const searchParams = useSearchParams()
 
   const handleOnViewChange = (value: string) => {

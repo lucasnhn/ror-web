@@ -1,6 +1,5 @@
 import { DefinitionDescription, DefinitionList, DefinitionTerm, Tile } from '@ror/react'
 import type { ClusterListItem } from '@ror/js-api-client'
-import { format } from 'date-fns'
 import Link from 'next/link'
 import clsxm from '@/utils/clsxm'
 import { HealthStatus } from '@/components/common/health-status'
