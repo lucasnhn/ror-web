@@ -13,7 +13,8 @@ export function ClusterVersionsCard({ cluster, className }: ClusterVersionsCardP
 
   const nhnToolingVersion = cluster.versions.nhnTooling.version
   const nhnToolingBranch = cluster.versions.nhnTooling.branch
-  const nhnToolingValue = `${nhnToolingVersion} (${nhnToolingBranch})`
+  const nhnToolingValue =
+    nhnToolingVersion !== 'Missing ...' ? `${nhnToolingVersion} (${nhnToolingBranch})` : 'Missing …'
 
   const agentVersion = cluster.versions.agent?.version
   const agentSha = cluster.versions.agent?.sha

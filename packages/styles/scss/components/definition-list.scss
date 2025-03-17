@@ -23,13 +23,13 @@
 
   .#{$prefix}-dl__term {
     margin: 0;
-    @include type-style('heading-01');
+    @include type-style('label-02');
     color: cv.get-var('text-secondary');
   }
 
   .#{$prefix}-dl__description {
     font-style: normal;
     margin: 0;
-    @include type-style('body-01');
+    @include type-style('body-01-compact');
   }
 }
