@@ -116,6 +116,15 @@
     @include light-dark('support-caution-minor', rgb-color('yellow', '500'), rgb-color('yellow', '400'));
     @include light-dark('support-caution-major', rgb-color('orange', '500'), rgb-color('orange', '400'));
     @include light-dark('support-caution-undefined', rgb-color('purple', '500'), rgb-color('purple', '400'));
+    
+    /// Status text
+    @include light-dark('text-support-error', rgb-color('red', '800'), rgb-color('red', '700'));
+    @include light-dark('text-support-success', rgb-color('green', '800'), rgb-color('green', '700'));
+    @include light-dark('text-support-warning', rgb-color('yellow', '800'), rgb-color('yellow', '700'));
+    @include light-dark('text-support-info', rgb-color('blue', '800'), rgb-color('blue', '700'));
+    @include light-dark('text-support-caution-minor', rgb-color('yellow', '800'), rgb-color('yellow', '700'));
+    @include light-dark('text-support-caution-major', rgb-color('orange', '800'), rgb-color('orange', '700'));
+    @include light-dark('text-support-caution-undefined', rgb-color('purple', '800'), rgb-color('purple', '700'));
 
     // Spacing
     @include spacing.emit-spacing-custom-properties();
@@ -211,6 +220,15 @@
         @include light-dark('support-caution-minor', p3-color('yellow', '500'), p3-color('yellow', '400'));
         @include light-dark('support-caution-major', p3-color('orange', '500'), p3-color('orange', '400'));
         @include light-dark('support-caution-undefined', p3-color('purple', '500'), p3-color('purple', '400'));
+
+        /// Status text
+        @include light-dark('text-support-error', p3-color('red', '800'), p3-color('red', '700'));
+        @include light-dark('text-support-success', p3-color('green', '800'), p3-color('green', '700'));
+        @include light-dark('text-support-warning', p3-color('yellow', '800'), p3-color('yellow', '700'));
+        @include light-dark('text-support-info', p3-color('blue', '800'), p3-color('blue', '700'));
+        @include light-dark('text-support-caution-minor', p3-color('yellow', '800'), p3-color('yellow', '700'));
+        @include light-dark('text-support-caution-major', p3-color('orange', '800'), p3-color('orange', '700'));
+        @include light-dark('text-support-caution-undefined', p3-color('purple', '800'), p3-color('purple', '700'));
       }
     }
   }

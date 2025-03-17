@@ -248,38 +248,52 @@ export const MetricsBoard = ({ className }: MetricsBoardProps) => {
       </div>
 
       <div className='flex flex-col gap-2'>
-            <Tag size='sm' variant='readonly' backgroundColor='bg-red-50' textColor='text-red-100'>Hei på deg din gamle sei</Tag>
-            <Tag size='md' variant='readonly' backgroundColor='bg-red-100' textColor='text-red-200'>Hei på deg din gamle sei</Tag>
-            <Tag size='lg' variant='readonly' backgroundColor='bg-red-200' textColor='text-red-300'>Hei på deg din gamle sei</Tag>
+            <Tag size='sm' variant='readonly' severity='error'>Hei på deg din gamle sei</Tag>
+            <Tag size='md' variant='readonly' severity='success'>Hei på deg din gamle sei</Tag>
+            <Tag size='lg' variant='readonly' severity='warning'>Hei på deg din gamle sei</Tag>
             
-            <Tag size='sm' variant='readonly' icon={<SearchCodeIcon />} backgroundColor='bg-red-300' textColor='text-red-400'>
-              
+            <Tag size='sm' variant='readonly' severity='info' icon={<SearchCodeIcon />}>
               Hei på deg din gamle sei
             </Tag>
             
-            <Tag size='md' variant='readonly' icon={<SearchCodeIcon />} backgroundColor='bg-red-400' textColor='text-red-500'>
-              
+            <Tag size='md' variant='readonly' severity='caution-minor' icon={<SearchCodeIcon />}>
               Hei på deg din gamle sei
             </Tag>
             
-            <Tag size='lg' variant='readonly' icon={<SearchCodeIcon />} backgroundColor='bg-red-500' textColor='text-red-600'>
-              
+            <Tag size='lg' variant='readonly' severity='caution-major' icon={<SearchCodeIcon />}>
               Hei på deg din gamle sei
             </Tag>
             
-            <Tag size='sm' variant='dismissible' backgroundColor='bg-red-600' textColor='text-red-700'>Hei på deg din gamle sei</Tag>
-            <Tag size='md' variant='dismissible' backgroundColor='bg-red-700' textColor='text-red-800'>Hei på deg din gamle sei</Tag>
-            <Tag size='lg' variant='dismissible' backgroundColor='bg-red-800' textColor='text-red-900'>Hei på deg din gamle sei</Tag>
+            <Tag size='sm' variant='dismissible' severity='caution-undefined'>Hei på deg din gamle sei</Tag>
+            <Tag size='md' variant='dismissible' severity='error'>Hei på deg din gamle sei</Tag>
+            <Tag size='lg' variant='dismissible' severity='success'>Hei på deg din gamle sei</Tag>
             
-            <Tag size='sm' variant='dismissible' icon={<SearchCodeIcon />} backgroundColor='bg-red-900' textColor='text-red-950'>
+            <Tag size='sm' variant='dismissible' severity='warning' icon={<SearchCodeIcon />}>
               Hei på deg din gamle sei
             </Tag>
             
-            <Tag size='md' variant='dismissible' icon={<SearchCodeIcon />} backgroundColor='bg-red-950' textColor='text-black'>
+            <Tag size='md' variant='dismissible' severity='info' icon={<SearchCodeIcon />}>
               Hei på deg din gamle sei
             </Tag>
             
-            <Tag size='lg' variant='dismissible' icon={<SearchCodeIcon />} backgroundColor='bg-red-950' textColor='text-black'>
+            <Tag size='lg' variant='dismissible' severity='caution-minor' icon={<SearchCodeIcon />}>
+              Hei på deg din gamle sei
+            </Tag>
+
+
+            <Tag size='sm' variant='selectable' severity='error'>Hei på deg din gamle sei</Tag>
+            <Tag size='md' variant='selectable' severity='success'>Hei på deg din gamle sei</Tag>
+            <Tag size='lg' variant='selectable' severity='warning'>Hei på deg din gamle sei</Tag>
+            
+            <Tag size='sm' variant='selectable' severity='info' icon={<SearchCodeIcon />}>
+              Hei på deg din gamle sei
+            </Tag>
+            
+            <Tag size='md' variant='selectable' severity='caution-minor' icon={<SearchCodeIcon />}>
+              Hei på deg din gamle sei
+            </Tag>
+            
+            <Tag size='lg' variant='selectable' severity='caution-major' icon={<SearchCodeIcon />}>
               Hei på deg din gamle sei
             </Tag>
       </div>

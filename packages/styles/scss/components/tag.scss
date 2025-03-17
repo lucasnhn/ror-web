@@ -1,5 +1,9 @@
 @use 'sass:map';
-@use '../config.scss' as c;
+@use '../config.scss' as *;
+@use '../utilities/custom-properties.scss' as *;
+@use '../utilities/convert.scss';
+@use '../type/styles.scss' as type;
+
 
 $sizes: (
   "sm": (tagHeight: 1.125rem, xPadding: 0.5rem, crossPaddingRight: 1px, iconMargin: 0.25rem),
@@ -7,7 +11,7 @@ $sizes: (
   "lg": (tagHeight: 2rem, xPadding: 0.75rem, crossPaddingRight: 0.5rem, iconMargin: 0.5rem)
 );
 
-.#{c.$prefix}-tag {
+.#{$prefix}-tag {
   display: flex;
   align-items: center;
   font-size: 0.75rem;
@@ -24,21 +28,28 @@ $sizes: (
       height: map.get($values, "tagHeight");
       padding: 0 map.get($values, "xPadding");
 
-      &.#{c.$prefix}-tag--dismissible {
+      &.#{$prefix}-tag--dismissible {
         padding-right: map.get($values, "crossPaddingRight");
       }
 
-      .#{c.$prefix}-tag--x {
+      .#{$prefix}-tag--x {
         margin-left: map.get($values, "xPadding");
       }
       
-      &.#{c.$prefix}-tag--has-icon {
+      &.#{$prefix}-tag--has-icon {
         padding-left: map.get($values, "iconMargin");
       }
 
-      .#{c.$prefix}-tag--icon-container {
+      .#{$prefix}-tag--icon-container {
         margin-right: map.get($values, "iconMargin");
       }
+    }
+  }
+
+  @each $severity in ('error', 'success', 'warning', 'info', 'caution-minor', 'caution-major', 'caution-undefined') {
+    &--#{$severity} {
+      background-color: #{get-var('support-#{$severity}')};
+      color: #{get-var('text-support-#{$severity}')};
     }
   }
 }

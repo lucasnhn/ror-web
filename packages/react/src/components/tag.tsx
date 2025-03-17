@@ -5,6 +5,7 @@ import { AriaAttributes, HTMLAttributes } from 'react'
 
 export type TagVariant = 'readonly' | 'dismissible' | 'operational' | 'selectable'
 export type SizeVariant = 'sm' | 'md' | 'lg'
+export type TagSeverity = 'error' | 'success' | 'warning' | 'info' | 'caution-minor' | 'caution-major' | 'caution-undefined'
 
 // TODO: Finish tag component
 
@@ -21,7 +22,7 @@ export interface TagProps extends HTMLAttributes<HTMLElement> {
 
   /**
    * How large should the tag be?
-   * @default medium
+   * @default md
    */
   size?: SizeVariant
 
@@ -32,14 +33,9 @@ export interface TagProps extends HTMLAttributes<HTMLElement> {
   variant?: TagVariant
 
   /**
-   * What should the background color be? Expecting a tailwindcss color class.
+   * What should the tag severity be? Affects the color of the tag.
    */
-  backgroundColor: string
-
-  /**
-   * What should the background color be? Expecting a tailwindcss color class.
-   */
-  textColor: string
+  severity: TagSeverity
 
   /**
    * What icon should be used?
@@ -59,15 +55,14 @@ export function Tag({
   variant = 'readonly',
   icon = null,
   className,
-  backgroundColor,
-  textColor,
+  severity,
   children,
   asChild = false,
   ...rest
 }: TagProps) {
   const hasIcon = icon !== null
   const classes = clsx(
-    `r-tag r-tag--${size}`,
+    `r-tag r-tag--${size} r-tag--${severity}`,
     {
       /**
        * The readonly variant is the default and doesn't need a modifier class.
@@ -76,8 +71,6 @@ export function Tag({
       'r-tag--has-icon': hasIcon,
     },
     className,
-    backgroundColor,
-    textColor
   )
   const Comp = asChild ? Slot : 'span'
 
