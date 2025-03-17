@@ -43,7 +43,7 @@ const iconTypes = {
   informative: Info,
 }
 
-interface IconIndicatorProps {
+export interface IconIndicatorProps {
   /**
    * Specify an optional className to add.
    */
@@ -62,7 +62,7 @@ interface IconIndicatorProps {
   /**
    * Specify the size of the Icon Indicator. Defaults to 16.
    */
-  size?: 'md' | 'lg'
+  size?: 'sm' | 'md' | 'lg'
 }
 
 export const IconIndicator = forwardRef(function IconIndicatorContent(
