@@ -83,10 +83,6 @@ export const OperationalTag: Story = {
     },
 }
 
-// TODO: Implement selectable tag
-/**
- * `selectable` Tag story
- */
 export const SelectableTag: Story = {
     args: {
         size: 'md',

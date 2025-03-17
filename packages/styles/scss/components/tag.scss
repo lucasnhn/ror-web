@@ -59,11 +59,11 @@ $sizes: (
 
   &--selectable {
     box-sizing: border-box;
-    border-width: 1px;
+    border: 2px solid transparent;
     cursor: pointer;
   
     &:hover {
-      border-width: 2px;
+      border-color: #{get-var('border-strong')};
     }
   }
 
