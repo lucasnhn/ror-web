@@ -248,38 +248,38 @@ export const MetricsBoard = ({ className }: MetricsBoardProps) => {
       </div>
 
       <div className='flex flex-col gap-2'>
-            <Tag size='sm' variant='readonly'>Hei på deg din gamle sei</Tag>
-            <Tag size='md' variant='readonly'>Hei på deg din gamle sei</Tag>
-            <Tag size='lg' variant='readonly'>Hei på deg din gamle sei</Tag>
+            <Tag size='sm' variant='readonly' backgroundColor='bg-red-50' textColor='text-red-100'>Hei på deg din gamle sei</Tag>
+            <Tag size='md' variant='readonly' backgroundColor='bg-red-100' textColor='text-red-200'>Hei på deg din gamle sei</Tag>
+            <Tag size='lg' variant='readonly' backgroundColor='bg-red-200' textColor='text-red-300'>Hei på deg din gamle sei</Tag>
             
-            <Tag size='sm' variant='readonly' icon={<SearchCodeIcon />}>
+            <Tag size='sm' variant='readonly' icon={<SearchCodeIcon />} backgroundColor='bg-red-300' textColor='text-red-400'>
               
               Hei på deg din gamle sei
             </Tag>
             
-            <Tag size='md' variant='readonly' icon={<SearchCodeIcon />}>
+            <Tag size='md' variant='readonly' icon={<SearchCodeIcon />} backgroundColor='bg-red-400' textColor='text-red-500'>
               
               Hei på deg din gamle sei
             </Tag>
             
-            <Tag size='lg' variant='readonly' icon={<SearchCodeIcon />}>
+            <Tag size='lg' variant='readonly' icon={<SearchCodeIcon />} backgroundColor='bg-red-500' textColor='text-red-600'>
               
               Hei på deg din gamle sei
             </Tag>
             
-            <Tag size='sm' variant='dismissible'>Hei på deg din gamle sei</Tag>
-            <Tag size='md' variant='dismissible'>Hei på deg din gamle sei</Tag>
-            <Tag size='lg' variant='dismissible'>Hei på deg din gamle sei</Tag>
+            <Tag size='sm' variant='dismissible' backgroundColor='bg-red-600' textColor='text-red-700'>Hei på deg din gamle sei</Tag>
+            <Tag size='md' variant='dismissible' backgroundColor='bg-red-700' textColor='text-red-800'>Hei på deg din gamle sei</Tag>
+            <Tag size='lg' variant='dismissible' backgroundColor='bg-red-800' textColor='text-red-900'>Hei på deg din gamle sei</Tag>
             
-            <Tag size='sm' variant='dismissible' icon={<SearchCodeIcon />}>
+            <Tag size='sm' variant='dismissible' icon={<SearchCodeIcon />} backgroundColor='bg-red-900' textColor='text-red-950'>
               Hei på deg din gamle sei
             </Tag>
             
-            <Tag size='md' variant='dismissible' icon={<SearchCodeIcon />}>
+            <Tag size='md' variant='dismissible' icon={<SearchCodeIcon />} backgroundColor='bg-red-950' textColor='text-black'>
               Hei på deg din gamle sei
             </Tag>
             
-            <Tag size='lg' variant='dismissible' icon={<SearchCodeIcon />}>
+            <Tag size='lg' variant='dismissible' icon={<SearchCodeIcon />} backgroundColor='bg-red-950' textColor='text-black'>
               Hei på deg din gamle sei
             </Tag>
       </div>

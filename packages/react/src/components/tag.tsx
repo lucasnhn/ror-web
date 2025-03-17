@@ -32,6 +32,16 @@ export interface TagProps extends HTMLAttributes<HTMLElement> {
   variant?: TagVariant
 
   /**
+   * What should the background color be? Expecting a tailwindcss color class.
+   */
+  backgroundColor: string
+
+  /**
+   * What should the background color be? Expecting a tailwindcss color class.
+   */
+  textColor: string
+
+  /**
    * What icon should be used?
    * @default null
    */
@@ -49,6 +59,8 @@ export function Tag({
   variant = 'readonly',
   icon = null,
   className,
+  backgroundColor,
+  textColor,
   children,
   asChild = false,
   ...rest
@@ -63,9 +75,12 @@ export function Tag({
       [`r-tag--${variant}`]: variant !== 'readonly',
       'r-tag--has-icon': hasIcon,
     },
-    className
+    className,
+    backgroundColor,
+    textColor
   )
   const Comp = asChild ? Slot : 'span'
+
   return (
     <div>
       <Comp className={classes} {...rest}>
