@@ -9,7 +9,7 @@ export type TagVariant = 'readonly' | 'dismissible' | 'operational' | 'selectabl
 export type SizeVariant = 'sm' | 'md' | 'lg'
 export type TagSeverity = 'error' | 'success' | 'warning' | 'info' | 'caution-minor' | 'caution-major' | 'caution-undefined'
 
-// TODO: Finish tag component
+// TODO: Implement operational tag
 
 export interface TagProps extends HTMLAttributes<HTMLElement> {
   /**

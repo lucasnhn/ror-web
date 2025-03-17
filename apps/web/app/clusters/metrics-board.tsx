@@ -247,58 +247,6 @@ export const MetricsBoard = ({ className }: MetricsBoardProps) => {
         )}
       </div>
 
-      <div className='flex flex-col gap-2'>
-            <Tag size='sm' variant='readonly' severity='error'>Hei på deg din gamle sei</Tag>
-            <Tag size='md' variant='readonly' severity='success'>Hei på deg din gamle sei</Tag>
-            <Tag size='lg' variant='readonly' severity='warning'>Hei på deg din gamle sei</Tag>
-            
-            <Tag size='sm' variant='readonly' severity='info' icon={<SearchCodeIcon />}>
-              Hei på deg din gamle sei
-            </Tag>
-            
-            <Tag size='md' variant='readonly' severity='caution-minor' icon={<SearchCodeIcon />}>
-              Hei på deg din gamle sei
-            </Tag>
-            
-            <Tag size='lg' variant='readonly' severity='caution-major' icon={<SearchCodeIcon />}>
-              Hei på deg din gamle sei
-            </Tag>
-            
-            <Tag size='sm' variant='dismissible' severity='caution-undefined'>Hei på deg din gamle sei</Tag>
-            <Tag size='md' variant='dismissible' severity='error'>Hei på deg din gamle sei</Tag>
-            <Tag size='lg' variant='dismissible' severity='success'>Hei på deg din gamle sei</Tag>
-            
-            <Tag size='sm' variant='dismissible' severity='warning' icon={<SearchCodeIcon />}>
-              Hei på deg din gamle sei
-            </Tag>
-            
-            <Tag size='md' variant='dismissible' severity='info' icon={<SearchCodeIcon />}>
-              Hei på deg din gamle sei
-            </Tag>
-            
-            <Tag size='lg' variant='dismissible' severity='caution-minor' icon={<SearchCodeIcon />}>
-              Hei på deg din gamle sei
-            </Tag>
-
-
-            <Tag size='sm' variant='selectable' severity='error'>Hei på deg din gamle sei</Tag>
-            <Tag size='md' variant='selectable' severity='success'>Hei på deg din gamle sei</Tag>
-            <Tag size='lg' variant='selectable' severity='warning'>Hei på deg din gamle sei</Tag>
-            
-            <Tag size='sm' variant='selectable' severity='info' icon={<SearchCodeIcon />}>
-              Hei på deg din gamle sei
-            </Tag>
-            
-            <Tag size='md' variant='selectable' severity='caution-minor' icon={<SearchCodeIcon />}>
-              Hei på deg din gamle sei
-            </Tag>
-            
-            <Tag size='lg' variant='selectable' severity='caution-major' icon={<SearchCodeIcon />}>
-              Hei på deg din gamle sei
-            </Tag>
-      </div>
-
-
       <hr className='border-slate-500' />
 
       <div className={`flex flex-wrap justify-center gap-4`}>
