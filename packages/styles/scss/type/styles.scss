@@ -54,6 +54,7 @@ $heading-07: (
   'letter-spacing': 0,
 );
 
+/// Useful for sentenced longer than 4 lines
 $body-01: (
   'font-size': scale.type-scale(2),
   'font-weight': font-family.font-weight('regular'),
@@ -61,11 +62,46 @@ $body-01: (
   'letter-spacing': 0.16px,
 );
 
+/// Useful for sentenced no longer than 4 lines
+$body-01-compact: (
+  font-size: scale.type-scale(2),
+  font-weight: font-family.font-weight('regular'),
+  line-height: 1.28572,
+  letter-spacing: 0.16px,
+);
+
+/// Useful for sentences longer than 4 lines
 $body-02: (
   'font-size': scale.type-scale(3),
   'font-weight': font-family.font-weight('regular'),
   'line-height': 1.5,
   'letter-spacing': 0,
+);
+
+/// Useful for sentences no longer than 4 lines
+$body-02-compact: (
+  font-size: scale.type-scale(3),
+  font-weight: font-family.font-weight('regular'),
+  line-height: 1.375,
+  letter-spacing: 0,
+);
+
+/// Multipurpose style that can be used for labels in components, error messages, captions e.t.c.
+/// Should not be used in body copy
+$label-01: (
+  font-size: scale.type-scale(1),
+  font-weight: font-family.font-weight('regular'),
+  line-height: 1.33333,
+  letter-spacing: 0.32px,
+);
+
+/// Multipurpose style that can be used for labels in components, error messages, captions e.t.c.
+/// Should not be used in body copy
+$label-02: (
+  font-size: scale.type-scale(2),
+  font-weight: font-family.font-weight('regular'),
+  line-height: 1.28572,
+  letter-spacing: 0.16px,
 );
 
 $code-01: (
@@ -85,7 +121,11 @@ $tokens: (
   'heading-06': $heading-06,
   'heading-07': $heading-07,
   'body-01': $body-01,
+  'body-01-compact': $body-01-compact,
   'body-02': $body-02,
+  'body-02-compact': $body-02-compact,
+  'label-01': $label-01,
+  'label-02': $label-02,
   'code-01': $code-01,
 );
 

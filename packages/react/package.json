@@ -23,6 +23,10 @@
       "import": "./dist/components/table/index.js",
       "types": "./dist/components/table/index.d.ts"
     },
+    "./components/content-switch": {
+      "import": "./dist/components/content-switch/index.js",
+      "types": "./dist/components/content-switch/index.d.ts"
+    },
     "./src/components/*": {
       "import": "./src/components/*.tsx"
     },
@@ -33,6 +37,10 @@
     "./components/src/table": {
       "import": "./src/components/table/index.js",
       "types": "./src/components/table/index.d.ts"
+    },
+    "./components/src/content-switch": {
+      "import": "./src/components/content-switch/index.js",
+      "types": "./src/components/content-switch/index.d.ts"
     },
     "./utils/sorting": {
       "import": "./dist/utils/sorting.js",
