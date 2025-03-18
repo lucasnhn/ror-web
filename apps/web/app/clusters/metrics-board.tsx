@@ -1,7 +1,7 @@
 'use client'
 
 import type { MetricsCardItem } from '@ror/react'
-import { Button, MetricsCard, Tag } from '@ror/react'
+import { Button, MetricsCard } from '@ror/react'
 import { Layer } from '@ror/react/components/layer'
 import { PencilIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -246,9 +246,6 @@ export const MetricsBoard = ({ className }: MetricsBoardProps) => {
           </Button>
         )}
       </div>
-
-      <Tag size="lg" color="blue">Test</Tag>
-      <Tag size="lg">Test</Tag>
 
       <hr className='border-slate-500' />
 
