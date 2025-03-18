@@ -3,6 +3,7 @@ import {
   TooltipArrow,
   TooltipContent,
   TooltipContentProps,
+  TooltipPortal,
   Tooltip as TooltipPrimitive,
   TooltipTrigger,
   type TooltipProps as TooltipPrimitiveProps,
@@ -25,10 +26,12 @@ export function Tooltip({ children, content, defaultOpen, open, onOpenChange, ..
   return (
     <TooltipPrimitive defaultOpen={defaultOpen} open={open} onOpenChange={onOpenChange}>
       <TooltipTrigger asChild>{children}</TooltipTrigger>
-      <TooltipContent {...rest} className='r-tooltip'>
-        <div className='r-tooltip__inner'>{content}</div>
-        <TooltipArrow width={8} height={5} className='r-tooltip__arrow' />
-      </TooltipContent>
+      <TooltipPortal>
+        <TooltipContent {...rest} className='r-tooltip'>
+          <div className='r-tooltip__inner'>{content}</div>
+          <TooltipArrow width={8} height={5} className='r-tooltip__arrow' />
+        </TooltipContent>
+      </TooltipPortal>
     </TooltipPrimitive>
   )
 }

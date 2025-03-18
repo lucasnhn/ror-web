@@ -3,6 +3,7 @@ import type { Cluster } from '@ror/js-api-client'
 import clsxm from '@/utils/clsxm'
 import { Tile, CodeSnippet, Layer, DefinitionDescription, DefinitionList, DefinitionTerm, Tag } from '@ror/react'
 import { format } from 'date-fns'
+import { nb } from 'date-fns/locale/nb'
 
 interface ClusterMetadataCardProps {
   cluster: Cluster
@@ -11,9 +12,10 @@ interface ClusterMetadataCardProps {
 
 function getHaClusterPlaneValue(cluster: Cluster) {
   const nodes = cluster.topology.controlPlane.nodes
-  if (nodes.length > 1) {
+
+  if (Array.isArray(nodes) && nodes.length > 1) {
     return 'Yes'
-  } else if (nodes.length === 1) {
+  } else if (Array.isArray(nodes) && nodes.length === 1) {
     return 'No'
   } else {
     return ''
@@ -24,7 +26,9 @@ function formatObservationDate(date: string) {
   if (!date || date === '0001-01-01T00:00:00Z' || date === '') {
     return 'Missing…'
   }
-  return format(date, 'yyyy-MM-dd HH:mm:ss')
+  return format(date, 'PPp', {
+    locale: nb,
+  })
 }
 
 export function ClusterMetadataCard({ cluster, className }: ClusterMetadataCardProps) {

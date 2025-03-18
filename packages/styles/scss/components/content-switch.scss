@@ -1,0 +1,81 @@
+@use '../config.scss' as *;
+@use '../utilities/convert.scss';
+@use '../utilities/custom-properties.scss' as cv;
+@use '../layout.scss';
+@use '../type/styles.scss' as type;
+
+@layer components {
+  .#{$prefix}-content-switch {
+    --content-switch-border-radius: #{convert.to-rem(4px)};
+    --content-switch-padding-inline: #{cv.get-var('spacing-05')};
+    display: flex;
+    justify-content: space-evenly;
+    inline-size: 100%;
+  }
+
+  .#{$prefix}-content-switch--sm {
+    block-size: layout.height('sm');
+  }
+
+  .#{$prefix}-content-switch--md {
+    block-size: layout.height('md');
+  }
+
+  .#{$prefix}-content-switch--lg {
+    block-size: layout.height('lg');
+  }
+
+  .#{$prefix}-content-switch__tab:first-child {
+    border-start-start-radius: var(--content-switch-border-radius);
+    border-end-start-radius: var(--content-switch-border-radius);
+    border-inline-start: convert.to-rem(1px) solid cv.get-var('border-inverse');
+  }
+
+  .#{$prefix}-content-switch__tab:last-child {
+    border-start-end-radius: var(--content-switch-border-radius);
+    border-end-end-radius: var(--content-switch-border-radius);
+    border-inline-end: convert.to-rem(1px) solid cv.get-var('border-inverse');
+  }
+
+  .#{$prefix}-content-switch__tab {
+    @include type.type-style('body-01-compact');
+    border-radius: 0;
+    align-items: center;
+    padding: cv.get-var('spacing-03') var(--content-switch-padding-inline);
+    inline-size: 100%;
+    background-color: transparent;
+    color: cv.get-var('text-secondary');
+    border: 0;
+    border-block-end: convert.to-rem(1px) solid cv.get-var('border-inverse');
+    border-block-start: convert.to-rem(1px) solid cv.get-var('border-inverse');
+    transition: all 150ms cubic-bezier(0.2, 0, 0.38, 0.9);
+    text-align: start;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .#{$prefix}-content-switch__tab:not(.#{$prefix}-content-switch__tab--selected):hover {
+    cursor: pointer;
+    color: cv.get-var('text-primary');
+  }
+
+  .#{$prefix}-content-switch__tab:not(.#{$prefix}-content-switch__tab--selected):hover,
+  .#{$prefix}-content-switch__tab:not(.#{$prefix}-content-switch__tab--selected):active {
+    background-color: cv.get-var('layer-hover');
+    color: cv.get-var('text-primary');
+  }
+
+  .#{$prefix}-content-switch__tab-label {
+    display: inline-flex;
+    overflow: hidden;
+    max-inline-size: 100%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /// Selected state
+  .#{$prefix}-content-switch__tab--selected {
+    background-color: cv.get-var('layer-selected-inverse');
+    color: cv.get-var('text-inverse');
+  }
+}
