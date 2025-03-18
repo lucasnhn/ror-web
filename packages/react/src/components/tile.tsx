@@ -1,13 +1,20 @@
 import { clsx } from 'clsx'
-import type { ReactElement, ReactNode } from 'react'
+import type { ReactNode } from 'react'
+import { Slot } from '@radix-ui/react-slot'
 
 export interface TileProps {
   /**
-   * Render the component by your element of choice
-   * @example
-   * <Tile as="footer">
+   * Merge props onto its immediate child.
+   * Useful for rendering for instance a Link instead of a button.
+   * @docs {@link https://www.radix-ui.com/primitives/docs/utilities/slot}
    */
-  as?: ReactElement['type']
+  asChild?: boolean
+
+  /**
+   * Specify the kind of tile
+   */
+  kind?: 'normal' | 'clickable'
+
   /**
    * Additional classes
    */
@@ -18,8 +25,8 @@ export interface TileProps {
   children: ReactNode
 }
 
-export function Tile({ className, children, as = 'div' }: TileProps): ReactNode {
-  const classes = clsx('r-tile', className)
-  const Element = as
-  return <Element className={classes}>{children}</Element>
+export function Tile({ className, children, asChild = false, kind = 'normal' }: TileProps): ReactNode {
+  const classes = clsx('r-tile', { 'r-tile--clickable': kind === 'clickable' }, className)
+  const Comp = asChild ? Slot : 'div'
+  return <Comp className={classes}>{children}</Comp>
 }

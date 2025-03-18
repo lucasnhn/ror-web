@@ -71,7 +71,7 @@ export const TopologyModel = z.object({
   controlPlaneEndpoint: z.string(),
   egressIp: z.string(),
   controlPlane: z.object({
-    nodes: z.array(ControlPaneNodeModel),
+    nodes: z.array(ControlPaneNodeModel).nullish(),
   }),
 })
 

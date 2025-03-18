@@ -61,18 +61,20 @@ export default async function ClusterPageLayout({ params, children }: ClusterPag
 
   return (
     <Fragment>
-      <Tile as='header' className='mb-4 min-h-40 rounded-none flex flex-col flex-start px-6 pt-6 md:pl-8'>
-        <ClusterPageBreadcrumbs clusterId={cluster.clusterId} clusterName={cluster.clusterName} />
-        <div className='flex items-center gap-8 mb-8'>
-          <h1>{cluster.clusterName}</h1>
-          <div className='flex flex-col gap-2'>
-            <HealthStatus status={cluster.healthStatus.health} />
-            <p className='text-sm text-(--r-text-secondary)'>
-              Last heartbeat: {lastHeartbeatDateString} ({lastHeartbeatDistance} ago)
-            </p>
+      <Tile className='mb-4 min-h-40 rounded-none flex flex-col flex-start px-6 pt-6 md:pl-8' asChild>
+        <header>
+          <ClusterPageBreadcrumbs clusterId={cluster.clusterId} clusterName={cluster.clusterName} />
+          <div className='flex items-center gap-8 mb-8'>
+            <h1>{cluster.clusterName}</h1>
+            <div className='flex flex-col gap-2'>
+              <HealthStatus status={cluster.healthStatus.health} />
+              <p className='text-sm text-(--r-text-secondary)'>
+                Last heartbeat: {lastHeartbeatDateString} ({lastHeartbeatDistance} ago)
+              </p>
+            </div>
           </div>
-        </div>
-        <NavigationTabs items={tabs} className='mt-auto -translate-x-5' />
+          <NavigationTabs items={tabs} className='mt-auto -translate-x-5' />
+        </header>
       </Tile>
       <div className='pt-2 px-6 md:px-6 md:pt-8'>{children}</div>
     </Fragment>

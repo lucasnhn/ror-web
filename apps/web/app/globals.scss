@@ -1,4 +1,5 @@
 @use '@ror/styles';
+@use '@ror/styles/scss/type';
 
 @layer base {
   /// This lets the browser know that this websites supports both light and dark modes.
@@ -15,5 +16,59 @@
   /// Override the color system to say it only supports dark mode (see )
   html[data-color-scheme='dark'] {
     color-scheme: dark;
+  }
+}
+
+@layer components {
+  .heading-01 {
+    @include type.type-style('heading-01');
+  }
+
+  .heading-02 {
+    @include type.type-style('heading-02');
+  }
+
+  .heading-03 {
+    @include type.type-style('heading-03');
+  }
+
+  .heading-04 {
+    @include type.type-style('heading-04');
+  }
+
+  .heading-05 {
+    @include type.type-style('heading-05');
+  }
+
+  .heading-06 {
+    @include type.type-style('heading-06');
+  }
+
+  .body-01 {
+    @include type.type-style('body-01');
+  }
+
+  .body-01-compact {
+    @include type.type-style('body-01-compact');
+  }
+
+  .body-02 {
+    @include type.type-style('body-02');
+  }
+
+  .body-02-compact {
+    @include type.type-style('body-02-compact');
+  }
+
+  .label-01 {
+    @include type.type-style('label-01');
+  }
+
+  .label-02 {
+    @include type.type-style('label-02');
+  }
+
+  .code-01 {
+    @include type.type-style('code-01');
   }
 }

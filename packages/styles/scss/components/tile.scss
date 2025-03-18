@@ -14,4 +14,13 @@
     background-color: cv.get-var('layer');
     border-radius: 0.25rem;
   }
+
+  .#{$prefix}-tile--clickable {
+    cursor: pointer;
+    border: 1px solid cv.get-var('border-tile');
+  }
+
+  .#{$prefix}-tile--clickable:hover {
+    background-color: cv.get-var('layer-hover');
+  }
 }

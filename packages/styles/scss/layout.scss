@@ -1,0 +1,20 @@
+@use 'sass:map';
+@use './utilities/convert.scss';
+
+$heights-tokens: (
+  'xs': convert.to-rem(24px),
+  'sm': convert.to-rem(32px),
+  'md': convert.to-rem(40px),
+  'lg': convert.to-rem(48px),
+  'xl': convert.to-rem(64px),
+  '2xl': convert.to-rem(80px),
+);
+
+/// Get the height of a layout element based on its size.
+@function height($size) {
+  @return map.get($heights-tokens, $size);
+}
+
+@mixin height($size) {
+  height: height($size);
+}

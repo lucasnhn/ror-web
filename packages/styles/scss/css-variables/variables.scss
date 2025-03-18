@@ -46,6 +46,7 @@
     @include light-dark('layer-selected-hover-01', rgb-color('neutral', '300'), rgb-color('neutral', '700'));
     @include light-dark('layer-selected-hover-02', rgb-color('neutral', '300'), rgb-color('neutral', '600'));
     @include light-dark('layer-selected-hover-03', rgb-color('neutral', '400'), rgb-color('neutral', '500'));
+    @include light-dark('layer-selected-inverse', rgb-color('neutral', '950'), rgb-color('neutral', '50'));
 
     /// Layer Accent - Tertiary background paired with $layer-X
     @include light-dark('layer-accent-01', rgb-color('neutral', '200'), rgb-color('neutral', '800'));
@@ -59,15 +60,15 @@
     @include light-dark('layer-accent-active-03', rgb-color('neutral', '500'), rgb-color('neutral', '800'));
 
     /// Borders
-    @include light-dark('border-interactive', rgb-color('teal', '600'), rgb-color('teal', '700'));
-    /// 00 - Paired with $background
+    @include light-dark('border-interactive', rgb-color('teal', '500'), rgb-color('teal', '400'));
     @include light-dark('border-subtle-00', rgb-color('neutral', '200'), rgb-color('neutral', '800'));
-    /// 01 - Paired with $layer-01
     @include light-dark('border-subtle-01', rgb-color('neutral', '300'), rgb-color('neutral', '700'));
-    /// 02 - Paired with $layer-02
     @include light-dark('border-subtle-02', rgb-color('neutral', '200'), rgb-color('neutral', '800'));
-    /// 03 - Paired with $layer-03
     @include light-dark('border-subtle-03', rgb-color('neutral', '300'), rgb-color('neutral', '700'));
+    @include light-dark('border-inverse', rgb-color('neutral', '950'), rgb-color('neutral', '50'));
+    @include light-dark('border-tile-01', rgb-color('neutral', '300'), rgb-color('neutral', '700'));
+    @include light-dark('border-tile-02', rgb-color('neutral', '400'), rgb-color('neutral', '600'));
+    @include light-dark('border-tile-03', rgb-color('neutral', '300'), rgb-color('neutral', '500'));
 
     /// Text
     @include light-dark('text-primary', rgb-color('neutral', '950'), rgb-color('neutral', '100'));
@@ -169,6 +170,7 @@
         @include light-dark('layer-selected-hover-01', p3-color('neutral', '300'), p3-color('neutral', '700'));
         @include light-dark('layer-selected-hover-02', p3-color('neutral', '300'), p3-color('neutral', '600'));
         @include light-dark('layer-selected-hover-03', p3-color('neutral', '400'), p3-color('neutral', '500'));
+        @include light-dark('layer-selected-inverse', p3-color('neutral', '950'), p3-color('neutral', '50'));
 
         /// Layer Accent - Tertiary background paired with $layer-X
         @include light-dark('layer-accent-01', p3-color('neutral', '200'), p3-color('neutral', '800'));
@@ -182,14 +184,15 @@
         @include light-dark('layer-accent-active-03', p3-color('neutral', '500'), p3-color('neutral', '800'));
 
         /// Borders
-        /// 00 - Paired with $background
+        @include light-dark('border-interactive', p3-color('teal', '500'), p3-color('teal', '400'));
         @include light-dark('border-subtle-00', p3-color('neutral', '200'), p3-color('neutral', '800'));
-        /// 01 - Paired with $layer-01
         @include light-dark('border-subtle-01', p3-color('neutral', '300'), p3-color('neutral', '700'));
-        /// 02 - Paired with $layer-02
         @include light-dark('border-subtle-02', p3-color('neutral', '200'), p3-color('neutral', '800'));
-        /// 03 - Paired with $layer-03
         @include light-dark('border-subtle-03', p3-color('neutral', '300'), p3-color('neutral', '700'));
+        @include light-dark('border-inverse', p3-color('neutral', '950'), p3-color('neutral', '50'));
+        @include light-dark('border-tile-01', p3-color('neutral', '300'), p3-color('neutral', '700'));
+        @include light-dark('border-tile-02', p3-color('neutral', '400'), p3-color('neutral', '600'));
+        @include light-dark('border-tile-03', p3-color('neutral', '300'), p3-color('neutral', '500'));
 
         /// Text
         @include light-dark('text-primary', p3-color('neutral', '950'), p3-color('neutral', '100'));
