@@ -127,7 +127,7 @@
     @include light-dark('text-support-caution-major', rgb-color('orange', '800'), rgb-color('orange', '700'));
     @include light-dark('text-support-caution-undefined', rgb-color('purple', '800'), rgb-color('purple', '700'));
 
-    /// Colors
+    /// Tag colors
     @include light-dark('tag-red', rgb-color('red', '200'), rgb-color('red', '800'));
     @include light-dark('tag-orange', rgb-color('orange', '200'), rgb-color('orange', '800'));
     @include light-dark('tag-yellow', rgb-color('yellow', '200'), rgb-color('yellow', '800'));
@@ -136,6 +136,16 @@
     @include light-dark('tag-purple', rgb-color('purple', '200'), rgb-color('purple', '800'));
     @include light-dark('tag-pink', rgb-color('pink', '200'), rgb-color('pink', '800'));
     @include light-dark('tag-gray', rgb-color('gray', '200'), rgb-color('gray', '800'));
+
+    /// Tag text colors
+    @include light-dark('tag-text-red', rgb-color('red', '800'), rgb-color('red', '200'));
+    @include light-dark('tag-text-orange', rgb-color('orange', '800'), rgb-color('orange', '200'));
+    @include light-dark('tag-text-yellow', rgb-color('yellow', '800'), rgb-color('yellow', '200'));
+    @include light-dark('tag-text-green', rgb-color('green', '800'), rgb-color('green', '200'));
+    @include light-dark('tag-text-blue', rgb-color('blue', '800'), rgb-color('blue', '200'));
+    @include light-dark('tag-text-purple', rgb-color('purple', '800'), rgb-color('purple', '200'));
+    @include light-dark('tag-text-pink', rgb-color('pink', '800'), rgb-color('pink', '200'));
+    @include light-dark('tag-text-gray', rgb-color('gray', '800'), rgb-color('gray', '200'));
 
     // Spacing
     @include spacing.emit-spacing-custom-properties();
@@ -243,15 +253,25 @@
         @include light-dark('text-support-caution-major', p3-color('orange', '800'), p3-color('orange', '700'));
         @include light-dark('text-support-caution-undefined', p3-color('purple', '800'), p3-color('purple', '700'));
 
-        /// Colors
-        @include light-dark('tag-red', p3-color('red', '200'), p3-color('red', '700'));
-        @include light-dark('tag-orange', p3-color('orange', '200'), p3-color('orange', '700'));
-        @include light-dark('tag-yellow', p3-color('yellow', '200'), p3-color('yellow', '700'));
-        @include light-dark('tag-green', p3-color('green', '200'), p3-color('green', '700'));
-        @include light-dark('tag-blue', p3-color('blue', '200'), p3-color('blue', '700'));
-        @include light-dark('tag-purple', p3-color('purple', '200'), p3-color('purple', '700'));
-        @include light-dark('tag-pink', p3-color('pink', '200'), p3-color('pink', '700'));
-        @include light-dark('tag-gray', p3-color('gray', '200'), p3-color('gray', '700'));
+        /// Tag colors
+        @include light-dark('tag-red', p3-color('red', '200'), p3-color('red', '800'));
+        @include light-dark('tag-orange', p3-color('orange', '200'), p3-color('orange', '800'));
+        @include light-dark('tag-yellow', p3-color('yellow', '200'), p3-color('yellow', '800'));
+        @include light-dark('tag-green', p3-color('green', '200'), p3-color('green', '800'));
+        @include light-dark('tag-blue', p3-color('blue', '200'), p3-color('blue', '800'));
+        @include light-dark('tag-purple', p3-color('purple', '200'), p3-color('purple', '800'));
+        @include light-dark('tag-pink', p3-color('pink', '200'), p3-color('pink', '800'));
+        @include light-dark('tag-gray', p3-color('gray', '200'), p3-color('gray', '800'));
+
+        /// Tag text colors
+        @include light-dark('tag-red', p3-color('red', '800'), p3-color('red', '200'));
+        @include light-dark('tag-orange', p3-color('orange', '800'), p3-color('orange', '200'));
+        @include light-dark('tag-yellow', p3-color('yellow', '800'), p3-color('yellow', '200'));
+        @include light-dark('tag-green', p3-color('green', '800'), p3-color('green', '200'));
+        @include light-dark('tag-blue', p3-color('blue', '800'), p3-color('blue', '200'));
+        @include light-dark('tag-purple', p3-color('purple', '800'), p3-color('purple', '200'));
+        @include light-dark('tag-pink', p3-color('pink', '800'), p3-color('pink', '200'));
+        @include light-dark('tag-gray', p3-color('gray', '800'), p3-color('gray', '200'));
       }
     }
   }

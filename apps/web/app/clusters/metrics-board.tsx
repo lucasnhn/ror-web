@@ -1,9 +1,9 @@
 'use client'
 
-import { PencilIcon, SearchCodeIcon } from 'lucide-react'
+import type { MetricsCardItem } from '@ror/react'
 import { Button, MetricsCard, Tag } from '@ror/react'
 import { Layer } from '@ror/react/components/layer'
-import type { MetricsCardItem } from '@ror/react'
+import { PencilIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 
@@ -246,6 +246,9 @@ export const MetricsBoard = ({ className }: MetricsBoardProps) => {
           </Button>
         )}
       </div>
+
+      <Tag size="lg" color="blue">Test</Tag>
+      <Tag size="lg">Test</Tag>
 
       <hr className='border-slate-500' />
 

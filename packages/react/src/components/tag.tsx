@@ -8,7 +8,6 @@ import { useState } from 'react'
 
 export type TagVariant = 'readonly' | 'dismissible' | 'operational' | 'selectable'
 export type SizeVariant = 'sm' | 'md' | 'lg'
-export type TagSeverity = 'error' | 'success' | 'warning' | 'info' | 'caution-minor' | 'caution-major' | 'caution-undefined'
 export type TagColor = 'red' | 'orange' | 'yellow' | 'green' | 'blue' | 'purple' | 'pink' | 'gray' | 'neutral'
 
 // TODO: Implement operational tag

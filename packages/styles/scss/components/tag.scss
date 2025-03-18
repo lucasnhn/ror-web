@@ -15,7 +15,7 @@ $sizes: (
   display: flex;
   align-items: center;
   font-size: 0.75rem;
-  border-radius: calc(infinity * 1px);
+  border-radius: 2em;
   width: fit-content;
 
   svg {
@@ -49,6 +49,7 @@ $sizes: (
   @each $color in ('red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'gray') {
     &--#{$color} {
       background-color: #{get-var('tag-#{$color}')};
+      color: #{get-var('tag-text-#{$color}')};
     }
   }
 
