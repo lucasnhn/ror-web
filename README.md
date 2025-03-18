@@ -75,6 +75,8 @@ This repository includes a built-in component generator powered by Turborepo and
 
 All generators are located in the `turbo/generators` directory.
 
+For full documentation, see [Turborepo Generating Code Documentation](https://turbo.build/repo/docs/guides/generating-code).
+
 ### Generate a new React component
 
 To generate a new component, run:
