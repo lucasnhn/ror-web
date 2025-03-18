@@ -15,6 +15,7 @@ export { Layer } from './components/layer.tsx'
 export { MetricsCard } from './components/metrics-card.tsx'
 export type { MetricsCardItem } from './components/metrics-card.tsx'
 export { MetricsWheel } from './components/metrics-wheel.tsx'
+export { Pagination } from './components/pagination.tsx'
 export { Stack } from './components/stack.tsx'
 export {
   TableContainer,
