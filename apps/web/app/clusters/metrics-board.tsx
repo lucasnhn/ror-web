@@ -1,9 +1,9 @@
 'use client'
 
-import { PencilIcon } from 'lucide-react'
-import { Button, MetricsCard } from '@ror/react'
-import { Layer } from '@ror/react/components/layer'
 import type { MetricsCardItem } from '@ror/react'
+import { Button, MetricsCard, Tag } from '@ror/react'
+import { Layer } from '@ror/react/components/layer'
+import { PencilIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 
@@ -230,6 +230,7 @@ export const MetricsBoard = ({ className }: MetricsBoardProps) => {
     <div className={`flex flex-col gap-8 ${className}`}>
       <div className='flex flex-row justify-between items-center'>
         <h1>Dashboard</h1>
+        
         {shouldEdit ? (
           <div className='flex gap-3'>
             <Button variant='primary' onClick={() => saveIds()}>
@@ -245,6 +246,9 @@ export const MetricsBoard = ({ className }: MetricsBoardProps) => {
           </Button>
         )}
       </div>
+
+      <Tag size="lg" color="blue">Test</Tag>
+      <Tag size="lg">Test</Tag>
 
       <hr className='border-slate-500' />
 

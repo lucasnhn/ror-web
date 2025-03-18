@@ -1,70 +1,78 @@
-@use '../config.scss' as c;
+@use 'sass:map';
+@use '../config.scss' as *;
+@use '../utilities/custom-properties.scss' as *;
+@use '../utilities/convert.scss';
+@use '../spacing.scss' as spacing;
 
-@layer components {
-  // TODO: Finish tag component
-  .#{c.$prefix}-tag {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.25rem 0.5rem;
-    font-size: var(--font-size-small, 0.875rem);
-    border-radius: 4px;
-    font-weight: var(--font-weight-medium, 500);
-    white-space: nowrap;
-    user-select: none;
-    cursor: default;
-    background-color: red;
+
+$sizes: (
+  "sm": (tagHeight: 1.125rem, xPadding: spacing.$spacing-03, crossPaddingRight: 1px, iconMargin: spacing.$spacing-02),
+  "md": (tagHeight: 1.5rem, xPadding: spacing.$spacing-03, crossPaddingRight: spacing.$spacing-02, iconMargin: spacing.$spacing-02),
+  "lg": (tagHeight: 2rem, xPadding: spacing.$spacing-04, crossPaddingRight: spacing.$spacing-03, iconMargin: spacing.$spacing-03)
+);
+
+.#{$prefix}-tag {
+  display: flex;
+  align-items: center;
+  font-size: 0.75rem;
+  border-radius: 2em;
+  width: fit-content;
+
+  svg {
+    height: 1rem;
+    width: 1rem;
   }
 
-  /* Sizes */
-  .#{c.$prefix}-tag--small {
-    font-size: var(--font-size-xsmall, 0.75rem);
-    block-size: 1.75rem;
-    padding: 0 0.5rem;
-    border-radius: 4px;
+  @each $size, $values in $sizes {
+    &--#{$size} {
+      height: map.get($values, "tagHeight");
+      padding: 0 map.get($values, "xPadding");
+
+      &.#{$prefix}-tag--dismissible {
+        padding-right: map.get($values, "crossPaddingRight");
+      }
+
+      .#{$prefix}-tag__remove-icon {
+        margin-left: map.get($values, "xPadding");
+      }
+      
+      &.#{$prefix}-tag--has-icon {
+        padding-left: map.get($values, "iconMargin");
+      }
+
+      .#{$prefix}-tag--icon-container {
+        margin-right: map.get($values, "iconMargin");
+      }
+    }
   }
 
-  .#{c.$prefix}-tag--large {
-    font-size: var(--font-size-medium, 1rem);
-    block-size: 2.5rem;
-    padding: 0 1.25rem;
-    border-radius: 6px;
+  @each $color in ('red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'gray') {
+    &--#{$color} {
+      background-color: #{get-var('tag-#{$color}')};
+      color: #{get-var('tag-text-#{$color}')};
+    }
   }
 
-  /* Variants */
+  &--neutral {
+    background-color: #{get-var('background-hover')};
+  }
 
-  /* Types */
-  // .#{c.$prefix}-tag--primary {
-  //   background-color: var(--#{c.$prefix}-tag-primary-bg);
-  //   color: var(--#{c.$prefix}-tag-primary-text);
-  // }
+  &--selectable {
+    border-width: 2px;
+    cursor: pointer;
+  
+    &:hover {
+      background-color: #{get-var('background-active')};
+    }
 
-  // .#{c.$prefix}-tag--secondary {
-  //   background-color: var(--#{c.$prefix}-tag-secondary-bg);
-  //   color: var(--#{c.$prefix}-tag-secondary-text);
-  // }
+    &.r-tag--inactive {
+      background-color: #{get-var('background-inverse')}; 
+      color: #{get-var('background-hover')};
+      border: 2px solid transparent; 
 
-  // .#{c.$prefix}-tag--success {
-  //   background-color: var(--#{c.$prefix}-tag-success-bg);
-  //   color: var(--#{c.$prefix}-tag-success-text);
-  // }
-
-  // .#{c.$prefix}-tag--warning {
-  //   background-color: var(--#{c.$prefix}-tag-warning-bg);
-  //   color: var(--#{c.$prefix}-tag-warning-text);
-  // }
-
-  // .#{c.$prefix}-tag--error {
-  //   background-color: var(--#{c.$prefix}-tag-error-bg);
-  //   color: var(--#{c.$prefix}-tag-error-text);
-  // }
-
-  /* Clickable Tags */
-  // .#{c.$prefix}-tag--clickable {
-  //   cursor: pointer;
-  //   transition: background-color 0.2s ease-in-out;
-  // }
-
-  // .#{c.$prefix}-tag--clickable:hover {
-  //   background-color: var(--#{c.$prefix}-tag-hover);
-  // }
+      &:hover {
+        background-color: #{get-var('background-inverse-hover')};
+      }
+    }
+  }
 }

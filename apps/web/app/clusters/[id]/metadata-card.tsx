@@ -80,7 +80,7 @@ export function ClusterMetadataCard({ cluster, className }: ClusterMetadataCardP
           <div className='flex flex-col gap-1'>
             <DefinitionTerm>Environment</DefinitionTerm>
             <DefinitionDescription>
-              <Tag size='small' variant='readonly'>
+              <Tag size='sm' variant='readonly'>
                 {cluster.environment}
               </Tag>
             </DefinitionDescription>
