@@ -11,6 +11,8 @@
 @use './green.scss' as *;
 @use './emerald.scss' as *;
 @use './purple.scss' as *;
+@use './pink.scss' as *;
+@use './gray.scss' as *;
 
 $colors: (
   'white': (
@@ -60,6 +62,14 @@ $colors: (
   'purple': (
     'p3': $purple-p3,
     'rgb': $purple-rgb,
+  ),
+  'pink': (
+    'p3': $pink-p3,
+    'rgb': $pink-rgb,
+  ),
+  'gray': (
+    'p3': $gray-p3,
+    'rgb': $gray-rgb,
   ),
 );
 

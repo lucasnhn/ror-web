@@ -247,6 +247,56 @@ export const MetricsBoard = ({ className }: MetricsBoardProps) => {
         )}
       </div>
 
+      <div>
+        <Tag size="md" variant="readonly" color="red" icon={<SearchCodeIcon />} className='mb-4'>Testitest</Tag>
+        <Tag size="md" variant="readonly" color="orange" icon={<SearchCodeIcon />} className='mb-4'>Testitest</Tag>
+        <Tag size="md" variant="readonly" color="yellow" icon={<SearchCodeIcon />} className='mb-4'>Testitest</Tag>
+        <Tag size="md" variant="readonly" color="green" icon={<SearchCodeIcon />} className='mb-4'>Testitest</Tag>
+        <Tag size="md" variant="readonly" color="blue" icon={<SearchCodeIcon />} className='mb-4'>Testitest</Tag>
+        <Tag size="md" variant="readonly" color="purple" icon={<SearchCodeIcon />} className='mb-4'>Testitest</Tag>
+        <Tag size="md" variant="readonly" color="pink" icon={<SearchCodeIcon />} className='mb-4'>Testitest</Tag>
+        <Tag size="md" variant="readonly" color="gray" icon={<SearchCodeIcon />} className='mb-4'>Testitest</Tag>
+
+
+        <Tag size="sm" variant="dismissible" color="red" icon={<SearchCodeIcon />} className='mb-4'>Testitest</Tag>
+        <Tag size="sm" variant="dismissible" color="orange" icon={<SearchCodeIcon />} className='mb-4'>Testitest</Tag>
+        <Tag size="sm" variant="dismissible" color="yellow" icon={<SearchCodeIcon />} className='mb-4'>Testitest</Tag>
+        <Tag size="sm" variant="dismissible" color="green" icon={<SearchCodeIcon />} className='mb-4'>Testitest</Tag>
+        <Tag size="sm" variant="dismissible" color="blue" icon={<SearchCodeIcon />} className='mb-4'>Testitest</Tag>
+        <Tag size="sm" variant="dismissible" color="purple" icon={<SearchCodeIcon />} className='mb-4'>Testitest</Tag>
+        <Tag size="sm" variant="dismissible" color="pink" icon={<SearchCodeIcon />} className='mb-4'>Testitest</Tag>
+        <Tag size="sm" variant="dismissible" color="gray" icon={<SearchCodeIcon />} className='mb-4'>Testitest</Tag>
+
+
+        <Tag size="md" variant="dismissible" color="red" icon={<SearchCodeIcon />} className='mb-4'>Testitest</Tag>
+        <Tag size="md" variant="dismissible" color="orange" icon={<SearchCodeIcon />} className='mb-4'>Testitest</Tag>
+        <Tag size="md" variant="dismissible" color="yellow" icon={<SearchCodeIcon />} className='mb-4'>Testitest</Tag>
+        <Tag size="md" variant="dismissible" color="green" icon={<SearchCodeIcon />} className='mb-4'>Testitest</Tag>
+        <Tag size="md" variant="dismissible" color="blue" icon={<SearchCodeIcon />} className='mb-4'>Testitest</Tag>
+        <Tag size="md" variant="dismissible" color="purple" icon={<SearchCodeIcon />} className='mb-4'>Testitest</Tag>
+        <Tag size="md" variant="dismissible" color="pink" icon={<SearchCodeIcon />} className='mb-4'>Testitest</Tag>
+        <Tag size="md" variant="dismissible" color="gray" icon={<SearchCodeIcon />} className='mb-4'>Testitest</Tag>
+
+        <Tag size="lg" variant="dismissible" color="red" icon={<SearchCodeIcon />} className='mb-4'>Test</Tag>
+        <Tag size="lg" variant="dismissible" color="orange" icon={<SearchCodeIcon />} className='mb-4'>Testitest</Tag>
+        <Tag size="lg" variant="dismissible" color="yellow" icon={<SearchCodeIcon />} className='mb-4'>Testitest</Tag>
+        <Tag size="lg" variant="dismissible" color="green" icon={<SearchCodeIcon />} className='mb-4'>Testitest</Tag>
+        <Tag size="lg" variant="dismissible" color="blue" icon={<SearchCodeIcon />} className='mb-4'>Testitest</Tag>
+        <Tag size="lg" variant="dismissible" color="purple" icon={<SearchCodeIcon />} className='mb-4'>Testitest</Tag>
+        <Tag size="lg" variant="dismissible" color="pink" icon={<SearchCodeIcon />} className='mb-4'>Testitest</Tag>
+        <Tag size="lg" variant="dismissible" color="gray" icon={<SearchCodeIcon />} className='mb-4'>Testitest</Tag>
+
+
+        <Tag size="md" variant="selectable" icon={<SearchCodeIcon />} className='mb-4'>Testitest</Tag>
+        <Tag size="md" variant="selectable" icon={<SearchCodeIcon />} className='mb-4'>Testitest</Tag>
+        <Tag size="md" variant="selectable" icon={<SearchCodeIcon />} className='mb-4'>Testitest</Tag>
+        <Tag size="md" variant="selectable" icon={<SearchCodeIcon />} className='mb-4'>Testitest</Tag>
+        <Tag size="md" variant="selectable" icon={<SearchCodeIcon />} className='mb-4'>Testitest</Tag>
+        <Tag size="md" variant="selectable" icon={<SearchCodeIcon />} className='mb-4'>Testitest</Tag>
+        <Tag size="md" variant="selectable" icon={<SearchCodeIcon />} className='mb-4'>Testitest</Tag>
+        <Tag size="md" variant="selectable" icon={<SearchCodeIcon />} className='mb-4'>Testitest</Tag>
+      </div>
+
       <hr className='border-slate-500' />
 
       <div className={`flex flex-wrap justify-center gap-4`}>

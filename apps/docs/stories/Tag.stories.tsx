@@ -13,7 +13,7 @@ const meta = {
     className: { control: { type: 'text' }, description: 'Specify an optional className to be applied to the container node' },
     size: { control: { type: 'select', options: ['sm', 'md', 'lg'] }, description: 'How large should the tag be?' },
     variant: { control: { type: 'select', options: ['readonly', 'dismissible', 'operational', 'selectable'] }, description: 'What style of the tag should be used?' },
-    severity: { control: { type: 'select', options: ['error', 'success', 'warning', 'info', 'caution-minor', 'caution-major', 'caution-undefined'] }, description: 'What should the tag severity be? Affects the color of the tag.' },
+    color: { control: { type: 'select', options: ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'gray'] }, description: 'What should the tag severity be? Affects the color of the tag.' },
     icon: { control: false, description: 'What icon should be used?' },
     children: { control: { type: 'text' }, description: 'What should the text for the tag be?' },
   },
@@ -29,7 +29,7 @@ export const Default: Story = {
     args: {
         size: 'md',
         variant: 'readonly',
-        severity: 'info',
+        color: 'blue',
         children: 'This is a default tag'
     },
 }
@@ -41,7 +41,7 @@ export const SmallTag: Story = {
     args: {
         size: 'sm',
         variant: 'readonly',
-        severity: 'info',
+        color: 'blue',
         children: 'This is a small tag'
     },
 }
@@ -53,7 +53,7 @@ export const LargeTag: Story = {
     args: {
         size: 'md',
         variant: 'readonly',
-        severity: 'info',
+        color: 'blue',
         children: 'This is a large tag'
     },
 }
@@ -65,7 +65,7 @@ export const DismissibleTag: Story = {
     args: {
         size: 'md',
         variant: 'dismissible',
-        severity: 'info',
+        color: 'blue',
         children: 'This is a dismissible tag'
     },
 }
@@ -78,7 +78,7 @@ export const OperationalTag: Story = {
     args: {
         size: 'md',
         variant: 'operational',
-        severity: 'info',
+        color: 'blue',
         children: 'This is an operational tag'
     },
 }
@@ -87,7 +87,7 @@ export const SelectableTag: Story = {
     args: {
         size: 'md',
         variant: 'selectable',
-        severity: 'info',
+        color: 'blue',
         children: 'This is a selectable tag'
     },
 }
@@ -99,7 +99,7 @@ export const ErrorTag: Story = {
     args: {
         size: 'md',
         variant: 'readonly',
-        severity: 'error',
+        color: 'error',
         children: 'This is an error tag'
     },
 }
@@ -111,7 +111,7 @@ export const SuccessTag: Story = {
     args: {
         size: 'md',
         variant: 'readonly',
-        severity: 'success',
+        color: 'success',
         children: 'This is a success tag'
     },
 }
@@ -123,7 +123,7 @@ export const WarningTag: Story = {
     args: {
         size: 'md',
         variant: 'readonly',
-        severity: 'warning',
+        color: 'warning',
         children: 'This is a warning tag'
     },
 }
@@ -135,7 +135,7 @@ export const InfoTag: Story = {
     args: {
         size: 'md',
         variant: 'readonly',
-        severity: 'info',
+        severity: 'blue',
         children: 'This is an info tag'
     },
 }
@@ -147,7 +147,7 @@ export const CautionMinorTag: Story = {
     args: {
         size: 'md',
         variant: 'readonly',
-        severity: 'caution-minor',
+        color: 'caution-minor',
         children: 'This is a caution-minor tag'
     },
 }
@@ -159,7 +159,7 @@ export const CautionMajorTag: Story = {
     args: {
         size: 'md',
         variant: 'readonly',
-        severity: 'caution-major',
+        color: 'caution-major',
         children: 'This is a caution-major tag'
     },
 }
@@ -171,7 +171,7 @@ export const CautionUndefinedTag: Story = {
     args: {
         size: 'md',
         variant: 'readonly',
-        severity: 'caution-undefined',
+        color: 'caution-undefined',
         children: 'This is a caution-undefined tag'
     },
 }

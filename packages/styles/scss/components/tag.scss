@@ -2,20 +2,20 @@
 @use '../config.scss' as *;
 @use '../utilities/custom-properties.scss' as *;
 @use '../utilities/convert.scss';
-@use '../type/styles.scss' as type;
+@use '../spacing.scss' as spacing;
 
 
 $sizes: (
-  "sm": (tagHeight: 1.125rem, xPadding: 0.5rem, crossPaddingRight: 1px, iconMargin: 0.25rem),
-  "md": (tagHeight: 1.5rem, xPadding: 0.5rem, crossPaddingRight: 0.25rem, iconMargin: 0.25rem),
-  "lg": (tagHeight: 2rem, xPadding: 0.75rem, crossPaddingRight: 0.5rem, iconMargin: 0.5rem)
+  "sm": (tagHeight: 1.125rem, xPadding: spacing.$spacing-03, crossPaddingRight: 1px, iconMargin: spacing.$spacing-02),
+  "md": (tagHeight: 1.5rem, xPadding: spacing.$spacing-03, crossPaddingRight: spacing.$spacing-02, iconMargin: spacing.$spacing-02),
+  "lg": (tagHeight: 2rem, xPadding: spacing.$spacing-04, crossPaddingRight: spacing.$spacing-03, iconMargin: spacing.$spacing-03)
 );
 
 .#{$prefix}-tag {
   display: flex;
   align-items: center;
   font-size: 0.75rem;
-  border-radius: calc(infinity * 1px);
+  border-radius: 1em;
   width: fit-content;
 
   svg {
@@ -32,7 +32,7 @@ $sizes: (
         padding-right: map.get($values, "crossPaddingRight");
       }
 
-      .#{$prefix}-tag--x {
+      .#{$prefix}-tag__remove-icon {
         margin-left: map.get($values, "xPadding");
       }
       
@@ -46,25 +46,32 @@ $sizes: (
     }
   }
 
-  @each $severity in ('error', 'success', 'warning', 'info', 'caution-minor', 'caution-major', 'caution-undefined') {
-    &--#{$severity} {
-      background-color: #{get-var('support-#{$severity}')};
-      color: #{get-var('text-support-#{$severity}')};
+  @each $color in ('red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'gray') {
+    &--#{$color} {
+      background-color: #{get-var('#{$color}')};
     }
-    &.r-tag--#{$severity}--inactive {
-      background-color: #{get-var('text-support-#{$severity}')}; 
-      color: #{get-var('support-#{$severity}')}; 
-    }
+  }
+
+  &--neutral {
+    background-color: #{get-var('background-hover')};
   }
 
   &--selectable {
-    box-sizing: border-box;
-    border: 2px solid transparent;
+    border-width: 2px;
     cursor: pointer;
   
     &:hover {
-      border-color: #{get-var('border-strong')};
+      background-color: #{get-var('background-active')};
+    }
+
+    &.r-tag--inactive {
+      background-color: #{get-var('background-inverse')}; 
+      color: #{get-var('background-hover')};
+      border: 2px solid transparent; 
+
+      &:hover {
+        background-color: #{get-var('background-inverse-hover')};
+      }
     }
   }
-
 }
