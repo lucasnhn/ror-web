@@ -15,7 +15,7 @@ $sizes: (
   display: flex;
   align-items: center;
   font-size: 0.75rem;
-  border-radius: 1em;
+  border-radius: calc(infinity * 1px);
   width: fit-content;
 
   svg {
