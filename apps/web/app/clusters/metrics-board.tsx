@@ -246,10 +246,7 @@ export const MetricsBoard = ({ className }: MetricsBoardProps) => {
           </Button>
         )}
       </div>
-
-      <Tag size="lg" color="blue">Test</Tag>
-      <Tag size="lg">Test</Tag>
-
+      
       <hr className='border-slate-500' />
 
       <div className={`flex flex-wrap justify-center gap-4`}>
