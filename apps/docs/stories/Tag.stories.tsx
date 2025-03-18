@@ -11,12 +11,12 @@ const meta = {
     },
     tags: ['autodocs'],
     argTypes: {
-        className: { control: { type: 'text' }, description: 'Specify an optional className to be applied to the container node' },
-        size: { control: { type: 'select', options: ['sm', 'md', 'lg'] }, description: 'How large should the tag be?' },
-        variant: { control: { type: 'select', options: ['readonly', 'dismissible', 'operational', 'selectable'] }, description: 'What style of the tag should be used?' },
-        color: { control: { type: 'select', options: ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'gray'] }, description: 'What should the tag severity be? Affects the color of the tag.' },
-        icon: { control: false, description: 'What icon should be used?' },
-        children: { control: { type: 'text' }, description: 'What should the text for the tag be?' },
+        className: { control: { type: 'text' } },
+        size: { control: { type: 'select', options: ['sm', 'md', 'lg'] } },
+        variant: { control: { type: 'select', options: ['readonly', 'dismissible', 'operational', 'selectable'] } },
+        color: { control: { type: 'select', options: ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'gray'] } },
+        icon: { control: false},
+        children: { control: { type: 'text' } },
     },
 } satisfies Meta<typeof Tag>
 

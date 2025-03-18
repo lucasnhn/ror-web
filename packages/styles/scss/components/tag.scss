@@ -48,7 +48,7 @@ $sizes: (
 
   @each $color in ('red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'gray') {
     &--#{$color} {
-      background-color: #{get-var('#{$color}')};
+      background-color: #{get-var('tag-#{$color}')};
     }
   }
 

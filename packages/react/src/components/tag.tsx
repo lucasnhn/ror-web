@@ -3,7 +3,8 @@
 import { Slot } from '@radix-ui/react-slot'
 import clsx from 'clsx'
 import { XIcon } from 'lucide-react'
-import { AriaAttributes, HTMLAttributes, ReactNode, useState } from 'react'
+import type { AriaAttributes, HTMLAttributes, ReactNode } from 'react'
+import { useState } from 'react'
 
 export type TagVariant = 'readonly' | 'dismissible' | 'operational' | 'selectable'
 export type SizeVariant = 'sm' | 'md' | 'lg'

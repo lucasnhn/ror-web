@@ -127,14 +127,14 @@
     @include light-dark('text-support-caution-undefined', rgb-color('purple', '800'), rgb-color('purple', '700'));
 
     /// Colors
-    @include light-dark('red', rgb-color('red', '500'), rgb-color('red', '400'));
-    @include light-dark('orange', rgb-color('orange', '500'), rgb-color('orange', '400'));
-    @include light-dark('yellow', rgb-color('yellow', '500'), rgb-color('yellow', '400'));
-    @include light-dark('green', rgb-color('green', '500'), rgb-color('green', '400'));
-    @include light-dark('blue', rgb-color('blue', '500'), rgb-color('blue', '400'));
-    @include light-dark('purple', rgb-color('purple', '500'), rgb-color('purple', '400'));
-    @include light-dark('pink', rgb-color('pink', '500'), rgb-color('pink', '400'));
-    @include light-dark('gray', rgb-color('gray', '500'), rgb-color('gray', '400'));
+    @include light-dark('tag-red', rgb-color('red', '200'), rgb-color('red', '800'));
+    @include light-dark('tag-orange', rgb-color('orange', '200'), rgb-color('orange', '800'));
+    @include light-dark('tag-yellow', rgb-color('yellow', '200'), rgb-color('yellow', '800'));
+    @include light-dark('tag-green', rgb-color('green', '200'), rgb-color('green', '800'));
+    @include light-dark('tag-blue', rgb-color('blue', '200'), rgb-color('blue', '800'));
+    @include light-dark('tag-purple', rgb-color('purple', '200'), rgb-color('purple', '800'));
+    @include light-dark('tag-pink', rgb-color('pink', '200'), rgb-color('pink', '800'));
+    @include light-dark('tag-gray', rgb-color('gray', '200'), rgb-color('gray', '800'));
 
     // Spacing
     @include spacing.emit-spacing-custom-properties();
@@ -241,14 +241,14 @@
         @include light-dark('text-support-caution-undefined', p3-color('purple', '800'), p3-color('purple', '700'));
 
         /// Colors
-        @include light-dark('red', p3-color('red', '500'), p3-color('red', '400'));
-        @include light-dark('orange', p3-color('orange', '500'), p3-color('orange', '400'));
-        @include light-dark('yellow', p3-color('yellow', '500'), p3-color('yellow', '400'));
-        @include light-dark('green', p3-color('green', '500'), p3-color('green', '400'));
-        @include light-dark('blue', p3-color('blue', '500'), p3-color('blue', '400'));
-        @include light-dark('purple', p3-color('purple', '500'), p3-color('purple', '400'));
-        @include light-dark('pink', p3-color('pink', '500'), p3-color('pink', '400'));
-        @include light-dark('gray', p3-color('gray', '500'), p3-color('gray', '400'));
+        @include light-dark('tag-red', p3-color('red', '200'), p3-color('red', '700'));
+        @include light-dark('tag-orange', p3-color('orange', '200'), p3-color('orange', '700'));
+        @include light-dark('tag-yellow', p3-color('yellow', '200'), p3-color('yellow', '700'));
+        @include light-dark('tag-green', p3-color('green', '200'), p3-color('green', '700'));
+        @include light-dark('tag-blue', p3-color('blue', '200'), p3-color('blue', '700'));
+        @include light-dark('tag-purple', p3-color('purple', '200'), p3-color('purple', '700'));
+        @include light-dark('tag-pink', p3-color('pink', '200'), p3-color('pink', '700'));
+        @include light-dark('tag-gray', p3-color('gray', '200'), p3-color('gray', '700'));
       }
     }
   }
