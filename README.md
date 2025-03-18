@@ -68,3 +68,44 @@ npm run build
 The web application is instrumented with Open Telemetry to collect telemetry data. See `apps/web/instrumentation.ts` for implementation and [Next.js Open Telemetry Documentation](https://nextjs.org/docs/app/building-your-application/optimizing/open-telemetry).
 
 It is possible to configure custom spans, see [Next.js Custom Spans](https://nextjs.org/docs/app/building-your-application/optimizing/open-telemetry#custom-spans) for more information.
+
+# Generator
+
+This repository includes a built-in component generator powered by Turborepo and Plop.js to streamline the creation of new files.
+
+All generators are located in the `turbo/generators` directory.
+
+For full documentation, see [Turborepo Generating Code Documentation](https://turbo.build/repo/docs/guides/generating-code).
+
+### Generate a new React component
+
+To generate a new component, run:
+
+```bash
+npx turbo gen component
+```
+
+When prompted, enter a component name (in lowercase). The generator will automatically:
+
+1. Create a React component file at `packages/react/src/components/[name].tsx`
+2. Create a Storybook story file at `apps/docs/stories/[Name].stories.tsx`
+3. Create a SCSS file at `packages/styles/scss/components/[name].scss`
+
+All files are created with proper naming conventions (dash-case for CSS, PascalCase for React components) and include the basic boilerplate code, imports, and styling setup.
+
+Note: You will still need to manually import the generated component into the respective main application file.
+- `packages/react/src/main.tsx`
+- `packages/styles/scss/components/_index.scss`
+
+### Example
+
+```bash
+$ npx turbo gen component
+? What is the name of the new component? (lowercase) button
+```
+
+This will generate:
+- `packages/react/src/components/button.tsx`
+- `apps/docs/stories/Button.stories.tsx`
+- `packages/styles/scss/components/button.scss`
+```

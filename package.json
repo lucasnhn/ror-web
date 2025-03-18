@@ -25,5 +25,8 @@
     "workerDirectory": [
       "./apps/web/public"
     ]
+  },
+  "dependencies": {
+    "@turbo/gen": "2.4.4"
   }
 }
