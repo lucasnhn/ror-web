@@ -4,7 +4,7 @@
   "version": "0.0.6",
   "type": "commonjs",
   "scripts": {
-    "lint": "eslint ./stories",
+    "lint": "eslint",
     "dev": "storybook dev -p 11001 --no-open",
     "build": "storybook build",
     "clean": "rm -rf storybook-static && rm -rf .turbo && rm -rf node_modules"
