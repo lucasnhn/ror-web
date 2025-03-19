@@ -27,8 +27,8 @@ export default async function ClusterPage({ params }: ClusterPageProps) {
     <div className='grid grid-cols-12 gap-4 @container'>
       <ClusterMetrics cluster={cluster} className='col-span-12'/>
       <ClusterMetadataCard cluster={cluster} className='col-span-12 @5xl:col-span-6' />
-      <ClusterToolsCard cluster={cluster} user={session.user} className='col-span-12 @2xl:col-span-6 @5xl:col-span-3' />
       <ClusterVersionsCard cluster={cluster} className='col-span-12 @2xl:col-span-6 @5xl:col-span-3' />
+      <ClusterToolsCard cluster={cluster} user={session.user} className='col-span-12 @2xl:col-span-6 @5xl:col-span-3' />
     </div>
   )
 }
