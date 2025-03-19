@@ -17,14 +17,36 @@ export const metadata: Metadata = {
 interface ClusterPageProps {
   searchParams: Promise<{
     view?: 'grid' | 'list'
+    page?: number
+    limit?: number
   }>
 }
+
+const DEFAULT_LIMIT = 10
+const DEFAULT_PAGE = 0
 
 export default async function ClustersPage({ searchParams }: ClusterPageProps) {
   const session = await authGuard()
   const client = rorApiClient(session.accessToken)
-  const clustersResponse = await client.clusters.filter()
   const params = await searchParams
+
+  // Parse pagination parameters from URL
+  const limit = Number(params.limit) || DEFAULT_LIMIT
+  const page = Number(params.page) || 1 // URL shows 1-based indexing
+  const skip = (page - 1) * limit
+
+  const clustersResponse = await client.clusters.filter({
+    limit,
+    skip,
+  })
+
+  // Set up pagination state for the table
+  const paginationState = {
+    pageIndex: page - 1, // Convert to 0-based for internal use
+    pageSize: limit,
+  }
+
+  const pageCount = Math.ceil(clustersResponse.totalCount / limit)
 
   return (
     <Fragment>
@@ -43,11 +65,28 @@ export default async function ClustersPage({ searchParams }: ClusterPageProps) {
 
       <section className='px-6 mt-8'>
         {params.view === 'list' ? (
-          <ClustersTable key='table' data={clustersResponse.data} />
+          <ClustersTable
+            key='table'
+            data={clustersResponse.data}
+            pagination={paginationState}
+            totalCount={clustersResponse.totalCount}
+            pageCount={pageCount}
+          />
         ) : (
           <ClusterCards key='grid' data={clustersResponse.data} />
         )}
       </section>
+
+      {params.view === 'list' && (
+        <div className='mt-8 px-6'>
+          <details>
+            <summary>Pagination</summary>
+            <CodeSnippet type='multi' hideCopyButton>
+              {JSON.stringify(paginationState, null, 2)}
+            </CodeSnippet>
+          </details>
+        </div>
+      )}
 
       <div className='mt-8 px-6'>
         <details>
