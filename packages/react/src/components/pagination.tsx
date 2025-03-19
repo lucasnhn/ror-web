@@ -64,6 +64,8 @@ export interface PaginationProps extends Omit<HTMLAttributes<HTMLDivElement>, Ex
 }
 
 const baseClass = 'r-pagination'
+const textClass = `${baseClass}__text`
+const btnClass = `${baseClass}__btn`
 
 export function Pagination({
   itemRangeText,
@@ -102,13 +104,19 @@ export function Pagination({
   return (
     <div className={classes} {...rest}>
       <div className={`${baseClass}__start`}>
-        {itemRangeText ? <span className={`${baseClass}__items-range`}>{itemRangeText}</span> : null}
+        {itemRangeText ? <span className={`${textClass} ${baseClass}__items-range`}>{itemRangeText}</span> : null}
       </div>
       <div className={`${baseClass}__end`}>
         <div className={`${baseClass}__page-size`}>
-          <label htmlFor={`${baseClass}-page-count-${paginationPageCountId}`}>{itemsPerPageText}:</label>
+          <label
+            htmlFor={`${baseClass}-page-count-${paginationPageCountId}`}
+            className={`${textClass} ${baseClass}__label`}
+          >
+            {itemsPerPageText}:
+          </label>
           <select
             id={`${baseClass}-page-count-${paginationPageCountId}`}
+            className={`${baseClass}__select`}
             value={pageSize}
             onChange={handleOnPageSizeChange}
           >
@@ -124,7 +132,7 @@ export function Pagination({
             variant='ghost'
             iconOnly
             icon={<ChevronLeft />}
-            className={`${baseClass}__btn`}
+            className={btnClass}
             onClick={handleOnBackwards}
             disabled={backwardsDisabled}
           />
@@ -132,7 +140,7 @@ export function Pagination({
             variant='ghost'
             iconOnly
             icon={<ChevronRight />}
-            className={`${baseClass}__btn`}
+            className={btnClass}
             onClick={handleOnForwards}
             disabled={forwardsDisabled}
           />

@@ -44,10 +44,26 @@
     display: flex;
     align-items: center;
     column-gap: cv.get-var('spacing-03');
+    block-size: 100%;
   }
 
   .#{$prefix}-pagination__controls {
     display: flex;
+  }
+
+  .#{$prefix}-pagination__text {
+    display: inline-block;
+    white-space: nowrap;
+  }
+
+  .#{$prefix}-pagination__select {
+    @include types.type-style('body-01-compact');
+    display: flex;
+    block-size: var(--pagination-item-size);
+    inline-size: auto;
+    min-inline-size: auto;
+    line-height: 2.5rem;
+    padding-inline: cv.get-var('spacing-02');
   }
 
   .#{$prefix}-pagination__btn {

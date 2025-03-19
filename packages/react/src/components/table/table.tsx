@@ -228,9 +228,11 @@ export function TableCell({ align, className, children, scope, ...rest }: TableC
 /**
  * Table Container
  */
-export type TableContainerProps = ComponentPropsWithoutRef<'div'>
-export function TableContainer({ className, children, ...rest }: TableContainerProps) {
-  const classes = clsx('r-table-container', className)
+export type TableContainerProps = ComponentPropsWithoutRef<'div'> & {
+  hasPagination?: boolean
+}
+export function TableContainer({ className, children, hasPagination = false, ...rest }: TableContainerProps) {
+  const classes = clsx('r-table-container', { 'r-table-container--with-pagination': hasPagination }, className)
   return (
     <div className={classes} {...rest}>
       {children}

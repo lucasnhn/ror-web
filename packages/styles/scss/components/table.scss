@@ -120,7 +120,7 @@
     border-top-right-radius: var(--table-border-radius);
   }
 
-  .#{c.$prefix}-table-overflow:last-child
+  .#{c.$prefix}-table-container:not(.#{c.$prefix}-table-container--with-pagination)
     .#{c.$prefix}-table
     .#{c.$prefix}-table__body
     .#{c.$prefix}-table__row:last-of-type
@@ -128,7 +128,7 @@
     border-bottom-left-radius: var(--table-border-radius);
   }
 
-  .#{c.$prefix}-table-overflow:last-child
+  .#{c.$prefix}-table-container:not(.#{c.$prefix}-table-container--with-pagination)
     .#{c.$prefix}-table
     .#{c.$prefix}-table__body
     .#{c.$prefix}-table__row:last-of-type
