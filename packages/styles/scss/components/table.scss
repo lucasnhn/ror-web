@@ -58,7 +58,9 @@
   }
 
   .#{c.$prefix}-table-overflow {
+    position: relative;
     grid-area: table;
+    overflow: auto;
   }
 
   /* Table -------------------------------------------------------------------- */

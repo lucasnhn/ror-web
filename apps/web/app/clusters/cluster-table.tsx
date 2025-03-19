@@ -128,16 +128,14 @@ export function ClustersTable<T extends ClusterListItem>({
   }
 
   return (
-    <div className='max-w-screen overflow-x-auto'>
-      <DataTable
-        data={data}
-        totalCount={totalCount}
-        pageCount={pageCount}
-        columns={dataTableColumns}
-        pagination={pagination}
-        onPaginationChange={handleOnPaginationChange}
-        gridTemplateColumns={`repeat(8, minmax(max-content, 1fr))`}
-      />
-    </div>
+    <DataTable
+      data={data}
+      totalCount={totalCount}
+      pageCount={pageCount}
+      columns={dataTableColumns}
+      pagination={pagination}
+      onPaginationChange={handleOnPaginationChange}
+      gridTemplateColumns={`repeat(8, minmax(max-content, 1fr))`}
+    />
   )
 }
