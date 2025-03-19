@@ -1,7 +1,7 @@
 'use client'
 import type { Cluster } from '@ror/js-api-client'
 import clsxm from '@/utils/clsxm'
-import { Tile, CodeSnippet, Layer, DefinitionDescription, DefinitionList, DefinitionTerm, Tag } from '@ror/react'
+import { Tile, CodeSnippet, Layer, DefinitionDescription, DefinitionList, DefinitionTerm } from '@ror/react'
 import { format } from 'date-fns'
 import { nb } from 'date-fns/locale/nb'
 import { EnvironmentTag } from '@/components/common/environment-tag'
