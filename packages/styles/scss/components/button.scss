@@ -91,6 +91,14 @@
     background: cv.get-var('background-hover');
   }
 
+  .#{c.$prefix}-btn--ghost.#{c.$prefix}-btn--icon-only[disabled] {
+    cursor: not-allowed;
+  }
+
+  .#{c.$prefix}-btn--ghost.#{c.$prefix}-btn--icon-only[disabled] svg {
+    color: cv.get-var('icon-disabled');
+  }
+
   .#{c.$prefix}-btn--icon-only {
     justify-content: center;
     padding: 0;

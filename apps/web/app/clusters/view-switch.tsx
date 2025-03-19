@@ -10,6 +10,12 @@ export function ClusterPageViewSwitch() {
     const url = '/clusters'
     const params = new URLSearchParams(searchParams)
 
+    // Clear any pagination parameters from the list view
+    params.delete('page')
+    params.delete('limit')
+
+    // Switch between grid and list view
+    // removing the param for the default view (grid)
     if (value === 'grid' && params.has('view')) {
       params.delete('view')
     } else {

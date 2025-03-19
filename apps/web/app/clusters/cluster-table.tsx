@@ -4,8 +4,10 @@ import { convertBytes } from '@/utils/bytes'
 import { createColumnHelper } from '@tanstack/react-table'
 import type { ClusterListItem } from '@ror/js-api-client'
 import Link from 'next/link'
-import { DataTable, DataTableColumnDef } from '@/components/common/data-table'
+import { DataTable } from '@/components/common/data-table'
+import type { DataTableColumnDef, DataTablePagination } from '@/components/common/data-table'
 import { HealthStatus } from '@/components/common/health-status'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 const columnHelper = createColumnHelper<ClusterListItem>()
 
@@ -89,12 +91,51 @@ const dataTableColumns = [
 
 interface ClusterTableProps<T> {
   data: T[]
+  totalCount: number
+  pageCount: number
+  pagination: DataTablePagination
 }
 
-export function ClustersTable<T extends ClusterListItem>({ data }: ClusterTableProps<T>) {
+export function ClustersTable<T extends ClusterListItem>({
+  data,
+  totalCount,
+  pageCount,
+  pagination,
+}: ClusterTableProps<T>) {
+  const router = useRouter()
+  const currentSearchParams = useSearchParams()
+
+  const updateSearchParams = (newSearchParams: URLSearchParams) => {
+    const url = '/clusters'
+
+    // If the current search params are different from the new params
+    // then push a new url
+    const mergedSearchParams = new URLSearchParams(currentSearchParams)
+    newSearchParams.forEach((v, k) => {
+      mergedSearchParams.set(k, v)
+    })
+
+    const newUrl = mergedSearchParams.size > 0 ? `${url}?${mergedSearchParams.toString()}` : url
+
+    router.push(newUrl)
+  }
+
+  const handleOnPaginationChange = (state: DataTablePagination) => {
+    const params = new URLSearchParams()
+    params.set('page', (state.pageIndex + 1).toString())
+    params.set('limit', state.pageSize.toString())
+    updateSearchParams(params)
+  }
+
   return (
-    <div className='max-w-screen overflow-x-auto'>
-      <DataTable data={data} columns={dataTableColumns} gridTemplateColumns={`repeat(8, minmax(max-content, 1fr))`} />
-    </div>
+    <DataTable
+      data={data}
+      totalCount={totalCount}
+      pageCount={pageCount}
+      columns={dataTableColumns}
+      pagination={pagination}
+      onPaginationChange={handleOnPaginationChange}
+      gridTemplateColumns={`repeat(8, minmax(max-content, 1fr))`}
+    />
   )
 }
