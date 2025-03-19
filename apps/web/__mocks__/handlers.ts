@@ -10,9 +10,20 @@ const rorBaseApiUrl = process.env.NEXT_PUBLIC_ROR_API_URL
 // Append a path to the base URL
 const path = (path: string) => `${rorBaseApiUrl}${path}`
 
+interface FilterBody {
+  limit?: number
+  skip?: number
+}
+
 export const handlers = [
-  http.post<never, never, PaginatedResponse<Cluster>>(path('/v1/clusters/filter'), () => {
-    const paginatedResponse = createPaginatedResponse(clusters)
+  http.post<never, FilterBody, PaginatedResponse<Cluster>>(path('/v1/clusters/filter'), async ({ request }) => {
+    // Read the intercepted request body as JSON.
+    const payload = await request.json()
+    const pagination = {
+      limit: payload?.limit ?? 10,
+      skip: payload?.skip ?? 0,
+    }
+    const paginatedResponse = createPaginatedResponse(pagination, clusters)
     return HttpResponse.json(paginatedResponse)
   }),
   http.get(path('/v1/clusters/:clusterId'), ({ params }) => {

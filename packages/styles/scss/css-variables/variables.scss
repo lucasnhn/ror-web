@@ -94,6 +94,7 @@
     /// Icons
     @include light-dark('icon-primary', rgb-color('neutral', '950'), rgb-color('neutral', '100'));
     @include light-dark('icon-secondary', rgb-color('neutral', '700'), rgb-color('neutral', '300'));
+    @include light-dark('icon-disabled', rgb-color('neutral', '500'), rgb-color('neutral', '500'));
 
     /// Links
     @include light-dark('link-primary', rgb-color('teal', '500'), rgb-color('teal', '400'));
@@ -117,7 +118,7 @@
     @include light-dark('support-caution-minor', rgb-color('yellow', '500'), rgb-color('yellow', '400'));
     @include light-dark('support-caution-major', rgb-color('orange', '500'), rgb-color('orange', '400'));
     @include light-dark('support-caution-undefined', rgb-color('purple', '500'), rgb-color('purple', '400'));
-    
+
     /// Status text
     @include light-dark('text-support-error', rgb-color('red', '800'), rgb-color('red', '700'));
     @include light-dark('text-support-success', rgb-color('green', '800'), rgb-color('green', '700'));
@@ -220,6 +221,7 @@
         /// Icons
         @include light-dark('icon-primary', p3-color('neutral', '950'), p3-color('neutral', '100'));
         @include light-dark('icon-secondary', p3-color('neutral', '700'), p3-color('neutral', '300'));
+        @include light-dark('icon-disabled', p3-color('neutral', '500'), p3-color('neutral', '500'));
 
         /// Links
         @include light-dark('link-primary', p3-color('teal', '500'), p3-color('teal', '400'));

@@ -12,7 +12,8 @@ import {
   TableSubtitle,
 } from '@ror/react/src/components/table/index'
 import { SortDirection } from '@ror/react/utils/sorting'
-import { MouseEvent } from 'react'
+import { Fragment, MouseEvent } from 'react'
+import { Pagination } from '@ror/react'
 
 const meta = {
   title: 'ui/Table',
@@ -99,6 +100,52 @@ export const Sortable: Story = {
           </TableBody>
         </Table>
       </TableContainer>
+    )
+  },
+}
+
+export const WithPagination: Story = {
+  render: ({ cellPadding, gridTemplateColumns, ...args }) => {
+    const handleOnSort = (id: string, direction: SortDirection, event: MouseEvent<HTMLButtonElement>) => {
+      event.preventDefault()
+      console.log('Sorting...', id, direction)
+    }
+
+    return (
+      <Fragment>
+        <TableContainer>
+          <TableTitle id='table-title'>Table Title</TableTitle>
+          <TableSubtitle id='table-subtitle'>Table Subtitle</TableSubtitle>
+          <Table {...args} cellPadding={cellPadding} gridTemplateColumns={gridTemplateColumns}>
+            <TableHead>
+              <TableRow>
+                <TableSortHeader id='name' direction='DESC' onToggleSort={handleOnSort}>
+                  Cluster
+                </TableSortHeader>
+                <TableSortHeader id='status' onToggleSort={handleOnSort}>
+                  Status
+                </TableSortHeader>
+                <TableSortHeader id='tags' onToggleSort={handleOnSort}>
+                  Tags
+                </TableSortHeader>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              <TableRow>
+                <TableCell>aks-001-dev</TableCell>
+                <TableCell>Critical</TableCell>
+                <TableCell>a, b, c</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>aks-002-dev</TableCell>
+                <TableCell>Healthy</TableCell>
+                <TableCell>a, b, c</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <Pagination itemRangeText='2 out 2 clusters' />
+      </Fragment>
     )
   },
 }

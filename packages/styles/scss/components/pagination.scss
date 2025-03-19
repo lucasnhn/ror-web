@@ -1,0 +1,85 @@
+@use '../config.scss' as *;
+@use '../type/styles.scss' as types;
+@use '../utilities/custom-properties.scss' as cv;
+@use '../utilities/convert.scss';
+@use '../layout';
+
+@layer components {
+  .#{$prefix}-pagination {
+    --pagination-border-radius: #{convert.to-rem(4px)};
+    --pagination-item-size: #{layout.height('md')};
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    inline-size: 100%;
+    min-block-size: var(--pagination-item-size);
+    background: cv.get-var('layer');
+    border-block-start: 1px solid cv.get-var('border-subtle');
+    color: cv.get-var('text-primary');
+    @include types.type-style('body-01-compact');
+    border-end-start-radius: var(--pagination-border-radius);
+    border-end-end-radius: var(--pagination-border-radius);
+  }
+
+  .#{$prefix}-pagination__start,
+  .#{$prefix}-pagination__end {
+    display: flex;
+    align-items: center;
+    block-size: 100%;
+  }
+
+  .#{$prefix}-pagination__start {
+    padding-inline-start: cv.get-var('spacing-05');
+  }
+
+  .#{$prefix}-pagination__end {
+    column-gap: cv.get-var('spacing-03');
+  }
+
+  .#{$prefix}-pagination__items-range {
+    color: cv.get-var('text-secondary');
+  }
+
+  .#{$prefix}-pagination__page-size {
+    display: flex;
+    align-items: center;
+    column-gap: cv.get-var('spacing-03');
+    block-size: 100%;
+  }
+
+  .#{$prefix}-pagination__controls {
+    display: flex;
+  }
+
+  .#{$prefix}-pagination__text {
+    display: inline-block;
+    white-space: nowrap;
+  }
+
+  .#{$prefix}-pagination__select {
+    @include types.type-style('body-01-compact');
+    display: flex;
+    block-size: var(--pagination-item-size);
+    inline-size: auto;
+    min-inline-size: auto;
+    line-height: 2.5rem;
+    padding-inline: cv.get-var('spacing-02');
+  }
+
+  .#{$prefix}-pagination__btn {
+    --btn-height: var(--pagination-item-size);
+    border-radius: 0;
+  }
+
+  .#{$prefix}-pagination__controls .#{$prefix}-pagination__btn:last-child {
+    border-inline-start: 1px solid cv.get-var('border-subtle');
+    border-start-start-radius: 0;
+    border-start-end-radius: 0;
+    border-end-start-radius: 0;
+    border-end-end-radius: var(--pagination-border-radius);
+  }
+
+  .#{$prefix}-pagination__btn:hover:not([disabled]) {
+    background: cv.get-var('layer-hover');
+  }
+}
