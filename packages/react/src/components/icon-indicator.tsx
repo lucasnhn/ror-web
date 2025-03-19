@@ -78,7 +78,7 @@ export const IconIndicator = forwardRef(function IconIndicatorContent(
 
   return (
     <div className={classes} ref={ref} {...rest}>
-      <IconForKind size={size} className='r-icon-indicator__icon' />
+      <IconForKind className='r-icon-indicator__icon' />
       <span className='r-icon-indicator__label'>{label}</span>
     </div>
   )
