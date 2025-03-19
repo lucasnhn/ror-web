@@ -23,7 +23,7 @@ interface ClusterPageProps {
 }
 
 const DEFAULT_LIMIT = 10
-const DEFAULT_PAGE = 0
+const DEFAULT_PAGE = 1
 
 export default async function ClustersPage({ searchParams }: ClusterPageProps) {
   const session = await authGuard()
@@ -32,7 +32,7 @@ export default async function ClustersPage({ searchParams }: ClusterPageProps) {
 
   // Parse pagination parameters from URL
   const limit = Number(params.limit) || DEFAULT_LIMIT
-  const page = Number(params.page) || 1 // URL shows 1-based indexing
+  const page = Number(params.page) || DEFAULT_PAGE // URL shows 1-based indexing
   const skip = (page - 1) * limit
 
   const clustersResponse = await client.clusters.filter({
