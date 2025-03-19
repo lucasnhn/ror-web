@@ -23,15 +23,15 @@ export function ClusterToolsCard({ cluster, user, className }: ClusterToolsCardP
 
   return (
     <Tile className={classes}>
-      <h3 className='text-base pb-3 mb-5 border-b border-b-(--r-border-subtle)'>Tools</h3>
+      <h3 className='heading-01 pb-3 mb-5 border-b border-b-(--r-border-subtle)'>Tools</h3>
       <Layer level={1}>
         <Stack gap={5} className='max-w-full'>
           <div>
-            <h4 className='text-sm text-secondary font-medium mb-2'>ROR CLI</h4>
+            <h4 className='label-02 text-secondary mb-2'>ROR CLI</h4>
             <CodeSnippet type='single'>{rorLogin}</CodeSnippet>
           </div>
           <div>
-            <h4 className='text-sm text-secondary font-medium mb-2'>Kubectl</h4>
+            <h4 className='label-02 text-secondary mb-2'>Kubectl</h4>
             <CodeSnippet type='single'>{kubectlLogin}</CodeSnippet>
           </div>
         </Stack>
