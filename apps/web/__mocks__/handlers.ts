@@ -1,4 +1,5 @@
 import { http, HttpResponse } from 'msw'
+import { alphabetical } from 'radash'
 
 import clusters from './data/clusters'
 import { createPaginatedResponse, type PaginatedResponse } from './utils/paginated-response'
@@ -13,6 +14,12 @@ const path = (path: string) => `${rorBaseApiUrl}${path}`
 interface FilterBody {
   limit?: number
   skip?: number
+  sort?: [
+    {
+      sortField: 'clusterName'
+      sortOrder: 1 | -1
+    },
+  ]
 }
 
 export const handlers = [
@@ -23,7 +30,23 @@ export const handlers = [
       limit: payload?.limit ?? 10,
       skip: payload?.skip ?? 0,
     }
-    const paginatedResponse = createPaginatedResponse(pagination, clusters)
+
+    let filteredClusters = [...clusters]
+
+    if (Array.isArray(payload?.sort) && payload.sort.length > 0 && payload.sort[0].sortField === 'clusterName') {
+      const sortByField = payload.sort[0].sortField
+      const sortOrder = payload.sort[0].sortOrder === -1 ? 'desc' : 'asc'
+      console.log('mock - sorting, field: %s, order: %s', sortByField, sortOrder)
+      filteredClusters = alphabetical(clusters, (c) => c.clusterName, sortOrder)
+    }
+
+    const paginatedResponse = createPaginatedResponse(pagination, filteredClusters)
+
+    console.log(
+      'mock – sortedClusters:',
+      filteredClusters.map((cluster) => cluster.clusterName)
+    )
+
     return HttpResponse.json(paginatedResponse)
   }),
   http.get(path('/v1/clusters/:clusterId'), ({ params }) => {

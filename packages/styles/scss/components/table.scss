@@ -138,20 +138,6 @@
     border-bottom-right-radius: var(--table-border-radius);
   }
 
-  /**
-* Offset padding to make sure type aligns regardless of cell padding
-* selection
-*/
-  .#{c.$prefix}-table__row > *:first-child:not(.#{c.$prefix}-table__cell-skeleton),
-  .#{c.$prefix}-table__row > *:first-child .#{c.$prefix}-table__cell-skeleton-item {
-    padding-inline-start: get-var('spacing-05');
-  }
-
-  .#{c.$prefix}-table__row > *:last-child:not(.#{c.$prefix}-table__cell-skeleton),
-  .#{c.$prefix}-table__row > *:last-child .#{c.$prefix}-table__cell-skeleton-item {
-    padding-inline-end: get-var('spacing-05');
-  }
-
   /* Table header */
   .#{c.$prefix}-table__header {
     color: get-var('text-primary');
@@ -190,9 +176,9 @@
     visibility: hidden;
   }
 
-  /* The ASC icon is visible if the header is sortable and is hovered or focused */
-  .#{c.$prefix}-table__header:hover .#{c.$prefix}-table__sort-icon--ascending,
-  .#{c.$prefix}-table__header .#{c.$prefix}-table__sort-btn:focus .#{c.$prefix}-table__sort-icon--ascending {
+  /* The sort icon is visible if the header is sortable and is hovered or focused */
+  .#{c.$prefix}-table__header:hover .#{c.$prefix}-table__sort-icon,
+  .#{c.$prefix}-table__header .#{c.$prefix}-table__sort-btn:focus .#{c.$prefix}-table__sort-icon {
     visibility: visible;
   }
 
@@ -211,7 +197,6 @@
 
   .#{c.$prefix}-table__sort-btn {
     --btn-height: auto;
-    --btn-width: auto;
     padding: 0;
     border: 0 none;
     column-gap: 0.5rem;

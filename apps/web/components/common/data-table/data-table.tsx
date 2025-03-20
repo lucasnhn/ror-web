@@ -9,12 +9,13 @@ import {
   TableSubtitle,
   TableContainer,
   TableSortHeader,
+  TableHeader,
 } from '@ror/react/components/table'
 import type { TableProps } from '@ror/react/components/table'
 import { Pagination } from '@ror/react/components/pagination'
 import { SortDirection } from '@ror/react/utils/sorting'
 import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
-import type { ColumnDef, PaginationState } from '@tanstack/react-table'
+import type { ColumnDef, Header, PaginationState, SortingState } from '@tanstack/react-table'
 import { getItemRangeText } from './pagination'
 import { Fragment } from 'react'
 
@@ -25,8 +26,9 @@ import { Fragment } from 'react'
 export type DataTableColumnDef<TData> = ColumnDef<TData, any>
 
 export type DataTablePagination = PaginationState
+export type DataTableSorting = SortingState
 
-export interface DataTableProps<TData> extends TableProps {
+export interface DataTableProps<TData> extends Omit<TableProps, 'gridTemplateColumns'> {
   /**
    * Specify a title for the table
    */
@@ -76,12 +78,14 @@ export interface DataTableProps<TData> extends TableProps {
    * e.g. [10, 25, 50, 100]
    */
   pageSizes?: number[]
+
+  sorting: SortingState
+  onSortingChange: (state: SortingState) => void
 }
 
 export function DataTable<TData>(props: DataTableProps<TData>) {
   const {
     cellPadding,
-    gridTemplateColumns,
     title,
     subtitle,
     columns,
@@ -91,6 +95,8 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
     onPaginationChange,
     pageCount,
     pageSizes = [10, 25, 50, 100],
+    sorting = [],
+    onSortingChange,
   } = props
 
   const table = useReactTable({
@@ -119,18 +125,20 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
       onPaginationChange(newValue)
     },
 
+    enableSorting: true,
+    onSortingChange: (updater) => {
+      const newState = updater instanceof Function ? updater(props.sorting) : updater
+      onSortingChange(newState)
+    },
+
     /**
      * The controlled pagination state
      */
     state: {
       pagination,
+      sorting,
     },
   })
-
-  const handleOnSort = (id: string, direction: Exclude<SortDirection, 'NONE'>) => {
-    // TODO: Implement sorting logic together with @tanstack/react-table
-    console.log(`Sorting by ${id} in ${direction} order`)
-  }
 
   const handleOnPageSizeChange = (pageSize: number) => {
     /**
@@ -148,6 +156,18 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
     table.nextPage()
   }
 
+  const getSortingOrder = <TData, TValue>(header: Header<TData, TValue>): SortDirection => {
+    const direction = header.column.getIsSorted()
+
+    if (direction === 'asc') {
+      return SortDirection.ASC
+    } else if (direction === 'desc') {
+      return SortDirection.DESC
+    }
+
+    return SortDirection.NONE
+  }
+
   // The current page in the pagination
   const currentPage = table.getState().pagination.pageIndex
   // The selected number of items to show per page
@@ -161,6 +181,9 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
     max: totalCount,
   })
 
+  const numberOfColumns = table.getAllColumns().length.toString()
+  const gridTemplateColumns = `repeat(${numberOfColumns}, minmax(max-content, 1fr))`
+
   return (
     <Fragment>
       <TableContainer hasPagination>
@@ -170,11 +193,52 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
           <TableHead>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableSortHeader key={header.id} id={header.id} direction={'NONE'} onToggleSort={handleOnSort}>
-                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                  </TableSortHeader>
-                ))}
+                {headerGroup.headers.map((header) => {
+                  const child = header.isPlaceholder
+                    ? null
+                    : flexRender(header.column.columnDef.header, header.getContext())
+
+                  /**
+                   * If the column is sortable, render the sortable th component
+                   */
+                  if (header.column.getCanSort()) {
+                    /**
+                     * Get the current sorting direction for the column
+                     * It maps the value from @tanstack/react-table to the @ror/react SortDirection enum
+                     */
+                    const sortingDirection = getSortingOrder(header)
+
+                    /**
+                     * Callback handler for when sort direction is changed
+                     */
+                    const handleOnToggleSort = (_id: string, nextDirection: SortDirection) => {
+                      if (nextDirection === SortDirection.NONE) {
+                        header.column.clearSorting()
+                      } else {
+                        const isDescending = nextDirection === SortDirection.DESC
+                        header.column.toggleSorting(isDescending)
+                      }
+                    }
+
+                    return (
+                      <TableSortHeader
+                        key={header.id}
+                        id={header.id}
+                        colSpan={header.colSpan}
+                        direction={sortingDirection}
+                        onToggleSort={handleOnToggleSort}
+                      >
+                        {child}
+                      </TableSortHeader>
+                    )
+                  }
+
+                  return (
+                    <TableHeader key={header.id} id={header.id} colSpan={header.colSpan}>
+                      {child}
+                    </TableHeader>
+                  )
+                })}
               </TableRow>
             ))}
           </TableHead>
