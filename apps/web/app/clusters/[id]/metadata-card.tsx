@@ -1,9 +1,10 @@
 'use client'
 import type { Cluster } from '@ror/js-api-client'
 import clsxm from '@/utils/clsxm'
-import { Tile, CodeSnippet, Layer, DefinitionDescription, DefinitionList, DefinitionTerm, Tag } from '@ror/react'
+import { Tile, CodeSnippet, Layer, DefinitionDescription, DefinitionList, DefinitionTerm } from '@ror/react'
 import { format } from 'date-fns'
 import { nb } from 'date-fns/locale/nb'
+import { EnvironmentTag } from '@/components/common/environment-tag'
 
 interface ClusterMetadataCardProps {
   cluster: Cluster
@@ -80,9 +81,9 @@ export function ClusterMetadataCard({ cluster, className }: ClusterMetadataCardP
           <div className='flex flex-col gap-1'>
             <DefinitionTerm>Environment</DefinitionTerm>
             <DefinitionDescription>
-              <Tag size='sm' variant='readonly'>
+              <EnvironmentTag environment={cluster.environment} size='sm' variant='readonly'>
                 {cluster.environment}
-              </Tag>
+              </EnvironmentTag>
             </DefinitionDescription>
           </div>
           <div className='flex flex-col gap-1'>
