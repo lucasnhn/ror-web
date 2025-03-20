@@ -1,8 +1,8 @@
 "use client"
 
 import { clsx } from 'clsx';
-import type { Cluster } from '@ror/js-api-client'
-import { Tag, Tile } from '@ror/react';
+import type { Cluster } from '@ror/js-api-client';
+import { Tile } from '@ror/react';
 import { convertBytes } from '@/utils/bytes';
 
 export interface ClusterMetricsProps {
