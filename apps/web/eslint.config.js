@@ -1,5 +1,6 @@
 import js from '@eslint/js'
 import { FlatCompat } from '@eslint/eslintrc'
+import reactCompiler from '@eslint/eslint-plugin-react-compiler'
 
 const compat = new FlatCompat({
   baseDirectory: import.meta.dirname,
