@@ -43,7 +43,7 @@ export function ClusterMetadataCard({ cluster, className }: ClusterMetadataCardP
   return (
     <Tile className={classes}>
       <div className=''>
-        <h3 className='text-base pb-3 mb-5 border-b border-b-(--r-border-subtle)'>Information</h3>
+        <h3 className='heading-01 pb-3 mb-5 border-b border-b-(--r-border-subtle)'>Information</h3>
         <DefinitionList className='grid-cols-4'>
           <div className='flex flex-col gap-1'>
             <DefinitionTerm>Project</DefinitionTerm>
