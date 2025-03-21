@@ -173,7 +173,6 @@ export function ClustersTable<T extends ClusterListItem>({
       sorting={sortState}
       onSortingChange={handleOnSortChange}
       onPaginationChange={handleOnPaginationChange}
-      pageSizes={[1, 2, 10]}
     />
   )
 }
