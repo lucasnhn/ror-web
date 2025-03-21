@@ -8,6 +8,7 @@ import { Fragment } from 'react'
 import { ClusterCards } from './cluster-cards'
 import Link from 'next/link'
 import { ClusterPageViewSwitch } from './view-switch'
+import { SortingRequestParam } from '@ror/js-api-client/dist/types'
 
 export const metadata: Metadata = {
   title: 'ROR (Beta) - Clusters',
@@ -19,6 +20,8 @@ interface ClusterPageProps {
     view?: 'grid' | 'list'
     page?: number
     limit?: number
+    sort?: string
+    order?: 'asc' | 'desc'
   }>
 }
 
@@ -35,10 +38,24 @@ export default async function ClustersPage({ searchParams }: ClusterPageProps) {
   const page = Number(params.page) || DEFAULT_PAGE // URL shows 1-based indexing
   const skip = (page - 1) * limit
 
-  const clustersResponse = await client.clusters.filter({
+  // Parse sorting parameters from URL
+  const sort = params.sort ? params.sort : 'clusterName'
+  const order = params.order === 'asc' ? 1 : -1
+
+  const sortOptions = {
+    sortField: sort,
+    sortOrder: order,
+  } satisfies SortingRequestParam
+
+  const requestOptions = {
     limit,
     skip,
-  })
+    sort: params.sort ? [sortOptions] : [],
+  }
+
+  console.log('clusters page -> requestOptions', requestOptions)
+
+  const clustersResponse = await client.clusters.filter(requestOptions)
 
   // Set up pagination state for the table
   const paginationState = {
