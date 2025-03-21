@@ -5,7 +5,6 @@ import { CodeSnippet } from '@ror/react/components/code-snippet'
 import { Layer } from '@ror/react/components/layer'
 import { Tile } from '@ror/react/components/tile'
 import { User } from 'next-auth'
-import { hostname } from 'os'
 import { ArrowRight } from 'lucide-react'
 
 interface ClusterToolsCardProps {
@@ -65,7 +64,7 @@ export function ClusterToolsCard({ cluster, user, className }: ClusterToolsCardP
                 className='flex items-center gap-2 text-[#23bc7f] hover:underline'
               >
                 <span>ArgoCD</span>
-                <ArrowRight size={16} />
+                <ArrowRight size={18} />
               </a>
             )}
 
@@ -77,7 +76,7 @@ export function ClusterToolsCard({ cluster, user, className }: ClusterToolsCardP
                 className='flex items-center gap-2 text-[#23bc7f] hover:underline'
               >
                 <span>Grafana</span>
-                <ArrowRight size={16} />
+                <ArrowRight size={18} />
               </a>
             )}
           </div>
