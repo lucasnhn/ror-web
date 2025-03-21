@@ -4,6 +4,7 @@ import { rorApiClient } from '@/services/ror-api'
 import { ClusterMetadataCard } from './metadata-card'
 import { ClusterToolsCard } from './tools-card'
 import { ClusterVersionsCard } from './versions-card'
+import { ClusterMetrics } from './cluster-metrics'
 
 interface ClusterPageProps {
   params: Promise<{
@@ -24,6 +25,7 @@ export default async function ClusterPage({ params }: ClusterPageProps) {
 
   return (
     <div className='grid grid-cols-12 gap-4 @container'>
+      <ClusterMetrics cluster={cluster} className='col-span-12 @6xl:col-span-6'/>
       <ClusterMetadataCard cluster={cluster} className='col-span-12 @5xl:col-span-6' />
       <ClusterVersionsCard cluster={cluster} className='col-span-12 @2xl:col-span-6 @5xl:col-span-3' />
       <ClusterToolsCard cluster={cluster} user={session.user} className='col-span-12 @2xl:col-span-6 @5xl:col-span-3' />

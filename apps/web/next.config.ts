@@ -6,7 +6,15 @@ const nextConfig: NextConfig = {
    * @docs https://nextjs.org/docs/app/api-reference/config/next-config-js/output#automatically-copying-traced-files
    */
   output: 'standalone',
-  transpilePackages: ['@ror/react'],
+
+  experimental: {
+    /**
+     * Only load the modules we are actually using,
+     * while still giving us the convenience of writing import statements with many named exports.
+     * @docs https://nextjs.org/docs/app/api-reference/config/next-config-js/optimizePackageImports
+     */
+    optimizePackageImports: ['@ror/react', 'radash'],
+  },
 }
 
 export default nextConfig

@@ -33,3 +33,4 @@ export {
 export { Tile } from './components/tile.tsx'
 export { Tooltip, TooltipProvider } from './components/tooltip.tsx'
 export { Tag } from './components/tag.tsx'
+export type { TagProps, TagColor, TagVariant } from './components/tag.tsx'
