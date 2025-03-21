@@ -96,6 +96,18 @@ export const Cluster = z
     topology: TopologyModel,
     versions: VersionsModel,
     workspace: WorkspaceModel,
+    ingresses: z.union([
+      z.array(
+        z.object({
+          ingressrules: z.array(
+            z.object({
+              hostname: z.string().optional(),
+            }).optional()
+          ).optional(),
+        }).optional()
+      ), 
+      z.null()
+    ]).optional(),
   })
   .passthrough()
 
