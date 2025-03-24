@@ -1,14 +1,15 @@
+import type { ReactNode } from 'react'
 import type { Metadata } from 'next'
 import { Inter, Ubuntu_Mono } from 'next/font/google'
 import { clsx } from 'clsx'
 import { PublicEnvScript } from 'next-runtime-env'
-import './tailwind.css'
-import './globals.scss'
 import { AppShell } from '@/components/app-shell/app-shell'
-import { Providers } from './providers'
 import { getDarkModePreferenceAction } from '@/utils/dark-mode.actions'
 import { getLeftPanelPreferenceAction } from '@/components/app-shell/app-shell-actions'
 import { onUnhandledRequest } from '@/__mocks__/utils/on-unhandled-request'
+import './tailwind.css'
+import './globals.scss'
+import { Providers } from './providers'
 
 /**
  * Register the server-side mock server
@@ -38,11 +39,11 @@ export const metadata: Metadata = {
   description: 'ROR (Release Operate Report)',
 }
 
-export default async function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode
-}>) {
+interface RootLayoutProps {
+  children: ReactNode
+}
+
+export default async function RootLayout({ children }: Readonly<RootLayoutProps>) {
   // Retrieve the user's preferred color scheme
   // otherwise it defaults to "system"
   const theme = await getDarkModePreferenceAction()

@@ -1,7 +1,7 @@
 import { clsx } from 'clsx'
 import { forwardRef } from 'react'
 import type { ComponentPropsWithoutRef, CSSProperties, MouseEvent, PropsWithChildren, ReactElement } from 'react'
-import { ArrowDownNarrowWide, ArrowUpNarrowWide } from 'lucide-react'
+import { ArrowDownUp, ArrowDownWideNarrow, ArrowUpNarrowWide } from 'lucide-react'
 import type { SortDirection as SortDirectionType } from '../../utils/sorting'
 import { SortDirection, transition } from '../../utils/sorting'
 import { Button } from '../button'
@@ -140,11 +140,7 @@ interface TableSortHeaderProps extends TableHeaderProps {
    * Provide a handler that is called when the sortable TableHeader is
    * interacted with via a click or keyboard interaction
    */
-  onToggleSort: (
-    id: string,
-    direction: Exclude<SortDirectionType, 'NONE'>,
-    event?: MouseEvent<HTMLButtonElement>
-  ) => void
+  onToggleSort: (id: string, nextDirection: SortDirectionType, event: MouseEvent<HTMLButtonElement>) => void
 }
 
 export function TableSortHeader({
@@ -157,25 +153,34 @@ export function TableSortHeader({
   ...rest
 }: TableSortHeaderProps) {
   const handleOnClick = (event: MouseEvent<HTMLButtonElement>) => {
-    const newDirection = direction === SortDirection.NONE ? SortDirection.ASC : transition(direction)
-    onToggleSort(id, newDirection, event)
+    const nextDirection = transition(direction)
+    onToggleSort(id, nextDirection, event)
   }
 
-  const ariaSort = direction === 'DESC' ? 'descending' : direction === 'ASC' ? 'ascending' : undefined
+  const ariaSort =
+    direction === SortDirection.DESC ? 'descending' : direction === SortDirection.ASC ? 'ascending' : undefined
 
   return (
     <TableHeader {...rest} aria-sort={ariaSort} align={align} className={className}>
       <Button type='button' className='r-table__sort-btn' onClick={handleOnClick}>
         {children}
-        {direction === SortDirection.NONE || direction === SortDirection.ASC ? (
-          <ArrowUpNarrowWide className='r-table__sort-icon r-table__sort-icon--ascending' />
-        ) : null}
-        {direction === SortDirection.DESC ? (
-          <ArrowDownNarrowWide className='r-table__sort-icon r-table__sort-icon--descending' />
-        ) : null}
+        <TableSortIcon direction={direction} />
       </Button>
     </TableHeader>
   )
+}
+
+function TableSortIcon({ direction }: { direction: SortDirectionType }) {
+  switch (direction) {
+    case SortDirection.NONE:
+      return <ArrowDownUp className='r-table__sort-icon r-table__sort-icon--none' />
+    case SortDirection.ASC:
+      return <ArrowUpNarrowWide className='r-table__sort-icon r-table__sort-icon--ascending' />
+    case SortDirection.DESC:
+      return <ArrowDownWideNarrow className='r-table__sort-icon r-table__sort-icon--descending' />
+    default:
+      return null
+  }
 }
 
 /**

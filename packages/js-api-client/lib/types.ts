@@ -62,3 +62,17 @@ export interface PaginationRequestParams {
    */
   skip?: number
 }
+
+export interface SortingRequestParam {
+  /**
+   * Field to sort results by
+   */
+  sortField: string
+
+  /**
+   * Order to sort results in
+   */
+  sortOrder: 1 | -1
+}
+
+export type SortingRequestParams = SortingRequestParam[]
