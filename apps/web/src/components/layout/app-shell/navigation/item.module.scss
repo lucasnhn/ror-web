@@ -1,0 +1,48 @@
+@use '@ror/styles/scss/layout';
+
+.link {
+  display: flex;
+  align-items: center;
+  gap: var(--menu-item-gap);
+  padding: var(--menu-item-y-padding) var(--menu-item-x-padding);
+  min-height: 2rem;
+  min-width: 2rem;
+  border-radius: var(--radius-sm);
+  color: var(--r-text-primary);
+  cursor: pointer;
+  font-size: var(--text-sm);
+  position: relative;
+}
+
+.label {
+  display: none;
+  align-items: center;
+  flex-grow: 1;
+  column-gap: 0.5rem;
+  font-size: var(--text-sm);
+  font-weight: 400;
+}
+
+.link svg {
+  width: 1rem;
+  height: 1rem;
+  color: var(--r-icon-primary);
+  flex-shrink: 0;
+}
+
+.link:hover {
+  background: var(--menu-item-hover-bg);
+}
+
+/// Expanded state
+.caret[data-expanded='true'] {
+  transform: rotate(90deg);
+}
+
+/// Container queries - set on the whole left panel element
+@container (width > 3rem) {
+  .label,
+  .caret {
+    display: flex;
+  }
+}
