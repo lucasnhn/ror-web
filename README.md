@@ -4,7 +4,7 @@ Frontend for admin GUI in the ROR project.
 ## Tech Stack
 - 🔒 TypeScript by default
 - 📖 [Next.js](https://nextjs.org/docs)
-- 🎨 Styling (To be decided)
+- 🎨 Styling we use a combination of SASS `packages/styles` and [Tailwind CSS](https://tailwindcss.com/)
 
 ## Getting Started
 

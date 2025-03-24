@@ -1,0 +1,26 @@
+.staticMenu {
+  margin-top: var(--spacing-1);
+}
+
+.staticMenu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.staticMenu a {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: var(--menu-item-y-padding) var(--menu-item-x-padding) var(--menu-item-y-padding)
+    /// Align the sub navigation label with the top level label
+    /// x-padding + icon size + menu item gap
+    calc(var(--menu-item-x-padding) + 1rem + 1px + var(--menu-item-gap));
+  font-size: var(--text-sm);
+  border-radius: var(--radius-sm);
+  height: 2rem;
+}
+
+.collapsed {
+  display: none;
+}
