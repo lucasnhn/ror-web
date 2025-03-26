@@ -3,7 +3,6 @@ import type { Metadata } from 'next'
 import { Inter, Ubuntu_Mono } from 'next/font/google'
 import { clsx } from 'clsx'
 import { PublicEnvScript } from 'next-runtime-env'
-import { AppShell } from '@/components/layout/app-shell/app-shell'
 import { getLeftPanelPreferenceAction } from '@/components/layout/app-shell/app-shell-actions'
 import { getDarkModePreferenceAction } from '@/utils/dark-mode.actions'
 import { onUnhandledRequest } from '@/__mocks__/utils/on-unhandled-request'
@@ -59,9 +58,7 @@ export default async function RootLayout({ children }: Readonly<RootLayoutProps>
         <PublicEnvScript />
       </head>
       <body>
-        <Providers defaultSidebarOpen={defaultSidebarOpen}>
-          <AppShell>{children}</AppShell>
-        </Providers>
+        <Providers defaultSidebarOpen={defaultSidebarOpen}>{children}</Providers>
       </body>
     </html>
   )

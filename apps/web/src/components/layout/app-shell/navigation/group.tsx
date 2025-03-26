@@ -20,7 +20,7 @@ interface NavigationItemProps {
 export function NavigationGroup({ label, icon, children }: NavigationItemProps) {
   const { leftPanelExpanded } = useAppShellContext()
   const [flyoverOpen, setFlyoverOpen] = useState(false)
-  const [staticOpen, setStaticOpen] = useState(false)
+  const [staticOpen, setStaticOpen] = useState(true)
   const debouncedFlyoverOpen = useDebounce(flyoverOpen, 200)
 
   /**
@@ -62,7 +62,7 @@ export function NavigationGroup({ label, icon, children }: NavigationItemProps) 
 
   return (
     <Popover open={debouncedFlyoverOpen} onOpenChange={handleOnOpenChange}>
-      <li>
+      <li className={s.group}>
         <PopoverTrigger asChild>
           <button
             className={s.trigger}

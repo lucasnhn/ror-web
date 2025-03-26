@@ -1,7 +1,6 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "ui": "tui",
-  "globalEnv": ["AUTH_ISSUER", "AUTH_CLIENT_ID", "AUTH_CLIENT_SECRET"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
