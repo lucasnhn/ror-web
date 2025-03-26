@@ -1,7 +1,9 @@
-import NextAuth from 'next-auth'
+import NextAuth, { Session } from 'next-auth'
 import { Provider } from 'next-auth/providers'
 import { jwtDecode } from 'jwt-decode'
 import { env } from '@/config/env'
+import { NextResponse } from 'next/server'
+import { routes } from './routes'
 
 /**
  * We are adding the accessToken to the session so it can be retrieved from the
@@ -42,8 +44,12 @@ const trusthost = Boolean(JSON.parse(env.AUTH_TRUST_HOST))
  * - auth utility function
  */
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  debug: true,
   providers: [dexIdpProvider],
   trustHost: trusthost,
+  pages: {
+    signIn: routes.auth.signIn.getHref(),
+  },
   callbacks: {
     jwt({ token, account }) {
       if (account?.provider === 'dex') {
@@ -58,22 +64,30 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       session.accessToken = token.accessToken as string
       return session
     },
-    authorized: async ({ auth }) => {
-      if (!auth?.accessToken) {
-        return false
+    authorized: async ({ request, auth }) => {
+      if (request.method === 'POST') {
+        // If the request has a valid auth token, it is authorized
+        const valid = validateAuthToken(auth)
+        if (valid) return true
+        return NextResponse.json('expired auth token', { status: 401 })
       }
 
-      const decodedToken = jwtDecode(auth?.accessToken as string)
-
-      if (!decodedToken) {
-        return false
-      }
-
-      // Check if the authentication token from dex has expired
-      const expirationTime = (decodedToken.exp as number) * 1000
-      const currentTime = Date.now()
-      const isTokenExpired = expirationTime < currentTime
-      return isTokenExpired ? false : true
+      // Logged in users are authenticated, otherwise redirect to login page
+      return !!auth?.user
     },
   },
 })
+
+function validateAuthToken(session: Session | null): boolean {
+  if (!session) {
+    return false
+  }
+
+  try {
+    const decodedToken = jwtDecode(session.accessToken)
+    const expirationTime = (decodedToken.exp as number) * 1000
+    return expirationTime >= Date.now()
+  } catch {
+    return false
+  }
+}

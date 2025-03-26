@@ -2,17 +2,17 @@ export const routes = {
   auth: {
     signIn: {
       label: 'Sign in',
-      getHref: () => '/api/auth/sign-in',
+      getHref: () => 'api/auth/signin',
     },
     signOut: {
       label: 'Sign out',
-      getHref: () => '/api/auth/sign-out',
+      getHref: () => '/api/auth/signout',
     },
   },
   app: {
     overview: {
       label: 'Overview',
-      getHref: () => '/',
+      getHref: () => '/clusters',
     },
     clusters: {
       label: 'Clusters',
