@@ -1,6 +1,5 @@
 import { authGuard } from '@/features/auth/utils/auth-guard'
 import { rorApiClient } from '@/services/ror-api'
-import { ClusterIngressesTable } from './ingresses-table'
 
 interface ClusterIngressesPageProps {
   params: Promise<{
@@ -20,5 +19,5 @@ export default async function ClusterIngressesPage({ params }: ClusterIngressesP
     return <div>No ingresses found</div>
   }
 
-  return <ClusterIngressesTable ingresses={ingresses} />
+  return <h1>Ingresses</h1>
 }
