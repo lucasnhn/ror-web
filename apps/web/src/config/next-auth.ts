@@ -2,7 +2,6 @@ import NextAuth, { Session } from 'next-auth'
 import { Provider } from 'next-auth/providers'
 import { jwtDecode } from 'jwt-decode'
 import { env } from '@/config/env'
-import { NextResponse } from 'next/server'
 import { routes } from './routes'
 
 /**
@@ -44,7 +43,6 @@ const trusthost = Boolean(JSON.parse(env.AUTH_TRUST_HOST))
  * - auth utility function
  */
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  debug: true,
   providers: [dexIdpProvider],
   trustHost: trusthost,
   pages: {
@@ -67,9 +65,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     authorized: async ({ request, auth }) => {
       if (request.method === 'POST') {
         // If the request has a valid auth token, it is authorized
-        const valid = validateAuthToken(auth)
-        if (valid) return true
-        return NextResponse.json('expired auth token', { status: 401 })
+        return validateAuthToken(auth)
       }
 
       // Logged in users are authenticated, otherwise redirect to login page

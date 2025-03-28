@@ -1,10 +1,9 @@
-"use client"
+'use client'
 
-import { Slot } from '@radix-ui/react-slot'
 import clsx from 'clsx'
 import { XIcon } from 'lucide-react'
-import type { AriaAttributes, HTMLAttributes, ReactNode } from 'react'
-import { useState } from 'react'
+import type { AriaAttributes, ReactNode } from 'react'
+import type { PolymorphicComponentPropWithRef } from '../types/polymorphic'
 
 export type TagVariant = 'readonly' | 'dismissible' | 'operational' | 'selectable'
 export type SizeVariant = 'sm' | 'md' | 'lg'
@@ -12,7 +11,7 @@ export type TagColor = 'red' | 'orange' | 'yellow' | 'green' | 'blue' | 'purple'
 
 // TODO: Implement operational tag
 
-export interface TagProps extends HTMLAttributes<HTMLElement> {
+export interface TagBaseProps {
   /**
    * Specify the label for the breadcrumb container
    */
@@ -36,7 +35,7 @@ export interface TagProps extends HTMLAttributes<HTMLElement> {
   variant?: TagVariant
 
   /**
-   * What should the tag color be? 
+   * What should the tag color be?
    */
   color?: TagColor
 
@@ -47,23 +46,26 @@ export interface TagProps extends HTMLAttributes<HTMLElement> {
   icon?: ReactNode
 
   /**
-   * Merge props onto its immediate child.
-   * @docs {@link https://www.radix-ui.com/primitives/docs/utilities/slot}
+   * Specify if the component is selected
+   * (only applicable to variant = 'selectable')
    */
-  asChild?: boolean
+  isSelected?: boolean
 }
 
-export function Tag({
+export type TagProps<T extends React.ElementType> = PolymorphicComponentPropWithRef<T, TagBaseProps>
+
+export function Tag<T extends React.ElementType>({
   size = 'md',
   variant = 'readonly',
   icon = null,
   className,
   color = 'neutral',
   children,
-  asChild = false,
+  isSelected = false,
+  onClick,
+  as: BaseComponent,
   ...rest
-}: TagProps) {
-  const [isActive, setIsActive] = useState<boolean>(true);
+}: TagProps<T>) {
   const hasIcon = icon !== null
   const classes = clsx(
     `r-tag r-tag--${size} r-tag--${color}`,
@@ -73,25 +75,18 @@ export function Tag({
        */
       [`r-tag--${variant}`]: variant !== 'readonly',
       'r-tag--has-icon': hasIcon,
-      'r-tag--inactive': variant === 'selectable' && !isActive,
+      'r-tag--selected': variant === 'selectable' && isSelected,
     },
-    className,
+    className
   )
-  const Comp = asChild ? Slot : 'span'
 
-  const handleClick = () => {
-    setIsActive((prev) => !prev);
-  }
- 
+  const ComponentTag = BaseComponent ?? 'div'
+
   return (
-    <div onClick={handleClick}>
-      <Comp className={classes} {...rest}>
-      {hasIcon && <span className='r-tag--icon-container'>{icon}</span>}
-        {children}
-        {variant === 'dismissible' && (
-          <XIcon className='r-tag__remove-icon' />
-        )}
-      </Comp>
-    </div>
+    <ComponentTag className={classes} title={typeof children === 'string' ? children : undefined} {...rest}>
+      {hasIcon && <span className='r-tag__icon-container'>{icon}</span>}
+      <span className='r-tag__label'>{children}</span>
+      {variant === 'dismissible' && <XIcon className='r-tag__remove-icon' />}
+    </ComponentTag>
   )
 }

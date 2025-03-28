@@ -1,3 +1,4 @@
+'use client'
 import { useContext } from 'react'
 import { AppShellContext, AppShellDispatchContext } from './app-shell-context'
 import type { AppShellContextDispatchType, AppShellContextType } from './app-shell-context'

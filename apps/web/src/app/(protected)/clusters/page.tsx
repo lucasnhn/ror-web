@@ -103,14 +103,16 @@ export default async function ClustersPage({ searchParams }: ClusterPageProps) {
         </div>
       )}
 
-      <div className='mt-8 px-6'>
-        <details>
-          <summary>raw data</summary>
-          <CodeSnippet type='multi' hideCopyButton>
-            {JSON.stringify(clustersResponse, null, 2)}
-          </CodeSnippet>
-        </details>
-      </div>
+      {process.env.NODE_ENV === 'development' && (
+        <div className='mt-8 px-6'>
+          <details>
+            <summary>raw data</summary>
+            <CodeSnippet type='multi' hideCopyButton>
+              {JSON.stringify(clustersResponse, null, 2)}
+            </CodeSnippet>
+          </details>
+        </div>
+      )}
     </Fragment>
   )
 }

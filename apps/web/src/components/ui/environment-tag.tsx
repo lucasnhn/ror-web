@@ -12,14 +12,18 @@ const mapEnvironmentToColor: Record<Environment | string, TagColor> = {
   qa: 'yellow',
 }
 
-interface EnvironmentTagProps extends Omit<TagProps, 'color'> {
+interface EnvironmentTagProps extends Omit<TagProps<'div'>, 'color' | 'as'> {
   environment: Environment | string
 }
 
 /**
  * Display environment as a tag using consistent color for the different environments
  */
-export function EnvironmentTag({ environment }: EnvironmentTagProps) {
+export function EnvironmentTag({ environment, ...rest }: EnvironmentTagProps) {
   const color = mapEnvironmentToColor[environment] ?? 'gray'
-  return <Tag color={color}>{environment}</Tag>
+  return (
+    <Tag color={color} {...rest}>
+      {environment}
+    </Tag>
+  )
 }
