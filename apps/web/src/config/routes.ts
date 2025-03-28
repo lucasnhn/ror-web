@@ -2,7 +2,7 @@ export const routes = {
   auth: {
     signIn: {
       label: 'Sign in',
-      getHref: () => 'api/auth/signin',
+      getHref: () => '/sign-in',
     },
     signOut: {
       label: 'Sign out',
