@@ -1,5 +1,4 @@
 'use client'
-import { format } from 'date-fns'
 import { convertBytes } from '@/utils/bytes'
 import { createColumnHelper } from '@tanstack/react-table'
 import type { ClusterListItem } from '@ror/js-api-client'
@@ -10,6 +9,9 @@ import { HealthStatus } from '@/components/ui/health-status'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useCallback } from 'react'
 import { routes } from '@/config/routes'
+import { EnvironmentTag } from '@/components/ui/environment-tag'
+import { getArgoTool, getGrafanaTool } from '@/features/clusters/utils/tools'
+import { ExternalLink } from 'lucide-react'
 
 const columnHelper = createColumnHelper<ClusterListItem>()
 
@@ -35,6 +37,14 @@ const dataTableColumns = [
     cell: (info) => {
       const value = info.getValue()
       return <HealthStatus status={value} />
+    },
+  }),
+  columnHelper.accessor('environment', {
+    header: 'Environment',
+    enableSorting: false,
+    cell: (info) => {
+      const value = info.getValue()
+      return <EnvironmentTag environment={value} />
     },
   }),
   columnHelper.accessor('metrics.cpuPercentage', {
@@ -65,23 +75,6 @@ const dataTableColumns = [
       )
     },
   }),
-  columnHelper.accessor('lastObserved', {
-    header: 'Last heartbeat',
-    enableSorting: false,
-    cell: (info) => {
-      const lastObserved = new Date(info.getValue())
-      const formatted = format(lastObserved, 'dd LLL, yyyy - HH:mm:ss')
-      return <span>{formatted}</span>
-    },
-  }),
-  columnHelper.accessor('created', {
-    header: 'Created at',
-    enableSorting: false,
-    cell: (info) => {
-      const createdAt = format(info.getValue(), 'dd LLL, yyyy - HH:mm:ss')
-      return <span>{createdAt}</span>
-    },
-  }),
   columnHelper.accessor((info) => info.versions?.nhnTooling.version ?? '', {
     header: 'Tooling',
     enableSorting: false,
@@ -96,6 +89,50 @@ const dataTableColumns = [
     cell: (info) => {
       const projectName = info.getValue()
       return <span>{projectName ?? '-'}</span>
+    },
+  }),
+  columnHelper.display({
+    header: 'Argo',
+    enableSorting: false,
+    cell: (info) => {
+      const cluster = info.row.original
+      const argoUrl = getArgoTool(cluster)
+      if (!argoUrl) {
+        return 'Missing…'
+      }
+      return (
+        <a
+          href={`https://${argoUrl}`}
+          target='_blank'
+          rel='noopener noreferrer'
+          className='flex items-center gap-2 text-link'
+        >
+          Open Argo
+          <ExternalLink className='w-5 h-5 text-current' />
+        </a>
+      )
+    },
+  }),
+  columnHelper.display({
+    header: 'Grafana',
+    enableSorting: false,
+    cell: (info) => {
+      const cluster = info.row.original
+      const grafanaUrl = getGrafanaTool(cluster)
+      if (!grafanaUrl) {
+        return 'Missing…'
+      }
+      return (
+        <a
+          href={`https://${grafanaUrl}`}
+          target='_blank'
+          rel='noopener noreferrer'
+          className='flex items-center gap-2 text-link'
+        >
+          Open Grafana
+          <ExternalLink className='w-5 h-5 text-current' />
+        </a>
+      )
     },
   }),
 ] satisfies DataTableColumnDef<ClusterListItem>[]

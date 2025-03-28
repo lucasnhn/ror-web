@@ -29,6 +29,8 @@ export default tseslint.config(
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
       ...react.configs.recommended.rules,
       ...react.configs['jsx-runtime'].rules,
+      // Since hooks can be used within a render function inside a story, we turn off this rule
+      'react-hooks/rules-of-hooks': 'off',
     },
   }
 )

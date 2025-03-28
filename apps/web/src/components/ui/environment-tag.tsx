@@ -19,7 +19,11 @@ interface EnvironmentTagProps extends Omit<TagProps, 'color'> {
 /**
  * Display environment as a tag using consistent color for the different environments
  */
-export function EnvironmentTag({ environment }: EnvironmentTagProps) {
+export function EnvironmentTag({ environment, ...rest }: EnvironmentTagProps) {
   const color = mapEnvironmentToColor[environment] ?? 'gray'
-  return <Tag color={color}>{environment}</Tag>
+  return (
+    <Tag color={color} {...rest}>
+      {environment}
+    </Tag>
+  )
 }

@@ -3,20 +3,40 @@
 @use '../utilities/custom-properties.scss' as *;
 @use '../utilities/convert.scss';
 @use '../spacing.scss' as spacing;
-
+@use '../type/styles.scss' as type;
+@use '../layout.scss' as layout;
 
 $sizes: (
-  "sm": (tagHeight: 1.125rem, xPadding: spacing.$spacing-03, crossPaddingRight: 1px, iconMargin: spacing.$spacing-02),
-  "md": (tagHeight: 1.5rem, xPadding: spacing.$spacing-03, crossPaddingRight: spacing.$spacing-02, iconMargin: spacing.$spacing-02),
-  "lg": (tagHeight: 2rem, xPadding: spacing.$spacing-04, crossPaddingRight: spacing.$spacing-03, iconMargin: spacing.$spacing-03)
+  'sm': (
+    height: convert.to-rem(18px),
+    xPadding: spacing.$spacing-03,
+    crossPaddingRight: 1px,
+    iconMargin: spacing.$spacing-02,
+  ),
+  'md': (
+    height: convert.to-rem(24px),
+    xPadding: spacing.$spacing-03,
+    crossPaddingRight: spacing.$spacing-02,
+    iconMargin: spacing.$spacing-02,
+  ),
+  'lg': (
+    height: convert.to-rem(32px),
+    xPadding: spacing.$spacing-04,
+    crossPaddingRight: spacing.$spacing-03,
+    iconMargin: spacing.$spacing-03,
+  ),
 );
 
 .#{$prefix}-tag {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  font-size: 0.75rem;
+  justify-content: center;
   border-radius: 2em;
   width: fit-content;
+  @include type.type-style('label-01');
+
+  /// restricts size of contained elements
+  max-inline-size: convert.to-rem(208px);
 
   svg {
     height: 1rem;
@@ -25,25 +45,31 @@ $sizes: (
 
   @each $size, $values in $sizes {
     &--#{$size} {
-      height: map.get($values, "tagHeight");
-      padding: 0 map.get($values, "xPadding");
+      height: map.get($values, 'height');
+      padding: 0 map.get($values, 'xPadding');
 
       &.#{$prefix}-tag--dismissible {
-        padding-right: map.get($values, "crossPaddingRight");
+        padding-right: map.get($values, 'crossPaddingRight');
       }
 
       .#{$prefix}-tag__remove-icon {
-        margin-left: map.get($values, "xPadding");
-      }
-      
-      &.#{$prefix}-tag--has-icon {
-        padding-left: map.get($values, "iconMargin");
+        margin-left: map.get($values, 'xPadding');
       }
 
-      .#{$prefix}-tag--icon-container {
-        margin-right: map.get($values, "iconMargin");
+      &.#{$prefix}-tag--has-icon {
+        padding-left: map.get($values, 'iconMargin');
+      }
+
+      .#{$prefix}-tag__icon-container {
+        margin-right: map.get($values, 'iconMargin');
       }
     }
+  }
+
+  &__icon-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   @each $color in ('red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'gray') {
@@ -58,21 +84,34 @@ $sizes: (
   }
 
   &--selectable {
-    border-width: 2px;
+    background: #{get-var('layer')};
+    color: #{get-var('text-primary')};
+    border: 1px solid #{get-var('border-inverse')};
     cursor: pointer;
-  
+
     &:hover {
       background-color: #{get-var('background-active')};
     }
+  }
 
-    &.r-tag--inactive {
-      background-color: #{get-var('background-inverse')}; 
-      color: #{get-var('background-hover')};
-      border: 2px solid transparent; 
+  /// selected is only applicable when the tag is selectable (--selectable)
+  &--selected {
+    background-color: #{get-var('background-inverse')};
+    color: #{get-var('background-hover')};
+    border: 2px solid transparent;
 
-      &:hover {
-        background-color: #{get-var('background-inverse-hover')};
-      }
+    &:hover {
+      background-color: #{get-var('background-inverse-hover')};
     }
+  }
+
+  /// Tags that are longer then the specified "max-inline-size" should be truncated with ellipsis.
+  &--operational > *:first-child,
+  &--selectable > *:first-child,
+  &__label {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
