@@ -12,7 +12,7 @@ const mapEnvironmentToColor: Record<Environment | string, TagColor> = {
   qa: 'yellow',
 }
 
-interface EnvironmentTagProps extends Omit<TagProps, 'color'> {
+interface EnvironmentTagProps extends Omit<TagProps<'div'>, 'color' | 'as'> {
   environment: Environment | string
 }
 
