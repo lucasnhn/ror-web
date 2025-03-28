@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { Tag } from '@ror/react/src/components/tag'
-import { useState } from 'react'
 import { CheckIcon } from 'lucide-react'
 
 const meta = {
