@@ -6,7 +6,6 @@ import { HealthStatus } from '@/components/ui/health-status'
 import { convertBytes } from '@/utils/bytes'
 import { EnvironmentTag } from '@/components/ui/environment-tag'
 import { getCommonClusterTools } from '@/features/clusters/utils/tools'
-import { Fragment } from 'react'
 import { ExternalLink } from 'lucide-react'
 
 interface ClusterCardProps {
