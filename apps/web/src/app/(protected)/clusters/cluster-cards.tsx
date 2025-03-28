@@ -68,42 +68,40 @@ function ClusterCard({ cluster, className }: ClusterCardProps) {
           <DefinitionDescription className='truncate' title={cluster.metadata?.project?.name ?? ''}>
             {cluster.metadata?.project?.name ?? ''}
           </DefinitionDescription>
-          {tools.argo && (
-            <Fragment>
-              <DefinitionTerm>Argo</DefinitionTerm>
-              <DefinitionDescription>
-                {tools.argo && (
-                  <a
-                    href={`https://${tools.argo}`}
-                    target='_blank'
-                    rel='noopener noreferrer'
-                    className='flex items-center gap-2 text-link'
-                  >
-                    <span>Open ArgoCD</span>
-                    <ExternalLink className='w-5 h-5 text-current' />
-                  </a>
-                )}
-              </DefinitionDescription>
-            </Fragment>
-          )}
-          {tools.grafana && (
-            <Fragment>
-              <DefinitionTerm>Grafana</DefinitionTerm>
-              <DefinitionDescription>
-                {tools.grafana && (
-                  <a
-                    href={`https://${tools.grafana}`}
-                    target='_blank'
-                    rel='noopener noreferrer'
-                    className='flex items-center gap-2 text-link'
-                  >
-                    <span>Open Grafana</span>
-                    <ExternalLink className='w-5 h-5 text-current' />
-                  </a>
-                )}
-              </DefinitionDescription>
-            </Fragment>
-          )}
+
+          <DefinitionTerm>Argo</DefinitionTerm>
+          <DefinitionDescription>
+            {tools.argo ? (
+              <a
+                href={`https://${tools.argo}`}
+                target='_blank'
+                rel='noopener noreferrer'
+                className='flex items-center gap-2 text-link'
+              >
+                <span>Open ArgoCD</span>
+                <ExternalLink className='w-5 h-5 text-current' />
+              </a>
+            ) : (
+              'Missing…'
+            )}
+          </DefinitionDescription>
+
+          <DefinitionTerm>Grafana</DefinitionTerm>
+          <DefinitionDescription>
+            {tools.grafana ? (
+              <a
+                href={`https://${tools.grafana}`}
+                target='_blank'
+                rel='noopener noreferrer'
+                className='flex items-center gap-2 text-link'
+              >
+                <span>Open Grafana</span>
+                <ExternalLink className='w-5 h-5 text-current' />
+              </a>
+            ) : (
+              'Missing…'
+            )}
+          </DefinitionDescription>
         </DefinitionList>
       </div>
     </Tile>
