@@ -2,7 +2,6 @@ import NextAuth, { Session } from 'next-auth'
 import { Provider } from 'next-auth/providers'
 import { jwtDecode } from 'jwt-decode'
 import { env } from '@/config/env'
-import { NextResponse } from 'next/server'
 import { routes } from './routes'
 
 /**
