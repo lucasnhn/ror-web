@@ -2,7 +2,7 @@ export {
   TableContainer,
   TableTitle,
   TableSubtitle,
-  TableActions,
+  TableToolbar,
   Table,
   TableHead,
   TableBody,
@@ -12,3 +12,5 @@ export {
   TableCell,
 } from './table'
 export type { TableProps } from './table'
+export { TableToolbarSearch } from './table-toolbar-search'
+export type { TableToolbarSearchProps } from './table-toolbar-search'

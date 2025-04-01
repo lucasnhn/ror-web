@@ -319,9 +319,9 @@ export function TableSubtitle({ as = 'p', children, className, id, ...rest }: Pr
 /**
  * Table actions
  */
-export type TableActionsProps = ComponentPropsWithoutRef<'div'>
-export function TableActions({ className, children, ...rest }: TableActionsProps) {
-  const classes = clsx('r-table__actions', className)
+export type TableToolbarProps = ComponentPropsWithoutRef<'div'>
+export function TableToolbar({ className, children, ...rest }: TableToolbarProps) {
+  const classes = clsx('r-table__toolbar', className)
   return (
     <div {...rest} className={classes}>
       {children}
