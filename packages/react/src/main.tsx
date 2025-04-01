@@ -21,7 +21,7 @@ export {
   TableContainer,
   TableTitle,
   TableSubtitle,
-  TableActions,
+  TableToolbar,
   Table,
   TableHead,
   TableBody,
@@ -29,6 +29,7 @@ export {
   TableHeader,
   TableSortHeader,
   TableCell,
+  TableToolbarSearch,
 } from './components/table/index.tsx'
 export { Tile } from './components/tile.tsx'
 export { Tooltip, TooltipProvider } from './components/tooltip.tsx'
