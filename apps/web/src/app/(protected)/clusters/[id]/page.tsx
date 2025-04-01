@@ -5,6 +5,7 @@ import { ClusterMetadataCard } from './metadata-card'
 import { ClusterToolsCard } from './tools-card'
 import { ClusterVersionsCard } from './versions-card'
 import { ClusterMetrics } from './cluster-metrics'
+import { ClusterAccessGroupCard } from './access-group-card'
 
 interface ClusterPageProps {
   params: Promise<{
@@ -29,6 +30,7 @@ export default async function ClusterPage({ params }: ClusterPageProps) {
       <ClusterMetadataCard cluster={cluster} className='col-span-12 @5xl:col-span-6' />
       <ClusterVersionsCard cluster={cluster} className='col-span-12 @2xl:col-span-6 @5xl:col-span-3' />
       <ClusterToolsCard cluster={cluster} user={session.user} className='col-span-12 @2xl:col-span-6 @5xl:col-span-3' />
+      <ClusterAccessGroupCard  cluster={cluster} className='col-span-12 @2xl:col-span-6 @5xl:col-span-3' />
     </div>
   )
 }
