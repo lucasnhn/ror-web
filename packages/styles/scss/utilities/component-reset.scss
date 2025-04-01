@@ -1,0 +1,30 @@
+@mixin reset {
+  box-sizing: border-box;
+  padding: 0;
+  border: 0;
+  margin: 0;
+  font-family: inherit;
+  font-size: 100%;
+  vertical-align: baseline;
+}
+
+/// Reset button styles
+/// @param {Boolean} $width - Whether to set the inline-size to 100% or not (default is true)
+@mixin button-reset($width: true) {
+  @include reset();
+  display: inline-block;
+  padding: 0;
+  border: 0;
+  appearance: none;
+  background: none;
+  cursor: pointer;
+  text-align: start;
+
+  @if ($width == true) {
+    inline-size: 100%;
+  }
+
+  &::-moz-focus-inner {
+    border: 0;
+  }
+}

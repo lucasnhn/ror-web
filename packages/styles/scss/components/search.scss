@@ -1,0 +1,128 @@
+@use '../config.scss' as *;
+@use '../type/styles.scss' as type;
+@use '../utilities/custom-properties.scss' as cv;
+@use '../utilities/visually-hidden.scss' as vh;
+@use '../utilities/convert.scss';
+@use '../layout.scss';
+@use '../spacing.scss';
+@use '../utilities/component-reset.scss' as cr;
+
+@layer components {
+  .#{$prefix}-search {
+    --search-inline-padding: #{cv.get-var('spacing-08')};
+    --search-block-padding: 0;
+    --search-height: #{layout.height('md')};
+    --search-icon-size: #{convert.to-rem(16px)};
+    --search-icon-inset: #{cv.get-var('spacing-05')};
+    position: relative;
+    display: flex;
+    align-items: center;
+    inline-size: 100%;
+  }
+
+  .#{$prefix}-search .#{$prefix}-label {
+    @include vh.visually-hidden;
+  }
+
+  .#{$prefix}-search__input {
+    @include cr.reset();
+    @include type.type-style('body-01-compact');
+    order: 1;
+    padding: var(--search-block-padding) var(--search-inline-padding);
+    border: none;
+    appearance: none;
+    background-color: cv.get-var('field');
+    border: 1px solid #{cv.get-var('border-strong')};
+    border-radius: convert.to-rem(4px);
+    color: cv.get-var('text-primary');
+    block-size: var(--search-height);
+    inline-size: 100%;
+    text-overflow: ellipsis;
+
+    &:focus {
+      /* TODO: Implement focus styles */
+    }
+
+    &::placeholder {
+      /* TODO: Implement placeholder */
+    }
+
+    &::-ms-clear {
+      display: none;
+    }
+  }
+
+  /// Set size of icons
+  .#{$prefix}-search__magnifier,
+  .#{$prefix}-search__magnifier-icon,
+  .#{$prefix}-search__close-icon {
+    block-size: var(--search-icon-size);
+    inline-size: var(--search-icon-size);
+  }
+
+  .#{$prefix}-search__magnifier-icon,
+  .#{$prefix}-search__close-icon {
+    color: currentColor;
+  }
+
+  /// Search icon
+  .#{$prefix}-search__magnifier {
+    position: absolute;
+    z-index: 2;
+    color: cv.get-var('icon-secondary');
+    inset-block-start: 50%;
+    inset-inline-start: var(--search-icon-inset);
+    pointer-events: none;
+    transform: translateY(-50%);
+  }
+
+  /// Close icon
+  .#{$prefix}-search__close {
+    @include cr.button-reset();
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #{cv.get-var('icon-primary')};
+    opacity: 1;
+    visibility: inherit;
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-end: 0;
+    block-size: var(--search-height);
+    inline-size: var(--search-height);
+  }
+
+  .#{$prefix}-search__close--hidden {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  /// Disabled
+  .#{$prefix}-search__input[disabled] {
+    background-color: cv.get-var('field');
+    border-block-end: 1px solid transparent;
+    color: cv.get-var('text-disabled');
+    cursor: not-allowed;
+
+    &::placeholder {
+      color: cv.get-var('field');
+    }
+  }
+
+  /// Size variants
+  .#{$prefix}-search--sm {
+    --search-inline-padding: #{cv.get-var('spacing-07')};
+    --search-block-padding: 0;
+    --search-height: #{layout.height('sm')};
+  }
+  .#{$prefix}-search--md {
+    --search-inline-padding: #{cv.get-var('spacing-08')};
+    --search-block-padding: 0;
+    --search-height: #{layout.height('md')};
+  }
+  .#{$prefix}-search--lg {
+    --search-inline-padding: #{cv.get-var('spacing-09')};
+    --search-block-padding: 0;
+    --search-height: #{layout.height('lg')};
+  }
+}
