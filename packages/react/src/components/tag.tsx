@@ -3,7 +3,7 @@
 import clsx from 'clsx'
 import { XIcon } from 'lucide-react'
 import type { AriaAttributes, ReactNode } from 'react'
-import type { PolymorphicComponentPropWithRef } from '../types/polymorphic'
+import type { PolymorphicComponentProp } from '../types/polymorphic'
 
 export type TagVariant = 'readonly' | 'dismissible' | 'operational' | 'selectable'
 export type SizeVariant = 'sm' | 'md' | 'lg'
@@ -52,7 +52,7 @@ export interface TagBaseProps {
   isSelected?: boolean
 }
 
-export type TagProps<T extends React.ElementType> = PolymorphicComponentPropWithRef<T, TagBaseProps>
+export type TagProps<T extends React.ElementType> = PolymorphicComponentProp<T, TagBaseProps>
 
 export function Tag<T extends React.ElementType>({
   size = 'md',
