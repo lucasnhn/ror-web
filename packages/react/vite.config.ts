@@ -76,6 +76,6 @@ export default defineConfig({
         preserveDirectives(),
       ],
     },
-    emptyOutDir: true,
+    emptyOutDir: false,
   },
 })
