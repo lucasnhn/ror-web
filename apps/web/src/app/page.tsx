@@ -1,6 +1,8 @@
 import { authGuard } from '@/features/auth/utils/auth-guard'
+import { redirect } from 'next/navigation'
 
 export default async function Home() {
   await authGuard()
-  return <h1>Welcome to ROR</h1>
+
+  redirect('/clusters')
 }
