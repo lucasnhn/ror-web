@@ -72,7 +72,6 @@ export function generateRequest(config: ApiClientConfig): ApiRequestFunction {
      * Execute the request
      */
     try {
-      console.log('Executing request with options:', fetchOptions)
       const response = await fetch(url.toString(), fetchOptions)
 
       if (!response.ok) {
