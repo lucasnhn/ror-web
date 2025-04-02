@@ -9,12 +9,15 @@ const columns = [
   columnHelper.accessor('metadata.name', {
     id: 'name',
     header: 'Name',
+    enableSorting: false,
   }),
   columnHelper.accessor('node.status.nodeInfo.osImage', {
     header: 'OS Image',
+    enableSorting: false,
   }) as ColumnDef<Node>,
   columnHelper.accessor('node.status.nodeInfo.architecture', {
     header: 'Architecture',
+    enableSorting: false,
   }) as ColumnDef<Node>,
 ] satisfies ColumnDef<Node>[]
 
