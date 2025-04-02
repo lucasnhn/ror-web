@@ -61,17 +61,17 @@ export interface DataTableProps<TData> extends Omit<TableProps, 'gridTemplateCol
   /**
    * The current state of pagination
    */
-  pagination: DataTablePagination
+  pagination?: DataTablePagination
 
   /**
    * The callback when pagination changes
    */
-  onPaginationChange: (state: DataTablePagination) => void
+  onPaginationChange?: (state: DataTablePagination) => void
 
   /**
    * Provide the number of pages available for pagination
    */
-  pageCount: number
+  pageCount?: number
 
   /**
    * Provide a custom set of different page sizes
@@ -121,14 +121,18 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
      * Trigger callback when pagination changes
      */
     onPaginationChange: (updater) => {
-      const newValue = updater instanceof Function ? updater(props.pagination) : updater
-      onPaginationChange(newValue)
+      if (props.pagination && typeof onPaginationChange === 'function') {
+        const newValue = updater instanceof Function ? updater(props.pagination) : updater
+        onPaginationChange(newValue)
+      }
     },
 
     enableSorting: true,
     onSortingChange: (updater) => {
-      const newState = updater instanceof Function ? updater(props.sorting) : updater
-      onSortingChange(newState)
+      if (props.sorting && typeof onSortingChange === 'function') {
+        const newState = updater instanceof Function ? updater(props.sorting) : updater
+        onSortingChange(newState)
+      }
     },
 
     /**
