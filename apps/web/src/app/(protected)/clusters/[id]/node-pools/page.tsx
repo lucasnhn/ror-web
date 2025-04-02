@@ -1,5 +1,6 @@
 import { authGuard } from '@/features/auth/utils/auth-guard'
 import { rorApiClient } from '@/services/ror-api'
+import { NodePoolsTable } from './node-pools-table'
 
 interface NodePoolsPageProps {
   params: Promise<{ id: string }>
@@ -10,13 +11,13 @@ export default async function NodePoolsPage({ params }: NodePoolsPageProps) {
   const session = await authGuard()
   const client = rorApiClient(session.accessToken)
 
-  const nodes = await client.nodes.listByCluster(id)
+  const response = await client.nodes.listByCluster(id)
 
-  console.log(nodes)
+  const nodes = response.resources
 
   return (
     <div>
-      <h1>Node Pools</h1>
+      <NodePoolsTable nodes={nodes} />
     </div>
   )
 }
