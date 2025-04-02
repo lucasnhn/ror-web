@@ -6,3 +6,4 @@ export type {
   ClusterListItemType as ClusterListItem,
 } from './resources/clusters/clusters.types'
 export { Health } from './resources/generic-models/health'
+export type { Node, Nodes } from './resources/nodes/nodes.types'

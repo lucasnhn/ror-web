@@ -18,7 +18,7 @@ export const createNodesResource = (client: ResourceClient): NodeResource => {
       searchParams.set('ownerSubject', 'ror scope: node')
       searchParams.set('apiversion', 'general.ror.internal/v1alpha1')
       searchParams.set('kind', ResourceKind.Nodes)
-      const url = `/v2/resources?${searchParams.toString()}`
+      const url = `/v2/resources`
       const response = await resource.get(url)
       const validatedData = NodesSchema.parse(response)
       return validatedData
