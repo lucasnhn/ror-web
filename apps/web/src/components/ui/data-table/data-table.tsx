@@ -10,6 +10,8 @@ import {
   TableContainer,
   TableSortHeader,
   TableHeader,
+  TableToolbar,
+  TableToolbarSearch,
 } from '@ror/react/components/table'
 import type { TableProps } from '@ror/react/components/table'
 import { Pagination } from '@ror/react/components/pagination'
@@ -17,7 +19,8 @@ import { SortDirection } from '@ror/react/utils/sorting'
 import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import type { ColumnDef, Header, PaginationState, SortingState } from '@tanstack/react-table'
 import { getItemRangeText } from './pagination'
-import { Fragment } from 'react'
+import { ChangeEvent, ChangeEventHandler, Fragment, useId } from 'react'
+import { Layer } from '@ror/react'
 
 /**
  * DataTableColumnDef is a type that represents a column definition for a DataTable.
@@ -61,17 +64,17 @@ export interface DataTableProps<TData> extends Omit<TableProps, 'gridTemplateCol
   /**
    * The current state of pagination
    */
-  pagination: DataTablePagination
+  pagination?: DataTablePagination
 
   /**
    * The callback when pagination changes
    */
-  onPaginationChange: (state: DataTablePagination) => void
+  onPaginationChange?: (state: DataTablePagination) => void
 
   /**
    * Provide the number of pages available for pagination
    */
-  pageCount: number
+  pageCount?: number
 
   /**
    * Provide a custom set of different page sizes
@@ -79,8 +82,17 @@ export interface DataTableProps<TData> extends Omit<TableProps, 'gridTemplateCol
    */
   pageSizes?: number[]
 
-  sorting: SortingState
-  onSortingChange: (state: SortingState) => void
+  sorting?: SortingState
+  onSortingChange?: (state: SortingState) => void
+
+  /**
+   * The current search query
+   */
+  searchQuery?: string
+  /**
+   * Callback for when the user changes the search query
+   */
+  onSearchChange?: (event: ChangeEvent<HTMLInputElement>) => void
 }
 
 export function DataTable<TData>(props: DataTableProps<TData>) {
@@ -91,13 +103,18 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
     columns,
     data,
     totalCount,
-    pagination,
+    pagination = { pageIndex: 0, pageSize: 10 },
     onPaginationChange,
     pageCount,
     pageSizes = [10, 25, 50, 100],
     sorting = [],
     onSortingChange,
+    searchQuery,
+    onSearchChange,
   } = props
+
+  const tableTitleId = useId()
+  const tableSubtitleId = useId()
 
   const table = useReactTable({
     data,
@@ -121,14 +138,18 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
      * Trigger callback when pagination changes
      */
     onPaginationChange: (updater) => {
-      const newValue = updater instanceof Function ? updater(props.pagination) : updater
-      onPaginationChange(newValue)
+      if (props.pagination && typeof onPaginationChange === 'function') {
+        const newValue = updater instanceof Function ? updater(props.pagination) : updater
+        onPaginationChange(newValue)
+      }
     },
 
     enableSorting: true,
     onSortingChange: (updater) => {
-      const newState = updater instanceof Function ? updater(props.sorting) : updater
-      onSortingChange(newState)
+      if (props.sorting && typeof onSortingChange === 'function') {
+        const newState = updater instanceof Function ? updater(props.sorting) : updater
+        onSortingChange(newState)
+      }
     },
 
     /**
@@ -156,6 +177,12 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
     table.nextPage()
   }
 
+  const handleOnSearchChange: ChangeEventHandler<HTMLInputElement> = (event) => {
+    if (typeof onSearchChange === 'function') {
+      onSearchChange(event)
+    }
+  }
+
   const getSortingOrder = <TData, TValue>(header: Header<TData, TValue>): SortDirection => {
     const direction = header.column.getIsSorted()
 
@@ -181,14 +208,27 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
     max: totalCount,
   })
 
-  const numberOfColumns = table.getAllColumns().length.toString()
-  const gridTemplateColumns = `repeat(${numberOfColumns}, minmax(max-content, 1fr))`
+  const numberOfColumns = table.getAllColumns().length
+  const gridTemplateColumns = `repeat(${numberOfColumns.toString()}, minmax(max-content, 1fr))`
+  const hasTitleOrSubtitle = title || subtitle
 
   return (
     <Fragment>
       <TableContainer hasPagination>
-        {title ? <TableTitle id='table-title'>{title}</TableTitle> : null}
-        {subtitle ? <TableSubtitle id='table-subtitle'>{subtitle}</TableSubtitle> : null}
+        {hasTitleOrSubtitle ? (
+          <div className='r-table__masthead'>
+            {title && <TableTitle id={tableTitleId}>{title}</TableTitle>}
+            {subtitle && <TableSubtitle id={tableSubtitleId}>{subtitle}</TableSubtitle>}
+          </div>
+        ) : null}
+
+        <TableToolbar>
+          <Layer level={1}>
+            {typeof onSearchChange === 'function' && (
+              <TableToolbarSearch labelText='Search' value={searchQuery} onChange={handleOnSearchChange} />
+            )}
+          </Layer>
+        </TableToolbar>
         <Table cellPadding={cellPadding} gridTemplateColumns={gridTemplateColumns}>
           <TableHead>
             {table.getHeaderGroups().map((headerGroup) => (

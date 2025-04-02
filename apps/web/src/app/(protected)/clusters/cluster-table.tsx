@@ -7,11 +7,12 @@ import { DataTable } from '@/components/ui/data-table'
 import type { DataTableColumnDef, DataTablePagination, DataTableSorting } from '@/components/ui/data-table'
 import { HealthStatus } from '@/components/ui/health-status'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { useCallback } from 'react'
+import { ChangeEvent, useCallback, useEffect, useState } from 'react'
 import { routes } from '@/config/routes'
 import { EnvironmentTag } from '@/components/ui/environment-tag'
 import { getArgoTool, getGrafanaTool } from '@/features/clusters/utils/tools'
 import { ExternalLink } from 'lucide-react'
+import { useDebounce } from '@uidotdev/usehooks'
 
 const columnHelper = createColumnHelper<ClusterListItem>()
 
@@ -153,6 +154,8 @@ export function ClustersTable<T extends ClusterListItem>({
   const router = useRouter()
   const pathname = usePathname()
   const currentSearchParams = useSearchParams()
+  const [localSearchQuery, setLocalSearchQuery] = useState('')
+  const debouncedSearchQuery = useDebounce(localSearchQuery, 300)
 
   const updateSearchParams = useCallback(
     (newSearchParams: URLSearchParams) => {
@@ -188,6 +191,27 @@ export function ClustersTable<T extends ClusterListItem>({
     [currentSearchParams, updateSearchParams]
   )
 
+  const handleOnSearchChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+    setLocalSearchQuery(event.target.value)
+  }, [])
+
+  /**
+   * Update the search query ("?q=value") parameter based on the debounced search query
+   * Reason for doing it is o ensure that the search query is updated only when the user has stopped typing for a certain amount of time.
+   */
+  useEffect(() => {
+    function updateSearchQueryParams() {
+      const params = new URLSearchParams(currentSearchParams)
+      if (!debouncedSearchQuery || debouncedSearchQuery === '') {
+        params.delete('q')
+      } else {
+        params.set('q', debouncedSearchQuery)
+      }
+      updateSearchParams(params)
+    }
+    updateSearchQueryParams()
+  }, [debouncedSearchQuery, currentSearchParams, updateSearchParams])
+
   const sortByField = currentSearchParams.get('sort')
   const sortDirection = currentSearchParams.get('order')
 
@@ -210,6 +234,8 @@ export function ClustersTable<T extends ClusterListItem>({
       sorting={sortState}
       onSortingChange={handleOnSortChange}
       onPaginationChange={handleOnPaginationChange}
+      searchQuery={localSearchQuery}
+      onSearchChange={handleOnSearchChange}
     />
   )
 }
