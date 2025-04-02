@@ -28,6 +28,8 @@ interface ClusterPageProps {
 const DEFAULT_LIMIT = 10
 const DEFAULT_PAGE = 1
 
+export const dynamic = 'force-dynamic'
+
 export default async function ClustersPage({ searchParams }: ClusterPageProps) {
   const session = await authGuard()
   const client = rorApiClient(session.accessToken)
