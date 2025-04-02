@@ -1,7 +1,7 @@
 import { Health } from '@ror/js-api-client'
 import { sub } from 'date-fns'
 
-export default [
+const clusters = [
   {
     id: '6523967984fddd1597f6166f',
     identifier: 'aaa-001-dev-kgfh',
@@ -529,3 +529,5 @@ export default [
     },
   },
 ]
+
+export default clusters
