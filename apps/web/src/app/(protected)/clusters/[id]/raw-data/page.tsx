@@ -12,10 +12,11 @@ export default async function ClusterRawDataPage({ params }: ClusterPageProps) {
   const { id } = await params
   const session = await authGuard()
   const client = rorApiClient(session.accessToken)
-  const cluster = await client.clusters.get(id)
+  const cluster = await client.kubernetesCluster.idV1(id)
 
   return (
     <div className=''>
+      <h3>Version 1</h3>
       <CodeSnippet type='multi' style={{ '--code-snippet-multi-max-height': '40rem' }}>
         {JSON.stringify(cluster, null, 2)}
       </CodeSnippet>

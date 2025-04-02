@@ -1,49 +1,95 @@
-import { RequestOptions } from '../types/request'
-import { ApiError, NetworkError, AuthenticationError, AuthorizationError, NotFoundError } from './errors'
+import type { ApiClientConfig } from '../types/config'
+import { ApiError, AuthenticationError, AuthorizationError, NotFoundError } from './errors'
+import { logApiError } from './logger'
 
-export async function makeRequest<T>(
-  path: string,
-  method: 'GET' | 'POST' | 'PUT' | 'DELETE',
-  options: RequestOptions,
-  data?: any,
-  queryParams?: Record<string, any>
-): Promise<T> {
-  const url = new URL(path, options.baseUrl)
+export interface ApiRequestFunction {
+  (requestOptions: RequestOptions): Promise<unknown>
+}
 
-  // Add query parameters if provided
-  if (queryParams) {
-    Object.entries(queryParams).forEach(([key, value]) => {
-      if (value !== undefined && value !== null) {
-        url.searchParams.append(key, String(value))
+export interface RequestOptions {
+  /**
+   * The pathname of the request
+   */
+  path: string
+  /**
+   * The HTTP method of the request
+   */
+  method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
+  /**
+   * Optional url search param to add to the request
+   */
+  params?: URLSearchParams
+  /**
+   * Optional body argument to send along
+   */
+  body?: any
+}
+
+/**
+ * The generateRequest function is a higher-order function that creates an API request function.
+ *
+ * @remarks
+ * It configures the request with the provided API client configuration and returns a function
+ * that can be used to make HTTP requests to an API.
+ *
+ * The returned function handles URL construction, query parameters, request headers,
+ * and error responses automatically.
+ *
+ * @throws {NetworkError} When a network error occurs during the request
+ * @throws {AuthenticationError} When the API returns a 401 status code
+ * @throws {AuthorizationError} When the API returns a 403 status code
+ * @throws {NotFoundError} When the API returns a 404 status code
+ * @throws {ApiError} When the API returns any other error status code
+ */
+export function generateRequest(config: ApiClientConfig): ApiRequestFunction {
+  return async (requestOptions: RequestOptions) => {
+    /**
+     * Construct a url based on the baseUrl and the path
+     */
+    const url = new URL(requestOptions.path, config.baseUrl)
+
+    /**
+     * Add query parameters to the url variable if provided
+     */
+    if (requestOptions.params) {
+      requestOptions.params.forEach((value, name) => {
+        if (value !== undefined && value !== null) {
+          url.searchParams.append(name, String(value))
+        }
+      })
+    }
+
+    /**
+     * Setup the final fetch options
+     */
+    const fetchOptions: RequestInit = {
+      method: requestOptions.method,
+      headers: config.headers,
+      ...(requestOptions.body && { body: JSON.stringify(requestOptions.body) }),
+    }
+
+    /**
+     * Execute the request
+     */
+    try {
+      console.log('Executing request with options:', fetchOptions)
+      const response = await fetch(url.toString(), fetchOptions)
+
+      if (!response.ok) {
+        handleErrorResponse(response)
       }
-    })
-  }
 
-  const headers: HeadersInit = {
-    'Content-Type': 'application/json',
-    Authorization: `Bearer ${options.accessToken}`,
-    ...options.headers,
-  }
-
-  const fetchOptions: RequestInit = {
-    method,
-    headers,
-    ...(data && { body: JSON.stringify(data) }),
-  }
-
-  try {
-    const response = await fetch(url.toString(), fetchOptions)
-
-    if (!response.ok) {
-      handleErrorResponse(response)
+      const json = await response.json()
+      return json
+    } catch (error) {
+      logApiError(requestOptions.method, url.toString(), error)
+      if (error instanceof ApiError) {
+        throw error
+      } else if (error instanceof Error) {
+        throw error
+      }
+      throw new Error('Unknown error occured')
     }
-
-    return await response.json()
-  } catch (error) {
-    if (error instanceof ApiError) {
-      throw error
-    }
-    throw new NetworkError('Network error occurred', 500, String(error))
   }
 }
 

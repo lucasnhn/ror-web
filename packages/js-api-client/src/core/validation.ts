@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { ValidationError } from './errors'
+import { logValidationError } from './logger'
 
 /**
  * Validates response data against a Zod schema
@@ -35,7 +36,9 @@ export function validateResponse<T>(data: unknown, schema: z.ZodType<T>): T {
         formattedErrors[path].push(issue.message)
       }
 
-      throw new ValidationError('Response validation failed', formattedErrors)
+      const validationError = new ValidationError('Response validation failed', formattedErrors)
+      logValidationError(validationError, data)
+      throw validationError
     }
     throw error
   }

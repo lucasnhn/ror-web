@@ -1,7 +1,7 @@
 'use client'
 import { convertBytes } from '@/utils/bytes'
 import { createColumnHelper } from '@tanstack/react-table'
-import type { ClusterListItem } from '@ror/js-api-client'
+import type { Cluster } from '@ror/js-api-client'
 import Link from 'next/link'
 import { DataTable } from '@/components/ui/data-table'
 import type { DataTableColumnDef, DataTablePagination, DataTableSorting } from '@/components/ui/data-table'
@@ -14,7 +14,7 @@ import { getArgoTool, getGrafanaTool } from '@/features/clusters/utils/tools'
 import { ExternalLink } from 'lucide-react'
 import { useDebounce } from '@uidotdev/usehooks'
 
-const columnHelper = createColumnHelper<ClusterListItem>()
+const columnHelper = createColumnHelper<Cluster>()
 
 const dataTableColumns = [
   columnHelper.accessor('clusterName', {
@@ -136,21 +136,16 @@ const dataTableColumns = [
       )
     },
   }),
-] satisfies DataTableColumnDef<ClusterListItem>[]
+] satisfies DataTableColumnDef<Cluster>[]
 
-interface ClusterTableProps<T> {
-  data: T[]
+interface ClusterTableProps {
+  data: Cluster[]
   totalCount: number
   pageCount: number
   pagination: DataTablePagination
 }
 
-export function ClustersTable<T extends ClusterListItem>({
-  data,
-  totalCount,
-  pageCount,
-  pagination,
-}: ClusterTableProps<T>) {
+export function ClustersTable({ data, totalCount, pageCount, pagination }: ClusterTableProps) {
   const router = useRouter()
   const pathname = usePathname()
   const currentSearchParams = useSearchParams()

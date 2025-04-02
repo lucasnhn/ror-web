@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { createV2ResourceResponseSchema } from './common'
 
 export const KubernetesClusterSpecToolingConfig = z
   .object({
@@ -56,10 +57,14 @@ export const KubernetesClusterStatus = z.object({
 })
 
 export const KubernetesClusterSchema = z.object({
-  // The spec defines how the cluster is configured and provisioned.
-  // e.g. how it should be
-  spec: KubernetesClusterSpec,
-  // The status defines the current state of the cluster.
-  // e.g. how it is
-  status: KubernetesClusterStatus,
+  kubernetesCluster: z.object({
+    // The spec defines how the cluster is configured and provisioned.
+    // e.g. how it should be
+    spec: KubernetesClusterSpec,
+    // The status defines the current state of the cluster.
+    // e.g. how it is
+    status: KubernetesClusterStatus,
+  }),
 })
+
+export const KubernetesClusterResponseSchema = createV2ResourceResponseSchema(KubernetesClusterSchema)

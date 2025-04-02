@@ -1,5 +1,5 @@
 import { DefinitionDescription, DefinitionList, DefinitionTerm, Stack, Tile } from '@ror/react'
-import type { ClusterListItem } from '@ror/js-api-client'
+import type { Cluster } from '@ror/js-api-client'
 import Link from 'next/link'
 import clsxm from '@/utils/clsxm'
 import { HealthStatus } from '@/components/ui/health-status'
@@ -9,7 +9,7 @@ import { getCommonClusterTools } from '@/features/clusters/utils/tools'
 import { ExternalLink } from 'lucide-react'
 
 interface ClusterCardProps {
-  cluster: ClusterListItem
+  cluster: Cluster
   className?: string
 }
 
@@ -111,7 +111,7 @@ interface ClusterTableProps<T> {
   data: T[]
 }
 
-export function ClusterCards<T extends ClusterListItem>({ data }: ClusterTableProps<T>) {
+export function ClusterCards<T extends Cluster>({ data }: ClusterTableProps<T>) {
   return (
     <div className='grid grid-cols-12 gap-6 @container'>
       {data.map((c) => (

@@ -1,5 +1,3 @@
-// import { Health } from '@ror/js-api-client'
-// import { sub } from 'date-fns'
 import { NodeResponse } from '@ror/js-api-client'
 
 const nodes: NodeResponse = {
