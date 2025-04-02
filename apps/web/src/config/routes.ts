@@ -26,6 +26,10 @@ export const routes = {
       label: 'Ingresses',
       getHref: (id: string) => `/clusters/${id}/ingresses`,
     },
+    clusterNodePools: {
+      label: 'Node pools',
+      getHref: (id: string) => `/clusters/${id}/node-pools`,
+    },
     clusterPolicies: {
       label: 'Policies',
       getHref: (id: string) => `/clusters/${id}/policies`,

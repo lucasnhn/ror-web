@@ -18,6 +18,7 @@ interface ClusterPageLayoutProps {
 const {
   cluster,
   clusterIngresses,
+  clusterNodePools,
   clusterPolicies,
   clusterVulnerabilities,
   clusterCompliance,
@@ -34,6 +35,10 @@ const createTabNavigationItems = (clusterId: string) => {
     {
       label: clusterIngresses.label,
       href: clusterIngresses.getHref(clusterId),
+    },
+    {
+      label: clusterNodePools.label,
+      href: clusterNodePools.getHref(clusterId),
     },
     {
       label: clusterPolicies.label,
