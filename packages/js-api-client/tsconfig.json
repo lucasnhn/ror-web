@@ -6,15 +6,15 @@
     "module": "es6",
     "lib": ["es6", "dom"],
     "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
+    "declarationMap": false,
+    "sourceMap": false,
     "outDir": "dist",
-    "rootDirs": ["lib"],
+    "rootDir": "./src",
     "strict": true,
     "incremental": true,
-    "moduleResolution": "node",
-    "esModuleInterop": true,
+    "moduleResolution": "node16",
+    "esModuleInterop": false,
     "forceConsistentCasingInFileNames": true
   },
-  "exclude": ["lib/**/*.spec.tsx", "dist/**/*"]
+  "exclude": ["src/**/*.spec.tsx", "dist/**/*"]
 }
