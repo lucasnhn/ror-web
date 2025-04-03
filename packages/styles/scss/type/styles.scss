@@ -131,7 +131,7 @@ $tokens: (
 
 @mixin emit-custom-properties($name, $value) {
   @each $property, $value in $value {
-    #{$property}: var(--#{config.$prefix}-#{$name}-#{$property}, #{$value});
+    #{$property}: var(--r-#{$name}-#{$property}, #{$value});
   }
 }
 

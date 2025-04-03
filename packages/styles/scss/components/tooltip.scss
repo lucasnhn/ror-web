@@ -1,9 +1,8 @@
-@use '../config.scss' as *;
 @use '../type/styles.scss' as types;
 @use '../utilities/custom-properties.scss' as cv;
 
 @layer components {
-  .#{$prefix}-tooltip {
+  .r-tooltip {
     --r-tooltip-shadow:
       0 0 1px var(--r-tooltip-shadow-color-default, #05050629),
       0 0 2px var(--r-tooltip-shadow-color-default, #05050629),

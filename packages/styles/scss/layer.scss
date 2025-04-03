@@ -1,9 +1,9 @@
-@use 'config.scss' as *;
+@use 'config.scss' as config;
 @use './utilities/custom-properties.scss' as *;
 
 @mixin emit-layer-custom-properties {
   :root,
-  .#{$prefix}-layer--one {
+  .r-layer--one {
     @include declaration('layer', get-var('layer-01'));
     @include declaration('layer-active', get-var('layer-active-01'));
     @include declaration('layer-hover', get-var('layer-hover-01'));
@@ -20,7 +20,7 @@
     @include declaration('border-tile', get-var('border-tile-01'));
   }
 
-  .#{$prefix}-layer--two {
+  .r-layer--two {
     @include declaration('layer', get-var('layer-02'));
     @include declaration('layer-active', get-var('layer-active-02'));
     @include declaration('layer-hover', get-var('layer-hover-02'));
@@ -37,7 +37,7 @@
     @include declaration('border-tile', get-var('border-tile-02'));
   }
 
-  .#{$prefix}-layer--three {
+  .r-layer--three {
     @include declaration('layer', get-var('layer-03'));
     @include declaration('layer-active', get-var('layer-active-03'));
     @include declaration('layer-hover', get-var('layer-hover-03'));
@@ -55,7 +55,7 @@
   }
 }
 
-@if $css--layer-tokens == true {
+@if config.$css--layer-tokens == true {
   @layer base {
     @include emit-layer-custom-properties;
   }

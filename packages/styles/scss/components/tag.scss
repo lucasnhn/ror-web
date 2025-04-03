@@ -1,5 +1,4 @@
 @use 'sass:map';
-@use '../config.scss' as *;
 @use '../utilities/custom-properties.scss' as *;
 @use '../utilities/convert.scss';
 @use '../spacing.scss' as spacing;
@@ -27,7 +26,7 @@ $sizes: (
   ),
 );
 
-.#{$prefix}-tag {
+.r-tag {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -48,19 +47,19 @@ $sizes: (
       height: map.get($values, 'height');
       padding: 0 map.get($values, 'xPadding');
 
-      &.#{$prefix}-tag--dismissible {
+      &.r-tag--dismissible {
         padding-right: map.get($values, 'crossPaddingRight');
       }
 
-      .#{$prefix}-tag__remove-icon {
+      .r-tag__remove-icon {
         margin-left: map.get($values, 'xPadding');
       }
 
-      &.#{$prefix}-tag--has-icon {
+      &.r-tag--has-icon {
         padding-left: map.get($values, 'iconMargin');
       }
 
-      .#{$prefix}-tag__icon-container {
+      .r-tag__icon-container {
         margin-right: map.get($values, 'iconMargin');
       }
     }

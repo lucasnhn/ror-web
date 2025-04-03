@@ -1,11 +1,10 @@
-@use '../config.scss' as *;
 @use '../type/styles.scss' as types;
 @use '../utilities/custom-properties.scss' as cv;
 @use '../utilities/convert.scss';
 @use '../layout';
 
 @layer components {
-  .#{$prefix}-pagination {
+  .r-pagination {
     --pagination-border-radius: #{convert.to-rem(4px)};
     --pagination-item-size: #{layout.height('md')};
     display: flex;
@@ -21,42 +20,42 @@
     border-end-end-radius: var(--pagination-border-radius);
   }
 
-  .#{$prefix}-pagination__start,
-  .#{$prefix}-pagination__end {
+  .r-pagination__start,
+  .r-pagination__end {
     display: flex;
     align-items: center;
     block-size: 100%;
   }
 
-  .#{$prefix}-pagination__start {
+  .r-pagination__start {
     padding-inline-start: cv.get-var('spacing-05');
   }
 
-  .#{$prefix}-pagination__end {
+  .r-pagination__end {
     column-gap: cv.get-var('spacing-03');
   }
 
-  .#{$prefix}-pagination__items-range {
+  .r-pagination__items-range {
     color: cv.get-var('text-secondary');
   }
 
-  .#{$prefix}-pagination__page-size {
+  .r-pagination__page-size {
     display: flex;
     align-items: center;
     column-gap: cv.get-var('spacing-03');
     block-size: 100%;
   }
 
-  .#{$prefix}-pagination__controls {
+  .r-pagination__controls {
     display: flex;
   }
 
-  .#{$prefix}-pagination__text {
+  .r-pagination__text {
     display: inline-block;
     white-space: nowrap;
   }
 
-  .#{$prefix}-pagination__select {
+  .r-pagination__select {
     @include types.type-style('body-01-compact');
     display: flex;
     block-size: var(--pagination-item-size);
@@ -66,12 +65,12 @@
     padding-inline: cv.get-var('spacing-02');
   }
 
-  .#{$prefix}-pagination__btn {
+  .r-pagination__btn {
     --btn-height: var(--pagination-item-size);
     border-radius: 0;
   }
 
-  .#{$prefix}-pagination__controls .#{$prefix}-pagination__btn:last-child {
+  .r-pagination__controls .r-pagination__btn:last-child {
     border-inline-start: 1px solid cv.get-var('border-subtle');
     border-start-start-radius: 0;
     border-start-end-radius: 0;
@@ -79,7 +78,7 @@
     border-end-end-radius: var(--pagination-border-radius);
   }
 
-  .#{$prefix}-pagination__btn:hover:not([disabled]) {
+  .r-pagination__btn:hover:not([disabled]) {
     background: cv.get-var('layer-hover');
   }
 }

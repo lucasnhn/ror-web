@@ -25,16 +25,16 @@
 /// @example get-var('text-primary') gives var(--r-text-primary)
 @function get-var($name, $fallback: false) {
   @if $fallback {
-    @return var(--#{config.$prefix}-#{$name}, #{$fallback});
+    @return var(--r-#{$name}, #{$fallback});
   }
-  @return var(--#{config.$prefix}-#{$name});
+  @return var(--r-#{$name});
 }
 
 /// Get the <custom-property-name> for a given string
 /// @param {String} $name
 /// @returns {String}
 @function get-name($name) {
-  @return --#{config.$prefix}-#{$name};
+  @return --r-#{$name};
 }
 
 /// Emit a declaration which sets the value of a CSS Custom Property using the
