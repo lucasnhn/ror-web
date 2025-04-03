@@ -22,7 +22,7 @@ export default async function ClusterPage({ params }: ClusterPageProps) {
   const { id } = await params
   const session = await authGuard()
   const client = rorApiClient(session.accessToken)
-  const cluster = await client.clusters.get(id)
+  const cluster = await client.kubernetesCluster.idV1(id)
 
   return (
     <div className='grid grid-cols-12 gap-4 @container'>
@@ -30,7 +30,7 @@ export default async function ClusterPage({ params }: ClusterPageProps) {
       <ClusterMetadataCard cluster={cluster} className='col-span-12 @5xl:col-span-6' />
       <ClusterVersionsCard cluster={cluster} className='col-span-12 @2xl:col-span-6 @5xl:col-span-3' />
       <ClusterToolsCard cluster={cluster} user={session.user} className='col-span-12 @2xl:col-span-6 @5xl:col-span-3' />
-      <ClusterAccessGroupCard  cluster={cluster} className='col-span-12 @2xl:col-span-6 @5xl:col-span-3' />
+      <ClusterAccessGroupCard cluster={cluster} className='col-span-12 @2xl:col-span-6 @5xl:col-span-3' />
     </div>
   )
 }

@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { HealthSchema } from '../generic-models/health'
+import { createPaginationSchema } from './common'
 
 const VersionModel = z.object({
   version: z.string(),
@@ -14,32 +14,32 @@ const AgentModel = VersionModel.extend({
   sha: z.string(),
 })
 
-export const VersionsModel = z.object({
+const VersionsModel = z.object({
   nhnTooling: NhnToolingModel.passthrough(),
   agent: AgentModel.optional(),
   kubernetes: z.string(),
 })
 
-export const ProjectModel = z.object({
+const ProjectModel = z.object({
   name: z.string().optional(),
 })
 
-export const MetadataModel = z.object({
+const MetadataModel = z.object({
   project: ProjectModel.optional(),
 })
 
-export const DatacenterModel = z.object({
+const DatacenterModel = z.object({
   name: z.string(),
   provider: z.string(),
   apiEndpoint: z.string(),
 })
 
-export const WorkspaceModel = z.object({
+const WorkspaceModel = z.object({
   name: z.string(),
   datacenter: DatacenterModel,
 })
 
-export const ControlPaneNodeModel = z.object({
+const ControlPaneNodeModel = z.object({
   name: z.string(),
   role: z.literal('control-plane'),
   created: z.string(),
@@ -67,7 +67,7 @@ export const ControlPaneNodeModel = z.object({
   machineClass: z.string(),
 })
 
-export const TopologyModel = z.object({
+const TopologyModel = z.object({
   controlPlaneEndpoint: z.string(),
   egressIp: z.string(),
   controlPlane: z.object({
@@ -75,18 +75,18 @@ export const TopologyModel = z.object({
   }),
 })
 
-export const AclModel = z.object({
+const AclModel = z.object({
   accessGroups: z.array(z.string()),
 })
 
-export const Cluster = z
+export const ClusterSchema = z
   .object({
     clusterId: z.string(),
     clusterName: z.string(),
     created: z.string(),
     environment: z.string(),
     healthStatus: z.object({
-      health: HealthSchema,
+      health: z.number(),
     }),
     firstObserved: z.string(),
     lastObserved: z.string(),
@@ -131,11 +131,4 @@ export const Cluster = z
   })
   .passthrough()
 
-export const ClusterListItem = Cluster.extend({
-  topology: TopologyModel.extend({
-    controlPlane: z.object({
-      // Nodes are nullable when fetched from the "filter" endpoint
-      nodes: z.array(ControlPaneNodeModel).nullable(),
-    }),
-  }),
-})
+export const ClustersResponseSchema = createPaginationSchema(ClusterSchema)

@@ -1,4 +1,4 @@
 import { clustersHandlers } from './handlers/clusters'
-import { nodesHandlers } from './handlers/nodes'
+import { v2ResourcesHandlers } from './handlers/v2-resources'
 
-export const handlers = [...clustersHandlers, ...nodesHandlers]
+export const handlers = [...clustersHandlers, ...v2ResourcesHandlers]

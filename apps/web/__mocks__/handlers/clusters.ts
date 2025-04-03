@@ -1,10 +1,10 @@
 import { http, HttpResponse } from 'msw'
 import { alphabetical } from 'radash'
 
-import clusters from '../data/clusters'
+import { clustersVersion1 } from '../data/clusters'
 import { createPaginatedResponse, type PaginatedResponse } from '../utils/paginated-response'
 import { getRorAPIPath } from '../utils/mock-base-url'
-type Cluster = (typeof clusters)[number]
+type ClusterVersionOne = (typeof clustersVersion1)[number]
 
 interface FilterBody {
   limit?: number
@@ -18,7 +18,7 @@ interface FilterBody {
 }
 
 export const clustersHandlers = [
-  http.post<never, FilterBody, PaginatedResponse<Cluster>>(
+  http.post<never, FilterBody, PaginatedResponse<ClusterVersionOne>>(
     getRorAPIPath('/v1/clusters/filter'),
     async ({ request }) => {
       // Read the intercepted request body as JSON.
@@ -28,7 +28,7 @@ export const clustersHandlers = [
         skip: payload?.skip ?? 0,
       }
 
-      let filteredClusters = [...clusters]
+      let filteredClusters = [...clustersVersion1]
 
       /**
        * Manually sort the clusters by name
@@ -36,7 +36,7 @@ export const clustersHandlers = [
        */
       if (Array.isArray(payload?.sort) && payload.sort.length > 0 && payload.sort[0].sortField === 'clusterName') {
         const sortOrder = payload.sort[0].sortOrder === -1 ? 'desc' : 'asc'
-        filteredClusters = alphabetical(clusters, (c) => c.clusterName, sortOrder)
+        filteredClusters = alphabetical(clustersVersion1, (c) => c.clusterName, sortOrder)
       }
 
       /**
@@ -48,7 +48,7 @@ export const clustersHandlers = [
     }
   ),
   http.get(getRorAPIPath('/v1/clusters/:clusterId'), ({ params }) => {
-    const singleCluster = clusters.find((c) => c.clusterId === params.clusterId)
+    const singleCluster = clustersVersion1.find((c) => c.clusterId === params.clusterId)
 
     if (!singleCluster) {
       return HttpResponse.json({ error: 'Cluster not found' }, { status: 404 })

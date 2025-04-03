@@ -8,7 +8,6 @@ import { Fragment } from 'react'
 import { ClusterCards } from './cluster-cards'
 import Link from 'next/link'
 import { ClusterPageViewSwitch } from './view-switch'
-import { SortingRequestParam } from '@ror/js-api-client/dist/types'
 
 export const metadata: Metadata = {
   title: 'ROR (Beta) - Clusters',
@@ -47,7 +46,7 @@ export default async function ClustersPage({ searchParams }: ClusterPageProps) {
   const sortOptions = {
     sortField: sort,
     sortOrder: order,
-  } satisfies SortingRequestParam
+  }
 
   const requestOptions = {
     limit,
@@ -55,7 +54,8 @@ export default async function ClustersPage({ searchParams }: ClusterPageProps) {
     sort: params.sort ? [sortOptions] : [],
   }
 
-  const clustersResponse = await client.clusters.filter(requestOptions)
+  const clustersResponse = await client.kubernetesCluster.filter(requestOptions)
+  const clusters = clustersResponse.data ?? []
 
   // Set up pagination state for the table
   const paginationState = {
@@ -84,13 +84,13 @@ export default async function ClustersPage({ searchParams }: ClusterPageProps) {
         {params.view === 'list' ? (
           <ClustersTable
             key='table'
-            data={clustersResponse.data}
+            data={clusters}
             pagination={paginationState}
             totalCount={clustersResponse.totalCount}
             pageCount={pageCount}
           />
         ) : (
-          <ClusterCards key='grid' data={clustersResponse.data} />
+          <ClusterCards key='grid' data={clusters} />
         )}
       </section>
 

@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { createResourceResponseSchema, ResourceSchema } from '../generic-models/resource-response'
+import { createV2ResourceResponseSchema, V2ResourceSchema } from './common'
 
 const NodeSpecTaint = z.object({
   effect: z.string(),
@@ -54,13 +54,11 @@ const NodeStatusSchema = z.object({
   nodeInfo: NodeStatusNodeInfo,
 })
 
-export const NodeSchema = ResourceSchema.extend({
+export const NodeSchema = V2ResourceSchema.extend({
   node: z.object({
-    // How it should be
     spec: NodeSpecSchema,
-    // How it is right now
     status: NodeStatusSchema,
   }),
 })
 
-export const NodeResponseSchema = createResourceResponseSchema(NodeSchema)
+export const NodeResponseSchema = createV2ResourceResponseSchema(NodeSchema)

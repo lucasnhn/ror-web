@@ -12,7 +12,7 @@ export default async function ClusterIngressesPage({ params }: ClusterIngressesP
 
   const session = await authGuard()
   const client = rorApiClient(session.accessToken)
-  const cluster = await client.clusters.get(id)
+  const cluster = await client.kubernetesCluster.idV1(id)
   const ingresses = cluster.ingresses
 
   if (!ingresses) {

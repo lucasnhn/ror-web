@@ -1,7 +1,6 @@
-import { Health } from '@ror/js-api-client'
 import { sub } from 'date-fns'
 
-const clusters = [
+export const clustersVersion1 = [
   {
     id: '6523967984fddd1597f6166f',
     identifier: 'aaa-001-dev-kgfh',
@@ -128,7 +127,7 @@ const clusters = [
     firstObserved: '2025-03-03T13:28:54.941Z',
     lastObserved: sub(new Date(), { minutes: 5 }).toISOString(),
     healthStatus: {
-      health: Health.Healthy,
+      health: 1,
       messages: null,
     },
     createdBy: '',
@@ -446,7 +445,7 @@ const clusters = [
     firstObserved: '2024-06-24T07:54:31.64Z',
     lastObserved: sub(new Date(), { minutes: 12 }).toLocaleString(),
     healthStatus: {
-      health: Health.Unhealthy,
+      health: 2,
       messages: null,
     },
     createdBy: '',
@@ -530,4 +529,5 @@ const clusters = [
   },
 ]
 
-export default clusters
+// TODO: Add data for this structure once it is more ready in the backend
+export const clustersVersion2 = []

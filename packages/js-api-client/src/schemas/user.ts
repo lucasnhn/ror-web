@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-export const UserSelf = z.object({
+export const UserSelfSchema = z.object({
   auth: z.object({
     authProvider: z.string(),
     authProviderId: z.string(),

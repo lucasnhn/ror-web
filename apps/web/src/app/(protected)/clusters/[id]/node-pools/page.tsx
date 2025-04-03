@@ -13,7 +13,7 @@ export default async function NodePoolsPage({ params }: NodePoolsPageProps) {
 
   const response = await client.nodes.listByCluster(id)
 
-  const nodes = response.resources
+  const nodes = response?.resources ?? []
 
   return (
     <div>
