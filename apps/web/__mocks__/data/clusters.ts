@@ -529,4 +529,5 @@ export const clustersVersion1 = [
   },
 ]
 
+// TODO: Add data for this structure once it is more ready in the backend
 export const clustersVersion2 = []
