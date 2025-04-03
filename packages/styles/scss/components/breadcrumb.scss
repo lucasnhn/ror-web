@@ -1,9 +1,8 @@
-@use '../config.scss' as c;
 @use '../type/styles.scss' as types;
 @use '../utilities/custom-properties.scss' as cv;
 
 @layer components {
-  .#{c.$prefix}-breadcrumb {
+  .r-breadcrumb {
     box-sizing: border-box;
     padding: 0;
     border: 0;
@@ -15,7 +14,7 @@
     display: inline;
   }
 
-  .#{c.$prefix}-breadcrumb__item {
+  .r-breadcrumb__item {
     position: relative;
     display: flex;
     align-items: center;
@@ -34,7 +33,7 @@
     }
   }
 
-  .#{c.$prefix}-breadcrumb__link {
+  .r-breadcrumb__link {
     padding: 0;
     border: 0;
     margin: 0;
@@ -53,12 +52,12 @@
     }
   }
 
-  .#{c.$prefix}-breadcrumb--no-trailing-slash .#{c.$prefix}-breadcrumb__item:last-child::after {
+  .r-breadcrumb--no-trailing-slash .r-breadcrumb__item:last-child::after {
     content: '';
   }
 
   @media (min-width: 42rem) {
-    .#{c.$prefix}-breadcrumb {
+    .r-breadcrumb {
       display: flex;
       flex-wrap: wrap;
     }

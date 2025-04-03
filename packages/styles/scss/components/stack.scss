@@ -1,10 +1,9 @@
-@use '../config.scss' as *;
 @use '../utilities/custom-properties.scss' as *;
 @use '../utilities/convert.scss';
 @use '../spacing.scss';
 
 @layer components {
-  .#{$prefix}-stack {
+  .r-stack {
     &--vertical {
       display: grid;
       grid-auto-flow: row;

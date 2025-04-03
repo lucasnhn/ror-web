@@ -1,9 +1,8 @@
-@use '../config.scss' as *;
 @use '../type/styles.scss' as types;
 @use '../utilities/custom-properties.scss' as cv;
 
 @layer components {
-  .#{$prefix}-tile {
+  .r-tile {
     @include types.type-style('body-01');
     position: relative;
     display: block;
@@ -15,12 +14,12 @@
     border-radius: 0.25rem;
   }
 
-  .#{$prefix}-tile--clickable {
+  .r-tile--clickable {
     cursor: pointer;
     border: 1px solid cv.get-var('border-tile');
   }
 
-  .#{$prefix}-tile--clickable:hover {
+  .r-tile--clickable:hover {
     background-color: cv.get-var('layer-hover');
   }
 }
