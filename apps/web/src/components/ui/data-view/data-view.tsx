@@ -69,14 +69,8 @@ export function DataView<TData>({ title, subtitle, table, cellPadding }: DataVie
 
   const hasTitleOrSubtitle = title || subtitle
 
-<<<<<<< HEAD:apps/web/src/components/ui/data-view.tsx
-  console.log("table.getAllColumns()", table.getAllColumns())
-
-  const numberOfColumns = table.getAllColumns().length 
-=======
   // Columns
   const numberOfColumns = table.getAllColumns().length
->>>>>>> d1ef3cfcbb59df9ec810c24c7f8fbc40ef355b5a:apps/web/src/components/ui/data-view/data-view.tsx
   const gridTemplateColumns = `repeat(${numberOfColumns.toString()}, minmax(max-content, 1fr))`
 
   const tableState = table.getState()
