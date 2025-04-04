@@ -41,7 +41,9 @@ export function DataView<TData>({ title, subtitle, table, cellPadding }: DataVie
   const tableSubtitleId = useId()
   const hasTitleOrSubtitle = title || subtitle
 
-  const numberOfColumns = table.getAllColumns().length
+  console.log("table.getAllColumns()", table.getAllColumns())
+
+  const numberOfColumns = table.getAllColumns().length 
   const gridTemplateColumns = `repeat(${numberOfColumns.toString()}, minmax(max-content, 1fr))`
 
   return (

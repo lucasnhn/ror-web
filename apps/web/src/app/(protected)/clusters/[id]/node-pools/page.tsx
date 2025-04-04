@@ -19,7 +19,7 @@ export default async function NodePoolsPage({ params }: NodePoolsPageProps) {
   return (
     <div>
       <NodePoolsTable nodes={nodes} />
-      <NodePoolsDataView />
+      <NodePoolsDataView nodes={nodes} />
     </div>
   )
 }
