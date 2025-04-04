@@ -1,6 +1,5 @@
 import { authGuard } from '@/features/auth/utils/auth-guard'
 import { rorApiClient } from '@/services/ror-api'
-import { NodePoolsTable } from './node-pools-table'
 import { NodePoolsDataView } from './node-pools-data-view'
 
 interface NodePoolsPageProps {
@@ -18,7 +17,6 @@ export default async function NodePoolsPage({ params }: NodePoolsPageProps) {
 
   return (
     <div>
-      <NodePoolsTable nodes={nodes} />
       <NodePoolsDataView nodes={nodes} />
     </div>
   )

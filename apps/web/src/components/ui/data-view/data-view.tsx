@@ -17,34 +17,76 @@ import {
 import type { TableProps } from '@ror/react/components/table'
 import { SortDirection } from '@ror/react/utils/sorting'
 import { Fragment, useId } from 'react'
+import { Pagination } from '@ror/react'
 
 export interface DataViewProps<TData> extends Omit<TableProps, 'gridTemplateColumns'> {
+  /**
+   * Optional title of the data view table
+   */
   title?: string
+  /**
+   * Optional subtitle of the data view table
+   */
   subtitle?: string
+  /**
+   * The "table" instance to use
+   * @example
+   * import { useReactTable } from '@tanstack/react-table'
+   * const tableInstance = useReactTable({
+   *   data: [...],
+   *   columns: [...],
+   *   getSortedRowModel: getSortedRowModel(),
+   * })
+   * <DataView table={tableInstance} />
+   */
   table: TanStackTable<TData>
-}
-
-const getSortingOrder = <TData, TValue>(header: Header<TData, TValue>): SortDirection => {
-  const direction = header.column.getIsSorted()
-
-  if (direction === 'asc') {
-    return SortDirection.ASC
-  } else if (direction === 'desc') {
-    return SortDirection.DESC
-  }
-
-  return SortDirection.NONE
 }
 
 export function DataView<TData>({ title, subtitle, table, cellPadding }: DataViewProps<TData>) {
   const tableTitleId = useId()
   const tableSubtitleId = useId()
+
+  /**
+   * Map between the @tanstack/table and the Table component sorting values
+   */
+  const getSortingOrder = <TData, TValue>(header: Header<TData, TValue>): SortDirection => {
+    // Get the sorting direction from the header column
+    const direction = header.column.getIsSorted()
+
+    // Map it to the Table component sorting values
+    if (direction === 'asc') {
+      return SortDirection.ASC
+    } else if (direction === 'desc') {
+      return SortDirection.DESC
+    }
+
+    return SortDirection.NONE
+  }
+
+  const handleOnPaginationPageSizeChange = (pageSize: number) => {
+    table.setPageSize(pageSize)
+  }
+
   const hasTitleOrSubtitle = title || subtitle
 
+<<<<<<< HEAD:apps/web/src/components/ui/data-view.tsx
   console.log("table.getAllColumns()", table.getAllColumns())
 
   const numberOfColumns = table.getAllColumns().length 
+=======
+  // Columns
+  const numberOfColumns = table.getAllColumns().length
+>>>>>>> d1ef3cfcbb59df9ec810c24c7f8fbc40ef355b5a:apps/web/src/components/ui/data-view/data-view.tsx
   const gridTemplateColumns = `repeat(${numberOfColumns.toString()}, minmax(max-content, 1fr))`
+
+  const tableState = table.getState()
+
+  // Pagination
+  const pageSize = tableState.pagination.pageSize
+  const pageSizeOptions = [10, 20, 30, 40, 50, 75, 100]
+  const pageIndex = tableState.pagination.pageIndex + 1
+  const pageCount = table.getPageCount()
+  const paginationItemRangeText = `Page ${pageIndex} of ${pageCount}`
 
   return (
     <Fragment>
@@ -120,6 +162,16 @@ export function DataView<TData>({ title, subtitle, table, cellPadding }: DataVie
           </TableBody>
         </Table>
       </TableContainer>
+      <Pagination
+        itemRangeText={paginationItemRangeText}
+        pageSize={pageSize}
+        pageSizes={pageSizeOptions}
+        onPageSizeChange={handleOnPaginationPageSizeChange}
+        backwardsDisabled={!table.getCanPreviousPage()}
+        forwardsDisabled={!table.getCanNextPage()}
+        onForwards={() => table.nextPage()}
+        onBackwards={() => table.previousPage()}
+      />
     </Fragment>
   )
 }
