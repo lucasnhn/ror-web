@@ -12,7 +12,7 @@ export default async function ClusterRawDataPage({ params }: ClusterPageProps) {
   const { id } = await params
   const session = await authGuard()
   const client = rorApiClient(session.accessToken)
-  const cluster = await client.kubernetesCluster.idV1(id)
+  const cluster = await client.kubernetesClusters.idV1(id)
 
   return (
     <div className=''>

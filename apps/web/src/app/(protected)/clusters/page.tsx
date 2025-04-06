@@ -54,7 +54,7 @@ export default async function ClustersPage({ searchParams }: ClusterPageProps) {
     sort: params.sort ? [sortOptions] : [],
   }
 
-  const clustersResponse = await client.kubernetesCluster.filter(requestOptions)
+  const clustersResponse = await client.kubernetesClusters.filter(requestOptions)
   const clusters = clustersResponse.data ?? []
 
   // Set up pagination state for the table
