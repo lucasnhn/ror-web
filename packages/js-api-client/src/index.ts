@@ -12,6 +12,7 @@ export type {
   Ingress,
   IngressResponse,
   Cluster,
+  ClusterIngress,
   ClustersResponse,
   KubernetesCluster,
   KubernetesClusterResponse,
