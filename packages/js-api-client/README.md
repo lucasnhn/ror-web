@@ -21,16 +21,16 @@ You can install in a local package by manually adding it to your `package.json` 
 ### Basic Setup
 
 ```typescript
-import { createApiClient } from '@ror/js-api-client';
+import { createApiClient } from '@ror/js-api-client'
 
 const apiClient = createApiClient({
   baseUrl: 'https://api.example.com',
   accessToken: 'your-access-token',
   // Optional additional headers
   headers: {
-    'X-Custom-Header': 'value'
-  }
-});
+    'X-Custom-Header': 'value',
+  },
+})
 ```
 
 ### Working with Services
@@ -41,20 +41,20 @@ The service endpoints are under construction, therefore expect regular changes a
 
 ```typescript
 // List Kubernetes clusters
-const params = new URLSearchParams();
-const clusters = await apiClient.kubernetesClusters.list(params);
+const params = new URLSearchParams()
+const clusters = await apiClient.kubernetesClusters.list(params)
 
 // Get a cluster by ID
-const cluster = await apiClient.kubernetesClusters.id('cluster-id');
+const cluster = await apiClient.kubernetesClusters.id('cluster-id')
 
 // List nodes for a specific cluster
-const nodes = await apiClient.nodes.listByCluster('cluster-id');
+const nodes = await apiClient.nodes.listByCluster('cluster-id')
 
 // Get user information
-const user = await apiClient.users.self();
+const user = await apiClient.users.self()
 
 // List ingresses
-const ingresses = await apiClient.ingresses.list();
+const ingresses = await apiClient.ingresses.list()
 ```
 
 ### Error Handling
@@ -64,6 +64,7 @@ The client provides a comprehensive set of error classes to handle various API e
 #### Error Types
 
 - **`ApiError`**: The base error class for all API-related errors. Contains:
+
   - `status`: HTTP status code
   - `message`: Error message
   - `details`: Optional additional error details
@@ -88,37 +89,37 @@ import {
   AuthenticationError,
   AuthorizationError,
   NotFoundError,
-  ValidationError
-} from '@ror/js-api-client';
+  ValidationError,
+} from '@ror/js-api-client'
 
 try {
   // API call
-  const cluster = await apiClient.kubernetesClusters.id('cluster-id');
+  const cluster = await apiClient.kubernetesClusters.id('cluster-id')
 } catch (error) {
   if (error instanceof AuthenticationError) {
     // Handle 401 - redirect to login or refresh token
-    console.error('Authentication failed. Please login again.');
+    console.error('Authentication failed. Please login again.')
   } else if (error instanceof AuthorizationError) {
     // Handle 403 - show permission denied message
-    console.error('You do not have permission to access this resource.');
+    console.error('You do not have permission to access this resource.')
   } else if (error instanceof NotFoundError) {
     // Handle 404 - show not found message
-    console.error('The requested resource was not found.');
+    console.error('The requested resource was not found.')
   } else if (error instanceof ValidationError) {
     // Handle validation errors with field-specific messages
-    console.error('Validation failed:');
+    console.error('Validation failed:')
     Object.entries(error.validationErrors).forEach(([field, messages]) => {
-      console.error(`- ${field}: ${messages.join(', ')}`);
-    });
+      console.error(`- ${field}: ${messages.join(', ')}`)
+    })
   } else if (isApiError(error)) {
     // Handle other API errors
-    console.error(`API Error (${error.status}): ${error.message}`);
+    console.error(`API Error (${error.status}): ${error.message}`)
     if (error.details) {
-      console.error(`Details: ${error.details}`);
+      console.error(`Details: ${error.details}`)
     }
   } else {
     // Handle unexpected errors
-    console.error('An unexpected error occurred:', error);
+    console.error('An unexpected error occurred:', error)
   }
 }
 ```
@@ -159,11 +160,5 @@ src/
 The package exports various TypeScript types for working with the API:
 
 ```typescript
-import type {
-  Ingress,
-  Cluster,
-  KubernetesCluster,
-  Node,
-  User
-} from '@ror/js-api-client';
+import type { Ingress, Cluster, KubernetesCluster, Node, User } from '@ror/js-api-client'
 ```

@@ -11,6 +11,7 @@ cp apps/web/.env.example apps/web/.env.local
 ```
 
 Edit the `.env.local` file with your configuration:
+
 - `AUTH_SECRET`: Secret for signing authentication tokens
 - `AUTH_ISSUER`: Your authentication issuer URL
 - `AUTH_CLIENT_ID`: Client ID for authentication

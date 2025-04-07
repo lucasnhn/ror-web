@@ -51,7 +51,9 @@
     "dev": "vite build --watch",
     "build": "tsc -b ./tsconfig.app.json && vite build",
     "lint": "eslint ./src",
-    "clean": "rm -rf dist && rm -rf .turbo && rm -rf node_modules"
+    "clean": "rm -rf dist && rm -rf .turbo && rm -rf node_modules",
+    "format": "prettier . --check --cache --cache-location='node_modules/.cache/.prettiercache'",
+    "format:fix": "prettier . --write --cache --cache-location='node_modules/.cache/.prettiercache' --log-level=warn"
   },
   "peerDependencies": {
     "react": "^19.0.0",
