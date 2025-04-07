@@ -1,12 +1,15 @@
-export const LEFT_PANEL_STORAGE_KEY = 'ror.left-panel-expanded'
+'use server'
+
+import { authGuard } from '@/features/auth/utils/auth-guard'
 import { getSavedPreference, setSavedPreference } from '@/utils/cookies'
 
 export async function saveLeftPanelPreferenceAction(value: boolean) {
-  await setSavedPreference(LEFT_PANEL_STORAGE_KEY, value.toString())
+  await authGuard()
+  await setSavedPreference('ror.left-panel-expanded', value.toString())
 }
 
 export async function getLeftPanelPreferenceAction(): Promise<boolean> {
-  const value = await getSavedPreference(LEFT_PANEL_STORAGE_KEY, 'true')
+  const value = await getSavedPreference('ror.left-panel-expanded', 'true')
   const validValue = validateLeftPanelPreference(value)
   return validValue
 }

@@ -44,6 +44,7 @@ apps/web/
 ├── __mocks__/          # Mock data and handlers for development/testing
 ├── public/             # Static assets
 └── src/
+    ├── actions/        # Next.js Server Actions
     ├── app/            # Next.js App Router routes and components
     ├── components/     # Reusable UI components
     │   ├── layout/     # Layout components like app shell, navigation
