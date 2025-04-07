@@ -1,11 +1,11 @@
-import { ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { AppShellLeftPanel } from './left-panel'
 import { Navigation } from './navigation/navigation'
 import { LeftPanelToggleButton } from './left-panel-toggle'
 import { Profile } from './profile'
 import { Logo } from './logo'
 import { ThemeToggle } from './theme-toggle'
-import { getDarkModePreferenceAction, saveDarkModePreferenceAction } from '@/actions/dark-mode'
+import { getDarkModePreferenceAction } from '@/actions/dark-mode'
 
 interface AppShellProps {
   children: ReactNode
