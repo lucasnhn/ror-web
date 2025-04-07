@@ -1,5 +1,6 @@
 import { authGuard } from '@/features/auth/utils/auth-guard'
 import { rorApiClient } from '@/services/ror-api'
+import { ClusterIngressesDataView } from './ingress-data-view'
 
 interface ClusterIngressesPageProps {
   params: Promise<{
@@ -12,12 +13,22 @@ export default async function ClusterIngressesPage({ params }: ClusterIngressesP
 
   const session = await authGuard()
   const client = rorApiClient(session.accessToken)
-  const cluster = await client.kubernetesClusters.idV1(id)
-  const ingresses = cluster.ingresses
+
+  const ingressFilter = [
+    {
+      field: 'rormeta.ownerref.subject',
+      type: 'string',
+      operator: 'eq',
+      value: id,
+    },
+  ]
+  const listParams = new URLSearchParams([['filter', JSON.stringify(ingressFilter)]])
+  const clusterIngresses = await client.ingresses.list(listParams)
+  const ingresses = clusterIngresses?.resources ?? []
 
   if (!ingresses) {
     return <div>No ingresses found</div>
   }
 
-  return <h1>Ingresses</h1>
+  return <ClusterIngressesDataView ingresses={ingresses} />
 }

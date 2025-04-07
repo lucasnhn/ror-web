@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { createV2ResourceResponseSchema } from './common'
+import { createV2ResourceResponseSchema, V2ResourceSchema } from './common'
 
 const IngressSpecBackendResource = z.object({
   apiGroup: z.string().nullable().optional(),
@@ -29,7 +29,7 @@ const IngressSpecRulesHttpPathsSchema = z.object({
 })
 
 const IngressSpecRulesHttpSchema = z.object({
-  paths: IngressSpecRulesHttpPathsSchema.nullable().optional(),
+  paths: z.array(IngressSpecRulesHttpPathsSchema).nullable().optional(),
 })
 
 const IngressSpecRulesSchema = z.object({
@@ -62,7 +62,7 @@ const IngressStatusSchema = z.object({
   loadBalancer: IngressStatusLoadBalancerSchema,
 })
 
-export const IngressSchema = z.object({
+export const IngressSchema = V2ResourceSchema.extend({
   ingress: z.object({
     spec: IngressSpecSchema,
     status: IngressStatusSchema,

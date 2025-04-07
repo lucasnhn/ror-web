@@ -1,7 +1,7 @@
 'use client'
 import { Tooltip } from '@ror/react/components/tooltip'
 import { useAppShellContext } from './use-app-shell'
-import { saveLeftPanelPreferenceAction } from './app-shell-actions'
+import { saveLeftPanelPreferenceAction } from '@/actions/left-panel'
 
 export function LeftPanelToggleButton() {
   const { leftPanelExpanded, onToggleLeftPanel } = useAppShellContext()
