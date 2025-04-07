@@ -79,6 +79,31 @@ const AclModel = z.object({
   accessGroups: z.array(z.string()),
 })
 
+const IngressRuleV1 = z
+  .object({
+    hostname: z.string().optional(),
+    ipaddresses: z.array(z.string()).optional(),
+    rules: z.array(
+      z.object({
+        path: z.string(),
+        // TODO: Finish model
+        service: z.object({}).passthrough(),
+      })
+    ),
+  })
+  .passthrough()
+
+export const ClusterIngressModelV1 = z.object({
+  uid: z.string(),
+  health: z.number(),
+  name: z.string(),
+  namespace: z.string(),
+  class: z.string(),
+  ingressrules: z.array(IngressRuleV1).optional(),
+})
+
+const ClusterIngressesModelV1 = z.array(ClusterIngressModelV1.passthrough())
+
 export const ClusterSchema = z
   .object({
     clusterId: z.string(),
@@ -107,26 +132,7 @@ export const ClusterSchema = z
     topology: TopologyModel,
     versions: VersionsModel,
     workspace: WorkspaceModel,
-    ingresses: z
-      .union([
-        z.array(
-          z
-            .object({
-              ingressrules: z
-                .array(
-                  z
-                    .object({
-                      hostname: z.string().optional(),
-                    })
-                    .optional()
-                )
-                .optional(),
-            })
-            .optional()
-        ),
-        z.null(),
-      ])
-      .optional(),
+    ingresses: ClusterIngressesModelV1.optional().nullable(),
     acl: AclModel,
   })
   .passthrough()

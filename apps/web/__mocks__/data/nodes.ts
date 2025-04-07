@@ -1,3 +1,4 @@
+import { faker } from '@faker-js/faker'
 import { NodeResponse } from '@ror/js-api-client'
 
 const nodes: NodeResponse = {
@@ -7,8 +8,8 @@ const nodes: NodeResponse = {
       apiVersion: 'v1',
       metadata: {
         name: 't-aaa-001-control-plane-6ffkc',
-        uid: '3f346038-0136-4f0d-9aa6-3c277c37a14e',
-        resourceVersion: '493788292',
+        uid: faker.string.uuid(),
+        resourceVersion: faker.string.numeric(6),
         creationTimestamp: '2025-01-31T15:00:54Z',
         labels: {},
         annotations: {},
@@ -16,7 +17,7 @@ const nodes: NodeResponse = {
       },
       rormeta: {
         version: 'v2',
-        hash: '5884478303314410569',
+        hash: faker.string.numeric(10),
         ownerref: { scope: 'cluster', subject: 'aaa-001-dev' },
         action: 'Update',
       },
@@ -51,8 +52,8 @@ const nodes: NodeResponse = {
       apiVersion: 'v1',
       metadata: {
         name: 't-aaa-001-workers-f4jpw-f4hxf-h5g2n',
-        uid: '9408a85e-901c-48ec-bd4b-4de4a44c82be',
-        resourceVersion: '493788565',
+        uid: faker.string.uuid(),
+        resourceVersion: faker.string.numeric(6),
         creationTimestamp: '2025-01-31T15:14:58Z',
         labels: {},
         annotations: {},
@@ -60,7 +61,7 @@ const nodes: NodeResponse = {
       },
       rormeta: {
         version: 'v2',
-        hash: '2592243034891482106',
+        hash: faker.string.numeric(10),
         ownerref: { scope: 'cluster', subject: 'aaa-001-dev' },
         action: 'Update',
       },
@@ -95,8 +96,8 @@ const nodes: NodeResponse = {
       apiVersion: 'v1',
       metadata: {
         name: 't-aaa-001-workers-f4jpw-f4hxf-lmcrl',
-        uid: '4a4ceb1e-0131-47a5-b566-4ed2d5f2f07f',
-        resourceVersion: '493782257',
+        uid: faker.string.uuid(),
+        resourceVersion: faker.string.numeric(6),
         creationTimestamp: '2025-01-31T15:10:22Z',
         labels: {},
         annotations: {},
@@ -104,7 +105,7 @@ const nodes: NodeResponse = {
       },
       rormeta: {
         version: 'v2',
-        hash: '2412552037763072509',
+        hash: faker.string.numeric(19),
         ownerref: { scope: 'cluster', subject: 'aaa-001-dev' },
         action: 'Update',
       },
@@ -139,8 +140,8 @@ const nodes: NodeResponse = {
       apiVersion: 'v1',
       metadata: {
         name: 't-aaa-001-workers-f4jpw-f4hxf-w2mhs',
-        uid: '3d70c520-1a20-4d38-b1dc-1200381ee7bf',
-        resourceVersion: '493788829',
+        uid: faker.string.uuid(),
+        resourceVersion: faker.string.numeric(6),
         creationTimestamp: '2025-01-31T15:06:54Z',
         labels: {},
         annotations: {},
@@ -148,7 +149,7 @@ const nodes: NodeResponse = {
       },
       rormeta: {
         version: 'v2',
-        hash: '4944169613020978094',
+        hash: faker.string.numeric(19),
         ownerref: { scope: 'cluster', subject: 'aaa-001-dev' },
         action: 'Update',
       },

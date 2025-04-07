@@ -1,4 +1,5 @@
 import { sub } from 'date-fns'
+import { faker } from '@faker-js/faker'
 
 export const clustersVersion1 = [
   {
@@ -43,7 +44,7 @@ export const clustersVersion1 = [
     },
     topology: {
       controlPlaneEndpoint: '',
-      egressIp: '10.11.63.5',
+      egressIp: faker.internet.ipv4(),
       controlPlane: {
         nodes: null,
         metrics: {
@@ -171,11 +172,11 @@ export const clustersVersion1 = [
     workspaceId: '66792637962733bd96c8a2f6',
     workspace: {
       id: '66792637962733bd96c8a2f6',
-      name: 'trd1cl02-aaa-002-dev',
-      datacenterId: '64fb42853fc0553130aa26ea',
+      name: 'noe01-aaa-002-dev',
+      datacenterId: faker.string.uuid(),
       datacenter: {
-        id: '64fb42853fc0553130aa26ea',
-        name: 'trd1cl02',
+        id: faker.string.uuid(),
+        name: 'noe01',
         provider: 'tanzu',
         location: {
           id: '',
@@ -363,15 +364,15 @@ export const clustersVersion1 = [
     },
     ingresses: [
       {
-        uid: '4dd873a3-8b65-4e7f-aeea-332891cee31a',
+        uid: faker.string.uuid(),
         health: 1,
         name: 'argocd-server',
         namespace: 'argocd',
         class: 'avi-ingress-class-datacenter',
         ingressrules: [
           {
-            hostname: 'argo.aaa-002-dev.trd1cl02-aaa-002-dev.sky.example.com',
-            ipaddresses: ['10.204.28.113'],
+            hostname: 'argo.aaa-002-dev.noe01-aaa-002-dev.sky.example.com',
+            ipaddresses: [faker.internet.ipv4()],
             rules: [
               {
                 path: '/',
@@ -404,15 +405,15 @@ export const clustersVersion1 = [
         ],
       },
       {
-        uid: 'bbaf489b-d514-4087-9100-cc0777fc3dd8',
+        uid: faker.string.uuid(),
         health: 1,
         name: 'grafana-somenett',
         namespace: 'prometheus-operator',
         class: 'avi-ingress-class-datacenter',
         ingressrules: [
           {
-            hostname: 'grafana.aaa-002-dev.trd1cl02-aaa-002-dev.sky.example.com',
-            ipaddresses: ['10.204.28.113'],
+            hostname: 'grafana.aaa-002-dev.noe01-aaa-002-dev.sky.example.com',
+            ipaddresses: [faker.internet.ipv4()],
             rules: [
               {
                 path: '/',
@@ -462,9 +463,9 @@ export const clustersVersion1 = [
       },
     },
     metadata: {
-      projectId: '66794b1e4d60b4db3219372c',
+      projectId: faker.string.uuid(),
       project: {
-        id: '66794b1e4d60b4db3219372c',
+        id: faker.string.uuid(),
         name: 'aaa-002-dev',
         description: 'A project description',
         active: true,
@@ -529,5 +530,137 @@ export const clustersVersion1 = [
   },
 ]
 
-// TODO: Add data for this structure once it is more ready in the backend
-export const clustersVersion2 = []
+export const clustersVersion2 = {
+  resources: [
+    {
+      kind: 'KubernetesCluster',
+      apiVersion: 'general.ror.internal/v1alpha1',
+      metadata: {
+        name: 'aaa-001-dev',
+        creationTimestamp: '2022-03-17T14:06:47Z',
+      },
+      rormeta: {
+        version: 'v2',
+        ownerref: {
+          scope: 'workspace',
+          subject: 'trd1-nhn-mgmt',
+        },
+        tags: [
+          {
+            key: 'consumer',
+            value: 'ror',
+          },
+          {
+            key: 'environment',
+            value: 'dev',
+          },
+          {
+            key: 'criticality',
+            value: '4',
+          },
+          {
+            key: 'sensitivity',
+            value: '2',
+          },
+          {
+            key: 'servicetag',
+            value: '434423',
+          },
+        ],
+      },
+      kubernetescluster: {
+        spec: {
+          data: {
+            clusterId: 'aaa-001-dev-kgfh',
+            provider: 'tanzu',
+            datacenter: 'trd1',
+            region: 'trd',
+            zone: 'trd1cl01',
+            project: 'test',
+            workspace: 'trd1-nhn-mgmt',
+            workorder: 'Intern',
+            environment: 'dev',
+          },
+          topology: {
+            version: 'v1.28.7',
+            controlplane: {
+              replicas: 3,
+              provider: 'tanzu',
+              machineClass: 'best-effort-large',
+              metadata: {
+                labels: null,
+                annotations: null,
+              },
+              storage: null,
+            },
+            workers: {
+              nodePools: [
+                {
+                  name: 'default',
+                  replicas: 4,
+                  provider: 'tanzu',
+                  machineClass: 'best-effort-cpu-2xlarge',
+                  metadata: {
+                    labels: null,
+                    annotations: null,
+                  },
+                  storage: null,
+                },
+              ],
+            },
+          },
+        },
+        status: {
+          status: {
+            cluster: {
+              externalId: '0000-0000-0000-0000',
+              resources: [
+                {
+                  name: 'cpu',
+                  allocated: '8',
+                  usage: '8%',
+                },
+                {
+                  name: 'memory',
+                  allocated: '64Gi',
+                  usage: '50%',
+                },
+              ],
+              controlplane: {
+                status: 'Running',
+                message: '3/3 Controllplane is running',
+              },
+              workers: {
+                nodepools: [
+                  {
+                    name: 'default',
+                    status: 'Running',
+                    message: '4/4 Workers are running',
+                  },
+                ],
+              },
+            },
+            versions: [
+              {
+                component: 'kubernetes',
+                version: 'v1.28.7',
+              },
+              {
+                component: 'nhntooling',
+                version: 'v1.16.3',
+                branch: 'main',
+              },
+            ],
+            'egress-ip': '10.204.2.10',
+            controlplaneendpoint: '10.204.0.50:6443',
+            lastUpdated: '0001-01-01T00:00:00Z',
+            lastUpdatedBy: 'agentv2',
+            created: '2022-03-17T14:06:47Z',
+          },
+          phase: 'Running',
+          conditions: null,
+        },
+      },
+    },
+  ],
+}
