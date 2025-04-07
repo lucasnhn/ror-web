@@ -9,7 +9,7 @@ interface BaseMetricsCardProps extends HTMLAttributes<HTMLElement> {
   /**
    * Specify the label for the metrics card
    */
-  'ariaLabel'?: AriaAttributes['aria-label']
+  ariaLabel?: AriaAttributes['aria-label']
 
   /**
    * Specify an optional className to be applied to the container node
@@ -52,7 +52,9 @@ function isMetricsCardWithItemProps(props: MetricsCardProps): props is BaseMetri
   return 'item' in props && props.item !== undefined
 }
 
-function isMetricsCardWithChildrenProps(props: MetricsCardProps): props is BaseMetricsCardProps & MetricsCardWithChildrenProps {
+function isMetricsCardWithChildrenProps(
+  props: MetricsCardProps
+): props is BaseMetricsCardProps & MetricsCardWithChildrenProps {
   return 'children' in props && isValidElement(props.children)
 }
 

@@ -50,6 +50,6 @@ Or import the different modules which provides the most flexibility, allowing yo
 If you prefer not to configure Sass or need a quick implementation, you can use the pre-compiled CSS files directly:
 
 ```javascript
-import '@ror/styles/css/index.css'; // Import all styles
-import '@ror/styles/css/reset.css'; // Import only the reset
+import '@ror/styles/css/index.css' // Import all styles
+import '@ror/styles/css/reset.css' // Import only the reset
 ```

@@ -16,7 +16,7 @@ export const columns = [
   }) as ColumnDef<Node>, //why ColumnDef<Node> here and not on name?
   columnHelper.accessor('node.status.nodeInfo.architecture', {
     header: 'Architecture',
-  }) as ColumnDef<Node>,//why ColumnDef<Node> here and not on name?
+  }) as ColumnDef<Node>, //why ColumnDef<Node> here and not on name?
 ] satisfies ColumnDef<Node>[] //why ColumnDef<Node>[] here and not in example
 
 interface NodePoolsDataViewProps {
