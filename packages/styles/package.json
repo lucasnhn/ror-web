@@ -16,7 +16,7 @@
     "clean": "rm -rf css && rm -rf .turbo"
   },
   "devDependencies": {
-    "sass": "^1.83.4"
+    "sass": "^1.86.3"
   },
   "peerDependencies": {
     "sass": "^1.83.4"
