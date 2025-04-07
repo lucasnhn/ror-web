@@ -3,7 +3,7 @@
 import clsx from 'clsx'
 import { AriaAttributes, HTMLAttributes } from 'react'
 
-export interface MetricsWheelProps extends HTMLAttributes<HTMLElement> {
+export interface MetricsWheelProps extends Omit<HTMLAttributes<HTMLElement>, 'part'> {
   /**
    * Specify the label for the metrics wheel
    */
