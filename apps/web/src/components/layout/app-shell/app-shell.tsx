@@ -5,7 +5,7 @@ import { LeftPanelToggleButton } from './left-panel-toggle'
 import { Profile } from './profile'
 import { Logo } from './logo'
 import { ThemeToggle } from './theme-toggle'
-import { getDarkModePreferenceAction, saveDarkModePreferenceAction } from '@/utils/dark-mode.actions'
+import { getDarkModePreferenceAction, saveDarkModePreferenceAction } from '@/actions/dark-mode'
 
 interface AppShellProps {
   children: ReactNode
@@ -25,7 +25,7 @@ export async function AppShell({ children }: AppShellProps) {
         <div className='p-3 mt-auto flex flex-col @min-[6rem]:flex-row items-center justify-between gap-2'>
           <Profile />
           <div className='flex flex-col @min-[6rem]:flex-row items-center justify-end gap-2'>
-            <ThemeToggle colorScheme={colorScheme} onSavePreferenceAction={saveDarkModePreferenceAction} />
+            <ThemeToggle colorScheme={colorScheme} />
             <LeftPanelToggleButton />
           </div>
         </div>
