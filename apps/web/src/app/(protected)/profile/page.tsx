@@ -8,6 +8,8 @@ import { jwtDecode } from 'jwt-decode'
 import { Fragment } from 'react'
 import { localizeDate } from '@/utils/time-and-date'
 
+export const dynamic = 'force-dynamic'
+
 export default async function ProfilePage() {
   const session = await authGuard()
   const client = rorApiClient(session.accessToken)
