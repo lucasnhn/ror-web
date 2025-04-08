@@ -18,6 +18,13 @@ export { MetricsWheel } from './components/metrics-wheel.tsx'
 export { Pagination } from './components/pagination.tsx'
 export { Stack } from './components/stack.tsx'
 export {
+  StructuredListRow,
+  StructuredListBody,
+  StructuredListCell,
+  StructuredListHead,
+  StructuredListWrapper,
+} from './components/structured-list.tsx'
+export {
   TableContainer,
   TableTitle,
   TableSubtitle,
