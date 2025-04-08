@@ -22,6 +22,7 @@
 
     /// Backgrounds
     @include light-dark('background', cv.get-var('color-white'), rgb-color('neutral', '950'));
+    @include light-dark('background-primary', rgb-color('neutral', '50'), rgb-color('neutral', '950'));
     @include light-dark('background-hover', rgb-color('neutral', '100'), rgb-color('neutral', '900'));
     @include light-dark('background-active', rgb-color('neutral', '200'), rgb-color('neutral', '800'));
     @include light-dark('background-selected', rgb-color('neutral', '300'), rgb-color('neutral', '700'));
@@ -181,8 +182,8 @@
         @include light-dark('background-active', p3-color('neutral', '200'), p3-color('neutral', '800'));
         @include light-dark('background-selected', p3-color('neutral', '300'), p3-color('neutral', '700'));
         @include light-dark('background-selected-hover', p3-color('neutral', '400'), p3-color('neutral', '600'));
-        @include light-dark('background-inverse', p3-color('neutral', '950'), p3-color('neutral', '50'));
-        @include light-dark('background-inverse-hover', p3-color('neutral', '500'), p3-color('neutral', '100'));
+        @include light-dark('background-inverse', p3-color('neutral', '900'), p3-color('neutral', '50'));
+        @include light-dark('background-inverse-hover', p3-color('neutral', '800'), p3-color('neutral', '100'));
 
         /// Layer
         @include light-dark('layer-01', p3-color('neutral', '100'), p3-color('neutral', '900'));

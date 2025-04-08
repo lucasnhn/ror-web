@@ -13,6 +13,8 @@
 @use './purple.scss' as *;
 @use './pink.scss' as *;
 @use './gray.scss' as *;
+@use './cyan.scss' as *;
+@use './sky.scss' as *;
 
 $colors: (
   'white': (
@@ -70,6 +72,14 @@ $colors: (
   'gray': (
     'p3': $gray-p3,
     'rgb': $gray-rgb,
+  ),
+  'cyan': (
+    'p3': $cyan-p3,
+    'rgb': $cyan-rgb,
+  ),
+  'sky': (
+    'p3': $sky-p3,
+    'rgb': $sky-rgb,
   ),
 );
 
