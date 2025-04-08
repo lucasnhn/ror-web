@@ -163,14 +163,6 @@
 
     // Spacing
     @include spacing.emit-spacing-custom-properties();
-
-    // Standard colors
-    @include light-dark('color-red', rgb-color('red', '500'), rgb-color('red', '600'));
-    @include light-dark('color-orange', rgb-color('orange', '500'), rgb-color('orange', '600'));
-    @include light-dark('color-cyan', rgb-color('cyan', '500'), rgb-color('cyan', '600'));
-    @include light-dark('color-sky', rgb-color('sky', '500'), rgb-color('sky', '600'));
-    @include light-dark('color-yellow', rgb-color('yellow', '500'), rgb-color('yellow', '600'));
-    @include light-dark('color-amber', rgb-color('amber', '500'), rgb-color('amber', '600'));
   }
 
   @supports (color: oklch(0% 0 0)) {
@@ -308,14 +300,6 @@
         @include light-dark('tag-text-purple', p3-color('purple', '800'), p3-color('purple', '200'));
         @include light-dark('tag-text-pink', p3-color('pink', '800'), p3-color('pink', '200'));
         @include light-dark('tag-text-gray', p3-color('gray', '800'), p3-color('gray', '200'));
-        
-        // Standard colors
-        @include light-dark('color-red', p3-color('red', '500'), p3-color('red', '600'));
-        @include light-dark('color-orange', p3-color('orange', '500'), p3-color('orange', '600'));
-        @include light-dark('color-cyan', p3-color('cyan', '500'), p3-color('cyan', '600'));
-        @include light-dark('color-sky', p3-color('sky', '500'), p3-color('sky', '600'));
-        @include light-dark('color-yellow', p3-color('yellow', '500'), p3-color('yellow', '600'));
-        @include light-dark('color-amber', p3-color('amber', '500'), p3-color('amber', '600'));
       }
     }
   }

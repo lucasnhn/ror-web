@@ -27,10 +27,6 @@
     ]
   },
   "dependencies": {
-    "@turbo/gen": "2.4.4",
-    "class-variance-authority": "0.7.1",
-    "clsx": "2.1.1",
-    "lucide-react": "0.487.0",
-    "tailwind-merge": "3.2.0"
+    "@turbo/gen": "2.4.4"
   }
 }
