@@ -8,6 +8,7 @@ import { Fragment } from 'react'
 import { ClusterCards } from './cluster-cards'
 import Link from 'next/link'
 import { ClusterPageViewSwitch } from './view-switch'
+import { Button } from '@/components/ui/shadcn/button'
 
 export const metadata: Metadata = {
   title: 'ROR (Beta) - Clusters',
@@ -115,6 +116,8 @@ export default async function ClustersPage({ searchParams }: ClusterPageProps) {
           </details>
         </div>
       )}
+
+      <Button variant={"destructive"}>Hei</Button>
     </Fragment>
   )
 }

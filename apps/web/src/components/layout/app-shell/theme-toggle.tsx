@@ -99,6 +99,7 @@ function ThemeOption({
   onClick: (value: ColorScheme) => void
 }) {
   const handleOnClick = () => {
+    console.log('ThemeOption handleOnClick', theme)
     onClick(theme)
   }
 

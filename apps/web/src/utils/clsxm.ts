@@ -9,4 +9,6 @@ import { twMerge } from 'tailwind-merge'
  */
 const clsxm = (...classes: ClassValue[]) => twMerge(clsx(...classes))
 
+export const cn = clsxm
+
 export default clsxm

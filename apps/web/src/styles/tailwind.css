@@ -1,5 +1,6 @@
 @import '@evilmartians/harmony/tailwind.css';
 @import 'tailwindcss';
+@import "tw-animate-css";
 
 /**
  * Configure theme variables for tailwind
@@ -21,6 +22,41 @@
   --spacing-12: var(--r-spacing-12); /* 96px */
   --spacing-13: var(--r-spacing-13); /* 128px */
   --spacing-14: var(--r-spacing-14); /* 160px */
+
+  /* For shadcn */
+  --background: var(--r-background); 
+  --foreground: var(--r-background-inverse); 
+  --card: var(--r-background); 
+  --card-foreground: var(--r-background-inverse); 
+  --popover: var(--r-background); 
+  --popover-foreground: var(--r-background-inverse); 
+  --primary: var(--r-background-inverse-hover); 
+  --primary-foreground: var(--r-background-primary); 
+  --secondary: var(--r-background-hover); 
+  --secondary-foreground: var(--r-background-inverse-hover); 
+  --muted: var(--r-background-hover); 
+  --muted-foreground: var(--r-text-secondary); 
+  --accent: var(--r-background-hover); 
+  --accent-foreground: var(--r-background-inverse-hover); 
+  --destructive: var(--r-color-red); 
+  --destructive-foreground: var(--r-color-red); 
+  --border: var(--r-background-active); 
+  --input: var(--r-background-active); 
+  --ring: var(--r-border-strong-01); 
+  --chart-1: var(--r-color-orange); 
+  --chart-2: var(--r-color-cyan); 
+  --chart-3: var(--r-color-sky); 
+  --chart-4: var(--r-color-yellow); 
+  --chart-5: var(--r-color-amber); 
+  --radius: 0.625rem;
+  --sidebar: var(--r-background-primary); 
+  --sidebar-foreground: var(--r-background-inverse); 
+  --sidebar-primary: var(--r-background-inverse-hover); 
+  --sidebar-primary-foreground: var(--r-background-primary); 
+  --sidebar-accent: var(--r-background-hover); 
+  --sidebar-accent-foreground: var(--r-background-inverse-hover); 
+  --sidebar-border: var(--r-background-active); 
+  --sidebar-ring: var(--r-border-strong-01); 
 }
 
 /**
@@ -138,4 +174,41 @@
   .\@container {
     contain: layout;
   }
+}
+
+/* For shadcn */
+@theme inline {
+    --color-background: var(--r-background);
+    --color-foreground: var(--r-background-inverse);
+    --color-card: var(--r-background);
+    --color-card-foreground: var(--r-background-inverse);
+    --color-popover: var(--r-background);
+    --color-popover-foreground: var(--r-background-inverse);
+    --color-primary: var(--r-background-inverse-hover);
+    --color-primary-foreground: var(--r-background-primary);
+    --color-secondary: var(--r-background-hover);
+    --color-secondary-foreground: var(--r-background-inverse-hover);
+    --color-muted: var(--r-background-hover);
+    --color-muted-foreground: var(--r-text-secondary);
+    --color-accent: var(--r-background-hover);
+    --color-accent-foreground: var(--r-background-inverse-hover);
+    --color-destructive: var(--r-color-red);
+    --color-destructive-foreground: var(--r-color-red);
+    --color-border: var(--r-background-active);
+    --color-input: var(--r-background-active);
+    --color-ring: var(--r-border-strong-01);
+    --color-chart-1: var(--r-color-orange);
+    --color-chart-2: var(--r-color-cyan);
+    --color-chart-3: var(--r-color-sky);
+    --color-chart-4: var(--r-color-yellow);
+    --color-chart-5: var(--r-color-amber);
+    --radius: 0.625rem;
+    --color-sidebar: var(--r-background-primary);
+    --color-sidebar-foreground: var(--r-background-inverse);
+    --color-sidebar-primary: var(--r-background-inverse-hover);
+    --color-sidebar-primary-foreground: var(--r-background-primary);
+    --color-sidebar-accent: var(--r-background-hover);
+    --color-sidebar-accent-foreground: var(--r-background-inverse-hover);
+    --color-sidebar-border: var(--r-background-active);
+    --color-sidebar-ring: var(--r-border-strong-01);
 }
