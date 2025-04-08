@@ -9,6 +9,7 @@ import { twMerge } from 'tailwind-merge'
  */
 const clsxm = (...classes: ClassValue[]) => twMerge(clsx(...classes))
 
+// An alias export to make the integration with shadnc/ui smoother
 export const cn = clsxm
 
 export default clsxm
