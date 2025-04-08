@@ -5,13 +5,13 @@ import { Popover, PopoverContent, PopoverPortal, PopoverTrigger } from '@radix-u
 import { Moon, Sun, SunMoon } from 'lucide-react'
 import s from './theme-toggle.module.scss'
 import { ColorScheme, Labels } from '@/utils/dark-mode'
+import { saveDarkModePreferenceAction } from '@/actions/dark-mode'
 
 interface ThemeToggleProps {
   colorScheme: ColorScheme
-  onSavePreferenceAction: (theme: ColorScheme) => void
 }
 
-export function ThemeToggle({ colorScheme, onSavePreferenceAction }: ThemeToggleProps) {
+export function ThemeToggle({ colorScheme }: ThemeToggleProps) {
   // Setup listeners for changes in the user's color scheme preference
   useEffect(() => {
     function handleOnMatchMediaChange({ matches: isDark }: MediaQueryListEvent) {
@@ -28,6 +28,10 @@ export function ThemeToggle({ colorScheme, onSavePreferenceAction }: ThemeToggle
     }
   }, [colorScheme])
 
+  const handleOnSetColorScheme = (theme: ColorScheme) => {
+    saveDarkModePreferenceAction(theme)
+  }
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -41,17 +45,17 @@ export function ThemeToggle({ colorScheme, onSavePreferenceAction }: ThemeToggle
               <ThemeOption
                 theme={ColorScheme.Light}
                 isActive={colorScheme === ColorScheme.Light}
-                onClick={onSavePreferenceAction}
+                onClick={handleOnSetColorScheme}
               />
               <ThemeOption
                 theme={ColorScheme.Dark}
                 isActive={colorScheme === ColorScheme.Dark}
-                onClick={onSavePreferenceAction}
+                onClick={handleOnSetColorScheme}
               />
               <ThemeOption
                 theme={ColorScheme.System}
                 isActive={colorScheme === ColorScheme.System}
-                onClick={onSavePreferenceAction}
+                onClick={handleOnSetColorScheme}
               />
             </div>
           </div>
@@ -102,12 +106,14 @@ function ThemeOption({
     onClick(theme)
   }
 
+  const label = Labels.get(theme)
+
   return (
     <div className={s.option} role='option' data-value={theme} aria-selected={isActive} onClick={handleOnClick}>
       <figure className='rounded-md'>
         <ThemePreview theme={theme} />
       </figure>
-      <div className={s.label}>{Labels.get(theme)}</div>
+      <div className={s.label}>{label}</div>
     </div>
   )
 }

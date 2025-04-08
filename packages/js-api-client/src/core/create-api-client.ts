@@ -32,10 +32,10 @@ export function createApiClient(config: ApiClientConfig) {
    * Create our different services
    */
   const services = {
-    kubernetesCluster: createKubernetesClusterService(request),
+    kubernetesClusters: createKubernetesClusterService(request),
     nodes: createNodesService(request),
     users: createUsersService(request),
-    ingress: createIngressesService(request),
+    ingresses: createIngressesService(request),
   }
 
   return services

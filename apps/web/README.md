@@ -11,6 +11,7 @@ cp apps/web/.env.example apps/web/.env.local
 ```
 
 Edit the `.env.local` file with your configuration:
+
 - `AUTH_SECRET`: Secret for signing authentication tokens
 - `AUTH_ISSUER`: Your authentication issuer URL
 - `AUTH_CLIENT_ID`: Client ID for authentication
@@ -44,6 +45,7 @@ apps/web/
 ├── __mocks__/          # Mock data and handlers for development/testing
 ├── public/             # Static assets
 └── src/
+    ├── actions/        # Next.js Server Actions
     ├── app/            # Next.js App Router routes and components
     ├── components/     # Reusable UI components
     │   ├── layout/     # Layout components like app shell, navigation

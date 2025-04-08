@@ -13,13 +13,15 @@
   "scripts": {
     "build": "sass index.scss:css/index.css",
     "dev": "sass --watch index.scss:css/index.css",
-    "clean": "rm -rf css && rm -rf .turbo"
+    "clean": "rm -rf css && rm -rf .turbo",
+    "format": "prettier . --check --cache --cache-location='node_modules/.cache/.prettiercache'",
+    "format:fix": "prettier . --write --cache --cache-location='node_modules/.cache/.prettiercache' --log-level=warn"
   },
   "devDependencies": {
-    "sass": "^1.83.4"
+    "sass": "^1.86.3"
   },
   "peerDependencies": {
-    "sass": "^1.83.4"
+    "sass": "^1.83.3"
   },
   "peerDependenciesMeta": {
     "sass": {

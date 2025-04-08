@@ -161,6 +161,13 @@
     @include light-dark('tag-text-pink', rgb-color('pink', '800'), rgb-color('pink', '200'));
     @include light-dark('tag-text-gray', rgb-color('gray', '800'), rgb-color('gray', '200'));
 
+    /// Severity colors
+    @include light-dark('severity-critical', #da1e28, #fa4d56);
+    @include light-dark('severity-high', #da1e28, #fa4d56);
+    @include light-dark('severity-medium', #ff832b, #ff832b);
+    @include light-dark('severity-low', #f1c21b, #f1c21b);
+    @include light-dark('severity-none', #8a3ffc, #a56eff);
+
     // Spacing
     @include spacing.emit-spacing-custom-properties();
   }
@@ -300,6 +307,13 @@
         @include light-dark('tag-text-purple', p3-color('purple', '800'), p3-color('purple', '200'));
         @include light-dark('tag-text-pink', p3-color('pink', '800'), p3-color('pink', '200'));
         @include light-dark('tag-text-gray', p3-color('gray', '800'), p3-color('gray', '200'));
+
+        /// Severity colors
+        @include light-dark('severity-critical', oklch(0.57 0.2174 25.93), oklch(0.67 0.2088 22.13));
+        @include light-dark('severity-high', oklch(0.57 0.2174 25.93), oklch(0.67 0.2088 22.13));
+        @include light-dark('severity-medium', oklch(0.74 0.177 50.58), oklch(0.74 0.177 50.58));
+        @include light-dark('severity-low', oklch(0.83 0.1655 90.44), oklch(0.83 0.1655 90.44));
+        @include light-dark('severity-none', oklch(0.57 0.2579 294.89), oklch(0.66 0.2075 298));
       }
     }
   }

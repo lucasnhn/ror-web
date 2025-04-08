@@ -3,6 +3,8 @@ import { authGuard } from '@/features/auth/utils/auth-guard'
 import { CodeSnippet, DefinitionDescription, DefinitionList, DefinitionTerm, Layer, Tile } from '@ror/react'
 import { Fragment } from 'react'
 
+export const dynamic = 'force-dynamic'
+
 export default async function DebugPage() {
   const session = await authGuard()
   const decodedAuthToken = jwtDecode(session.accessToken)

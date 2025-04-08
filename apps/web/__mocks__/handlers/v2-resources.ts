@@ -1,6 +1,7 @@
 import { http, HttpResponse } from 'msw'
 import { clustersVersion2 } from '../data/clusters'
 import nodes from '../data/nodes'
+import { ingressesResponse } from '../data/ingresses'
 
 export const v2ResourcesHandlers = [
   http.get('http://localhost:10000/v2/resources', ({ request }) => {
@@ -14,6 +15,8 @@ export const v2ResourcesHandlers = [
         return HttpResponse.json(clustersVersion2)
       case 'Node':
         return HttpResponse.json(nodes)
+      case 'Ingress':
+        return HttpResponse.json(ingressesResponse)
       default:
         return HttpResponse.json(null)
     }

@@ -13,7 +13,7 @@ import {
 } from '@ror/react/src/components/table/index'
 import { SortDirection } from '@ror/react/utils/sorting'
 import { Fragment, MouseEvent } from 'react'
-import { Pagination } from '@ror/react'
+import { Pagination } from '@ror/react/src/components/pagination'
 
 const meta = {
   title: 'ui/Table',
