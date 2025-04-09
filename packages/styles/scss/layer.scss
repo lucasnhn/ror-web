@@ -31,7 +31,7 @@
     @include declaration('layer-accent-active', get-var('layer-accent-active-02'));
     @include declaration('field', get-var('field-02'));
     @include declaration('field-hover', get-var('field-hover-02'));
-    @include declaration('border-subtle', get-var('border-subtle-01'));
+    @include declaration('border-subtle', get-var('border-subtle-02'));
     @include declaration('border-subtle-selected', get-var('border-subtle-selected-02'));
     @include declaration('border-strong', get-var('border-strong-02'));
     @include declaration('border-tile', get-var('border-tile-02'));
@@ -48,7 +48,7 @@
     @include declaration('layer-accent-active', get-var('layer-accent-active-03'));
     @include declaration('field', get-var('field-03'));
     @include declaration('field-hover', get-var('field-hover-03'));
-    @include declaration('border-subtle', get-var('border-subtle-02'));
+    @include declaration('border-subtle', get-var('border-subtle-03'));
     @include declaration('border-subtle-selected', get-var('border-subtle-selected-03'));
     @include declaration('border-strong', get-var('border-strong-03'));
     @include declaration('border-tile', get-var('border-tile-03'));
