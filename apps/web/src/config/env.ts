@@ -51,6 +51,7 @@ export const env = createEnv({
    */
   client: {
     NEXT_PUBLIC_ROR_API_URL: z.string().url(),
+    NEXT_PUBLIC_MOCKING_ENABLED: z.string().default('false'),
   },
   /*
    * Due to how Next.js bundles environment variables on Edge and Client,
@@ -70,5 +71,7 @@ export const env = createEnv({
     AUTH_TRUST_HOST: process.env.AUTH_TRUST_HOST,
     // The base url to the ROR API
     NEXT_PUBLIC_ROR_API_URL: readVariable('NEXT_PUBLIC_ROR_API_URL'),
+    // Enable mocking of API responses, see __mocks__
+    NEXT_PUBLIC_MOCKING_ENABLED: readVariable('NEXT_PUBLIC_MOCKING_ENABLED'),
   },
 })
