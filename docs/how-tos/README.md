@@ -8,12 +8,12 @@
 
 ## How to GIT
 
-- [[How to - make issue]]
-- [[How to - make branch]]
-- [[How to - write commit message]]
-- [[How to - make PR]]
-- [[How to - review PR]]
+- [How to - make issue](make-issue.md)
+- [How to - make branch](make-branch.md)
+- [How to - write commit message](write-commit-message.md)
+- [How to - make PR](make-pr.md)
+- [How to - review PR](review-pr.md)
 
 ## How to repo
 
-- [[How to - clone and run ROR]]
+- [How to - clone and run ROR](clone-run.md)
