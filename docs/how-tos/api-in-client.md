@@ -1,3 +1,5 @@
+[Back to README](README.md)
+
 # How to - implement API call in js-api-client
 
 GoDoc: https://pkg.go.dev/github.com/NorskHelsenett/ror@v1.1.2/pkg/rorresources#Resource
