@@ -1,7 +1,5 @@
 # Index
 
-[Back to README](README.md)
-
 ## How to - implement component from start to end
 
 - [How to - implement API call in js-api-client](api-in-client.md)
