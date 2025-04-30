@@ -31,10 +31,29 @@ function CardContent({ className, ...props }: React.ComponentProps<'div'>) {
   return <div data-slot='card-content' className={cn('px-6', className)} {...props} />
 }
 
+export type ClusterCardDisplayData =
+  | 'argocd'
+  | 'grafana'
+  | 'rorcli'
+  | 'kubectl'
+  | 'accessGroups'
+  | 'cpu'
+  | 'memory'
+  | 'nodes'
+  | 'monthlyPrice'
+  | 'yearlyPrice'
+  | 'agentVersion'
+  | 'kubernetesVersion'
+  | 'toolingVersion'
+  | 'datacenterName'
+  | 'datacenterProvider'
+  | 'environment'
+
 interface ClusterCardProps {
   className?: string
   user?: User
   cluster: Cluster
+  displayData?: ClusterCardDisplayData[]
 }
 
 const envBgColors: Record<string, string> = {
@@ -44,7 +63,7 @@ const envBgColors: Record<string, string> = {
   test: 'bg-emerald-500',
 }
 
-const envColors: Record<string, string> = {
+const envColors: Record<string, 'red' | 'yellow' | 'blue' | 'emerald'> = {
   prod: 'red',
   qa: 'yellow',
   dev: 'blue',
@@ -72,7 +91,7 @@ const HealthCircle = ({ health }: HealthCircleProps) => (
   </div>
 )
 
-const ClusterCard = ({ className, user, cluster }: ClusterCardProps) => {
+const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps) => {
   const env = cluster.environment
   const accessGroups = cluster.acl.accessGroups
   const health = cluster.healthStatus.health
@@ -95,120 +114,162 @@ const ClusterCard = ({ className, user, cluster }: ClusterCardProps) => {
 
       <CardContent className='text-sm flex flex-col gap-3'>
         <section className='grid grid-cols-2'>
-          {tools.argo ? (
-            <a
-              href={`https://${tools.argo}`}
-              target='_blank'
-              rel='noopener noreferrer'
-              className='flex gap-2 font-bold text-blue-500'
-            >
-              <span>ArgoCD</span>
-              <ExternalLink className='w-5 h-5' />
-            </a>
-          ) : (
-            <p className='flex'>
-              <span className='font-bold'>ArgoCD &nbsp;</span>missing ...
-            </p>
-          )}
-          {tools.grafana ? (
-            <a
-              href={`https://${tools.grafana}`}
-              target='_blank'
-              rel='noopener noreferrer'
-              className='flex gap-2 font-bold text-blue-500'
-            >
-              <span>Graphana</span>
-              <ExternalLink className='w-5 h-5' />
-            </a>
-          ) : (
-            <p className='flex'>
-              <span className='font-bold'>Graphana &nbsp;</span>missing ...
-            </p>
-          )}
+          {displayData?.includes('argocd') &&
+            (tools.argo ? (
+              <a
+                href={`https://${tools.argo}`}
+                target='_blank'
+                rel='noopener noreferrer'
+                className='flex gap-2 font-bold text-blue-500'
+              >
+                <span>ArgoCD</span>
+                <ExternalLink className='w-5 h-5' />
+              </a>
+            ) : (
+              <p className='flex'>
+                <span className='font-bold'>ArgoCD &nbsp;</span>missing ...
+              </p>
+            ))}
+          {displayData?.includes('argocd') &&
+            (tools.grafana ? (
+              <a
+                href={`https://${tools.grafana}`}
+                target='_blank'
+                rel='noopener noreferrer'
+                className='flex gap-2 font-bold text-blue-500'
+              >
+                <span>Graphana</span>
+                <ExternalLink className='w-5 h-5' />
+              </a>
+            ) : (
+              <p className='flex'>
+                <span className='font-bold'>Graphana &nbsp;</span>missing ...
+              </p>
+            ))}
         </section>
 
         <section className='flex flex-col gap-1.5 [&>div]:gap-0.5'>
-          <div>
-            <p className='font-bold'>ROR CLI</p>
-            <Layer level={2}>
-              <CodeSnippet type='single'>{rorLogin}</CodeSnippet>
-            </Layer>
-          </div>
-          <div>
-            <p className='font-bold'>Kubectl</p>
-            <Layer level={2}>
-              <CodeSnippet type='single'>{kubectlLogin}</CodeSnippet>
-            </Layer>
-          </div>
+          {displayData?.includes('rorcli') && (
+            <div>
+              <p className='font-bold'>ROR CLI</p>
+              <Layer level={2}>
+                <CodeSnippet type='single'>{rorLogin}</CodeSnippet>
+              </Layer>
+            </div>
+          )}
+
+          {displayData?.includes('kubectl') && (
+            <div>
+              <p className='font-bold'>Kubectl</p>
+              <Layer level={2}>
+                <CodeSnippet type='single'>{kubectlLogin}</CodeSnippet>
+              </Layer>
+            </div>
+          )}
         </section>
 
         <section className='flex flex-col gap-1.5 [&>div]:grid [&>div]:grid-cols-2'>
-          <div>
-            <p className='font-bold'>Access groups</p>
+          {displayData?.includes('accessGroups') && (
             <div>
-              {accessGroups.length ? (
-                accessGroups.map((group, index) => <p key={index}>{group}</p>)
-              ) : (
-                <p>No access groups</p>
-              )}
+              <p className='font-bold'>Access groups</p>
+              <div>
+                {accessGroups.length ? (
+                  accessGroups.map((group, index) => <p key={index}>{group}</p>)
+                ) : (
+                  <p>No access groups</p>
+                )}
+              </div>
             </div>
-          </div>
-          <div>
-            <p className='font-bold'>CPU</p>
-            <p>
-              {metrics.cpuPercentage}% ({metrics.cpuConsumed}m of {metrics.cpu} cores)
-            </p>
-          </div>
-          <div>
-            <p className='font-bold'>Memory</p>
-            <p>
-              {metrics.memoryPercentage}% (
-              {convertBytes(metrics.memoryConsumed, { useBinaryUnits: true, includeUnit: false })} of&nbsp;
-              {convertBytes(metrics.memory, { useBinaryUnits: true })})
-            </p>
-          </div>
-          <div>
-            <p className='font-bold'>Nodes</p>
-            <p>
-              {metrics.nodeCount} ({metrics.nodePoolCount} node pool{metrics.nodePoolCount > 1 ? 's' : ''})
-            </p>
-          </div>
-          <div>
-            <p className='font-bold'>Monthly price</p>
-            <p>{metrics.priceMonth} kr</p>
-          </div>
-          <div>
-            <p className='font-bold'>Yearly price</p>
-            <p>{metrics.priceYear} kr</p>
-          </div>
-          <div>
-            <p className='font-bold'>ROR agent version</p>
-            <p>{versions.agent?.version}</p>
-          </div>
-          <div>
-            <p className='font-bold'>Kubernetes version</p>
-            <p>{versions.kubernetes}</p>
-          </div>
-          <div>
-            <p className='font-bold'>NHN tooling version</p>
-            <p>{versions.nhnTooling.version}</p>
-          </div>
-          <div>
-            <p className='font-bold'>Datacenter</p>
-            <p>{datacenter.name}</p>
-          </div>
-          <div>
-            <p className='font-bold'>Datacenter provider</p>
-            <p>{datacenter.provider}</p>
-          </div>
-          <div>
-            <p className='font-bold'>Environment</p>
-            <p>
-              <Pill variant={envColors[env]} className='px-3'>
-                {env.charAt(0).toUpperCase() + env.slice(1)}
-              </Pill>
-            </p>
-          </div>
+          )}
+
+          {displayData?.includes('cpu') && (
+            <div>
+              <p className='font-bold'>CPU</p>
+              <p>
+                {metrics.cpuPercentage}% ({metrics.cpuConsumed}m of {metrics.cpu} cores)
+              </p>
+            </div>
+          )}
+
+          {displayData?.includes('memory') && (
+            <div>
+              <p className='font-bold'>Memory</p>
+              <p>
+                {metrics.memoryPercentage}% (
+                {convertBytes(metrics.memoryConsumed, { useBinaryUnits: true, includeUnit: false })} of&nbsp;
+                {convertBytes(metrics.memory, { useBinaryUnits: true })})
+              </p>
+            </div>
+          )}
+
+          {displayData?.includes('nodes') && (
+            <div>
+              <p className='font-bold'>Nodes</p>
+              <p>
+                {metrics.nodeCount} ({metrics.nodePoolCount} node pool{metrics.nodePoolCount > 1 ? 's' : ''})
+              </p>
+            </div>
+          )}
+
+          {displayData?.includes('monthlyPrice') && (
+            <div>
+              <p className='font-bold'>Monthly price</p>
+              <p>{metrics.priceMonth} kr</p>
+            </div>
+          )}
+
+          {displayData?.includes('yearlyPrice') && (
+            <div>
+              <p className='font-bold'>Yearly price</p>
+              <p>{metrics.priceYear} kr</p>
+            </div>
+          )}
+
+          {displayData?.includes('agentVersion') && (
+            <div>
+              <p className='font-bold'>ROR agent version</p>
+              <p>{versions.agent?.version}</p>
+            </div>
+          )}
+
+          {displayData?.includes('kubernetesVersion') && (
+            <div>
+              <p className='font-bold'>Kubernetes version</p>
+              <p>{versions.kubernetes}</p>
+            </div>
+          )}
+
+          {displayData?.includes('toolingVersion') && (
+            <div>
+              <p className='font-bold'>NHN tooling version</p>
+              <p>{versions.nhnTooling.version}</p>
+            </div>
+          )}
+
+          {displayData?.includes('datacenterName') && (
+            <div>
+              <p className='font-bold'>Datacenter</p>
+              <p>{datacenter.name}</p>
+            </div>
+          )}
+
+          {displayData?.includes('datacenterProvider') && (
+            <div>
+              <p className='font-bold'>Datacenter provider</p>
+              <p>{datacenter.provider}</p>
+            </div>
+          )}
+
+          {displayData?.includes('environment') && (
+            <div>
+              <p className='font-bold'>Environment</p>
+              <p>
+                <Pill variant={envColors[env]} className='px-3'>
+                  {env.charAt(0).toUpperCase() + env.slice(1)}
+                </Pill>
+              </p>
+            </div>
+          )}
         </section>
       </CardContent>
     </Card>
