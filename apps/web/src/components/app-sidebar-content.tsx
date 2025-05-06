@@ -150,9 +150,9 @@ export function AppSidebarContent() {
             <Collapsible asChild defaultOpen={section.isActive} className='group/collapsible' key={index}>
               <SidebarMenuItem>
                 {section.items.length === 1 ? (
-                  <div className='flex flex-row items-center ml-[5px]'>
-                    <section.icon className='scale-70' />
-                    <SidebarMenuButton tooltip={section.title} className='ml-[-2px]'>
+                  <div className='flex flex-row items-center'>
+                    <SidebarMenuButton tooltip={section.title}>
+                      <section.icon />
                       {'url' in section.items[0] ? (
                         <Link href={section.items[0].url}>{section.items[0].title}</Link>
                       ) : (
