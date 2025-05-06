@@ -78,37 +78,37 @@ const sections: Section[] = [
   //     }
   //   ]
   // },
-  {
-    title: 'Administration',
-    icon: Settings2,
-    isActive: true,
-    items: [
-      {
-        title: 'Data centers',
-        url: '#',
-      },
-      {
-        title: 'Policy reports',
-        url: '#',
-      },
-      {
-        title: 'Admin price list',
-        url: '#',
-      },
-      {
-        title: 'Projects',
-        url: '#',
-      },
-      {
-        title: 'Vulnerability reports',
-        url: '#',
-      },
-      {
-        title: 'Workspaces',
-        url: '#',
-      },
-    ],
-  },
+  //   {
+  //     title: 'Administration',
+  //     icon: Settings2,
+  //     isActive: true,
+  //     items: [
+  //       {
+  //         title: 'Data centers',
+  //         url: '#',
+  //       },
+  //       {
+  //         title: 'Policy reports',
+  //         url: '#',
+  //       },
+  //       {
+  //         title: 'Admin price list',
+  //         url: '#',
+  //       },
+  //       {
+  //         title: 'Projects',
+  //         url: '#',
+  //       },
+  //       {
+  //         title: 'Vulnerability reports',
+  //         url: '#',
+  //       },
+  //       {
+  //         title: 'Workspaces',
+  //         url: '#',
+  //       },
+  //     ],
+  //   },
   {
     title: 'Help',
     icon: CircleHelp,
