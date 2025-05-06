@@ -1,21 +1,14 @@
 import type { ReactNode } from 'react'
-import { AppShellLeftPanel } from './left-panel'
-import { Navigation } from './navigation/navigation'
-import { LeftPanelToggleButton } from './left-panel-toggle'
-import { Profile } from './profile'
-import { Logo } from './logo'
-import { ThemeToggle } from './theme-toggle'
-import { getDarkModePreferenceAction } from '@/actions/dark-mode'
 
 interface AppShellProps {
   children: ReactNode
 }
 
 export async function AppShell({ children }: AppShellProps) {
-  const colorScheme = await getDarkModePreferenceAction()
+  // const colorScheme = await getDarkModePreferenceAction()
   return (
-    <div className='grid grid-cols-[max-content_auto]'>
-      <AppShellLeftPanel>
+    <div className='flex h-screen w-screen overflow-hidden'>
+      {/* <AppShellLeftPanel>
         <div className='p-2'>
           <Logo />
         </div>
@@ -29,8 +22,8 @@ export async function AppShell({ children }: AppShellProps) {
             <LeftPanelToggleButton />
           </div>
         </div>
-      </AppShellLeftPanel>
-      <div className='h-screen overflow-y-auto bg-background'>{children}</div>
+      </AppShellLeftPanel> */}
+      <div className='flex-1 overflow-y-auto'>{children}</div>
     </div>
   )
 }

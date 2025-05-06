@@ -1,3 +1,5 @@
+'use client'
+
 import { authGuard } from '@/features/auth/utils/auth-guard'
 import Image from 'next/image'
 import { Popover, PopoverContent, PopoverPortal, PopoverTrigger } from '@radix-ui/react-popover'
@@ -21,26 +23,26 @@ export async function Profile() {
     )
   }
 
-  if (session.user.name) {
-    const initials = session.user.name
-      .split(' ')
-      .map((word) => word[0])
-      .join('')
-      .toUpperCase()
+  // if (session.user.name) {
+  //   const initials = session.user.name
+  //     .split(' ')
+  //     .map((word) => word[0])
+  //     .join('')
+  //     .toUpperCase()
 
-    return (
-      <Popover>
-        <PopoverTrigger asChild>
-          <div className={s.profile}>
-            <div className={s.avatar}>
-              <span className={s.label}>{initials}</span>
-            </div>
-          </div>
-        </PopoverTrigger>
-        <ProfilePopover />
-      </Popover>
-    )
-  }
+  //   return (
+  //     <Popover>
+  //       <PopoverTrigger asChild>
+  //         <div className={s.profile}>
+  //           <div className={s.avatar}>
+  //             <span className={s.label}>{initials}</span>
+  //           </div>
+  //         </div>
+  //       </PopoverTrigger>
+  //       <ProfilePopover />
+  //     </Popover>
+  //   )
+  // }
 
   return (
     <Popover>

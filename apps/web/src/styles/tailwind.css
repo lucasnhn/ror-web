@@ -1,62 +1,66 @@
 @import '@evilmartians/harmony/tailwind.css';
 @import 'tailwindcss';
-@import "tw-animate-css";
+@import 'tw-animate-css';
+/*---break---
+ */
+@custom-variant dark (&:is(.dark *));
 
 /**
  * Configure theme variables for tailwind
  */
 @theme {
   /* Override spacing to use our spacing tokens from @ror/styles */
-  --spacing: inherit; /* for reference purposed this used to be 0.25rem/4px */
-  --spacing-1: var(--r-spacing-01); /* 2px */
-  --spacing-2: var(--r-spacing-02); /* 4px */
-  --spacing-3: var(--r-spacing-03); /* 8px */
-  --spacing-4: var(--r-spacing-04); /* 12px */
-  --spacing-5: var(--r-spacing-05); /* 16px */
-  --spacing-6: var(--r-spacing-06); /* 24px */
-  --spacing-7: var(--r-spacing-07); /* 32px */
-  --spacing-8: var(--r-spacing-08); /* 40px */
-  --spacing-9: var(--r-spacing-09); /* 48px */
-  --spacing-10: var(--r-spacing-10); /* 64px */
-  --spacing-11: var(--r-spacing-11); /* 80px */
-  --spacing-12: var(--r-spacing-12); /* 96px */
-  --spacing-13: var(--r-spacing-13); /* 128px */
-  --spacing-14: var(--r-spacing-14); /* 160px */
+  /* --spacing: inherit; /* for reference purposed this used to be 0.25rem/4px */
+  /* --spacing-1: var(--r-spacing-01); */ /* 2px */
+  /* --spacing-2: var(--r-spacing-02); */ /* 4px */
+  /* --spacing-3: var(--r-spacing-03); */ /* 8px */
+  /* --spacing-4: var(--r-spacing-04); */ /* 12px */
+  /* --spacing-5: var(--r-spacing-05); */ /* 16px */
+  /* --spacing-6: var(--r-spacing-06); */ /* 24px */
+  /* --spacing-7: var(--r-spacing-07); */ /* 32px */
+  /* --spacing-8: var(--r-spacing-08); */ /* 40px */
+  /* --spacing-9: var(--r-spacing-09); */ /* 48px */
+  /* --spacing-10: var(--r-spacing-10); */ /* 64px */
+  /* --spacing-11: var(--r-spacing-11); */ /* 80px */
+  /* --spacing-12: var(--r-spacing-12); */ /* 96px */
+  /* --spacing-13: var(--r-spacing-13); */ /* 128px */
+  /* --spacing-14: var(--r-spacing-14); */ /* 160px */
 
   /* For shadcn */
-  --background: var(--r-background); 
-  --foreground: var(--r-background-inverse); 
-  --card: var(--r-background); 
-  --card-foreground: var(--r-background-inverse); 
-  --popover: var(--r-background); 
-  --popover-foreground: var(--r-background-inverse); 
-  --primary: var(--r-background-inverse-hover); 
-  --primary-foreground: var(--r-background-primary); 
-  --secondary: var(--r-background-hover); 
-  --secondary-foreground: var(--r-background-inverse-hover); 
-  --muted: var(--r-background-hover); 
-  --muted-foreground: var(--r-text-secondary); 
-  --accent: var(--r-background-hover); 
-  --accent-foreground: var(--r-background-inverse-hover); 
+  --background: var(--r-background);
+  --foreground: var(--r-background-inverse);
+  --card: var(--r-background);
+  --card-foreground: var(--r-background-inverse);
+  --popover: var(--r-background);
+  --popover-foreground: var(--r-background-inverse);
+  --primary: var(--r-background-inverse-hover);
+  --primary-foreground: var(--r-background-primary);
+  --secondary: var(--r-background-hover);
+  --secondary-foreground: var(--r-background-inverse-hover);
+  --muted: var(--r-background-hover);
+  --muted-foreground: var(--r-text-secondary);
+  --accent: var(--r-background-hover);
+  --accent-foreground: var(--r-background-inverse-hover);
   --destructive: light-dark(var(--color-red-500), var(--color-red-600));
   --destructive-foreground: light-dark(var(--color-red-500), var(--color-red-600));
-  --border: var(--r-background-active); 
-  --input: var(--r-background-active); 
-  --ring: var(--r-border-strong-01); 
-  --chart-1: light-dark(var(--color-orange-500), var(--color-orange-600)); 
-  --chart-2: light-dark(var(--color-cyan-500), var(--color-cyan-600)); 
-  --chart-3: light-dark(var(--color-sky-500), var(--color-sky-600)); 
-  --chart-4: light-dark(var(--color-yellow-500), var(--color-yellow-600)); 
-  --chart-5: light-dark(var(--color-amber-500), var(--color-amber-600)); 
+  --border: var(--r-background-active);
+  --input: var(--r-background-active);
+  --ring: var(--r-border-strong-01);
+  --chart-1: light-dark(var(--color-orange-500), var(--color-orange-600));
+  --chart-2: light-dark(var(--color-cyan-500), var(--color-cyan-600));
+  --chart-3: light-dark(var(--color-sky-500), var(--color-sky-600));
+  --chart-4: light-dark(var(--color-yellow-500), var(--color-yellow-600));
+  --chart-5: light-dark(var(--color-amber-500), var(--color-amber-600));
   --radius: 0.625rem;
-  --sidebar: var(--r-background-primary); 
-  --sidebar-foreground: var(--r-background-inverse); 
-  --sidebar-primary: var(--r-background-inverse-hover); 
-  --sidebar-primary-foreground: var(--r-background-primary); 
-  --sidebar-accent: var(--r-background-hover); 
-  --sidebar-accent-foreground: var(--r-background-inverse-hover); 
-  --sidebar-border: var(--r-background-active); 
-  --sidebar-ring: var(--r-border-strong-01); 
+  --sidebar: var(--r-background);
+  --sidebar-foreground: var(--r-background-inverse);
+  --sidebar-primary: var(--r-background-inverse-hover);
+  --sidebar-primary-foreground: var(--r-background-primary);
+  --sidebar-accent: var(--r-background-hover);
+  --sidebar-accent-foreground: var(--r-background-inverse-hover);
+  --sidebar-border: var(--r-background-active);
+  --sidebar-ring: var(--r-border-strong-01);
+  --sidebar-background: 0 0% 98%;
 }
 
 /**
@@ -178,8 +182,8 @@
 
 /* For shadcn */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: var(--color-red-400);
+  --color-foreground: var(--color-blue-400);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
   --color-popover: var(--popover);
@@ -203,12 +207,47 @@
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
   --radius: var(--radius);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar: var(--background);
+  --color-sidebar-foreground: var(--background-inverse);
+  --color-sidebar-primary: var(--background-inverse-hover);
+  --color-sidebar-primary-foreground: var(--background-primary);
+  --color-sidebar-accent: var(--background-hover);
+  --color-sidebar-accent-foreground: var(--background-inverse-hover);
+  --color-sidebar-border: var(--background-active);
+  --color-sidebar-ring: 0 0% 98%;
+}
+
+/*---break---
+ */
+:root {
+  --sidebar: hsl(0 0% 98%);
+  --sidebar-foreground: hsl(240 5.3% 26.1%);
+  --sidebar-primary: hsl(240 5.9% 10%);
+  --sidebar-primary-foreground: hsl(0 0% 98%);
+  --sidebar-accent: hsl(240 4.8% 95.9%);
+  --sidebar-accent-foreground: hsl(240 5.9% 10%);
+  --sidebar-border: hsl(220 13% 91%);
+  --sidebar-ring: hsl(217.2 91.2% 59.8%);
+}
+/*---break---
+ */
+.dark {
+  --sidebar: hsl(240 5.9% 10%);
+  --sidebar-foreground: hsl(240 4.8% 95.9%);
+  --sidebar-primary: hsl(224.3 76.3% 48%);
+  --sidebar-primary-foreground: hsl(0 0% 100%);
+  --sidebar-accent: hsl(240 3.7% 15.9%);
+  --sidebar-accent-foreground: hsl(240 4.8% 95.9%);
+  --sidebar-border: hsl(240 3.7% 15.9%);
+  --sidebar-ring: hsl(217.2 91.2% 59.8%);
+}
+/*---break---
+ */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }

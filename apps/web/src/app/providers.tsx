@@ -1,19 +1,31 @@
 import { ReactNode } from 'react'
-import { AppShellContextProvider } from '@/components/layout/app-shell/app-shell-provider'
-import { TooltipProvider } from '@ror/react/components/tooltip'
 import { MSWProvider } from './mock-provider'
+import { SidebarProvider, SidebarTrigger } from '@/components/shadcn/sidebar'
+import { AppSidebar } from '@/components/app-sidebar'
+import { getDarkModePreferenceAction } from '@/actions/dark-mode'
+import { ColorSchemeProvider } from '@/context/color-theme-context'
+import { cookies } from 'next/headers'
 
 interface ProvidersProps {
   children: ReactNode
-  defaultSidebarOpen: boolean
 }
 
-export function Providers({ children, defaultSidebarOpen }: ProvidersProps) {
+export async function Providers({ children }: ProvidersProps) {
+  const colorScheme = await getDarkModePreferenceAction()
+  console.log('colorScheme', colorScheme)
+  const cookieStore = await cookies()
+  const defaultOpen = cookieStore.get('sidebar_state')?.value === 'true'
+
   return (
     <MSWProvider>
-      <AppShellContextProvider defaultSidebarOpen={defaultSidebarOpen}>
-        <TooltipProvider>{children}</TooltipProvider>
-      </AppShellContextProvider>
+      <ColorSchemeProvider>
+        <SidebarProvider defaultOpen={defaultOpen}>
+          {/* <SidebarProvider> */}
+          {colorScheme ? <AppSidebar colorScheme={colorScheme} /> : null}
+          {/* <AppSidebar /> */}
+          <main>{children}</main>
+        </SidebarProvider>
+      </ColorSchemeProvider>
     </MSWProvider>
   )
 }
