@@ -1,5 +1,5 @@
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@radix-ui/react-collapsible'
-import { Boxes, ChevronRight, CircleHelp, CornerUpLeft, Settings2 } from 'lucide-react'
+import { Boxes, ChevronRight, CircleHelp, CornerUpLeft } from 'lucide-react'
 import Link from 'next/link'
 import {
   SidebarContent,
