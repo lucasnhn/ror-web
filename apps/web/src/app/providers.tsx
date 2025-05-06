@@ -12,7 +12,6 @@ interface ProvidersProps {
 
 export async function Providers({ children }: ProvidersProps) {
   const colorScheme = await getDarkModePreferenceAction()
-  console.log('colorScheme', colorScheme)
   const cookieStore = await cookies()
   const defaultOpen = cookieStore.get('sidebar_state')?.value === 'true'
 
