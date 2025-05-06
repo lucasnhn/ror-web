@@ -1,7 +1,11 @@
 import { authGuard } from '@/features/auth/utils/auth-guard'
-import { ProfileClient } from './profile-client'
+import { ProfileClientWrapper } from './profile-client-wrapper'
 
-export async function ProfileServer() {
+interface Props {
+  className?: string
+}
+
+export async function ProfileServer({ className }: Props) {
   const session = await authGuard()
-  return <ProfileClient user={session?.user ?? undefined} />
+  return <ProfileClientWrapper user={session?.user} className={className} />
 }
