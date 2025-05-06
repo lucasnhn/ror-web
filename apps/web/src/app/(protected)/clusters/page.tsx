@@ -8,6 +8,7 @@ import { ClusterCards } from './cluster-cards'
 import { ClusterPageViewSwitch } from './view-switch'
 import { Breadcrumb, BreadcrumbItem } from '@ror/react'
 import Link from 'next/link'
+import { ClusterCard, ClusterCardDisplayData } from '@/components/ui/cluster/cluster-card'
 
 export const metadata: Metadata = {
   title: 'ROR (Beta) - Clusters',
@@ -65,6 +66,26 @@ export default async function ClustersPage({ searchParams }: ClusterPageProps) {
 
   const pageCount = Math.ceil(clustersResponse.totalCount / limit)
 
+  const displayData: ClusterCardDisplayData[] = [
+    'argocd',
+    'grafana',
+    'rorcli',
+    'rorcli',
+    'kubectl',
+    'accessGroups',
+    'cpu',
+    'memory',
+    'nodes',
+    'monthlyPrice',
+    'yearlyPrice',
+    'agentVersion',
+    'kubernetesVersion',
+    'toolingVersion',
+    'datacenterName',
+    'datacenterProvider',
+    'environment',
+  ]
+
   return (
     <Fragment>
       <header className='px-6 pt-6 mb-8'>
@@ -90,7 +111,11 @@ export default async function ClustersPage({ searchParams }: ClusterPageProps) {
             pageCount={pageCount}
           />
         ) : (
-          <ClusterCards key='grid' data={clusters} />
+          <div className='flex flex-wrap gap-6'>
+            {clusters.map((cluster) => (
+              <ClusterCard cluster={cluster} key={cluster.clusterId} displayData={displayData} />
+            ))}
+          </div>
         )}
       </section>
 
