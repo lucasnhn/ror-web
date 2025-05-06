@@ -1,10 +1,10 @@
 'use client'
 
+import { type User } from '@auth/core/types'
 import { Popover, PopoverContent, PopoverPortal, PopoverTrigger } from '@radix-ui/react-popover'
+import { User as UserIcon } from 'lucide-react'
 import Link from 'next/link'
 import s from './profile.module.scss'
-import { type User } from '@auth/core/types'
-import { User as UserIcon } from 'lucide-react'
 
 interface ProfileClientProps {
   user?: Partial<User>
@@ -13,6 +13,7 @@ interface ProfileClientProps {
 
 export function ProfileClient({ user, className }: ProfileClientProps) {
   if (!user) return null
+
   return (
     <div className={`${className}`}>
       <Popover>
@@ -23,6 +24,7 @@ export function ProfileClient({ user, className }: ProfileClientProps) {
             </div>
           </div>
         </PopoverTrigger>
+
         <PopoverPortal>
           <PopoverContent collisionPadding={8} sideOffset={4}>
             <div className={s.popover}>

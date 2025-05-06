@@ -1,10 +1,10 @@
-import { ReactNode } from 'react'
-import { MSWProvider } from './mock-provider'
-import { SidebarProvider, SidebarTrigger } from '@/components/shadcn/sidebar'
-import { AppSidebar } from '@/components/app-sidebar'
 import { getDarkModePreferenceAction } from '@/actions/dark-mode'
+import { AppSidebar } from '@/components/app-sidebar'
+import { SidebarProvider } from '@/components/shadcn/sidebar'
 import { ColorSchemeProvider } from '@/context/color-theme-context'
 import { cookies } from 'next/headers'
+import { ReactNode } from 'react'
+import { MSWProvider } from './mock-provider'
 
 interface ProvidersProps {
   children: ReactNode

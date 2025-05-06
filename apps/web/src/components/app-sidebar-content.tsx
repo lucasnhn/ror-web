@@ -1,15 +1,15 @@
-import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@radix-ui/react-collapsible'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@radix-ui/react-collapsible'
 import { Boxes, ChevronRight, CircleHelp, CornerUpLeft, Settings2 } from 'lucide-react'
+import Link from 'next/link'
 import {
   SidebarContent,
   SidebarGroup,
   SidebarMenu,
-  SidebarMenuItem,
   SidebarMenuButton,
+  SidebarMenuItem,
   SidebarMenuSub,
   SidebarMenuSubItem,
 } from './shadcn/sidebar'
-import Link from 'next/link'
 
 type SidebarItem = { title: string } | { title: string; url: string }
 
@@ -78,37 +78,37 @@ const sections: Section[] = [
   //     }
   //   ]
   // },
-  //   {
+  // {
   //     title: 'Administration',
   //     icon: Settings2,
   //     isActive: true,
   //     items: [
-  //       {
-  //         title: 'Data centers',
-  //         url: '#',
-  //       },
-  //       {
-  //         title: 'Policy reports',
-  //         url: '#',
-  //       },
-  //       {
-  //         title: 'Admin price list',
-  //         url: '#',
-  //       },
-  //       {
-  //         title: 'Projects',
-  //         url: '#',
-  //       },
-  //       {
-  //         title: 'Vulnerability reports',
-  //         url: '#',
-  //       },
-  //       {
-  //         title: 'Workspaces',
-  //         url: '#',
-  //       },
+  //         {
+  //             title: 'Data centers',
+  //             url: '#',
+  //         },
+  //         {
+  //             title: 'Policy reports',
+  //             url: '#',
+  //         },
+  //         {
+  //             title: 'Admin price list',
+  //             url: '#',
+  //         },
+  //         {
+  //             title: 'Projects',
+  //             url: '#',
+  //         },
+  //         {
+  //             title: 'Vulnerability reports',
+  //             url: '#',
+  //         },
+  //         {
+  //             title: 'Workspaces',
+  //             url: '#',
+  //         },
   //     ],
-  //   },
+  // },
   {
     title: 'Help',
     icon: CircleHelp,
@@ -149,25 +149,40 @@ export function AppSidebarContent() {
           {sections.map((section, index) => (
             <Collapsible asChild defaultOpen={section.isActive} className='group/collapsible' key={index}>
               <SidebarMenuItem>
-                <CollapsibleTrigger asChild>
-                  <SidebarMenuButton tooltip={section.title}>
-                    <section.icon />
-                    <span>{section.title}</span>
-                    <ChevronRight className='ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90' />
-                  </SidebarMenuButton>
-                </CollapsibleTrigger>
+                {section.items.length === 1 ? (
+                  <div className='flex flex-row items-center ml-[5px]'>
+                    <section.icon className='scale-70' />
+                    <SidebarMenuButton tooltip={section.title} className='ml-[-2px]'>
+                      {'url' in section.items[0] ? (
+                        <Link href={section.items[0].url}>{section.items[0].title}</Link>
+                      ) : (
+                        <span>{section.items[0].title}</span>
+                      )}
+                    </SidebarMenuButton>
+                  </div>
+                ) : (
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton tooltip={section.title}>
+                      <section.icon />
+                      <span>{section.title}</span>
+                      <ChevronRight className='ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90' />
+                    </SidebarMenuButton>
+                  </CollapsibleTrigger>
+                )}
 
-                <CollapsibleContent className='overflow-hidden transition-all ease-in-out data-[state=closed]:animate-collapse-up data-[state=open]:animate-collapse-down'>
-                  <SidebarMenuSub>
-                    {section.items.map((item, index) => (
-                      <SidebarMenuSubItem key={index}>
-                        <SidebarMenuButton asChild>
-                          {'url' in item ? <Link href={item.url}>{item.title}</Link> : <span>{item.title}</span>}
-                        </SidebarMenuButton>
-                      </SidebarMenuSubItem>
-                    ))}
-                  </SidebarMenuSub>
-                </CollapsibleContent>
+                {section.items.length !== 1 && (
+                  <CollapsibleContent className='overflow-hidden transition-all ease-in-out data-[state=closed]:animate-collapse-up data-[state=open]:animate-collapse-down'>
+                    <SidebarMenuSub>
+                      {section.items.map((item, index) => (
+                        <SidebarMenuSubItem key={index}>
+                          <SidebarMenuButton asChild>
+                            {'url' in item ? <Link href={item.url}>{item.title}</Link> : <span>{item.title}</span>}
+                          </SidebarMenuButton>
+                        </SidebarMenuSubItem>
+                      ))}
+                    </SidebarMenuSub>
+                  </CollapsibleContent>
+                )}
               </SidebarMenuItem>
             </Collapsible>
           ))}

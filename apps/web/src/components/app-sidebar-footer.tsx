@@ -1,8 +1,8 @@
+import { ColorScheme } from '@/utils/dark-mode'
 import { Layer } from '@ror/react'
+import { ProfileServer } from './layout/app-shell/profile-server'
 import { ThemeToggle } from './layout/app-shell/theme-toggle'
 import { SidebarFooter, SidebarTrigger } from './shadcn/sidebar'
-import { ColorScheme } from '@/utils/dark-mode'
-import { ProfileServer } from './layout/app-shell/profile-server'
 
 interface AppSidebarFooterProps {
   colorScheme: ColorScheme

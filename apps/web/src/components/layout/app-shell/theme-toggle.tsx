@@ -1,12 +1,12 @@
 'use client'
 
-import { useEffect } from 'react'
-import { Popover, PopoverContent, PopoverPortal, PopoverTrigger } from '@radix-ui/react-popover'
-import { Moon, Sun, SunMoon } from 'lucide-react'
-import s from './theme-toggle.module.scss'
-import { ColorScheme, Labels } from '@/utils/dark-mode'
 import { useColorScheme, useSetColorScheme } from '@/context/color-theme-context'
+import { ColorScheme, Labels } from '@/utils/dark-mode'
+import { Popover, PopoverContent, PopoverPortal, PopoverTrigger } from '@radix-ui/react-popover'
 import { Layer } from '@ror/react'
+import { Moon, Sun, SunMoon } from 'lucide-react'
+import { useEffect } from 'react'
+import s from './theme-toggle.module.scss'
 
 interface ThemeToggleProps {
   colorScheme: ColorScheme
@@ -14,21 +14,6 @@ interface ThemeToggleProps {
 
 export function ThemeToggle({ colorScheme }: ThemeToggleProps) {
   // Setup listeners for changes in the user's color scheme preference
-  // useEffect(() => {
-  //   function handleOnMatchMediaChange({ matches: isDark }: MediaQueryListEvent) {
-  //     const value = isDark ? ColorScheme.Dark : ColorScheme.Light
-  //     if (colorScheme === ColorScheme.System) {
-  //       window.document.documentElement.setAttribute('data-color-scheme', value)
-  //     }
-  //   }
-
-  //   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', handleOnMatchMediaChange)
-
-  //   return () => {
-  //     window.matchMedia('(prefers-color-scheme: dark)').removeEventListener('change', handleOnMatchMediaChange)
-  //   }
-  // }, [colorScheme])
-
   useEffect(() => {
     const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches
     const resolved = colorScheme === ColorScheme.System ? (isDark ? 'dark' : 'light') : colorScheme

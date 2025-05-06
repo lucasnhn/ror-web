@@ -1,5 +1,5 @@
-import { SidebarHeader } from './shadcn/sidebar'
 import Image from 'next/image'
+import { SidebarHeader } from './shadcn/sidebar'
 
 export function AppSidebarHeader() {
   return (

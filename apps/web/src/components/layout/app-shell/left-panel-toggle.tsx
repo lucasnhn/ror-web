@@ -1,7 +1,7 @@
 'use client'
 
-import { useAppShellContext } from './use-app-shell'
 import { saveLeftPanelPreferenceAction } from '@/actions/left-panel'
+import { useAppShellContext } from './use-app-shell'
 
 export function LeftPanelToggleButton() {
   const { leftPanelExpanded, onToggleLeftPanel } = useAppShellContext()
@@ -11,10 +11,7 @@ export function LeftPanelToggleButton() {
     saveLeftPanelPreferenceAction(!leftPanelExpanded)
   }
 
-  // const tooltipText = leftPanelExpanded ? 'Hide Sidebar' : 'Show Sidebar'
-
   return (
-    // <Tooltip content={tooltipText}>
     <button
       className='w-7 h-7 shrink-0 cursor-pointer hover:bg-background-hover flex items-center justify-center justify-self-end rounded-sm border border-subtle'
       onClick={handleOnClick}
@@ -35,7 +32,5 @@ export function LeftPanelToggleButton() {
         <path d='M9 3v18'></path>
       </svg>
     </button>
-
-    // </Tooltip>
   )
 }
