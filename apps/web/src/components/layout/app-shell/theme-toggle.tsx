@@ -1,11 +1,12 @@
 'use client'
 
-import { useEffect } from 'react'
-import { Popover, PopoverContent, PopoverPortal, PopoverTrigger } from '@radix-ui/react-popover'
-import { Moon, Sun, SunMoon } from 'lucide-react'
-import s from './theme-toggle.module.scss'
+import { useColorScheme, useSetColorScheme } from '@/context/color-theme-context'
 import { ColorScheme, Labels } from '@/utils/dark-mode'
-import { saveDarkModePreferenceAction } from '@/actions/dark-mode'
+import { Popover, PopoverContent, PopoverPortal, PopoverTrigger } from '@radix-ui/react-popover'
+import { Layer } from '@ror/react'
+import { Moon, Sun, SunMoon } from 'lucide-react'
+import { useEffect } from 'react'
+import s from './theme-toggle.module.scss'
 
 interface ThemeToggleProps {
   colorScheme: ColorScheme
@@ -14,51 +15,39 @@ interface ThemeToggleProps {
 export function ThemeToggle({ colorScheme }: ThemeToggleProps) {
   // Setup listeners for changes in the user's color scheme preference
   useEffect(() => {
-    function handleOnMatchMediaChange({ matches: isDark }: MediaQueryListEvent) {
-      const value = isDark ? ColorScheme.Dark : ColorScheme.Light
+    const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const resolved = colorScheme === ColorScheme.System ? (isDark ? 'dark' : 'light') : colorScheme
+
+    document.documentElement.classList.toggle('dark', resolved === 'dark')
+
+    const handleOnMatchMediaChange = ({ matches: isDark }: MediaQueryListEvent) => {
       if (colorScheme === ColorScheme.System) {
-        window.document.documentElement.setAttribute('data-color-scheme', value)
+        document.documentElement.classList.toggle('dark', isDark)
       }
     }
 
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', handleOnMatchMediaChange)
-
-    return () => {
-      window.matchMedia('(prefers-color-scheme: dark)').removeEventListener('change', handleOnMatchMediaChange)
-    }
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+    mediaQuery.addEventListener('change', handleOnMatchMediaChange)
+    return () => mediaQuery.removeEventListener('change', handleOnMatchMediaChange)
   }, [colorScheme])
 
-  const handleOnSetColorScheme = (theme: ColorScheme) => {
-    saveDarkModePreferenceAction(theme)
-  }
+  const current = useColorScheme()
+  const setScheme = useSetColorScheme()
 
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <ThemeToggleTrigger theme={colorScheme} />
+        <ThemeToggleTrigger theme={current} />
       </PopoverTrigger>
       <PopoverPortal>
         <PopoverContent collisionPadding={8} sideOffset={4}>
-          <div className={s.popover} role='group'>
-            <span className={s.title}>Appearance</span>
-            <div className={s.options}>
-              <ThemeOption
-                theme={ColorScheme.Light}
-                isActive={colorScheme === ColorScheme.Light}
-                onClick={handleOnSetColorScheme}
-              />
-              <ThemeOption
-                theme={ColorScheme.Dark}
-                isActive={colorScheme === ColorScheme.Dark}
-                onClick={handleOnSetColorScheme}
-              />
-              <ThemeOption
-                theme={ColorScheme.System}
-                isActive={colorScheme === ColorScheme.System}
-                onClick={handleOnSetColorScheme}
-              />
+          <Layer level={0}>
+            <div className='bg-[var(--r-layer)] p-4 rounded-md flex flex-wrap gap-3' role='group'>
+              <ThemeOption theme={ColorScheme.Light} isActive={current === 'light'} onClick={setScheme} />
+              <ThemeOption theme={ColorScheme.Dark} isActive={current === 'dark'} onClick={setScheme} />
+              <ThemeOption theme={ColorScheme.System} isActive={current === 'system'} onClick={setScheme} />
             </div>
-          </div>
+          </Layer>
         </PopoverContent>
       </PopoverPortal>
     </Popover>
@@ -109,7 +98,7 @@ function ThemeOption({
   const label = Labels.get(theme)
 
   return (
-    <div className={s.option} role='option' data-value={theme} aria-selected={isActive} onClick={handleOnClick}>
+    <div className={`${s.option}`} role='option' data-value={theme} aria-selected={isActive} onClick={handleOnClick}>
       <figure className='rounded-md'>
         <ThemePreview theme={theme} />
       </figure>
