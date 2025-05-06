@@ -11,7 +11,7 @@ interface ProfileClientProps {
   className?: string
 }
 
-function ProfileClient({ user, className }: ProfileClientProps) {
+export function ProfileClient({ user, className }: ProfileClientProps) {
   if (!user) return null
   return (
     <div className={`${className}`}>
@@ -41,5 +41,3 @@ function ProfileClient({ user, className }: ProfileClientProps) {
     </div>
   )
 }
-
-export default ProfileClient

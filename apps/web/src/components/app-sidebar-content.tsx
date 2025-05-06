@@ -1,5 +1,5 @@
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@radix-ui/react-collapsible'
-import { Boxes, ChevronRight, CircleHelp, CornerUpLeft } from 'lucide-react'
+import { Boxes, ChevronRight, CircleHelp, CornerUpLeft, Settings2 } from 'lucide-react'
 import {
   SidebarContent,
   SidebarGroup,
@@ -78,37 +78,37 @@ const sections: Section[] = [
   //     }
   //   ]
   // },
-  // {
-  //   title: "Administration",
-  //   icon: Settings2,
-  //   isActive: true,
-  //   items: [
-  //     {
-  //       title: "Data centers",
-  //       url: "#",
-  //     },
-  //     {
-  //       title: "Policy reports",
-  //       url: "#",
-  //     },
-  //     {
-  //       title: "Admin price list",
-  //       url: "#",
-  //     },
-  //     {
-  //       title: "Projects",
-  //       url: "#",
-  //     },
-  //     {
-  //       title: "Vulnerability reports",
-  //       url: "#",
-  //     },
-  //     {
-  //       title: "Workspaces",
-  //       url: "#",
-  //     },
-  //   ]
-  // },
+  {
+    title: 'Administration',
+    icon: Settings2,
+    isActive: true,
+    items: [
+      {
+        title: 'Data centers',
+        url: '#',
+      },
+      {
+        title: 'Policy reports',
+        url: '#',
+      },
+      {
+        title: 'Admin price list',
+        url: '#',
+      },
+      {
+        title: 'Projects',
+        url: '#',
+      },
+      {
+        title: 'Vulnerability reports',
+        url: '#',
+      },
+      {
+        title: 'Workspaces',
+        url: '#',
+      },
+    ],
+  },
   {
     title: 'Help',
     icon: CircleHelp,
@@ -157,7 +157,7 @@ export function AppSidebarContent() {
                   </SidebarMenuButton>
                 </CollapsibleTrigger>
 
-                <CollapsibleContent>
+                <CollapsibleContent className='overflow-hidden transition-all ease-in-out data-[state=closed]:animate-collapse-up data-[state=open]:animate-collapse-down'>
                   <SidebarMenuSub>
                     {section.items.map((item, index) => (
                       <SidebarMenuSubItem key={index}>
