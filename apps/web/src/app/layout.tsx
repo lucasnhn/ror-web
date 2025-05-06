@@ -3,7 +3,6 @@ import type { Metadata } from 'next'
 import { Inter, Ubuntu_Mono } from 'next/font/google'
 import { clsx } from 'clsx'
 import { PublicEnvScript } from 'next-runtime-env'
-import { getLeftPanelPreferenceAction } from '@/actions/left-panel'
 import { getDarkModePreferenceAction } from '@/actions/dark-mode'
 import { onUnhandledRequest } from '@/__mocks__/utils/on-unhandled-request'
 import '@/styles/tailwind.css'
@@ -46,9 +45,6 @@ export default async function RootLayout({ children }: Readonly<RootLayoutProps>
   // Retrieve the user's preferred color scheme
   // otherwise it defaults to "system"
   const theme = await getDarkModePreferenceAction()
-
-  // Get the user's preferred sidebar open state
-  const defaultSidebarOpen = await getLeftPanelPreferenceAction()
 
   const classes = clsx(inter.variable, ubuntuMono.variable)
 
