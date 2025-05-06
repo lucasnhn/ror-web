@@ -58,7 +58,7 @@ export default async function RootLayout({ children }: Readonly<RootLayoutProps>
         <PublicEnvScript />
       </head>
       <body>
-        <Providers defaultSidebarOpen={defaultSidebarOpen}>{children}</Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
   )

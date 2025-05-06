@@ -20,9 +20,7 @@ export async function Providers({ children }: ProvidersProps) {
     <MSWProvider>
       <ColorSchemeProvider>
         <SidebarProvider defaultOpen={defaultOpen}>
-          {/* <SidebarProvider> */}
           {colorScheme ? <AppSidebar colorScheme={colorScheme} /> : null}
-          {/* <AppSidebar /> */}
           <main>{children}</main>
         </SidebarProvider>
       </ColorSchemeProvider>
