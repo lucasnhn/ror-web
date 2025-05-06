@@ -25,15 +25,12 @@ function BreadcrumbItem({ className, ...props }: React.ComponentProps<'li'>) {
   return <li data-slot='breadcrumb-item' className={cn('inline-flex items-center gap-1.5', className)} {...props} />
 }
 
-function BreadcrumbLink({
-  asChild,
-  className,
-  ...props
-}: React.ComponentProps<'a'> & {
+type BreadcrumbLinkProps = React.ComponentPropsWithoutRef<'a'> & {
   asChild?: boolean
-}) {
-  const Comp = asChild ? Slot : 'a'
+}
 
+function BreadcrumbLink({ asChild, className, ...props }: BreadcrumbLinkProps) {
+  const Comp = asChild ? Slot : 'a'
   return (
     <Comp data-slot='breadcrumb-link' className={cn('hover:text-foreground transition-colors', className)} {...props} />
   )
