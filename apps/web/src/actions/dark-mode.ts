@@ -1,8 +1,8 @@
 'use server'
 
-import { ColorScheme, COLOR_SCHEME_COOKIE_KEY, validateColorScheme } from '@/utils/dark-mode'
-import { deleteSavedPreference, getSavedPreference, setSavedPreference } from '@/utils/cookies'
 import { authGuard } from '@/features/auth/utils/auth-guard'
+import { deleteSavedPreference, getSavedPreference, setSavedPreference } from '@/utils/cookies'
+import { COLOR_SCHEME_COOKIE_KEY, ColorScheme, validateColorScheme } from '@/utils/dark-mode'
 
 export async function saveDarkModePreferenceAction(value: ColorScheme) {
   await authGuard()

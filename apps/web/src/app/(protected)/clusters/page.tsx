@@ -1,13 +1,13 @@
 import type { Metadata } from 'next'
-import { Breadcrumb, BreadcrumbItem } from '@ror/react/components/breadcrumb'
 import { CodeSnippet } from '@ror/react/components/code-snippet'
 import { rorApiClient } from '@/services/ror-api'
 import { authGuard } from '@/features/auth/utils/auth-guard'
 import { ClustersTable } from './cluster-table'
 import { Fragment } from 'react'
 import { ClusterCards } from './cluster-cards'
-import Link from 'next/link'
 import { ClusterPageViewSwitch } from './view-switch'
+import { Breadcrumb, BreadcrumbItem } from '@ror/react'
+import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'ROR (Beta) - Clusters',

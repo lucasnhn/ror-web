@@ -20,11 +20,11 @@
     "prepare": "husky"
   },
   "devDependencies": {
-    "@turbo/gen": "2.5.0",
+    "@turbo/gen": "2.5.2",
     "husky": "9.1.7",
     "prettier": "3.5.3",
     "prettier-plugin-packagejson": "2.5.10",
-    "turbo": "^2.5.0"
+    "turbo": "2.5.2"
   },
   "msw": {
     "workerDirectory": [
@@ -33,5 +33,9 @@
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,md,html,css,scss,json}": " prettier --write --ignore-unknown"
+  },
+  "dependencies": {
+    "@radix-ui/react-dialog": "1.1.11",
+    "@radix-ui/react-separator": "1.1.4"
   }
 }
