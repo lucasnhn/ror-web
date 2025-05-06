@@ -19,7 +19,7 @@ export function ProfileClient({ user, className }: ProfileClientProps) {
         <PopoverTrigger asChild>
           <div className={s.profile}>
             <div className={s.avatar}>
-              <UserIcon className='text-neutral-800 size-5' />
+              <UserIcon className='text-neutral-800 dark:text-neutral-200 size-5' />
             </div>
           </div>
         </PopoverTrigger>
