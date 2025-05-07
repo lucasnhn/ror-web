@@ -70,7 +70,6 @@ export default async function ClustersPage({ searchParams }: ClusterPageProps) {
     'argocd',
     'grafana',
     'rorcli',
-    'rorcli',
     'kubectl',
     'accessGroups',
     'cpu',
