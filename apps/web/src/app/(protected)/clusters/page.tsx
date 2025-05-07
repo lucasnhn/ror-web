@@ -1,13 +1,13 @@
-import type { Metadata } from 'next'
-import { CodeSnippet } from '@ror/react/components/code-snippet'
-import { rorApiClient } from '@/services/ror-api'
+import { ClusterCard, ClusterCardDisplayData } from '@/components/ui/cluster/cluster-card'
 import { authGuard } from '@/features/auth/utils/auth-guard'
-import { ClustersTable } from './cluster-table'
-import { Fragment } from 'react'
-import { ClusterCards } from './cluster-cards'
-import { ClusterPageViewSwitch } from './view-switch'
+import { rorApiClient } from '@/services/ror-api'
 import { Breadcrumb, BreadcrumbItem } from '@ror/react'
+import { CodeSnippet } from '@ror/react/components/code-snippet'
+import type { Metadata } from 'next'
 import Link from 'next/link'
+import { Fragment } from 'react'
+import { ClustersTable } from './cluster-table'
+import { ClusterPageViewSwitch } from './view-switch'
 
 export const metadata: Metadata = {
   title: 'ROR (Beta) - Clusters',
@@ -65,6 +65,25 @@ export default async function ClustersPage({ searchParams }: ClusterPageProps) {
 
   const pageCount = Math.ceil(clustersResponse.totalCount / limit)
 
+  const displayData: ClusterCardDisplayData[] = [
+    'argocd',
+    'grafana',
+    'rorcli',
+    'kubectl',
+    'accessGroups',
+    'cpu',
+    'memory',
+    'nodes',
+    'monthlyPrice',
+    'yearlyPrice',
+    'agentVersion',
+    'kubernetesVersion',
+    'toolingVersion',
+    'datacenterName',
+    'datacenterProvider',
+    'environment',
+  ]
+
   return (
     <Fragment>
       <header className='px-6 pt-6 mb-8'>
@@ -90,7 +109,11 @@ export default async function ClustersPage({ searchParams }: ClusterPageProps) {
             pageCount={pageCount}
           />
         ) : (
-          <ClusterCards key='grid' data={clusters} />
+          <div className='flex flex-wrap gap-6'>
+            {clusters.map((cluster) => (
+              <ClusterCard cluster={cluster} key={cluster.clusterId} displayData={displayData} />
+            ))}
+          </div>
         )}
       </section>
 

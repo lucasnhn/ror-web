@@ -23,6 +23,8 @@ export function convertBytes(
     useBinaryUnits?: boolean
     // Number of decimal places to round the result to. Defaults to 2.
     roundingPrecision?: number
+    // Include the unit in the output string. Defaults to true.
+    includeUnit?: boolean
     // Localize byte units to a specific language with optional plural forms. Defaults to English, which only requires "one" and "other".
     localizeOptions?:
       | { language: 'en'; plurals?: Partial<Pick<Plurals, 'one' | 'other'>> }
@@ -32,7 +34,12 @@ export function convertBytes(
       | { language: string; plurals?: Partial<Plurals> }
   } = {}
 ) {
-  const { useBinaryUnits = false, roundingPrecision = 2, localizeOptions = { language: 'en' } } = options
+  const {
+    useBinaryUnits = false,
+    roundingPrecision = 2,
+    includeUnit = true,
+    localizeOptions = { language: 'en' },
+  } = options
 
   // Ensure rounding precision is valid (non-negative).
   if (roundingPrecision < 0) throw new Error(`Invalid decimal precision: ${roundingPrecision}`)
@@ -58,5 +65,5 @@ export function convertBytes(
   // Select the appropriate unit for the result (e.g., "KiB" or "KB").
   const unit = exponent === 0 ? pluralizedUnit : units[exponent]
 
-  return `${value} ${unit}`
+  return includeUnit ? `${value} ${unit}` : value
 }
