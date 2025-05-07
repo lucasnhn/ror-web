@@ -1,14 +1,13 @@
-import type { Metadata } from 'next'
-import { CodeSnippet } from '@ror/react/components/code-snippet'
-import { rorApiClient } from '@/services/ror-api'
-import { authGuard } from '@/features/auth/utils/auth-guard'
-import { ClustersTable } from './cluster-table'
-import { Fragment } from 'react'
-import { ClusterCards } from './cluster-cards'
-import { ClusterPageViewSwitch } from './view-switch'
-import { Breadcrumb, BreadcrumbItem } from '@ror/react'
-import Link from 'next/link'
 import { ClusterCard, ClusterCardDisplayData } from '@/components/ui/cluster/cluster-card'
+import { authGuard } from '@/features/auth/utils/auth-guard'
+import { rorApiClient } from '@/services/ror-api'
+import { Breadcrumb, BreadcrumbItem } from '@ror/react'
+import { CodeSnippet } from '@ror/react/components/code-snippet'
+import type { Metadata } from 'next'
+import Link from 'next/link'
+import { Fragment } from 'react'
+import { ClustersTable } from './cluster-table'
+import { ClusterPageViewSwitch } from './view-switch'
 
 export const metadata: Metadata = {
   title: 'ROR (Beta) - Clusters',
@@ -69,7 +68,6 @@ export default async function ClustersPage({ searchParams }: ClusterPageProps) {
   const displayData: ClusterCardDisplayData[] = [
     'argocd',
     'grafana',
-    'rorcli',
     'rorcli',
     'kubectl',
     'accessGroups',
