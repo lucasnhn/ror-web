@@ -138,12 +138,12 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
                 rel='noopener noreferrer'
                 className='flex gap-2 font-bold text-blue-500'
               >
-                <span>Graphana</span>
+                <span>Grafana</span>
                 <ExternalLink className='w-5 h-5' />
               </a>
             ) : (
               <p className='flex'>
-                <span className='font-bold'>Graphana &nbsp;</span>missing ...
+                <span className='font-bold'>Grafana &nbsp;</span>missing ...
               </p>
             ))}
         </section>
