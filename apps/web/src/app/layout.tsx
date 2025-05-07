@@ -33,7 +33,7 @@ const ubuntuMono = Ubuntu_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'ROR (Beta)',
+  title: 'ROR',
   description: 'ROR (Release Operate Report)',
 }
 

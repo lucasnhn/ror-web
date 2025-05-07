@@ -34,11 +34,6 @@
     @include type.type-style('label-02');
   }
 
-  .r-icon-indicator--lg {
-    --icon-size: #{convert.to-rem(24px)};
-    @include type.type-style('body-02');
-  }
-
   .r-icon-indicator--failed {
     --icon-color: #{get-var('support-error')};
   }

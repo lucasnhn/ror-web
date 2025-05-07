@@ -35,12 +35,6 @@
     --icon-size: #{convert.to-rem(20px)};
     @include type.type-style('label-02');
   }
-
-  .r-severity-icon--lg {
-    --icon-size: #{convert.to-rem(24px)};
-    @include type.type-style('body-02');
-  }
-
   .r-severity-icon--critical {
     --icon-color: #{get-var('severity-critical')};
   }

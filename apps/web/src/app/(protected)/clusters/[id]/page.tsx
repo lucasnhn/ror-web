@@ -14,7 +14,7 @@ interface ClusterPageProps {
 }
 
 export const metadata: Metadata = {
-  title: 'ROR (Beta) - Cluster',
+  title: 'ROR - Cluster',
   description: 'View and manage cluster details',
 }
 
