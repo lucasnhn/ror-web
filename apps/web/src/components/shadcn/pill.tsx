@@ -39,15 +39,18 @@ const pillVariants = cva(
   }
 )
 
-function Pill({
-  className,
-  variant,
-  asChild = false,
-  ...props
-}: React.ComponentProps<'span'> & VariantProps<typeof pillVariants> & { asChild?: boolean }) {
-  const Comp = asChild ? Slot : 'span'
+type PillProps = React.HTMLAttributes<HTMLSpanElement> &
+  VariantProps<typeof pillVariants> & {
+    asChild?: boolean
+  }
 
-  return <Comp data-slot='pill' className={cn(pillVariants({ variant }), className, 'rounded-full')} {...props} />
-}
+const Pill = React.forwardRef<HTMLSpanElement, PillProps>(({ className, variant, asChild = false, ...props }, ref) => {
+  const Comp = asChild ? Slot : 'span'
+  return (
+    <Comp ref={ref} data-slot='pill' className={cn(pillVariants({ variant }), className, 'rounded-full')} {...props} />
+  )
+})
+
+Pill.displayName = 'Pill'
 
 export { Pill, pillVariants }
