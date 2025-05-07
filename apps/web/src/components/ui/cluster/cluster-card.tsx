@@ -8,6 +8,7 @@ import { CodeSnippet, Layer } from '@ror/react'
 import { User } from 'next-auth'
 import { Pill } from '@/components/shadcn/pill'
 import { convertBytes } from '@/utils/bytes'
+import Link from 'next/link'
 
 function Card({ className, ...props }: React.ComponentProps<'div'>) {
   return (
@@ -106,8 +107,10 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
   return (
     <Card className={cn('w-sm pt-0', className)}>
       <CardHeader className='m-0 mb-7 p-0 w-full'>
-        <CardTitle className={cn('text-2xl rounded-t-xl px-6 py-1', envBgColors[env!])}>
-          {cluster.clusterName}
+        <CardTitle className={cn('text-2xl rounded-t-xl px-6 py-2 flex', envBgColors[env!])}>
+          <Link href={`/clusters/${cluster.clusterId}`} title={cluster.clusterName}>
+            {cluster.clusterName}
+          </Link>
         </CardTitle>
         <HealthCircle health={health} />
       </CardHeader>

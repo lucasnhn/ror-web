@@ -17,7 +17,7 @@ export function ClusterMetrics({ className, cluster }: ClusterMetricsProps) {
 
   return (
     <Tile className={classes}>
-      <h3 className='heading-01 pb-3 mb-5 border-b border-b-(--r-border-subtle)'>Cluster metrics</h3>
+      <h3 className='heading-06 pb-3 mb-5 border-b border-b-(--r-border-subtle)'>Cluster metrics</h3>
       <div className='@container'>
         <div className='grid grid-cols-1 @[405px]:grid-cols-2 @[1005px]:grid-cols-4 gap-6 @[1005px]:gap-0'>
           <div className='col-span-1'>
