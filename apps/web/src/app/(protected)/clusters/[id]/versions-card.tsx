@@ -23,7 +23,7 @@ export function ClusterVersionsCard({ cluster, className }: ClusterVersionsCardP
   return (
     <Tile className={classes}>
       <div className=''>
-        <h3 className='heading-01 pb-3 mb-5 border-b border-b-(--r-border-subtle)'>Versions</h3>
+        <h3 className='heading-06 pb-3 mb-5 border-b border-b-(--r-border-subtle)'>Versions</h3>
         <DefinitionList>
           <DefinitionTerm>NHN-tooling</DefinitionTerm>
           <DefinitionDescription>{nhnToolingValue}</DefinitionDescription>

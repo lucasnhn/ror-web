@@ -1,16 +1,14 @@
 import { ClusterCard, ClusterCardDisplayData } from '@/components/ui/cluster/cluster-card'
 import { authGuard } from '@/features/auth/utils/auth-guard'
 import { rorApiClient } from '@/services/ror-api'
-import { Breadcrumb, BreadcrumbItem } from '@ror/react'
 import { CodeSnippet } from '@ror/react/components/code-snippet'
 import type { Metadata } from 'next'
-import Link from 'next/link'
-import { Fragment } from 'react'
 import { ClustersTable } from './cluster-table'
 import { ClusterPageViewSwitch } from './view-switch'
+import { Header } from '@/components/layout/app-shell/header'
 
 export const metadata: Metadata = {
-  title: 'ROR (Beta) - Clusters',
+  title: 'ROR - Clusters',
   description: 'View clusters',
 }
 
@@ -85,21 +83,16 @@ export default async function ClustersPage({ searchParams }: ClusterPageProps) {
   ]
 
   return (
-    <Fragment>
-      <header className='px-6 pt-6 mb-8'>
-        <Breadcrumb className='mb-6'>
-          <BreadcrumbItem isCurrentPage asChild>
-            <Link href='/'>Dashboard</Link>
-          </BreadcrumbItem>
-        </Breadcrumb>
-        <h1>Clusters</h1>
-      </header>
+    <div className='w-full flex flex-col'>
+      <Header title='Clusters' />
 
-      <div className='px-6 max-w-[20rem]'>
-        <ClusterPageViewSwitch />
+      <div className='w-full border-b h-28 flex items-center'>
+        <div className='px-12 w-96'>
+          <ClusterPageViewSwitch />
+        </div>
       </div>
 
-      <section className='px-6 mt-8'>
+      <section className='px-12 my-8'>
         {params.view === 'list' ? (
           <ClustersTable
             key='table'
@@ -127,17 +120,6 @@ export default async function ClustersPage({ searchParams }: ClusterPageProps) {
           </details>
         </div>
       )}
-
-      {process.env.NODE_ENV === 'development' && (
-        <div className='mt-8 px-6'>
-          <details>
-            <summary>raw data</summary>
-            <CodeSnippet type='multi' hideCopyButton>
-              {JSON.stringify(clustersResponse, null, 2)}
-            </CodeSnippet>
-          </details>
-        </div>
-      )}
-    </Fragment>
+    </div>
   )
 }

@@ -27,7 +27,7 @@ export function ClusterToolsCard({ cluster, user, className }: ClusterToolsCardP
 
   return (
     <Tile className={classes}>
-      <h3 className='heading-01 pb-3 mb-5 border-b border-b-(--r-border-subtle)'>Tools</h3>
+      <h3 className='heading-06 pb-3 mb-5 border-b border-b-(--r-border-subtle)'>Tools</h3>
       <Layer level={1}>
         <Stack gap={5} className='max-w-full'>
           <div>

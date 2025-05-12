@@ -1,9 +1,10 @@
 'use client'
 import { Copy } from 'lucide-react'
 import type { ReactNode } from 'react'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { clsx } from 'clsx'
 import { Button, ButtonSize } from './button'
+import { toast, Toaster } from 'sonner'
 
 export interface CopyButtonProps {
   /**
@@ -24,7 +25,7 @@ export interface CopyButtonProps {
   /**
    * Specify a callback function that is called when the button is clicked
    */
-  onClick?: () => void
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
 
   /**
    * How large should the copy button be?
@@ -42,9 +43,9 @@ export interface CopyButtonProps {
    */
   children?: ReactNode
 }
-
 export function CopyButton({ onClick, className, children, size = 'md' }: CopyButtonProps) {
   const timeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const [theme, setTheme] = useState<'light' | 'dark' | 'system'>('system')
 
   // Clean up timeout on unmount
   useEffect(() => {
@@ -55,16 +56,34 @@ export function CopyButton({ onClick, className, children, size = 'md' }: CopyBu
     }
   }, [])
 
-  const handleOnClick = () => {
-    if (typeof onClick === 'function') {
-      onClick()
+  // Determine theme on the client side
+  useEffect(() => {
+    const getTheme = () => {
+      if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        return 'dark'
+      } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+        return 'light'
+      }
+      return 'system'
     }
+
+    setTheme(getTheme())
+  }, [])
+
+  const handleOnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    toast.info('Copied to clipboard')
+    e.stopPropagation()
+    onClick?.(e)
   }
+
   const classes = clsx('r-copy-btn', className)
 
   return (
-    <Button icon={<Copy />} iconOnly onClick={handleOnClick} className={classes} size={size}>
-      {children}
-    </Button>
+    <>
+      <Toaster richColors position='bottom-right' theme={theme} />
+      <Button icon={<Copy />} iconOnly onClick={handleOnClick} className={classes} size={size}>
+        {children}
+      </Button>
+    </>
   )
 }

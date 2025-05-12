@@ -6,5 +6,9 @@ interface RootLayoutProps {
 }
 
 export default async function ProtectedLayout({ children }: Readonly<RootLayoutProps>) {
-  return <AppShell>{children}</AppShell>
+  return (
+    <div className='w-full'>
+      <AppShell>{children}</AppShell>
+    </div>
+  )
 }
