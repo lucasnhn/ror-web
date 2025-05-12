@@ -177,7 +177,7 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
 
           {displayData?.includes('kubectl') && (
             <div>
-              <p className='fonta-bold'>Kubectl</p>
+              <p className='font-bold'>Kubectl</p>
               <Layer level={2}>
                 <CodeSnippet type='single'>{kubectlLogin}</CodeSnippet>
               </Layer>
