@@ -71,7 +71,7 @@ export function CopyButton({ onClick, className, children, size = 'md' }: CopyBu
   }, [])
 
   const handleOnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    toast('Copied to clipboard', {})
+    toast.info('Copied to clipboard')
     e.stopPropagation()
     onClick?.(e)
   }

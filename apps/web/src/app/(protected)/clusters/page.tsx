@@ -83,7 +83,7 @@ export default async function ClustersPage({ searchParams }: ClusterPageProps) {
   ]
 
   return (
-    <div className='flex flex-col'>
+    <div className='w-full flex flex-col'>
       <Header title='Clusters' />
 
       <div className='w-full border-b h-28 flex items-center'>
