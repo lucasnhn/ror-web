@@ -43,7 +43,8 @@ export function CodeSnippet({ type, hideCopyButton = false, className, style, ch
     [`${baseClass}--multi`]: type === 'multi',
   })
 
-  const handleOnCopyClick = () => {
+  const handleOnCopyClick = (e?: React.MouseEvent) => {
+    e?.stopPropagation()
     if (!codeElementRef.current) return
     const innerText = codeElementRef.current.innerText
     void copy(innerText)
@@ -61,11 +62,13 @@ export function CodeSnippet({ type, hideCopyButton = false, className, style, ch
     }
 
     return (
-      <CopyButton className={classes} onClick={handleOnCopyClick}>
-        <code ref={codeElementRef} style={style} className={`${baseClass}__inline-code`}>
-          {children}
-        </code>
-      </CopyButton>
+      <>
+        <CopyButton className={classes} onClick={handleOnCopyClick}>
+          <code ref={codeElementRef} style={style} className={`${baseClass}__inline-code`}>
+            {children}
+          </code>
+        </CopyButton>
+      </>
     )
   }
 

@@ -1,3 +1,5 @@
+'use client'
+
 import * as React from 'react'
 
 import { cn } from '@/utils/clsxm'
@@ -8,7 +10,7 @@ import { CodeSnippet, Layer } from '@ror/react'
 import { User } from 'next-auth'
 import { Pill } from '@/components/shadcn/pill'
 import { convertBytes } from '@/utils/bytes'
-import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 function Card({ className, ...props }: React.ComponentProps<'div'>) {
   return (
@@ -104,13 +106,23 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
   const rorLogin = `ror login ${cluster.clusterId}`
   const kubectlLogin = `kubectl vsphere login --server=${serverUrl} -u ${user?.email} --insecure-skip-tls-verify --tanzu-kubernetes-cluster-namespace ${cluster?.workspace?.name} --tanzu-kubernetes-cluster-name ${cluster?.clusterName}`
 
+  const router = useRouter()
+
+  const handleCardClick = () => {
+    router.push(`/clusters/${cluster.clusterId}`)
+  }
+
   return (
-    <Card className={cn('w-sm pt-0', className)}>
+    <Card
+      className={cn('w-sm pt-0 hover:bg-[#ededed] dark:hover:bg-neutral-800 hover:cursor-pointer', className)}
+      onClick={handleCardClick}
+      role='button'
+      tabIndex={0}
+      onKeyDown={(e) => e.key === 'Enter' && handleCardClick()}
+    >
       <CardHeader className='m-0 mb-7 p-0 w-full'>
         <CardTitle className={cn('text-2xl rounded-t-xl px-6 py-2 flex', envBgColors[env!])}>
-          <Link href={`/clusters/${cluster.clusterId}`} title={cluster.clusterName}>
-            {cluster.clusterName}
-          </Link>
+          {cluster.clusterName}
         </CardTitle>
         <HealthCircle health={health} />
       </CardHeader>
@@ -120,10 +132,11 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
           {displayData?.includes('argocd') &&
             (tools.argo ? (
               <a
+                onClick={(e) => e.stopPropagation()}
                 href={`https://${tools.argo}`}
                 target='_blank'
                 rel='noopener noreferrer'
-                className='flex gap-2 font-bold text-blue-500'
+                className='flex gap-2 font-bold text-blue-500 w-fit'
               >
                 <span>ArgoCD</span>
                 <ExternalLink className='w-5 h-5' />
@@ -136,10 +149,11 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
           {displayData?.includes('argocd') &&
             (tools.grafana ? (
               <a
+                onClick={(e) => e.stopPropagation()}
                 href={`https://${tools.grafana}`}
                 target='_blank'
                 rel='noopener noreferrer'
-                className='flex gap-2 font-bold text-blue-500'
+                className='flex gap-2 font-bold text-blue-500 w-fit'
               >
                 <span>Grafana</span>
                 <ExternalLink className='w-5 h-5' />
@@ -163,7 +177,7 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
 
           {displayData?.includes('kubectl') && (
             <div>
-              <p className='font-bold'>Kubectl</p>
+              <p className='fonta-bold'>Kubectl</p>
               <Layer level={2}>
                 <CodeSnippet type='single'>{kubectlLogin}</CodeSnippet>
               </Layer>

@@ -42,7 +42,7 @@ export function ThemeToggle({ colorScheme }: ThemeToggleProps) {
       <PopoverPortal>
         <PopoverContent collisionPadding={8} sideOffset={4}>
           <Layer level={0}>
-            <div className='bg-[var(--r-layer)] p-4 rounded-md flex flex-wrap gap-3' role='group'>
+            <div className='bg-[var(--r-layer)] p-4 rounded-md flex flex-wrap gap-3 self' role='group'>
               <ThemeOption theme={ColorScheme.Light} isActive={current === 'light'} onClick={setScheme} />
               <ThemeOption theme={ColorScheme.Dark} isActive={current === 'dark'} onClick={setScheme} />
               <ThemeOption theme={ColorScheme.System} isActive={current === 'system'} onClick={setScheme} />
