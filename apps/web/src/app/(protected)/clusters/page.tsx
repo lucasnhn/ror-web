@@ -92,7 +92,7 @@ export default async function ClustersPage({ searchParams }: ClusterPageProps) {
         </div>
       </div>
 
-      <section className='px-12 mt-8'>
+      <section className='px-12 my-8'>
         {params.view === 'list' ? (
           <ClustersTable
             key='table'
