@@ -82,7 +82,7 @@ const AclModel = z.object({
 const IngressRuleV1 = z
   .object({
     hostname: z.string().optional(),
-    ipaddresses: z.array(z.string()).optional(),
+    ipaddresses: z.array(z.string()).optional().nullable(),
     rules: z.array(
       z.object({
         path: z.string(),
@@ -99,7 +99,7 @@ export const ClusterIngressModelV1 = z.object({
   name: z.string(),
   namespace: z.string(),
   class: z.string(),
-  ingressrules: z.array(IngressRuleV1).optional(),
+  ingressrules: z.array(IngressRuleV1).optional().nullable(),
 })
 
 const ClusterIngressesModelV1 = z.array(ClusterIngressModelV1.passthrough())
