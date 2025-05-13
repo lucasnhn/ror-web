@@ -4,8 +4,8 @@ import { rorApiClient } from '@/services/ror-api'
 import { CodeSnippet } from '@ror/react/components/code-snippet'
 import type { Metadata } from 'next'
 import { ClustersTable } from './cluster-table'
-import { ClusterPageViewSwitch } from './view-switch'
 import { Header } from '@/components/layout/app-shell/header'
+import { TabsViewSwitcher } from '@/components/ui/tabs-view-switcher'
 
 export const metadata: Metadata = {
   title: 'ROR - Clusters',
@@ -86,10 +86,8 @@ export default async function ClustersPage({ searchParams }: ClusterPageProps) {
     <div className='w-full flex flex-col'>
       <Header title='Clusters' />
 
-      <div className='w-full border-b h-28 flex items-center'>
-        <div className='px-12 w-96'>
-          <ClusterPageViewSwitch />
-        </div>
+      <div className='w-full border-b h-28 p-12 flex items-center justify-end'>
+        <TabsViewSwitcher />
       </div>
 
       <section className='px-12 my-8'>
