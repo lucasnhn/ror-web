@@ -4,10 +4,22 @@ import { rorApiClient } from '@/services/ror-api'
 import { CodeSnippet } from '@ror/react/components/code-snippet'
 import type { Metadata } from 'next'
 import { ClustersTable } from './cluster-table'
-import { ClusterPageViewSwitch } from './view-switch'
 import { Header } from '@/components/layout/app-shell/header'
 import { Toggle } from '@/components/shadcn/toggle'
 import { Funnel } from 'lucide-react'
+import { TabsViewSwitcher } from '@/components/ui/tabs-view-switcher'
+import Link from 'next/link'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  SelectLabel,
+  SelectGroup,
+} from '@/components/shadcn/select'
+import { MultiSelect } from '@/components/ui/multi-select'
+import MultipleSelector, { Option } from '@/components/shadcn/multiselect'
 
 export const metadata: Metadata = {
   title: 'ROR - Clusters',
@@ -42,6 +54,18 @@ export default async function ClustersPage({ searchParams }: ClusterPageProps) {
   // Parse sorting parameters from URL
   const sort = params.sort ? params.sort : 'clusterName'
   const order = params.order === 'asc' ? 1 : -1
+
+  const filtersOpen = params.filters === 'open'
+  const toggleFiltersParam = filtersOpen ? undefined : 'open'
+
+  const newParams = new URLSearchParams(params as any)
+  if (filtersOpen) {
+    newParams.delete('filters')
+  } else {
+    newParams.set('filters', 'open')
+  }
+
+  const toggleUrl = `/clusters?${newParams.toString()}`
 
   const sortOptions = {
     sortField: sort,
@@ -83,20 +107,276 @@ export default async function ClustersPage({ searchParams }: ClusterPageProps) {
     'datacenterProvider',
     'environment',
   ]
+  const status: Option[] = [
+    {
+      value: 'good',
+      label: 'Good',
+    },
+    {
+      value: 'smelly',
+      label: 'Smelly',
+    },
+    {
+      value: 'bad',
+      label: 'Bad',
+    },
+  ]
+
+  const environments: Option[] = [
+    {
+      value: 'development',
+      label: 'Development',
+    },
+    {
+      value: 'dev',
+      label: 'Dev',
+    },
+    {
+      value: 'test',
+      label: 'Test',
+    },
+    {
+      value: 'staging',
+      label: 'Staging',
+    },
+    {
+      value: 'production',
+      label: 'Production',
+    },
+    {
+      value: 'prod',
+      label: 'Prod',
+    },
+    {
+      value: 'qa',
+      label: 'QA',
+    },
+  ]
+
+  // TODO: Fetch this from somewhere
+  const datacenters: Option[] = [
+    {
+      value: 'trd1-tanzu',
+      label: 'trd1 - tanzu',
+    },
+    {
+      value: 'osl1-tanzu',
+      label: 'osl1 - tanzu',
+    },
+    {
+      value: 'trd1cl02-tanzu',
+      label: 'trd1cl02 - tanzu',
+    },
+    {
+      value: 'norwayeast-aks',
+      label: 'norwayeast - aks',
+    },
+    {
+      value: 'trd1-talos',
+      label: 'trd1 - talos',
+    },
+  ]
+
+  // TODO: Fetch this from somewhere
+  const workspaces: Option[] = [
+    {
+      value: 'trd1-amk-prod',
+      label: 'trd1-amk-prod',
+    },
+    {
+      value: 'trd1cl02-shp-prod',
+      label: 'trd1cl02-shp-prod',
+    },
+    {
+      value: 'trd1cl02-dcn',
+      label: 'trd1cl02-dcn',
+    },
+    {
+      value: 't-nhn',
+      label: 't-nhn',
+    },
+    {
+      value: 'trd1-amk',
+      label: 'trd1-amk',
+    },
+    {
+      value: 'trd1-app',
+      label: 'trd1-app',
+    },
+    {
+      value: 'trd1-team-kjernejournal-portal',
+      label: 'trd1-team-kjernejournal-portal',
+    },
+  ]
+
+  // TODO: Fetch this from somewhere
+  const toolingVersions: Option[] = [
+    {
+      value: 'null',
+      label: 'null',
+    },
+    {
+      value: '1-6-10',
+      label: '1.6.10',
+    },
+    {
+      value: '1-6-18',
+      label: '1.6.18',
+    },
+    {
+      value: '1-6-19',
+      label: '1.6.19',
+    },
+    {
+      value: '1-6-20',
+      label: '1.6.20',
+    },
+    {
+      value: '1-6-21',
+      label: '1.6.21',
+    },
+    {
+      value: 'missing',
+      label: 'Missing',
+    },
+  ]
+
+  // TODO: Fetch this from somewhere
+  const kubernetesVersions: Option[] = [
+    {
+      value: 'v1-26-13',
+      label: 'v1.26.13',
+    },
+    {
+      value: 'v1-27-10',
+      label: 'v1.27.10',
+    },
+    {
+      value: 'v1-27-11',
+      label: 'v1.27.11',
+    },
+    {
+      value: 'v1-28-7',
+      label: 'v1.28.7',
+    },
+    {
+      value: 'v1-30-11',
+      label: 'v1.30.11',
+    },
+    {
+      value: 'v1-31-4',
+      label: 'v1.31.4',
+    },
+    {
+      value: 'v1-31-6',
+      label: 'v1.31.6',
+    },
+    {
+      value: 'v1-32-1',
+      label: 'v1.32.1',
+    },
+    {
+      value: 'v1-32-3',
+      label: 'v1.32.3',
+    },
+  ]
 
   return (
     <div className='w-full flex flex-col'>
       <Header title='Clusters' />
 
-      <div className='w-full border-b h-28 flex items-center'>
-        <div className='px-12 w-96'>
-          <div>
-            <Toggle variant={'outline'} aria-label='Open filters'>
-              <Funnel />
-            </Toggle>
+      <div className='w-full border-b h-28 p-12 flex items-center justify-between'>
+        <div>
+          <div className='flex items-center gap-2'>
+            <Link href={toggleUrl}>
+              <Toggle pressed={filtersOpen} variant='outline' aria-label='Open filters'>
+                <Funnel />
+              </Toggle>
+            </Link>
+            {filtersOpen && (
+              <>
+                <MultipleSelector
+                  className='w-52'
+                  commandProps={{
+                    label: 'Status',
+                  }}
+                  value={[]}
+                  defaultOptions={status}
+                  placeholder='Select status'
+                  hideClearAllButton
+                  hidePlaceholderWhenSelected
+                  emptyIndicator={<p className='text-center text-sm'>No results found</p>}
+                />
+
+                <MultipleSelector
+                  className='w-52'
+                  commandProps={{
+                    label: 'Environments',
+                  }}
+                  value={[]}
+                  defaultOptions={environments}
+                  placeholder='Select environment'
+                  hideClearAllButton
+                  hidePlaceholderWhenSelected
+                  emptyIndicator={<p className='text-center text-sm'>No results found</p>}
+                />
+
+                <MultipleSelector
+                  className='w-52'
+                  commandProps={{
+                    label: 'Datacenters',
+                  }}
+                  value={[]}
+                  defaultOptions={datacenters}
+                  placeholder='Select datacenters'
+                  hideClearAllButton
+                  hidePlaceholderWhenSelected
+                  emptyIndicator={<p className='text-center text-sm'>No results found</p>}
+                />
+
+                <MultipleSelector
+                  className='w-52'
+                  commandProps={{
+                    label: 'Workspaces',
+                  }}
+                  value={[]}
+                  defaultOptions={workspaces}
+                  placeholder='Select workspaces'
+                  hideClearAllButton
+                  hidePlaceholderWhenSelected
+                  emptyIndicator={<p className='text-center text-sm'>No results found</p>}
+                />
+
+                <MultipleSelector
+                  className='w-52'
+                  commandProps={{
+                    label: 'Tooling versions',
+                  }}
+                  value={[]}
+                  defaultOptions={toolingVersions}
+                  placeholder='Select tooling versions'
+                  hideClearAllButton
+                  hidePlaceholderWhenSelected
+                  emptyIndicator={<p className='text-center text-sm'>No results found</p>}
+                />
+
+                <MultipleSelector
+                  className='w-52'
+                  commandProps={{
+                    label: 'Kubernetes versions',
+                  }}
+                  value={[]}
+                  defaultOptions={kubernetesVersions}
+                  placeholder='Select kubernetes versions'
+                  hideClearAllButton
+                  hidePlaceholderWhenSelected
+                  emptyIndicator={<p className='text-center text-sm'>No results found</p>}
+                />
+              </>
+            )}
           </div>
-          <ClusterPageViewSwitch />
         </div>
+        <TabsViewSwitcher />
       </div>
 
       <section className='px-12 my-8'>
