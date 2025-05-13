@@ -6,6 +6,8 @@ import type { Metadata } from 'next'
 import { ClustersTable } from './cluster-table'
 import { ClusterPageViewSwitch } from './view-switch'
 import { Header } from '@/components/layout/app-shell/header'
+import { Toggle } from '@/components/shadcn/toggle'
+import { Funnel } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'ROR - Clusters',
@@ -88,6 +90,11 @@ export default async function ClustersPage({ searchParams }: ClusterPageProps) {
 
       <div className='w-full border-b h-28 flex items-center'>
         <div className='px-12 w-96'>
+          <div>
+            <Toggle variant={'outline'} aria-label='Open filters'>
+              <Funnel />
+            </Toggle>
+          </div>
           <ClusterPageViewSwitch />
         </div>
       </div>
