@@ -9,16 +9,6 @@ import { Toggle } from '@/components/shadcn/toggle'
 import { Funnel } from 'lucide-react'
 import { TabsViewSwitcher } from '@/components/ui/tabs-view-switcher'
 import Link from 'next/link'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  SelectLabel,
-  SelectGroup,
-} from '@/components/shadcn/select'
-import { MultiSelect } from '@/components/ui/multi-select'
 import MultipleSelector, { Option } from '@/components/shadcn/multiselect'
 
 export const metadata: Metadata = {
@@ -33,6 +23,7 @@ interface ClusterPageProps {
     limit?: number
     sort?: string
     order?: 'asc' | 'desc'
+    filters?: string
   }>
 }
 
@@ -56,9 +47,11 @@ export default async function ClustersPage({ searchParams }: ClusterPageProps) {
   const order = params.order === 'asc' ? 1 : -1
 
   const filtersOpen = params.filters === 'open'
-  const toggleFiltersParam = filtersOpen ? undefined : 'open'
+  // const toggleFiltersParam = filtersOpen ? undefined : 'open'
 
-  const newParams = new URLSearchParams(params as any)
+  const newParams = new URLSearchParams(
+    params as string | string[][] | Record<string, string> | URLSearchParams | undefined
+  )
   if (filtersOpen) {
     newParams.delete('filters')
   } else {
@@ -288,6 +281,7 @@ export default async function ClustersPage({ searchParams }: ClusterPageProps) {
       <div className='w-full border-b h-28 p-12 flex items-center justify-between'>
         <div>
           <div className='flex items-center gap-2'>
+            {/* TODO: Add text that says that filters are applied if filters are applied */}
             <Link href={toggleUrl}>
               <Toggle pressed={filtersOpen} variant='outline' aria-label='Open filters'>
                 <Funnel />
