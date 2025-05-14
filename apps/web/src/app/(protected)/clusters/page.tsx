@@ -6,10 +6,12 @@ import type { Metadata } from 'next'
 import { ClustersTable } from './cluster-table'
 import { Header } from '@/components/layout/app-shell/header'
 import { Toggle } from '@/components/shadcn/toggle'
-import { Funnel } from 'lucide-react'
+import { ArrowDownNarrowWide, ArrowDownWideNarrow, Funnel } from 'lucide-react'
 import { TabsViewSwitcher } from '@/components/ui/tabs-view-switcher'
 import Link from 'next/link'
 import MultipleSelector, { Option } from '@/components/shadcn/multiselect'
+import { Button } from '@/components/shadcn/button'
+import { SortSelect } from '@/components/ui/sort-select'
 
 export const metadata: Metadata = {
   title: 'ROR - Clusters',
@@ -274,6 +276,82 @@ export default async function ClustersPage({ searchParams }: ClusterPageProps) {
     },
   ]
 
+  const multipleSelectorOptions = [
+    {
+      label: 'Status',
+      placeholder: 'Set status',
+      data: status,
+    },
+    {
+      label: 'Environments',
+      placeholder: 'Set environments',
+      data: environments,
+    },
+    {
+      label: 'Datacenters',
+      placeholder: 'Set datacenters',
+      data: datacenters,
+    },
+    {
+      label: 'Workspaces',
+      placeholder: 'Set workspaces',
+      data: workspaces,
+    },
+    {
+      label: 'Tooling versions',
+      placeholder: 'Set tooling versions',
+      data: toolingVersions,
+    },
+    {
+      label: 'Kubernetes versions',
+      placeholder: 'Set kubernetes versions',
+      data: kubernetesVersions,
+    },
+  ]
+
+  const sortingOptions = [
+    {
+      value: 'clusterName',
+      label: 'Cluster name',
+    },
+    {
+      value: 'accessGroups',
+      label: 'Num of access groups',
+    },
+    {
+      value: 'cpu',
+      label: 'CPU usage',
+    },
+    {
+      value: 'memory',
+      label: 'Memory usage',
+    },
+    {
+      value: 'nodes',
+      label: 'Num of nodes',
+    },
+    {
+      value: 'monthlyPrice',
+      label: 'Price',
+    },
+    {
+      value: 'agentVersion',
+      label: 'ROR agent version',
+    },
+    {
+      value: 'toolingVersion',
+      label: 'NHN tooling version',
+    },
+    {
+      value: 'datacenterName',
+      label: 'Datacenter',
+    },
+    {
+      value: 'datacenterProvider',
+      label: 'Datacenter provider',
+    },
+  ]
+
   return (
     <div className='w-full flex flex-col'>
       <Header title='Clusters' />
@@ -281,6 +359,39 @@ export default async function ClustersPage({ searchParams }: ClusterPageProps) {
       <div className='w-full border-b h-28 p-12 flex items-center justify-between'>
         <div>
           <div className='flex items-center gap-2'>
+            {/* TODO: Make the sorting based on the display data */}
+            <SortSelect options={sortingOptions} currentSort={params.sort} />
+
+            {params.sort &&
+              (() => {
+                const toggleOrderParams = new URLSearchParams(
+                  params as string[][] | Record<string, string> | string | URLSearchParams
+                )
+                const currentOrder = toggleOrderParams.get('order') === 'desc' ? 'desc' : 'asc'
+                const nextOrder = currentOrder === 'desc' ? 'asc' : 'desc'
+                toggleOrderParams.set('order', nextOrder)
+
+                const toggleOrderUrl = `/clusters?${toggleOrderParams.toString()}`
+
+                return (
+                  <Link href={toggleOrderUrl}>
+                    <Button variant='outline' className='border-[var(--input)]'>
+                      {currentOrder === 'desc' ? (
+                        <span className='flex gap-1 items-center'>
+                          <ArrowDownWideNarrow className='w-4 h-4' />
+                          DESC
+                        </span>
+                      ) : (
+                        <span className='flex gap-1 items-center'>
+                          <ArrowDownNarrowWide className='w-4 h-4' />
+                          ASC
+                        </span>
+                      )}
+                    </Button>
+                  </Link>
+                )
+              })()}
+
             {/* TODO: Add text that says that filters are applied if filters are applied */}
             <Link href={toggleUrl}>
               <Toggle pressed={filtersOpen} variant='outline' aria-label='Open filters'>
@@ -289,83 +400,21 @@ export default async function ClustersPage({ searchParams }: ClusterPageProps) {
             </Link>
             {filtersOpen && (
               <>
-                <MultipleSelector
-                  className='w-52'
-                  commandProps={{
-                    label: 'Status',
-                  }}
-                  value={[]}
-                  defaultOptions={status}
-                  placeholder='Select status'
-                  hideClearAllButton
-                  hidePlaceholderWhenSelected
-                  emptyIndicator={<p className='text-center text-sm'>No results found</p>}
-                />
-
-                <MultipleSelector
-                  className='w-52'
-                  commandProps={{
-                    label: 'Environments',
-                  }}
-                  value={[]}
-                  defaultOptions={environments}
-                  placeholder='Select environment'
-                  hideClearAllButton
-                  hidePlaceholderWhenSelected
-                  emptyIndicator={<p className='text-center text-sm'>No results found</p>}
-                />
-
-                <MultipleSelector
-                  className='w-52'
-                  commandProps={{
-                    label: 'Datacenters',
-                  }}
-                  value={[]}
-                  defaultOptions={datacenters}
-                  placeholder='Select datacenters'
-                  hideClearAllButton
-                  hidePlaceholderWhenSelected
-                  emptyIndicator={<p className='text-center text-sm'>No results found</p>}
-                />
-
-                <MultipleSelector
-                  className='w-52'
-                  commandProps={{
-                    label: 'Workspaces',
-                  }}
-                  value={[]}
-                  defaultOptions={workspaces}
-                  placeholder='Select workspaces'
-                  hideClearAllButton
-                  hidePlaceholderWhenSelected
-                  emptyIndicator={<p className='text-center text-sm'>No results found</p>}
-                />
-
-                <MultipleSelector
-                  className='w-52'
-                  commandProps={{
-                    label: 'Tooling versions',
-                  }}
-                  value={[]}
-                  defaultOptions={toolingVersions}
-                  placeholder='Select tooling versions'
-                  hideClearAllButton
-                  hidePlaceholderWhenSelected
-                  emptyIndicator={<p className='text-center text-sm'>No results found</p>}
-                />
-
-                <MultipleSelector
-                  className='w-52'
-                  commandProps={{
-                    label: 'Kubernetes versions',
-                  }}
-                  value={[]}
-                  defaultOptions={kubernetesVersions}
-                  placeholder='Select kubernetes versions'
-                  hideClearAllButton
-                  hidePlaceholderWhenSelected
-                  emptyIndicator={<p className='text-center text-sm'>No results found</p>}
-                />
+                {multipleSelectorOptions.map((option) => (
+                  <MultipleSelector
+                    key={option.label}
+                    className='w-52'
+                    commandProps={{
+                      label: option.label,
+                    }}
+                    value={[]}
+                    defaultOptions={option.data}
+                    placeholder={option.placeholder}
+                    hideClearAllButton
+                    hidePlaceholderWhenSelected
+                    emptyIndicator={<p className='text-center text-sm'>No results found</p>}
+                  />
+                ))}
               </>
             )}
           </div>
