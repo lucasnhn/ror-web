@@ -12,6 +12,7 @@ import Link from 'next/link'
 import MultipleSelector, { Option } from '@/components/shadcn/multiselect'
 import { Button } from '@/components/shadcn/button'
 import { SortSelect } from '@/components/ui/sort-select'
+import { ClusterSearch } from '@/components/ui/cluster-search'
 
 export const metadata: Metadata = {
   title: 'ROR - Clusters',
@@ -359,6 +360,8 @@ export default async function ClustersPage({ searchParams }: ClusterPageProps) {
       <div className='w-full border-b h-28 p-12 flex items-center justify-between'>
         <div>
           <div className='flex items-center gap-2'>
+            <ClusterSearch items={clusters} />
+
             {/* TODO: Make the sorting based on the display data */}
             <SortSelect options={sortingOptions} currentSort={params.sort} />
 
