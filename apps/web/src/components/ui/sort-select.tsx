@@ -28,7 +28,8 @@ export function SortSelect({ options, currentSort }: SortSelectProps) {
   }
 
   return (
-    <div className='flex flex-col mt-[-16px]'>
+    {/* Adjusted spacing to avoid layout inconsistencies. If alignment issues arise, revisit this value. */}
+    <div className='flex flex-col mt-0'>
       <span className='text-xs'>Sorting</span>
       <Select onValueChange={handleChange} defaultValue={currentSort}>
         <SelectTrigger className='w-52'>
