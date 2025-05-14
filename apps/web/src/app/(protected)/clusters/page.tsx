@@ -10,8 +10,6 @@ import { ArrowDownNarrowWide, ArrowDownWideNarrow, Funnel } from 'lucide-react'
 import { TabsViewSwitcher } from '@/components/ui/tabs-view-switcher'
 import Link from 'next/link'
 import MultipleSelector, { Option } from '@/components/shadcn/multiselect'
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn/select'
-import { SelectLabel } from '@radix-ui/react-select'
 import { Button } from '@/components/shadcn/button'
 import { SortSelect } from '@/components/ui/sort-select'
 
