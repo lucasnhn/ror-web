@@ -308,7 +308,7 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
       }
 
       void exec()
-    }, [debouncedSearchTerm, groupBy, open, triggerSearchOnFocus])
+    }, [debouncedSearchTerm, groupBy, open, triggerSearchOnFocus, onSearchSync])
 
     useEffect(() => {
       /** async search */
@@ -333,7 +333,7 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
       }
 
       void exec()
-    }, [debouncedSearchTerm, groupBy, open, triggerSearchOnFocus])
+    }, [debouncedSearchTerm, groupBy, open, triggerSearchOnFocus, onSearch])
 
     const CreatableItem = () => {
       if (!creatable) return undefined
