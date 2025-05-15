@@ -446,7 +446,7 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
                 <div
                   key={option.value}
                   className={cn(
-                    'animate-fadeIn relative inline-flex h-7 cursor-default items-center rounded-md border border-solid bg-background pe-7 pl-2 ps-2 text-xs font-medium text-secondary-foreground transition-all hover:bg-background disabled:cursor-not-allowed disabled:opacity-50 data-[fixed]:pe-2',
+                    'animate-fadeIn min-w-fit relative inline-flex h-7 cursor-default items-center rounded-md border border-solid bg-background pe-7 pl-2 ps-2 text-xs font-medium text-secondary-foreground transition-all hover:bg-background disabled:cursor-not-allowed disabled:opacity-50 data-[fixed]:pe-2',
                     badgeClassName
                   )}
                   data-fixed={option.fixed}
@@ -464,7 +464,10 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
                       e.preventDefault()
                       e.stopPropagation()
                     }}
-                    onClick={() => handleUnselect(option)}
+                    // Updated the onClick handler to use setTimeout for scrolling after DOM updates.
+                    onClick={() => {
+                      handleUnselect(option)
+                    }}
                     aria-label='Remove'
                   >
                     <Cross2Icon width={14} height={14} strokeWidth={2} aria-hidden='true' />
@@ -497,7 +500,7 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
               }}
               placeholder={hidePlaceholderWhenSelected && selected.length !== 0 ? '' : placeholder}
               className={cn(
-                'flex-1 bg-transparent outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed text-sm',
+                'flex-1 min-w-0 outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed text-sm',
                 {
                   'w-52': hidePlaceholderWhenSelected,
                   'px-3 py-2': selected.length === 0,
