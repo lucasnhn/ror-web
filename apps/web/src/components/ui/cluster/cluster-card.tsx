@@ -146,7 +146,7 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
                 <span className='font-bold'>ArgoCD &nbsp;</span>missing ...
               </p>
             ))}
-          {displayData?.includes('argocd') &&
+          {displayData?.includes('grafana') &&
             (tools.grafana ? (
               <a
                 onClick={(e) => e.stopPropagation()}
