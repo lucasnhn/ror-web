@@ -21,16 +21,17 @@ export function SortSelect({ options, currentSort }: SortSelectProps) {
   const searchParams = useSearchParams()
 
   const handleChange = (value: string) => {
+    if (value === currentSort) return
     const params = new URLSearchParams(searchParams.toString())
     params.set('sort', value)
-    params.set('order', 'asc') // default to ascending on change
+    params.set('order', 'asc')
     router.push(`/clusters?${params.toString()}`)
   }
 
   return (
     <div className='flex flex-col mt-[-16px]'>
       <span className='text-xs'>Sorting</span>
-      <Select onValueChange={handleChange} defaultValue={currentSort}>
+      <Select onValueChange={handleChange} value={currentSort}>
         <SelectTrigger className='w-52'>
           <SelectValue placeholder='Select sorting' />
         </SelectTrigger>

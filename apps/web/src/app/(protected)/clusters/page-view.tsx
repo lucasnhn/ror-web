@@ -382,10 +382,12 @@ export const PageView = ({ className, clusters, params }: PageViewProps) => {
     }
   }, [params])
 
+  const [searchResults, setSearchResults] = useState<Cluster[]>(clusters)
+
   const renderControls = () => (
     <div className='flex flex-wrap items-center justify-between w-full gap-4 [@container(max-width:1000px)]:flex-col [@container(max-width:1000px)]:items-start [@container(max-width:1000px)]:gap-6'>
       <div className='flex flex-wrap items-center gap-x-4 gap-y-6'>
-        <ClusterSearch items={clusters} />
+        <ClusterSearch items={clusters} onResultsChange={(res) => setSearchResults(res)} />
 
         <MultipleSelector
           className='w-52'
@@ -479,17 +481,21 @@ export const PageView = ({ className, clusters, params }: PageViewProps) => {
           />
         ) : (
           <div className='flex flex-wrap gap-6'>
-            {clusters.map((cluster) => (
-              <ClusterCard
-                key={cluster.clusterId}
-                cluster={cluster}
-                displayData={
-                  selectedDisplayData.length > 0
-                    ? selectedDisplayData
-                    : displayDataOptions.map((o) => o.value as ClusterCardDisplayData)
-                }
-              />
-            ))}
+            {(searchResults ?? clusters).length > 0 ? (
+              (searchResults ?? clusters).map((cluster) => (
+                <ClusterCard
+                  key={cluster.clusterId}
+                  cluster={cluster}
+                  displayData={
+                    selectedDisplayData.length > 0
+                      ? selectedDisplayData
+                      : displayDataOptions.map((o) => o.value as ClusterCardDisplayData)
+                  }
+                />
+              ))
+            ) : (
+              <p className='text-muted-foreground'>No cluster with a similar name exists.</p>
+            )}
           </div>
         )}
       </section>
