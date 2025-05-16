@@ -4,7 +4,7 @@ import * as React from 'react'
 
 import { cn } from '@/utils/clsxm'
 import { CircleCheck, CircleHelp, ExternalLink, Skull, TriangleAlert } from 'lucide-react'
-import { Cluster } from '@ror/js-api-client'
+import type { Cluster } from '@ror/js-api-client'
 import { getCommonClusterTools } from '@/features/clusters/utils/tools'
 import { CodeSnippet, Layer } from '@ror/react'
 import { User } from 'next-auth'

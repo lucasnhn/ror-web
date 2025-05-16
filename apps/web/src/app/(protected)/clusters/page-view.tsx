@@ -1,19 +1,19 @@
 'use client'
 
-import { Button } from '@/components/shadcn/button'
-import MultipleSelector, { Option } from '@/components/shadcn/multiselect'
-import { Toggle } from '@/components/shadcn/toggle'
+import { ClusterCard, ClusterCardDisplayData } from '@/components/ui/cluster/cluster-card'
 import { ClusterSearch } from '@/components/ui/cluster-search'
 import { SortSelect } from '@/components/ui/sort-select'
 import { TabsViewSwitcher } from '@/components/ui/tabs-view-switcher'
-import { cn } from '@/utils/clsxm'
-import { Cluster } from '@ror/js-api-client'
-import { ArrowDownWideNarrow, ArrowDownNarrowWide, Funnel } from 'lucide-react'
-import Link from 'next/link'
-import { CodeSnippet } from '@ror/react'
 import { ClustersTable } from './cluster-table'
-import { ClusterCard, ClusterCardDisplayData } from '@/components/ui/cluster/cluster-card'
-import { useEffect, useState } from 'react'
+import { CodeSnippet } from '@ror/react'
+import { Toggle } from '@/components/shadcn/toggle'
+import { Button } from '@/components/shadcn/button'
+import MultipleSelector, { Option } from '@/components/shadcn/multiselect'
+import { ArrowDownNarrowWide, ArrowDownWideNarrow, Funnel } from 'lucide-react'
+import { cn } from '@/utils/clsxm'
+import Link from 'next/link'
+import { useEffect, useMemo, useState } from 'react'
+import type { Cluster } from '@ror/js-api-client'
 
 interface Params {
   view?: 'grid' | 'list'
@@ -302,7 +302,7 @@ const kubernetesVersions: Option[] = [
   },
 ]
 
-const multipleSelectorOptions = [
+const filterOptions = [
   {
     label: 'Status',
     placeholder: 'Set status',
@@ -336,59 +336,14 @@ const multipleSelectorOptions = [
 ]
 
 export const PageView = ({ className, clusters, params }: PageViewProps) => {
-  const filtersOpen = params.filters === 'open'
-  const newParams = new URLSearchParams(
-    params as string | string[][] | Record<string, string> | URLSearchParams | undefined
-  )
-
-  if (filtersOpen) {
-    newParams.delete('filters')
-  } else {
-    newParams.set('filters', 'open')
-  }
-  const toggleUrl = `/clusters?${newParams.toString()}`
-
   const DEFAULT_LIMIT = 10
   const DEFAULT_PAGE = 1
 
-  // Parse pagination parameters from URL
   const limit = Number(params.limit) || DEFAULT_LIMIT
-  const page = Number(params.page) || DEFAULT_PAGE // URL shows 1-based indexing
+  const page = Number(params.page) || DEFAULT_PAGE
+  const filtersOpen = params.filters === 'open'
 
-  // Keep this for future pagination
-  // const skip = (page - 1) * limit
-  // Parse sorting parameters from URL
-  // const sort = params.sort ? params.sort : 'clusterName'
-  // const order = params.order === 'asc' ? 1 : -1
-
-  // Set up pagination state for the table
-  const paginationState = {
-    pageIndex: page - 1, // Convert to 0-based for internal use
-    pageSize: limit,
-  }
-
-  const pageCount = Math.ceil(clusters.length / limit)
-
-  const displayData: ClusterCardDisplayData[] = [
-    'argocd',
-    'grafana',
-    'rorcli',
-    'kubectl',
-    'accessGroups',
-    'cpu',
-    'memory',
-    'nodes',
-    'monthlyPrice',
-    'yearlyPrice',
-    'agentVersion',
-    'kubernetesVersion',
-    'toolingVersion',
-    'datacenterName',
-    'datacenterProvider',
-    'environment',
-  ]
-
-  const [selectedDisplayData, setSelectedDisplayData] = useState<ClusterCardDisplayData[] | null>(null)
+  const [selectedDisplayData, setSelectedDisplayData] = useState<ClusterCardDisplayData[]>([])
 
   useEffect(() => {
     const stored = localStorage.getItem('selectedDisplayData')
@@ -396,98 +351,123 @@ export const PageView = ({ className, clusters, params }: PageViewProps) => {
   }, [])
 
   useEffect(() => {
-    if (selectedDisplayData !== null) {
-      localStorage.setItem('selectedDisplayData', JSON.stringify(selectedDisplayData))
-    }
+    localStorage.setItem('selectedDisplayData', JSON.stringify(selectedDisplayData))
   }, [selectedDisplayData])
 
-  return (
-    <div>
-      <div className='w-full border-b h-28 p-12 flex items-center justify-between'>
-        <div className={cn(className, 'flex items-center gap-2')}>
-          {/* Search input */}
-          <ClusterSearch items={clusters} />
+  const paginationState = {
+    pageIndex: page - 1,
+    pageSize: limit,
+  }
 
-          {/* Display data */}
-          <MultipleSelector
-            className='w-52'
-            commandProps={{ label: 'Display data' }}
-            value={displayDataOptions.filter(
-              (opt) => selectedDisplayData?.includes(opt.value as ClusterCardDisplayData) ?? false
-            )}
-            onChange={(selected) => {
-              setSelectedDisplayData(selected.map((item) => item.value as ClusterCardDisplayData))
-            }}
-            defaultOptions={displayDataOptions}
-            placeholder='Set display data'
-            hideClearAllButton
-            hidePlaceholderWhenSelected
-            emptyIndicator={<p className='text-center text-sm'>No results found</p>}
-          />
+  const pageCount = Math.ceil(clusters.length / limit)
 
-          {/* Sorting */}
-          {/* TODO: Make the sorting based on the display data */}
-          <SortSelect options={sortingOptions} currentSort={params.sort} />
+  const toggleParams = useMemo(() => {
+    const newParams = new URLSearchParams(params as string[][] | Record<string, string> | string | URLSearchParams)
+    if (filtersOpen) {
+      newParams.delete('filters')
+    } else {
+      newParams.set('filters', 'open')
+    }
+    return `/clusters?${newParams.toString()}`
+  }, [params, filtersOpen])
 
-          {params.sort &&
-            (() => {
-              const toggleOrderParams = new URLSearchParams(
-                params as string[][] | Record<string, string> | string | URLSearchParams
-              )
-              const currentOrder = toggleOrderParams.get('order') === 'desc' ? 'desc' : 'asc'
-              const nextOrder = currentOrder === 'desc' ? 'asc' : 'desc'
-              toggleOrderParams.set('order', nextOrder)
+  const toggleSortParams = useMemo(() => {
+    if (!params.sort) return null
+    const newParams = new URLSearchParams(params as string[][] | Record<string, string> | string | URLSearchParams)
+    const currentOrder = newParams.get('order') === 'desc' ? 'desc' : 'asc'
+    newParams.set('order', currentOrder === 'desc' ? 'asc' : 'desc')
+    return {
+      url: `/clusters?${newParams.toString()}`,
+      isDesc: currentOrder === 'desc',
+    }
+  }, [params])
 
-              const toggleOrderUrl = `/clusters?${toggleOrderParams.toString()}`
+  const renderControls = () => (
+    <div className='flex flex-wrap items-center justify-between w-full gap-4 [@container(max-width:1000px)]:flex-col [@container(max-width:1000px)]:items-start [@container(max-width:1000px)]:gap-6'>
+      <div className='flex flex-wrap items-center gap-x-4 gap-y-6'>
+        <ClusterSearch items={clusters} />
 
-              return (
-                <Link href={toggleOrderUrl}>
-                  <Button variant='outline' className='border-[var(--input)]'>
-                    {currentOrder === 'desc' ? (
-                      <span className='flex gap-1 items-center'>
-                        <ArrowDownWideNarrow className='w-4 h-4' />
-                        DESC
-                      </span>
-                    ) : (
-                      <span className='flex gap-1 items-center'>
-                        <ArrowDownNarrowWide className='w-4 h-4' />
-                        ASC
-                      </span>
-                    )}
-                  </Button>
-                </Link>
-              )
-            })()}
+        <MultipleSelector
+          className='w-52'
+          commandProps={{ label: 'Display data' }}
+          value={displayDataOptions.filter((opt) => selectedDisplayData?.includes(opt.value as ClusterCardDisplayData))}
+          onChange={(selected) => setSelectedDisplayData(selected.map((item) => item.value as ClusterCardDisplayData))}
+          defaultOptions={displayDataOptions}
+          placeholder='Set display data'
+          hideClearAllButton
+          hidePlaceholderWhenSelected
+          emptyIndicator={<p className='text-center text-sm'>No results found</p>}
+        />
 
-          {/* Filtering */}
-          {/* TODO: Add text that says that filters are applied if filters are applied */}
-          <Link href={toggleUrl}>
-            <Toggle pressed={filtersOpen} variant='outline' aria-label='Open filters'>
-              <Funnel />
-            </Toggle>
+        <SortSelect options={sortingOptions} currentSort={params.sort} />
+
+        {toggleSortParams && (
+          <Link href={toggleSortParams.url}>
+            <Button variant='outline' className='border-[var(--input)]'>
+              {toggleSortParams.isDesc ? (
+                <span className='flex gap-1 items-center'>
+                  <ArrowDownWideNarrow className='w-4 h-4' />
+                  DESC
+                </span>
+              ) : (
+                <span className='flex gap-1 items-center'>
+                  <ArrowDownNarrowWide className='w-4 h-4' />
+                  ASC
+                </span>
+              )}
+            </Button>
           </Link>
-          {filtersOpen && (
-            <>
-              {multipleSelectorOptions.map((option) => (
-                <MultipleSelector
-                  key={option.label}
-                  className='w-52'
-                  commandProps={{
-                    label: option.label,
-                  }}
-                  value={[]}
-                  defaultOptions={option.data}
-                  placeholder={option.placeholder}
-                  hideClearAllButton
-                  hidePlaceholderWhenSelected
-                  emptyIndicator={<p className='text-center text-sm'>No results found</p>}
-                />
-              ))}
-            </>
-          )}
-        </div>
+        )}
+
+        <Link className='[@container(max-width:1000px)]:hidden' href={toggleParams}>
+          <Toggle pressed={filtersOpen} variant='outline' aria-label='Open filters'>
+            <Funnel />
+          </Toggle>
+        </Link>
+      </div>
+
+      <div className='flex flex-row gap-4'>
+        <Link className='[@container(min-width:1001px)]:hidden' href={toggleParams}>
+          <Toggle pressed={filtersOpen} variant='outline' aria-label='Open filters'>
+            <Funnel />
+          </Toggle>
+        </Link>
         <TabsViewSwitcher />
       </div>
+    </div>
+  )
+
+  const renderFilterSection = () => {
+    return (
+      filtersOpen && (
+        <div className='flex flex-wrap items-center gap-x-4 gap-y-6 min-h-28 mx-12 mt-6'>
+          {filterOptions.map((option) => (
+            <MultipleSelector
+              key={option.label}
+              className='w-52'
+              commandProps={{ label: option.label }}
+              value={[]}
+              defaultOptions={option.data}
+              placeholder={option.placeholder}
+              hideClearAllButton
+              hidePlaceholderWhenSelected
+              emptyIndicator={<p className='text-center text-sm'>No results found</p>}
+            />
+          ))}
+        </div>
+      )
+    )
+  }
+
+  return (
+    <div className={cn(className, '@container')}>
+      <div className={cn('border-b', filtersOpen && 'pb-2')}>
+        <div className={cn('mx-12 flex items-center min-h-28 py-6', filtersOpen && 'w-[calc(100%-6rem)] border-b')}>
+          {renderControls()}
+        </div>
+        {renderFilterSection()}
+      </div>
+
       <section className='px-12 my-8'>
         {params.view === 'list' ? (
           <ClustersTable
@@ -503,7 +483,11 @@ export const PageView = ({ className, clusters, params }: PageViewProps) => {
               <ClusterCard
                 key={cluster.clusterId}
                 cluster={cluster}
-                displayData={selectedDisplayData && selectedDisplayData.length > 0 ? selectedDisplayData : displayData}
+                displayData={
+                  selectedDisplayData.length > 0
+                    ? selectedDisplayData
+                    : displayDataOptions.map((o) => o.value as ClusterCardDisplayData)
+                }
               />
             ))}
           </div>
