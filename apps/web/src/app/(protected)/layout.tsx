@@ -1,4 +1,3 @@
-import { AppShell } from '@/components/layout/app-shell/app-shell'
 import type { ReactNode } from 'react'
 
 interface RootLayoutProps {
@@ -8,7 +7,9 @@ interface RootLayoutProps {
 export default async function ProtectedLayout({ children }: Readonly<RootLayoutProps>) {
   return (
     <div className='w-full'>
-      <AppShell>{children}</AppShell>
+      <div className='flex h-screen w-full overflow-hidden'>
+        <div className='flex-1 overflow-y-auto'>{children}</div>
+      </div>
     </div>
   )
 }
