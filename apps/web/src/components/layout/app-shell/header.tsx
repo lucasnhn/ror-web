@@ -1,3 +1,4 @@
+import { SidebarTrigger } from '@/components/shadcn/sidebar'
 import { cn } from '@/utils/clsxm'
 
 interface HeaderProps {
@@ -7,8 +8,9 @@ interface HeaderProps {
 
 export const Header = ({ className, title = 'ROR' }: HeaderProps) => {
   return (
-    <header className={cn('w-full h-28 px-12 py-2 border-b flex items-center', className)}>
-      <h1 className='text-center'>{title}</h1>
+    <header className={cn('w-full h-28 px-12 py-2 border-b flex items-center gap-4', className)}>
+      <SidebarTrigger className='sm:hidden' />
+      <h1 className='text-center text-5xl sm:text-[4rem]'>{title}</h1>
     </header>
   )
 }
