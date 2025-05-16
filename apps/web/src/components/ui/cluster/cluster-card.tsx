@@ -196,7 +196,9 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
               <p className='font-bold'>Access groups</p>
               <div className='overflow-hidden text-ellipsis whitespace-nowrap'>
                 {accessGroups.length ? (
-                  accessGroups.map((group, index) => <p key={index}>{group}</p>)
+                  accessGroups.map((group, index) => (
+                    <p key={index} title={group}>{group}</p>
+                  ))
                 ) : (
                   <p>No access groups</p>
                 )}
