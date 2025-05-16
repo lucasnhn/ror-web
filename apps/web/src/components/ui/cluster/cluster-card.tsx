@@ -114,7 +114,10 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
 
   return (
     <Card
-      className={cn('w-sm pt-0 hover:bg-[#ededed] dark:hover:bg-neutral-800 hover:cursor-pointer', className)}
+      className={cn(
+        'w-sm min-w-64 pt-0 hover:bg-[#ededed] dark:hover:bg-neutral-800 hover:cursor-pointer @container container',
+        className
+      )}
       onClick={handleCardClick}
       role='button'
       tabIndex={0}
@@ -142,8 +145,9 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
                 <ExternalLink className='w-5 h-5' />
               </a>
             ) : (
-              <p className='flex'>
-                <span className='font-bold'>ArgoCD &nbsp;</span>missing ...
+              <p className='flex [@container(max-width:360px)]:flex-col'>
+                <span className='font-bold'>ArgoCD &nbsp;</span>
+                <span>missing ...</span>
               </p>
             ))}
           {displayData?.includes('grafana') &&
@@ -159,8 +163,9 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
                 <ExternalLink className='w-5 h-5' />
               </a>
             ) : (
-              <p className='flex'>
-                <span className='font-bold'>Grafana &nbsp;</span>missing ...
+              <p className='flex [@container(max-width:360px)]:flex-col '>
+                <span className='font-bold'>Grafana &nbsp;</span>
+                <span>missing ...</span>
               </p>
             ))}
         </section>
@@ -185,11 +190,11 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
           )}
         </section>
 
-        <section className='flex flex-col gap-1.5 [&>div]:grid [&>div]:grid-cols-2'>
+        <section className='flex flex-col gap-1.5 [&>div]:grid [&>div]:grid-cols-2 [@container(max-width:360px)]:[&>div]:grid-cols-1'>
           {displayData?.includes('accessGroups') && (
             <div>
               <p className='font-bold'>Access groups</p>
-              <div>
+              <div className='overflow-hidden text-ellipsis whitespace-nowrap'>
                 {accessGroups.length ? (
                   accessGroups.map((group, index) => <p key={index}>{group}</p>)
                 ) : (
