@@ -15,15 +15,16 @@ interface ClusterPageLayoutProps {
   children: ReactNode
 }
 
+// TODO: Uncomment the following lines when the respective components are available
 const {
   cluster,
-  clusterIngresses,
+  // clusterIngresses,
   clusterNodePools,
-  clusterPolicies,
-  clusterVulnerabilities,
-  clusterCompliance,
-  clusterAbout,
-  clusterRawData,
+  // clusterPolicies,
+  // clusterVulnerabilities,
+  // clusterCompliance,
+  // clusterAbout,
+  // clusterRawData,
 } = routes.app
 
 const createTabNavigationItems = (clusterId: string) => {
@@ -32,34 +33,34 @@ const createTabNavigationItems = (clusterId: string) => {
       label: 'Details',
       href: cluster.getHref(clusterId),
     },
-    {
-      label: clusterIngresses.label,
-      href: clusterIngresses.getHref(clusterId),
-    },
+    // {
+    //   label: clusterIngresses.label,
+    //   href: clusterIngresses.getHref(clusterId),
+    // },
     {
       label: clusterNodePools.label,
       href: clusterNodePools.getHref(clusterId),
     },
-    {
-      label: clusterPolicies.label,
-      href: clusterPolicies.getHref(clusterId),
-    },
-    {
-      label: clusterVulnerabilities.label,
-      href: clusterVulnerabilities.getHref(clusterId),
-    },
-    {
-      label: clusterCompliance.label,
-      href: clusterCompliance.getHref(clusterId),
-    },
-    {
-      label: clusterAbout.label,
-      href: clusterAbout.getHref(clusterId),
-    },
-    {
-      label: clusterRawData.label,
-      href: clusterRawData.getHref(clusterId),
-    },
+    // {
+    //   label: clusterPolicies.label,
+    //   href: clusterPolicies.getHref(clusterId),
+    // },
+    // {
+    //   label: clusterVulnerabilities.label,
+    //   href: clusterVulnerabilities.getHref(clusterId),
+    // },
+    // {
+    //   label: clusterCompliance.label,
+    //   href: clusterCompliance.getHref(clusterId),
+    // },
+    // {
+    //   label: clusterAbout.label,
+    //   href: clusterAbout.getHref(clusterId),
+    // },
+    // {
+    //   label: clusterRawData.label,
+    //   href: clusterRawData.getHref(clusterId),
+    // },
   ]
 }
 

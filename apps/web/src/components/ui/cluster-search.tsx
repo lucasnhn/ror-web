@@ -1,6 +1,6 @@
 'use client'
 
-import { Cluster } from '@ror/js-api-client'
+import type { Cluster } from '@ror/js-api-client'
 import Fuse from 'fuse.js'
 import { useMemo, useState } from 'react'
 import { Input } from '../shadcn/input'
