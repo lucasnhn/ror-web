@@ -385,7 +385,7 @@ export const PageView = ({ className, clusters, params }: PageViewProps) => {
   const [searchResults, setSearchResults] = useState<Cluster[]>(clusters)
 
   const renderControls = () => (
-    <div className='flex flex-wrap items-center justify-between w-full gap-4 [@container(max-width:1000px)]:flex-col [@container(max-width:1000px)]:items-start [@container(max-width:1000px)]:gap-6'>
+    <div className='flex flex-wrap items-center justify-between w-full gap-4 [@container(max-width:1000px)]:flex-col [@container(max-width:1000px)]:items-start [@container(max-width:1000px)]:gap-6 '>
       <div className='flex flex-wrap items-center gap-x-4 gap-y-6'>
         <ClusterSearch items={clusters} onResultsChange={(res) => setSearchResults(res)} />
 
@@ -453,7 +453,7 @@ export const PageView = ({ className, clusters, params }: PageViewProps) => {
               placeholder={option.placeholder}
               hideClearAllButton
               hidePlaceholderWhenSelected
-              emptyIndicator={<p className='text-center text-sm'>No results found</p>}
+              emptyIndicator={<p className='text-center text-sm '>No results found</p>}
             />
           ))}
         </div>
@@ -464,7 +464,7 @@ export const PageView = ({ className, clusters, params }: PageViewProps) => {
   return (
     <div className={cn(className, '@container')}>
       <div className={cn('border-b', filtersOpen && 'pb-2')}>
-        <div className={cn('mx-12 flex items-center min-h-28 py-6', filtersOpen && 'w-[calc(100%-6rem)] border-b')}>
+        <div className={cn('mx-12 flex items-center min-h-28 py-6 ', filtersOpen && 'w-[calc(100%-6rem)] border-b')}>
           {renderControls()}
         </div>
         {renderFilterSection()}
