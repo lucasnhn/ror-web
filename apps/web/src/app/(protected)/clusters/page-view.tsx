@@ -388,7 +388,7 @@ export const PageView = ({ className, clusters, params }: PageViewProps) => {
   const renderControls = () => (
     <div className='flex flex-wrap items-center justify-between w-full gap-4 [@container(max-width:1000px)]:flex-col [@container(max-width:1000px)]:items-start [@container(max-width:1000px)]:gap-6 '>
       <div className='flex flex-wrap items-center gap-x-4 gap-y-6'>
-        {/* <SidebarTrigger /> */}
+        
 
         <ClusterSearch items={clusters} onResultsChange={(res) => setSearchResults(res)} />
 
