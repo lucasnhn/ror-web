@@ -22,7 +22,7 @@ interface HealthCircleProps {
 export const HealthCircle = ({ className, health }: HealthCircleProps) => (
   <div className={cn(className, 'bg-neutral-100 p-0.5 rounded-full relative flex items-center justify-center')}>
     <div
-      className={`w-[calc(100%-4px)] h-[calc(100%-4px)] rounded-full flex items-center justify-center ${healthColors[health - 1][0]} ${healthColors[health - 1][1]}`}
+      className={`w-[calc(100%-4px)] h-[calc(100%-4px)] rounded-full flex items-center justify-center ${(healthColors[health - 1] || ['bg-gray-500', 'dark:bg-gray-600'])[0]} ${(healthColors[health - 1] || ['bg-gray-500', 'dark:bg-gray-600'])[1]}`}
     >
       {getHealthSymbol(health)}
     </div>
