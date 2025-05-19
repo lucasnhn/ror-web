@@ -52,7 +52,7 @@ export const ClusterHeader = ({ className, cluster, tabs }: ClusterHeaderProps) 
         >
           <HealthCircle className='w-20 h-20' health={cluster.healthStatus.health} />
           <div className='flex flex-col w-fit'>
-            <p className='text-lg'>Environment: {cluster.environment.toUpperCase()}</p>
+            <p className='text-lg'>Environment: {cluster.environment?.toUpperCase() ?? 'UNKNOWN'}</p>
             <p className='text-lg'>Status: {getHealthStatus(cluster.healthStatus.health)}</p>
           </div>
         </div>
