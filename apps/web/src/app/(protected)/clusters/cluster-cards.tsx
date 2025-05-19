@@ -2,7 +2,7 @@ import { DefinitionDescription, DefinitionList, DefinitionTerm, Stack, Tile } fr
 import type { Cluster } from '@ror/js-api-client'
 import Link from 'next/link'
 import clsxm from '@/utils/clsxm'
-import { HealthStatus } from '@/components/ui/health-status'
+import { HealthStatus } from '@/components/ui/cluster/health-status'
 import { convertBytes } from '@/utils/bytes'
 import { EnvironmentTag } from '@/components/ui/environment-tag'
 import { getCommonClusterTools } from '@/features/clusters/utils/tools'

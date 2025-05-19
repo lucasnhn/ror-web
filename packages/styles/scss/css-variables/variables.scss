@@ -69,7 +69,7 @@
     @include light-dark('layer-accent-active-03', rgb-color('neutral', '500'), rgb-color('neutral', '800'));
 
     /// Borders
-    @include light-dark('border-interactive', rgb-color('teal', '500'), rgb-color('teal', '400'));
+    @include light-dark('border-interactive', rgb-color('blue', '500'), rgb-color('blue', '600'));
     @include light-dark('border-subtle-00', rgb-color('neutral', '200'), rgb-color('neutral', '800'));
     @include light-dark('border-subtle-01', rgb-color('neutral', '300'), rgb-color('neutral', '700'));
     @include light-dark('border-subtle-02', rgb-color('neutral', '200'), rgb-color('neutral', '800'));
