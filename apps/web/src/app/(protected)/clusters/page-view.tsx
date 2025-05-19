@@ -1,7 +1,6 @@
 'use client'
 
 import { ClusterCard, ClusterCardDisplayData } from '@/components/ui/cluster/cluster-card'
-import { ClusterSearch } from '@/components/ui/cluster-search'
 import { SortSelect } from '@/components/ui/sort-select'
 import { TabsViewSwitcher } from '@/components/ui/tabs-view-switcher'
 import { ClustersTable } from './cluster-table'
@@ -14,6 +13,7 @@ import { cn } from '@/utils/clsxm'
 import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
 import type { Cluster } from '@ror/js-api-client'
+import { ClusterSearch } from '@/components/ui/cluster/cluster-search'
 
 interface Params {
   view?: 'grid' | 'list'

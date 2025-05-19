@@ -15,9 +15,10 @@ interface TabItem {
 interface NavigationTabsProps {
   className?: string
   items: TabItem[]
+  tabColor?: string
 }
 
-export function NavigationTabs({ items, className }: NavigationTabsProps) {
+export function NavigationTabs({ items, className, tabColor }: NavigationTabsProps) {
   const currentPath = usePathname()
 
   const classes = clsx('r-tabs', s.navigation, className)
@@ -40,7 +41,7 @@ export function NavigationTabs({ items, className }: NavigationTabsProps) {
                   {isActive ? (
                     <motion.div
                       layoutId='active-indicator'
-                      className={clsxm('r-tab-indicator r-tab-indicator--active', s.activeIndicator)}
+                      className={clsxm('r-tab-indicator r-tab-indicator--active', s.activeIndicator, tabColor)}
                     />
                   ) : null}
                 </Link>

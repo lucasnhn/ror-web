@@ -2,15 +2,17 @@
 
 import * as React from 'react'
 
-import { cn } from '@/utils/clsxm'
-import { CircleCheck, CircleHelp, ExternalLink, Skull, TriangleAlert } from 'lucide-react'
-import type { Cluster } from '@ror/js-api-client'
-import { getCommonClusterTools } from '@/features/clusters/utils/tools'
-import { CodeSnippet, Layer } from '@ror/react'
-import { User } from 'next-auth'
 import { Pill } from '@/components/shadcn/pill'
+import { getCommonClusterTools } from '@/features/clusters/utils/tools'
 import { convertBytes } from '@/utils/bytes'
+import { cn } from '@/utils/clsxm'
+import type { Cluster } from '@ror/js-api-client'
+import { CodeSnippet, Layer } from '@ror/react'
+import { ExternalLink } from 'lucide-react'
+import { User } from 'next-auth'
 import { useRouter } from 'next/navigation'
+import { envBgColors } from './cluster-header'
+import { HealthCircle } from './health-circle'
 
 function Card({ className, ...props }: React.ComponentProps<'div'>) {
   return (
@@ -59,40 +61,12 @@ interface ClusterCardProps {
   displayData?: ClusterCardDisplayData[]
 }
 
-const envBgColors: Record<string, string> = {
-  prod: 'bg-red-500',
-  qa: 'bg-yellow-500',
-  dev: 'bg-blue-500',
-  test: 'bg-emerald-500',
-}
-
-const envColors: Record<string, 'red' | 'yellow' | 'blue' | 'emerald'> = {
+export const envColors: Record<string, 'red' | 'yellow' | 'blue' | 'emerald'> = {
   prod: 'red',
   qa: 'yellow',
   dev: 'blue',
   test: 'emerald',
 }
-
-const healthColors = ['bg-cyan-500', 'bg-orange-500', 'bg-[#EF4444]']
-
-// health is number from 1 to 3
-const getHealthSymbol = (health: number) => {
-  const icons = [CircleCheck, TriangleAlert, Skull]
-  const Icon = icons[health - 1] || CircleHelp
-  return <Icon className='text-neutral-100 w-8 h-8' />
-}
-
-interface HealthCircleProps {
-  health: number
-}
-
-const HealthCircle = ({ health }: HealthCircleProps) => (
-  <div className='bg-neutral-100 p-0.5 w-[52px] h-[52px] rounded-full relative ml-auto mr-4 top-[-24px]'>
-    <div className={`w-12 h-12 rounded-full flex items-center justify-center ${healthColors[health - 1]}`}>
-      {getHealthSymbol(health)}
-    </div>
-  </div>
-)
 
 const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps) => {
   const env = cluster.environment
@@ -124,10 +98,10 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
       onKeyDown={(e) => e.key === 'Enter' && handleCardClick()}
     >
       <CardHeader className='m-0 mb-7 p-0 w-full'>
-        <CardTitle className={cn('text-2xl rounded-t-xl px-6 py-2 flex', envBgColors[env!])}>
+        <CardTitle className={cn('text-2xl rounded-t-xl px-6 py-2 flex', envBgColors[env!][0], envBgColors[env!][1])}>
           {cluster.clusterName}
         </CardTitle>
-        <HealthCircle health={health} />
+        <HealthCircle className='ml-auto mr-4 top-[-24px] w-[52px] h-[52px] ' health={health} />
       </CardHeader>
 
       <CardContent className='text-sm flex flex-col gap-3'>
@@ -197,7 +171,9 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
               <div className='overflow-hidden text-ellipsis whitespace-nowrap'>
                 {accessGroups.length ? (
                   accessGroups.map((group, index) => (
-                    <p key={index} title={group}>{group}</p>
+                    <p key={index} title={group}>
+                      {group}
+                    </p>
                   ))
                 ) : (
                   <p>No access groups</p>
