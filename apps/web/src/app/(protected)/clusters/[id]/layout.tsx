@@ -75,21 +75,6 @@ export default async function ClusterPageLayout({ params, children }: ClusterPag
 
   return (
     <Fragment>
-      {/* <Tile className='mb-4 min-h-40 rounded-none flex flex-col flex-start px-6 pt-6 md:pl-8' asChild>
-        <header>
-          <ClusterPageBreadcrumbs clusterId={cluster.clusterId} clusterName={cluster.clusterName} />
-          <div className='flex items-center gap-8 mb-8'>
-            <h1>{cluster.clusterName}</h1>
-            <div className='flex flex-col gap-2'>
-              <HealthStatus status={cluster.healthStatus.health} />
-              <p className='text-sm text-(--r-text-secondary)'>
-                Last heartbeat: {lastHeartbeatDateString} ({lastHeartbeatDistance} ago)
-              </p>
-            </div>
-          </div>
-          <NavigationTabs items={tabs} className='mt-auto -translate-x-5' />
-        </header>
-      </Tile> */}
       <div className='border-b'>
         <ClusterHeader cluster={cluster} tabs={tabs} />
       </div>
