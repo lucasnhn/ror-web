@@ -17,13 +17,13 @@ import { ScrollArea, ScrollBar } from '@/components/shadcn/scroll-area'
 import { convertBytes } from '@/utils/bytes'
 
 const standardLayout = [
-  { i: 'metrics', x: 0, y: 0, w: 6, h: 8 },
-  { i: 'tools', x: 6, y: 0, w: 6, h: 8 },
-  { i: 'info', x: 12, y: 0, w: 12, h: 8 },
-  { i: 'accessGroups', x: 0, y: 8, w: 6, h: 8 },
-  { i: 'versions', x: 6, y: 8, w: 6, h: 8 },
-  { i: 'observed', x: 12, y: 8, w: 6, h: 8 },
-  { i: 'prices', x: 18, y: 8, w: 6, h: 8 },
+  { i: 'metrics', x: 0, y: 0, w: 6, h: 8, minW: 6, minH: 8 },
+  { i: 'tools', x: 6, y: 0, w: 6, h: 8, minW: 6, minH: 6 },
+  { i: 'info', x: 12, y: 0, w: 12, h: 8, minW: 9, minH: 8 },
+  { i: 'accessGroups', x: 0, y: 8, w: 6, h: 8, minW: 6, minH: 4 },
+  { i: 'versions', x: 6, y: 8, w: 6, h: 8, minW: 6, minH: 7 },
+  { i: 'observed', x: 12, y: 8, w: 6, h: 8, minW: 6, minH: 7 },
+  { i: 'prices', x: 18, y: 8, w: 6, h: 8, minW: 6, minH: 4 },
 ]
 
 interface ClusterDetailsProps {
@@ -218,7 +218,7 @@ export const ClusterDetails = ({ cluster, user, className }: ClusterDetailsProps
         <div key='tools' className='drag-handle'>
           <CardHeader title='Tools' />
           <div className='flex flex-col gap-2'>
-            <section className='grid grid-cols-2'>
+            <section className='flex flex-col'>
               {argo ? (
                 <a
                   onClick={(e) => e.stopPropagation()}
@@ -277,7 +277,7 @@ export const ClusterDetails = ({ cluster, user, className }: ClusterDetailsProps
             <ScrollBar orientation='vertical' />
           </ScrollArea>
         </div>
-        <div key='versions' className='drag-handle'>
+        <div key='versions' className='drag-handle min-h-fit min-w-fit'>
           <CardHeader title='Versions' />
           <div className='flex flex-col gap-3'>
             <div className='flex flex-col gap-1'>
