@@ -11,7 +11,7 @@ export interface ClusterMetricsProps {
 }
 
 export function ClusterMetrics({ className, cluster }: ClusterMetricsProps) {
-  const classes = clsx('w-full', 'p-5', className)
+  const classes = clsx('w-full h-full', 'p-5', className)
 
   const metrics = cluster.metrics
 

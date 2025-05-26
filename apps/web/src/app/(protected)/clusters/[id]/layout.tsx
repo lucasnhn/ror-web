@@ -20,7 +20,7 @@ const {
   // clusterVulnerabilities,
   // clusterCompliance,
   // clusterAbout,
-  // clusterRawData,
+  clusterRawData,
 } = routes.app
 
 export interface navigationItemObject {
@@ -58,10 +58,10 @@ const createTabNavigationItems = (clusterId: string) => {
     //   label: clusterAbout.label,
     //   href: clusterAbout.getHref(clusterId),
     // },
-    // {
-    //   label: clusterRawData.label,
-    //   href: clusterRawData.getHref(clusterId),
-    // },
+    {
+      label: clusterRawData.label,
+      href: clusterRawData.getHref(clusterId),
+    },
   ]
 }
 
