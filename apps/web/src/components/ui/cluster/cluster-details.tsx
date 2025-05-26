@@ -8,6 +8,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import GridLayout from 'react-grid-layout'
 import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
+
 import { ExternalLink } from 'lucide-react'
 import { Layer, CodeSnippet } from '@ror/react'
 import { format } from 'date-fns'
@@ -104,13 +105,14 @@ export const ClusterDetails = ({ cluster, user, className }: ClusterDetailsProps
     <div ref={containerRef} className='w-full border rounded-xl p-2'>
       <style>
         {`
-                    .react-resizable-handle::after { border-color: black; }
-                    .dark .react-resizable-handle::after { border-color: white; }
-                    .react-resizable-handle::after { scale: 2; }
-                    .react-resizable-handle::after { margin-right: 8px; }
-                    .react-resizable-handle::after { margin-bottom: 8px; }
-                    .react-grid-item.react-grid-placeholder: { background-color: blue; }
-                `}
+            .react-resizable-handle::after { border-color: black; }
+            .dark .react-resizable-handle::after { border-color: white; }
+            .react-resizable-handle::after { scale: 2; }
+            .react-resizable-handle::after { margin-right: 8px; }
+            .react-resizable-handle::after { margin-bottom: 8px; }
+            .react-grid-item.react-grid-placeholder { background-color: #58acf2; }
+            .dark .react-grid-item.react-grid-placeholder { background-color: #3e88c5; }
+        `}
       </style>
       {/* TODO: Implement logic to save and reset buttons */}
       {/* <div className='flex gap-2 p-2'>
