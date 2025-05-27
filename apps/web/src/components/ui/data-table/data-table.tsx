@@ -16,8 +16,8 @@ import {
 import type { TableProps } from '@ror/react/components/table'
 import { Pagination } from '@ror/react/components/pagination'
 import { SortDirection } from '@ror/react/utils/sorting'
-import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
-import type { ColumnDef, Header, PaginationState, SortingState } from '@tanstack/react-table'
+import { flexRender, getCoreRowModel, getExpandedRowModel, useReactTable } from '@tanstack/react-table'
+import type { ColumnDef, Header, PaginationState, Row, SortingState } from '@tanstack/react-table'
 import { getItemRangeText } from './pagination'
 import { ChangeEvent, ChangeEventHandler, Fragment, useId } from 'react'
 import { Layer } from '@ror/react'
@@ -93,6 +93,14 @@ export interface DataTableProps<TData> extends Omit<TableProps, 'gridTemplateCol
    * Callback for when the user changes the search query
    */
   onSearchChange?: (event: ChangeEvent<HTMLInputElement>) => void
+
+  /**
+   * If true, table will be expandable
+   * @default false
+   */
+  expandable?: boolean
+
+  renderExpandedRow?: (row: Row<TData>) => React.ReactNode
 }
 
 export function DataTable<TData>(props: DataTableProps<TData>) {
@@ -111,6 +119,7 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
     onSortingChange,
     searchQuery,
     onSearchChange,
+    expandable = false,
   } = props
 
   const tableTitleId = useId()
@@ -120,6 +129,8 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getExpandedRowModel: getExpandedRowModel(),
+    getRowCanExpand: () => expandable,
 
     /**
      * The table needs information about the total number of rows and pages.
@@ -210,6 +221,8 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
 
   const numberOfColumns = table.getAllColumns().length
   const gridTemplateColumns = `repeat(${numberOfColumns.toString()}, minmax(max-content, 1fr))`
+  const gridTemplateColumnsExpandable = `32px repeat(${numberOfColumns - 1}, minmax(max-content, 1fr))`
+
   const hasTitleOrSubtitle = title || subtitle
 
   return (
@@ -229,7 +242,10 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
             )}
           </Layer>
         </TableToolbar>
-        <Table cellPadding={cellPadding} gridTemplateColumns={gridTemplateColumns}>
+        <Table
+          cellPadding={cellPadding}
+          gridTemplateColumns={expandable ? gridTemplateColumnsExpandable : gridTemplateColumns}
+        >
           <TableHead>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
@@ -284,11 +300,31 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
           </TableHead>
           <TableBody>
             {table.getRowModel().rows.map((row) => (
-              <TableRow key={row.id}>
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
-                ))}
-              </TableRow>
+              <Fragment key={row.id}>
+                <TableRow>
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                  ))}
+                </TableRow>
+                {/* {row.getIsExpanded() && (
+                  <TableRow className=''>
+                    <TableCell
+                      style={{ gridColumn: `span ${table.getAllFlatColumns().length}` }}
+                      className='bg-[var(--r-layer)] brightness-102 dark:brightness-130'
+                    >
+                      {(row.original as Nodepool).nodes.map((node) => <NodeCard key={node.name} node={node} />)} */}
+                {/* Replace with your expanded content */}
+                {/* <div className="w-full bg-muted p-2 rounded">
+                        Expanded content here...
+                      </div>*/}
+                {/* </TableCell>  */}
+                {/* <td colSpan={7} className='bg-red-400'>
+                        <span className='bg-blue-400'>Test</span>
+                    </td> */}
+                {/* </TableRow> */}
+                {/* )} */}
+                {row.getIsExpanded() && props.renderExpandedRow?.(row)}
+              </Fragment>
             ))}
           </TableBody>
         </Table>
