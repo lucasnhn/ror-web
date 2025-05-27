@@ -16,7 +16,13 @@ import {
 import type { TableProps } from '@ror/react/components/table'
 import { Pagination } from '@ror/react/components/pagination'
 import { SortDirection } from '@ror/react/utils/sorting'
-import { flexRender, getCoreRowModel, getExpandedRowModel, useReactTable } from '@tanstack/react-table'
+import {
+  flexRender,
+  getCoreRowModel,
+  getExpandedRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from '@tanstack/react-table'
 import type { ColumnDef, Header, PaginationState, Row, SortingState } from '@tanstack/react-table'
 import { getItemRangeText } from './pagination'
 import { ChangeEvent, ChangeEventHandler, Fragment, useId } from 'react'
@@ -130,6 +136,7 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
     columns,
     getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
+    getSortedRowModel: getSortedRowModel(),
     getRowCanExpand: () => expandable,
 
     /**
@@ -225,6 +232,9 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
 
   const hasTitleOrSubtitle = title || subtitle
 
+  // Only show pagination if there are more rows than the current page size
+  const showPagination = totalCount > paginationPageSize
+
   return (
     <Fragment>
       <TableContainer hasPagination>
@@ -306,39 +316,24 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
                     <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                   ))}
                 </TableRow>
-                {/* {row.getIsExpanded() && (
-                  <TableRow className=''>
-                    <TableCell
-                      style={{ gridColumn: `span ${table.getAllFlatColumns().length}` }}
-                      className='bg-[var(--r-layer)] brightness-102 dark:brightness-130'
-                    >
-                      {(row.original as Nodepool).nodes.map((node) => <NodeCard key={node.name} node={node} />)} */}
-                {/* Replace with your expanded content */}
-                {/* <div className="w-full bg-muted p-2 rounded">
-                        Expanded content here...
-                      </div>*/}
-                {/* </TableCell>  */}
-                {/* <td colSpan={7} className='bg-red-400'>
-                        <span className='bg-blue-400'>Test</span>
-                    </td> */}
-                {/* </TableRow> */}
-                {/* )} */}
                 {row.getIsExpanded() && props.renderExpandedRow?.(row)}
               </Fragment>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
-      <Pagination
-        pageSize={paginationPageSize}
-        pageSizes={pageSizes}
-        onPageSizeChange={handleOnPageSizeChange}
-        itemRangeText={itemRangeText}
-        backwardsDisabled={!table.getCanPreviousPage()}
-        forwardsDisabled={!table.getCanNextPage()}
-        onBackwards={handleOnPaginationBackwards}
-        onForwards={handleOnPaginationForwards}
-      />
+      {showPagination && (
+        <Pagination
+          pageSize={paginationPageSize}
+          pageSizes={pageSizes}
+          onPageSizeChange={handleOnPageSizeChange}
+          itemRangeText={itemRangeText}
+          backwardsDisabled={!table.getCanPreviousPage()}
+          forwardsDisabled={!table.getCanNextPage()}
+          onBackwards={handleOnPaginationBackwards}
+          onForwards={handleOnPaginationForwards}
+        />
+      )}
     </Fragment>
   )
 }

@@ -1,8 +1,7 @@
 'use client'
 
 import { convertBytes } from '@/utils/bytes'
-import { ColumnDef } from '@tanstack/react-table'
-// import {TableCell, TableRow } from "@/components/shadcn/table"
+import { ColumnDef, SortingState } from '@tanstack/react-table'
 import React, { useState } from 'react'
 import { DataTable } from '@/components/ui/data-table'
 import { Button } from '@/components/shadcn/button'
@@ -58,6 +57,10 @@ interface DataTableProps<TData> {
 export function PageView({ data }: DataTableProps<Nodepool>) {
   const [edit, setEdit] = useState<boolean>(false)
   const [remove, setRemove] = useState<boolean>(false)
+  const [sorting, setSorting] = useState<SortingState>([])
+
+  console.log('Edit:', edit)
+  console.log('Remove:', remove)
 
   const columns: ColumnDef<Nodepool>[] = [
     {
@@ -115,6 +118,8 @@ export function PageView({ data }: DataTableProps<Nodepool>) {
         data={data}
         totalCount={data.length}
         expandable
+        sorting={sorting}
+        onSortingChange={setSorting}
         renderExpandedRow={(row) => (
           <TableRow className='contents'>
             <TableCell colSpan={columns.length} className='p-0' style={{ gridColumn: '1 / -1' }}>

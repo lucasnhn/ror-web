@@ -1,7 +1,6 @@
 import { authGuard } from '@/features/auth/utils/auth-guard'
 import { rorApiClient } from '@/services/ror-api'
 import { PageView } from './page-view'
-
 interface NodePoolsPageProps {
   params: Promise<{ id: string }>
 }
@@ -84,6 +83,7 @@ export default async function NodePoolsPage({ params }: NodePoolsPageProps) {
   const response = await client.nodes.listByCluster(id)
 
   const nodes = response?.resources ?? []
+  console.log('Nodes:', nodes)
 
   return (
     <div>
