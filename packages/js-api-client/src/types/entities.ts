@@ -9,6 +9,7 @@ import { DeploymentResponseSchema, DeploymentSchema } from '../schemas/deploymen
 import { ServiceSchema, ServiceResponseSchema } from '../schemas/service'
 import { ReplicaSetSchema, ReplicaSetResponseSchema } from '../schemas/replicaset'
 import { DaemonSetSchema, DaemonResponseSchema } from '../schemas/Daemonset'
+import { ConfigurationSchema, configurationResponseSchema } from '../schemas/configuration'
 
 export type Ingress = z.infer<typeof IngressSchema>
 export type IngressResponse = z.infer<typeof IngressResponseSchema>
@@ -32,3 +33,5 @@ export type ReplicaSet = z.infer<typeof ReplicaSetSchema>
 export type ReplicaSetResponse = z.infer<typeof ReplicaSetResponseSchema>
 export type DaemonSet = z.infer<typeof DaemonSetSchema>
 export type DaemonSetResponse = z.infer<typeof DaemonResponseSchema>
+export type Configuration = z.infer<typeof ConfigurationSchema>
+export type ConfigurationResponse = z.infer<typeof configurationResponseSchema>
