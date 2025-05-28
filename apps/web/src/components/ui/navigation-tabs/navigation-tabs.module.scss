@@ -39,7 +39,7 @@
   width: 100%;
   left: 0;
   bottom: -3px;
-  background: var(--r-border-interactive);
+  // background: var(--r-border-interactive); // Unsure about this decision, so leave it commented for now
   pointer-events: none;
 }
 

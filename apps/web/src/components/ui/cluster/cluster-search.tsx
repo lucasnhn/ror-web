@@ -3,8 +3,8 @@
 import type { Cluster } from '@ror/js-api-client'
 import Fuse from 'fuse.js'
 import { useEffect, useMemo, useState } from 'react'
-import { Input } from '../shadcn/input'
 import { Search } from 'lucide-react'
+import { Input } from '@/components/shadcn/input'
 
 export interface ClusterSearchProps {
   items: Cluster[]

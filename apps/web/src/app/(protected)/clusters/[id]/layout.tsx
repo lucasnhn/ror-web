@@ -1,12 +1,8 @@
 import { authGuard } from '@/features/auth/utils/auth-guard'
-import { HealthStatus } from '@/components/ui/health-status'
-import { NavigationTabs } from '@/components/ui/navigation-tabs/navigation-tabs'
 import { rorApiClient } from '@/services/ror-api'
-import { Tile } from '@ror/react/components/tile'
-import { format, formatDistance } from 'date-fns'
 import { Fragment, ReactNode } from 'react'
-import { ClusterPageBreadcrumbs } from './breadcrumbs'
 import { routes } from '@/config/routes'
+import { ClusterHeader } from '@/components/ui/cluster/cluster-header'
 
 interface ClusterPageLayoutProps {
   params: Promise<{
@@ -24,8 +20,13 @@ const {
   // clusterVulnerabilities,
   // clusterCompliance,
   // clusterAbout,
-  // clusterRawData,
+  clusterRawData,
 } = routes.app
+
+export interface navigationItemObject {
+  label: string
+  href: string
+}
 
 const createTabNavigationItems = (clusterId: string) => {
   return [
@@ -57,10 +58,10 @@ const createTabNavigationItems = (clusterId: string) => {
     //   label: clusterAbout.label,
     //   href: clusterAbout.getHref(clusterId),
     // },
-    // {
-    //   label: clusterRawData.label,
-    //   href: clusterRawData.getHref(clusterId),
-    // },
+    {
+      label: clusterRawData.label,
+      href: clusterRawData.getHref(clusterId),
+    },
   ]
 }
 
@@ -72,27 +73,11 @@ export default async function ClusterPageLayout({ params, children }: ClusterPag
 
   const tabs = createTabNavigationItems(id)
 
-  const lastHeartbeatDate = new Date(cluster.lastObserved)
-  const lastHeartbeatDateString = format(lastHeartbeatDate, 'yyyy-MM-dd HH:mm:ss')
-  const lastHeartbeatDistance = formatDistance(lastHeartbeatDate, new Date())
-
   return (
     <Fragment>
-      <Tile className='mb-4 min-h-40 rounded-none flex flex-col flex-start px-6 pt-6 md:pl-8' asChild>
-        <header>
-          <ClusterPageBreadcrumbs clusterId={cluster.clusterId} clusterName={cluster.clusterName} />
-          <div className='flex items-center gap-8 mb-8'>
-            <h1>{cluster.clusterName}</h1>
-            <div className='flex flex-col gap-2'>
-              <HealthStatus status={cluster.healthStatus.health} />
-              <p className='text-sm text-(--r-text-secondary)'>
-                Last heartbeat: {lastHeartbeatDateString} ({lastHeartbeatDistance} ago)
-              </p>
-            </div>
-          </div>
-          <NavigationTabs items={tabs} className='mt-auto -translate-x-5' />
-        </header>
-      </Tile>
+      <div className='border-b'>
+        <ClusterHeader cluster={cluster} tabs={tabs} />
+      </div>
       <div className='pt-2 px-6 md:px-6 md:pt-8'>{children}</div>
     </Fragment>
   )
