@@ -7,6 +7,7 @@ import { UserSelfSchema } from '../schemas/user'
 import { PodResponseSchema, PodSchema } from '../schemas/pod'
 import { DeploymentResponseSchema, DeploymentSchema } from '../schemas/deployment'
 import { ServiceSchema, ServiceResponseSchema } from '../schemas/service'
+import { ReplicaSetSchema, ReplicaSetResponseSchema } from '../schemas/replicaset'
 
 export type Ingress = z.infer<typeof IngressSchema>
 export type IngressResponse = z.infer<typeof IngressResponseSchema>
@@ -26,3 +27,5 @@ export type Deployment = z.infer<typeof DeploymentSchema>
 export type DeploymentResponse = z.infer<typeof DeploymentResponseSchema>
 export type Service = z.infer<typeof ServiceSchema>
 export type ServiceResponse = z.infer<typeof ServiceResponseSchema>
+export type ReplicaSet = z.infer<typeof ReplicaSetSchema>
+export type ReplicaSetResponse = z.infer<typeof ReplicaSetResponseSchema>
