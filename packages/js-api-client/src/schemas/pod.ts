@@ -11,20 +11,20 @@ const PodSpecContainers = z.object({
   name: z.string().optional(),
   image: z.string().optional(),
   ports: z.array(PodSpecContainersPorts).optional(),
-}) // 1-2
+})
 
 const PodSpecSchema = z.object({
   containers: z.array(PodSpecContainers).optional(),
   ServiceAccountName: z.string().optional(),
   NodeName: z.string().optional(),
-}) // 1
+})
 
 const PodStatusSchema = z.object({
   Message: z.string().optional(),
   Phase: z.string().optional(),
   Reason: z.string().optional(),
   StartTime: z.string().optional(),
-}) // 1-1
+})
 
 export const PodSchema = V2ResourceSchema.extend({
   pod: z.object({
