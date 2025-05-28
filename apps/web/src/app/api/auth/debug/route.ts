@@ -20,10 +20,10 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const accessToken = token.accessToken as string
-    if (!accessToken) {
-      console.log('[DEBUG] No access token in session')
-      return NextResponse.json({ error: 'No access token in session' }, { status: 401 })
+    const accessToken = token.accessToken
+    if (typeof accessToken !== 'string' || !accessToken) {
+      console.log('[DEBUG] Invalid or missing access token in session')
+      return NextResponse.json({ error: 'Invalid or missing access token in session' }, { status: 401 })
     }
 
     const decodedToken = jwtDecode<DecodedToken>(accessToken)
