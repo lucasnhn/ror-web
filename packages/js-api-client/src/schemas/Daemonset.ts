@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { createV2ResourceResponseSchema, V2ResourceSchema } from './common'
 
-const DaemonSetStatus = z.object({
+const DaemonSetStatusSchema = z.object({
   NumberReady: z.number(),
   NumberUnavailable: z.number(),
   NumberMisscheduled: z.number(),
@@ -13,7 +13,7 @@ const DaemonSetStatus = z.object({
 
 export const DaemonSetSchema = V2ResourceSchema.extend({
   node: z.object({
-    status: DaemonSetStatus,
+    status: DaemonSetStatusSchema,
   }),
 })
 

@@ -12,12 +12,12 @@ const ReplicaSetSpecSelector = z.object({
   matchLabels: z.record(z.string()),
 })
 
-const ReplicaSetSpec = z.object({
+const ReplicaSetSpecSchema = z.object({
   replicas: z.number(),
   selector: ReplicaSetSpecSelector,
 })
 
-const ReplicaSetStatus = z.object({
+const ReplicaSetStatusSchema = z.object({
   AvailableReplicas: z.number(),
   ReadyReplicas: z.number(),
   replicas: z.number(),
@@ -25,8 +25,8 @@ const ReplicaSetStatus = z.object({
 
 export const ReplicaSetSchema = V2ResourceSchema.extend({
   node: z.object({
-    spec: ReplicaSetSpec,
-    status: ReplicaSetStatus,
+    spec: ReplicaSetSpecSchema,
+    status: ReplicaSetStatusSchema,
   }),
 })
 
