@@ -5,7 +5,7 @@ import { ColumnDef, SortingState } from '@tanstack/react-table'
 import React, { useState } from 'react'
 import { DataTable } from '@/components/ui/data-table'
 import { Button } from '@/components/shadcn/button'
-import { PencilIcon, Trash } from 'lucide-react'
+import { PencilIcon, Plus, Trash } from 'lucide-react'
 import { TableCell, TableRow } from '@ror/react/components/table/table'
 
 interface Node {
@@ -113,6 +113,10 @@ export function PageView({ data }: DataTableProps<Nodepool>) {
 
   return (
     <div>
+      <Button>
+        <Plus />
+        Create nodepool
+      </Button>
       <DataTable
         columns={columns}
         data={data}

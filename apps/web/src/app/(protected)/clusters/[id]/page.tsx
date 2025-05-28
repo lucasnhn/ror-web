@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { authGuard } from '@/features/auth/utils/auth-guard'
 import { rorApiClient } from '@/services/ror-api'
 import { ClusterDetails } from '@/components/ui/cluster/cluster-details'
+import { CodeSnippet } from '@ror/react'
 
 interface ClusterPageProps {
   params: Promise<{
@@ -22,6 +23,7 @@ export default async function ClusterPage({ params }: ClusterPageProps) {
 
   return (
     <div className='@container'>
+      <CodeSnippet type='single'>{session.accessToken}</CodeSnippet>
       <ClusterDetails cluster={cluster} />
     </div>
   )
