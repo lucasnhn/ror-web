@@ -4,6 +4,7 @@ import { createKubernetesClusterService } from '../services/kubernetes-cluster'
 import { createNodesService } from '../services/nodes'
 import { createUsersService } from '../services/users'
 import { createIngressesService } from '../services/ingresses'
+import { createConfigurationService } from '../services/configuration'
 
 function setDefaultHeaders(config: ApiClientConfig): Record<string, string> {
   return {
@@ -36,6 +37,7 @@ export function createApiClient(config: ApiClientConfig) {
     nodes: createNodesService(request),
     users: createUsersService(request),
     ingresses: createIngressesService(request),
+    configuration: createConfigurationService(request),
   }
 
   return services
