@@ -25,7 +25,7 @@ export async function middleware(req: NextRequest) {
   console.log(`[MIDDLEWARE] Environment: ${process.env.NODE_ENV}`)
 
   // Skip auth for debug routes
-  if (debugRoutes.some((route) => path.startsWith(route))) {
+  if (isDev && debugRoutes.some((route) => path.startsWith(route))) {
     console.log(`[MIDDLEWARE] Bypassing auth for debug route: ${path}`)
     return NextResponse.next()
   }
