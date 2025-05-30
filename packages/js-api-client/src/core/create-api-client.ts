@@ -8,6 +8,7 @@ import { createConfigurationService } from '../services/configuration'
 import { createDeploymentService } from '../services/deployment'
 import { createServiceService } from '../services/service'
 import { createDaemonSetService } from '../services/deamonset'
+import { createReplicaSetService } from '../services/replicaset'
 
 function setDefaultHeaders(config: ApiClientConfig): Record<string, string> {
   return {
@@ -44,6 +45,7 @@ export function createApiClient(config: ApiClientConfig) {
     deployment: createDeploymentService(request),
     service: createServiceService(request),
     daemonSet: createDaemonSetService(request),
+    replicaSet: createReplicaSetService(request),
   }
 
   return services

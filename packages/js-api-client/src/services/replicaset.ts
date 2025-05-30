@@ -1,12 +1,12 @@
 import type { RequestOptions } from '../core/request'
 import { validateResponse } from '../core/validation'
-import { ServiceResponseSchema, ServiceSchema } from '../schemas/service'
+import { ReplicaSetResponseSchema, ReplicaSetSchema } from '../schemas/replicaset'
 
-export const createServiceService = (request: (requestOptions: RequestOptions) => Promise<unknown>) => ({
+export const createReplicaSetService = (request: (requestOptions: RequestOptions) => Promise<unknown>) => ({
   list: async (otherParams: URLSearchParams) => {
     const params = new URLSearchParams(otherParams)
     params.set('apiversion', 'general.ror.internal/v1alpha1')
-    params.set('kind', 'Service')
+    params.set('kind', 'ReplicaSet')
 
     const response = await request({
       method: 'GET',
@@ -14,7 +14,7 @@ export const createServiceService = (request: (requestOptions: RequestOptions) =
       params,
     })
 
-    return validateResponse(response, ServiceResponseSchema)
+    return validateResponse(response, ReplicaSetResponseSchema)
   },
   byId: async (id: string) => {
     const response = await request({
@@ -22,11 +22,11 @@ export const createServiceService = (request: (requestOptions: RequestOptions) =
       path: `/v2/resources/uuid/${id}`,
     })
 
-    return validateResponse(response, ServiceSchema)
+    return validateResponse(response, ReplicaSetSchema)
   },
   listByCluster: async (clusterId: string) => {
     const params = new URLSearchParams()
-    params.set('kind', 'Service')
+    params.set('kind', 'ReplicaSet')
     params.set('apiversion', 'general.ror.internal/v1alpha1')
     params.set('ownerScope', 'cluster')
     params.set('ownerSubject', clusterId)
@@ -37,6 +37,6 @@ export const createServiceService = (request: (requestOptions: RequestOptions) =
       params,
     })
 
-    return validateResponse(response, ServiceResponseSchema)
+    return validateResponse(response, ReplicaSetResponseSchema)
   },
 })
