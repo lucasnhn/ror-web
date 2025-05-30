@@ -17,8 +17,6 @@ export async function GET() {
     const allCookies = cookieStore.getAll().map((c) => ({
       name: c.name,
       value: c.name.includes('token') ? `${c.value.substring(0, 10)}...` : c.value.substring(0, 5) + '...',
-      path: c.path,
-      expires: c.expires,
     }))
 
     // Check for session cookies specifically

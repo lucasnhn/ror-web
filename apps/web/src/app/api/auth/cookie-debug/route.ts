@@ -8,15 +8,13 @@ import { cookies } from 'next/headers'
 export async function GET() {
   try {
     // Analyze cookies for debugging
-    const cookieStore = cookies()
+    const cookieStore = await cookies()
     const allCookies = cookieStore.getAll().map((c) => ({
       name: c.name,
       value:
         c.name.includes('token') || c.name.includes('state')
           ? `${c.value.substring(0, 10)}...`
           : c.value.substring(0, Math.min(c.value.length, 20)) + (c.value.length > 20 ? '...' : ''),
-      path: c.path,
-      expires: c.expires,
     }))
 
     // Check for session cookies specifically
