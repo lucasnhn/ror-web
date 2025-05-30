@@ -8,8 +8,9 @@ import { PodResponseSchema, PodSchema } from '../schemas/pod'
 import { DeploymentResponseSchema, DeploymentSchema } from '../schemas/deployment'
 import { ServiceSchema, ServiceResponseSchema } from '../schemas/service'
 import { ReplicaSetSchema, ReplicaSetResponseSchema } from '../schemas/replicaset'
-import { DaemonSetSchema, DaemonResponseSchema } from '../schemas/Daemonset'
+import { DaemonSetResponseSchema, DaemonSetSchema } from '../schemas/Daemonset'
 import { ConfigurationSchema, configurationResponseSchema } from '../schemas/configuration'
+import { VulnerabilityReportResponseSchema, VulnerabilityReportSchema } from '../schemas/vulnerabilityReport'
 
 export type Ingress = z.infer<typeof IngressSchema>
 export type IngressResponse = z.infer<typeof IngressResponseSchema>
@@ -32,6 +33,10 @@ export type ServiceResponse = z.infer<typeof ServiceResponseSchema>
 export type ReplicaSet = z.infer<typeof ReplicaSetSchema>
 export type ReplicaSetResponse = z.infer<typeof ReplicaSetResponseSchema>
 export type DaemonSet = z.infer<typeof DaemonSetSchema>
-export type DaemonSetResponse = z.infer<typeof DaemonResponseSchema>
+export type DaemonSetResponse = z.infer<typeof DaemonSetResponseSchema>
 export type Configuration = z.infer<typeof ConfigurationSchema>
 export type ConfigurationResponse = z.infer<typeof configurationResponseSchema>
+export type Vulnerability = z.infer<typeof VulnerabilityReportSchema>
+export type VulnerabilityReportResponse = z.infer<typeof VulnerabilityReportResponseSchema>
+export type Replicaset = z.infer<typeof ReplicaSetSchema>
+export type ReplicasetResponse = z.infer<typeof ReplicaSetResponseSchema>
