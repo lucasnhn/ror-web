@@ -4,6 +4,7 @@ import { createKubernetesClusterService } from '../services/kubernetes-cluster'
 import { createNodesService } from '../services/nodes'
 import { createUsersService } from '../services/users'
 import { createIngressesService } from '../services/ingresses'
+import { createPodsService } from '../services/pods'
 import { createConfigurationService } from '../services/configurations'
 import { createDeploymentService } from '../services/deployments'
 import { createServiceService } from '../services/services'
@@ -48,6 +49,7 @@ export function createApiClient(config: ApiClientConfig) {
     daemonSet: createDaemonSetService(request),
     replicaSet: createReplicaSetService(request),
     vulnerabilityReport: createVulnerabilityReportService(request),
+    pods: createPodsService(request),
   }
 
   return services
