@@ -9,6 +9,7 @@ import { createDeploymentService } from '../services/deployment'
 import { createServiceService } from '../services/service'
 import { createDaemonSetService } from '../services/deamonset'
 import { createReplicaSetService } from '../services/replicaset'
+import { createVulnerabilityReportService } from '../services/VulnerabilityReports'
 
 function setDefaultHeaders(config: ApiClientConfig): Record<string, string> {
   return {
@@ -46,6 +47,7 @@ export function createApiClient(config: ApiClientConfig) {
     service: createServiceService(request),
     daemonSet: createDaemonSetService(request),
     replicaSet: createReplicaSetService(request),
+    vulnerabilityReport: createVulnerabilityReportService(request),
   }
 
   return services
