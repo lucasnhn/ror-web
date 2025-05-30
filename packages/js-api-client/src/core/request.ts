@@ -81,7 +81,13 @@ export function generateRequest(config: ApiClientConfig): ApiRequestFunction {
       const json = await response.json()
       return json
     } catch (error) {
-      logApiError(requestOptions.method, url.toString(), error)
+      // Enhanced error logging with environment information
+      const additionalInfo = {
+        environment: typeof process === 'object' && process.versions && process.versions.node ? 'server' : 'client',
+        fetchUrl: url.toString(),
+        headers: JSON.stringify(fetchOptions.headers || {}),
+      }
+      logApiError(requestOptions.method, url.toString(), error, additionalInfo)
       if (error instanceof ApiError) {
         throw error
       } else if (error instanceof Error) {
