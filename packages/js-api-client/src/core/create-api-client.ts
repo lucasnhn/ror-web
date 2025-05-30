@@ -6,6 +6,7 @@ import { createUsersService } from '../services/users'
 import { createIngressesService } from '../services/ingresses'
 import { createConfigurationService } from '../services/configuration'
 import { createDeploymentService } from '../services/deployment'
+import { createServiceService } from '../services/service'
 
 function setDefaultHeaders(config: ApiClientConfig): Record<string, string> {
   return {
@@ -39,7 +40,8 @@ export function createApiClient(config: ApiClientConfig) {
     users: createUsersService(request),
     ingresses: createIngressesService(request),
     configuration: createConfigurationService(request),
-    Deployment: createDeploymentService(request),
+    deployment: createDeploymentService(request),
+    service: createServiceService(request),
   }
 
   return services
