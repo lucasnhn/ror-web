@@ -4,6 +4,7 @@ import { KubernetesClusterSchema, KubernetesClusterResponseSchema } from '../sch
 import { ClusterIngressModelV1, ClusterSchema, ClustersResponseSchema } from '../schemas/kubernetes-cluster-v1'
 import { NodeSchema, NodeResponseSchema } from '../schemas/node'
 import { UserSelfSchema } from '../schemas/user'
+import { PodResponseSchema, PodSchema } from '../schemas/pod'
 
 export type Ingress = z.infer<typeof IngressSchema>
 export type IngressResponse = z.infer<typeof IngressResponseSchema>
@@ -17,3 +18,5 @@ export type KubernetesClusterResponse = z.infer<typeof KubernetesClusterResponse
 export type Node = z.infer<typeof NodeSchema>
 export type NodeResponse = z.infer<typeof NodeResponseSchema>
 export type User = z.infer<typeof UserSelfSchema>
+export type Pod = z.infer<typeof PodSchema>
+export type PodResponse = z.infer<typeof PodResponseSchema>
