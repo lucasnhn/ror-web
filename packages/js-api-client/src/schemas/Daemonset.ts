@@ -17,4 +17,4 @@ export const DaemonSetSchema = V2ResourceSchema.extend({
   }),
 })
 
-export const DaemonResponseSchema = createV2ResourceResponseSchema(DaemonSetSchema)
+export const DaemonSetResponseSchema = createV2ResourceResponseSchema(DaemonSetSchema)
