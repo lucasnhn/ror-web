@@ -4,10 +4,31 @@ import { cookies } from 'next/headers'
 export async function GET() {
   // Use await with cookies() since it returns a Promise
   const cookieStore = await cookies()
-  const sessionCookie = cookieStore.get('next-auth.session-token')
+
+  // Check both possible cookie names based on environment
+  const sessionCookie =
+    cookieStore.get('next-auth.session-token') || cookieStore.get('__Secure-next-auth.session-token')
+
+  // Log all cookies for debugging
+  const allCookies = cookieStore.getAll().map((c) => ({
+    name: c.name,
+    value: (c.value || '').substring(0, 20) + '...',
+  }))
+
+  console.log('[ENV DEBUG] All cookies:', allCookies)
 
   if (!sessionCookie) {
-    return NextResponse.json({ error: 'No session cookie found' }, { status: 401 })
+    return NextResponse.json({
+      tokenExists: false,
+      error: 'No session cookie found',
+      cookies: allCookies,
+      environment: {
+        AUTH_SECRET: process.env.AUTH_SECRET ? '✓ Set' : '✗ Not set',
+        NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET ? '✓ Set' : '✗ Not set',
+        AUTH_ISSUER: process.env.AUTH_ISSUER,
+        NODE_ENV: process.env.NODE_ENV,
+      },
+    })
   }
 
   try {
