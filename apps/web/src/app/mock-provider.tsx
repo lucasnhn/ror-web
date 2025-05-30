@@ -14,13 +14,50 @@ import { onUnhandledRequest } from '@/__mocks__/utils/on-unhandled-request'
 const mockingEnabledPromise =
   typeof window !== 'undefined' && process.env.NEXT_PUBLIC_MOCKING_ENABLED === 'true'
     ? import('@/__mocks__/browser').then(async ({ worker }) => {
-        await worker.start({
-          onUnhandledRequest: onUnhandledRequest,
-        })
+        try {
+          console.log('[MSW] Starting service worker...')
 
-        worker.use(...handlers)
+          // Check if service worker is already registered
+          const registrations = await navigator.serviceWorker.getRegistrations()
+          const hasMockWorker = registrations.some(
+            (reg) => reg.active && reg.active.scriptURL.includes('mockServiceWorker.js')
+          )
 
-        console.log(worker.listHandlers())
+          if (hasMockWorker) {
+            console.log('[MSW] Mock service worker already registered, unregistering first')
+            await Promise.all(
+              registrations
+                .filter((reg) => reg.active && reg.active.scriptURL.includes('mockServiceWorker.js'))
+                .map((reg) => reg.unregister())
+            )
+          }
+
+          // Start with a fresh worker
+          await worker
+            .start({
+              onUnhandledRequest: onUnhandledRequest,
+              serviceWorker: {
+                url: '/mockServiceWorker.js',
+                options: {
+                  scope: '/',
+                },
+              },
+            })
+            .catch((e) => {
+              console.error('[MSW] Failed to start worker:', e)
+              // Return a friendlier error for users
+              throw new Error(
+                'MSW initialization failed. Try disabling NEXT_PUBLIC_MOCKING_ENABLED or refreshing the page.'
+              )
+            })
+
+          worker.use(...handlers)
+
+          console.log('[MSW] Service worker started successfully!')
+          console.log('[MSW] Registered handlers:', worker.listHandlers().length)
+        } catch (error) {
+          console.error('[MSW] Service worker registration failed:', error)
+        }
       })
     : Promise.resolve()
 
