@@ -13,7 +13,7 @@ export async function GET() {
     const session = await auth()
 
     // Analyze cookies for debugging
-    const cookieStore = cookies()
+    const cookieStore = await cookies()
     const allCookies = cookieStore.getAll().map((c) => ({
       name: c.name,
       value: c.name.includes('token') ? `${c.value.substring(0, 10)}...` : c.value.substring(0, 5) + '...',

@@ -11,7 +11,17 @@ import { Info, AlertCircle } from 'lucide-react'
 export default function SignInDebugPage() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
-  const [env, setEnv] = useState<any>(null)
+  interface EnvData {
+    environment?: {
+      NODE_ENV?: string
+      AUTH_SECRET?: string
+      NEXTAUTH_SECRET?: string
+      AUTH_ISSUER?: string
+    }
+    cookieName?: string
+    cookieValue?: string
+  }
+  const [env, setEnv] = useState<EnvData | null>(null)
 
   useEffect(() => {
     // Fetch environment information
@@ -42,9 +52,14 @@ export default function SignInDebugPage() {
       })
 
       console.log('Sign-in result:', result)
-    } catch (err: any) {
-      setError(err.message || 'An unknown error occurred')
-      console.error('Sign-in error:', err)
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message)
+        console.error('Sign-in error:', err)
+      } else {
+        setError('An unknown error occurred')
+        console.error('Sign-in error:', err)
+      }
     } finally {
       setLoading(false)
     }

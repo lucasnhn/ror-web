@@ -15,12 +15,7 @@ interface DecodedToken {
 const isDev = process.env.NODE_ENV !== 'production'
 
 // Debug route patterns that should bypass authentication
-const debugRoutes = [
-  '/sign-in',
-  '/sign-in-debug',
-  '/auth-debug',
-  '/api/auth', // This covers all auth routes including callbacks
-]
+const debugRoutes = ['/sign-in', '/sign-in-debug', '/auth-debug', '/api/auth']
 
 export async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname
@@ -85,7 +80,6 @@ export async function middleware(req: NextRequest) {
   console.log(`[MIDDLEWARE] Token exists with properties:`, Object.keys(token))
 
   try {
-    // Check for possible token formats - production vs development may differ
     console.log(`[MIDDLEWARE] Token format validation:`, {
       hasAccessToken: 'accessToken' in token,
       accessTokenType: typeof token.accessToken,
@@ -95,22 +89,17 @@ export async function middleware(req: NextRequest) {
     let expirationTime: number
     let tokenToValidate: string | null = null
 
-    // Handle different token structures we might encounter
     if (typeof token.accessToken === 'string') {
-      // Standard case: token has an accessToken string that needs decoding
       tokenToValidate = token.accessToken
       console.log(`[MIDDLEWARE] Using accessToken string from token`)
     } else if ('exp' in token && typeof token.exp === 'number') {
-      // Alternative case: token itself is already decoded and has exp
       expirationTime = (token.exp as number) * 1000
       console.log(`[MIDDLEWARE] Using token's own exp field: ${token.exp}`)
     } else {
-      // Unknown format
       console.log(`[MIDDLEWARE] Invalid token format - neither accessToken string nor exp field found`)
       return NextResponse.redirect(`${req.nextUrl.origin}/sign-in`)
     }
 
-    // If we have a token string, decode it to check expiration
     if (tokenToValidate) {
       const decodedToken = jwtDecode<DecodedToken>(tokenToValidate)
 
@@ -123,7 +112,6 @@ export async function middleware(req: NextRequest) {
       console.log(`[MIDDLEWARE] Decoded token exp: ${decodedToken.exp}`)
     }
 
-    // Check expiration
     const currentTime = Date.now()
     console.log(`[MIDDLEWARE] Token expiration:`, {
       currentTime: new Date(currentTime).toISOString(),

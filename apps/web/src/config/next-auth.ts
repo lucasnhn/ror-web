@@ -72,7 +72,7 @@ console.log('[NEXTAUTH] Configuration:', {
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [dexIdpProvider],
   trustHost: trusthost,
-  debug: true, // Enable debug logs in all environments for troubleshooting
+  debug: process.env.NODE_ENV !== 'production', // Enable debug logs only in non-production environments
 
   // Force JWT strategy for tokens
   session: {
