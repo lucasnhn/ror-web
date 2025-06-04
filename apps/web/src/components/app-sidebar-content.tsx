@@ -21,7 +21,7 @@ interface Section {
 }
 
 /*
- * Add sections as they are created
+ * TODO: Add sections as they are created
  */
 const sections: Section[] = [
   //   {

@@ -16,8 +16,14 @@ import {
 import type { TableProps } from '@ror/react/components/table'
 import { Pagination } from '@ror/react/components/pagination'
 import { SortDirection } from '@ror/react/utils/sorting'
-import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
-import type { ColumnDef, Header, PaginationState, SortingState } from '@tanstack/react-table'
+import {
+  flexRender,
+  getCoreRowModel,
+  getExpandedRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from '@tanstack/react-table'
+import type { ColumnDef, Header, PaginationState, Row, SortingState } from '@tanstack/react-table'
 import { getItemRangeText } from './pagination'
 import { ChangeEvent, ChangeEventHandler, Fragment, useId } from 'react'
 import { Layer } from '@ror/react'
@@ -93,6 +99,14 @@ export interface DataTableProps<TData> extends Omit<TableProps, 'gridTemplateCol
    * Callback for when the user changes the search query
    */
   onSearchChange?: (event: ChangeEvent<HTMLInputElement>) => void
+
+  /**
+   * If true, table will be expandable
+   * @default false
+   */
+  expandable?: boolean
+
+  renderExpandedRow?: (row: Row<TData>) => React.ReactNode
 }
 
 export function DataTable<TData>(props: DataTableProps<TData>) {
@@ -111,6 +125,7 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
     onSortingChange,
     searchQuery,
     onSearchChange,
+    expandable = false,
   } = props
 
   const tableTitleId = useId()
@@ -120,6 +135,9 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getExpandedRowModel: getExpandedRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getRowCanExpand: () => expandable,
 
     /**
      * The table needs information about the total number of rows and pages.
@@ -210,7 +228,17 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
 
   const numberOfColumns = table.getAllColumns().length
   const gridTemplateColumns = `repeat(${numberOfColumns.toString()}, minmax(max-content, 1fr))`
+  const gridTemplateColumnsExpandable =
+    numberOfColumns <= 1
+      ? numberOfColumns === 1
+        ? '32px'
+        : ''
+      : `32px repeat(${numberOfColumns - 1}, minmax(max-content, 1fr))`
+
   const hasTitleOrSubtitle = title || subtitle
+
+  // Only show pagination if there are more rows than the current page size
+  const showPagination = totalCount > paginationPageSize
 
   return (
     <Fragment>
@@ -229,7 +257,10 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
             )}
           </Layer>
         </TableToolbar>
-        <Table cellPadding={cellPadding} gridTemplateColumns={gridTemplateColumns}>
+        <Table
+          cellPadding={cellPadding}
+          gridTemplateColumns={expandable ? gridTemplateColumnsExpandable : gridTemplateColumns}
+        >
           <TableHead>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
@@ -284,25 +315,30 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
           </TableHead>
           <TableBody>
             {table.getRowModel().rows.map((row) => (
-              <TableRow key={row.id}>
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
-                ))}
-              </TableRow>
+              <Fragment key={row.id}>
+                <TableRow>
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                  ))}
+                </TableRow>
+                {row.getIsExpanded() && props.renderExpandedRow?.(row)}
+              </Fragment>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
-      <Pagination
-        pageSize={paginationPageSize}
-        pageSizes={pageSizes}
-        onPageSizeChange={handleOnPageSizeChange}
-        itemRangeText={itemRangeText}
-        backwardsDisabled={!table.getCanPreviousPage()}
-        forwardsDisabled={!table.getCanNextPage()}
-        onBackwards={handleOnPaginationBackwards}
-        onForwards={handleOnPaginationForwards}
-      />
+      {showPagination && (
+        <Pagination
+          pageSize={paginationPageSize}
+          pageSizes={pageSizes}
+          onPageSizeChange={handleOnPageSizeChange}
+          itemRangeText={itemRangeText}
+          backwardsDisabled={!table.getCanPreviousPage()}
+          forwardsDisabled={!table.getCanNextPage()}
+          onBackwards={handleOnPaginationBackwards}
+          onForwards={handleOnPaginationForwards}
+        />
+      )}
     </Fragment>
   )
 }

@@ -70,7 +70,8 @@ export function DataView<TData>({ title, subtitle, table, cellPadding }: DataVie
   const hasTitleOrSubtitle = title || subtitle
 
   // Columns
-  const numberOfColumns = table.getAllColumns().length
+  if (!table) return null
+  const numberOfColumns = table?.getAllColumns?.().length ?? 0
   const gridTemplateColumns = `repeat(${numberOfColumns.toString()}, minmax(max-content, 1fr))`
 
   const tableState = table.getState()
