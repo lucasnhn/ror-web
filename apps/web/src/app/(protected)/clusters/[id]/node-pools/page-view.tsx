@@ -7,6 +7,7 @@ import { DataTable } from '@/components/ui/data-table'
 import { Button } from '@/components/shadcn/button'
 import { PencilIcon, Plus, Trash } from 'lucide-react'
 import { TableCell, TableRow } from '@ror/react/components/table/table'
+import Link from 'next/link'
 
 interface Node {
   name: string
@@ -94,6 +95,15 @@ export function PageView({ data }: DataTableProps<Nodepool>) {
       accessorKey: 'memory',
       header: 'Memory',
       cell: ({ row }) => convertBytes(row.original.memory),
+    },
+    {
+      accessorKey: 'nodes',
+      header: 'Node links',
+      cell: () => (
+        <Link href='nodes' className='text-blue-500 dark:text-blue-600 hover:underline'>
+          Nodes
+        </Link>
+      ),
     },
     {
       accessorKey: 'actions',
