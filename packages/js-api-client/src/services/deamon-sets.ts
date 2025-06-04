@@ -1,6 +1,6 @@
 import type { RequestOptions } from '../core/request'
 import { validateResponse } from '../core/validation'
-import { DaemonSetResponseSchema, DaemonSetSchema } from '../schemas/Daemonset'
+import { DaemonSetResponseSchema, DaemonSetSchema } from '../schemas/daemon-set'
 
 export const createDaemonSetService = (request: (requestOptions: RequestOptions) => Promise<unknown>) => ({
   list: async (otherParams: URLSearchParams) => {

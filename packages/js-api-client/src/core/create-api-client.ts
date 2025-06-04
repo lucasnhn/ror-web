@@ -8,8 +8,8 @@ import { createPodsService } from '../services/pods'
 import { createConfigurationService } from '../services/configurations'
 import { createDeploymentService } from '../services/deployments'
 import { createServiceService } from '../services/services'
-import { createDaemonSetService } from '../services/deamonsets'
-import { createReplicaSetService } from '../services/replicaset'
+import { createDaemonSetService } from '../services/deamon-sets'
+import { createReplicaSetService } from '../services/replica-sets'
 import { createVulnerabilityReportService } from '../services/VulnerabilityReports'
 
 function setDefaultHeaders(config: ApiClientConfig): Record<string, string> {

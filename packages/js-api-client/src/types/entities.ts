@@ -7,10 +7,10 @@ import { UserSelfSchema } from '../schemas/user'
 import { PodResponseSchema, PodSchema } from '../schemas/pod'
 import { DeploymentResponseSchema, DeploymentSchema } from '../schemas/deployment'
 import { ServiceSchema, ServiceResponseSchema } from '../schemas/service'
-import { ReplicaSetSchema, ReplicaSetResponseSchema } from '../schemas/replicaset'
-import { DaemonSetResponseSchema, DaemonSetSchema } from '../schemas/Daemonset'
+import { ReplicaSetSchema, ReplicaSetResponseSchema } from '../schemas/replica-set'
+import { DaemonSetResponseSchema, DaemonSetSchema } from '../schemas/daemon-set'
 import { ConfigurationSchema, configurationResponseSchema } from '../schemas/configuration'
-import { VulnerabilityReportResponseSchema, VulnerabilityReportSchema } from '../schemas/vulnerabilityReport'
+import { VulnerabilityReportResponseSchema, VulnerabilityReportSchema } from '../schemas/vulnerability-report'
 
 export type Ingress = z.infer<typeof IngressSchema>
 export type IngressResponse = z.infer<typeof IngressResponseSchema>
