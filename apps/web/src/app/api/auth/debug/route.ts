@@ -12,30 +12,75 @@ interface DecodedToken {
 }
 
 export async function GET(req: NextRequest) {
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET || process.env.AUTH_SECRET })
+  // Log all cookies for debugging
+  console.log(
+    '[DEBUG] All cookies:',
+    Object.fromEntries(req.cookies.getAll().map((c) => [c.name, c.value.substring(0, 20) + '...']))
+  )
+
+  // Log request URL
+  console.log('[DEBUG] Request URL:', req.url)
+
+  // Find the right cookie name
+  const sessionCookie =
+    req.cookies.get('next-auth.session-token') || req.cookies.get('__Secure-next-auth.session-token')
+
+  // Try different approaches to get the token
+  console.log('[DEBUG] Trying to get token with cookie name:', sessionCookie?.name)
+
+  const token = await getToken({
+    req,
+    secret: process.env.NEXTAUTH_SECRET || process.env.AUTH_SECRET,
+    secureCookie: process.env.NODE_ENV === 'production',
+    cookieName: sessionCookie?.name,
+  })
 
   if (!token) {
-    console.log('[DEBUG] No token found')
-    return NextResponse.json({ error: 'No token found' }, { status: 401 })
+    console.log('[DEBUG] No token found in request')
+    return NextResponse.json({
+      tokenExists: false,
+      error: 'No token found',
+    })
   }
 
+  console.log('[DEBUG] Token structure:', {
+    keys: Object.keys(token),
+    accessTokenType: typeof token.accessToken,
+    hasExp: 'exp' in token,
+  })
+
   try {
-    const accessToken = token.accessToken
-    if (typeof accessToken !== 'string' || !accessToken) {
-      console.log('[DEBUG] Invalid or missing access token in session')
-      return NextResponse.json({ error: 'Invalid or missing access token in session' }, { status: 401 })
+    let decodedToken: DecodedToken | undefined
+    let expirationTime: number | undefined
+
+    // Handle different token formats
+    if (typeof token.accessToken === 'string') {
+      // Standard case - token has an accessToken that needs decoding
+      console.log('[DEBUG] Found string accessToken in token')
+      decodedToken = jwtDecode<DecodedToken>(token.accessToken)
+      expirationTime = decodedToken.exp * 1000
+    } else if ('exp' in token && typeof token.exp === 'number') {
+      // Token itself contains exp claim
+      console.log('[DEBUG] Using exp from token directly')
+      expirationTime = (token.exp as number) * 1000
+      decodedToken = token as unknown as DecodedToken
+    } else {
+      console.log('[DEBUG] Unusual token format, dumping structure:', token)
+      return NextResponse.json({
+        tokenExists: true,
+        error: 'Unrecognized token format',
+        token,
+      })
     }
 
-    const decodedToken = jwtDecode<DecodedToken>(accessToken)
-    const expirationTime = decodedToken.exp * 1000
     const currentTime = Date.now()
 
     return NextResponse.json({
-      tokenExists: !!token,
-      expirationTime: new Date(expirationTime).toISOString(),
+      tokenExists: true,
+      expirationTime: expirationTime ? new Date(expirationTime).toISOString() : undefined,
       currentTime: new Date(currentTime).toISOString(),
-      isExpired: currentTime >= expirationTime,
-      timeUntilExpiry: expirationTime - currentTime,
+      isExpired: expirationTime ? currentTime >= expirationTime : undefined,
+      timeUntilExpiry: expirationTime ? expirationTime - currentTime : undefined,
       decodedToken,
       token,
     })

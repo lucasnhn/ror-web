@@ -13,11 +13,11 @@ export const columns = [
   }),
   columnHelper.accessor('node.status.nodeInfo.osImage', {
     header: 'OS Image',
-  }) as ColumnDef<Node>, //why ColumnDef<Node> here and not on name?
+  }) as ColumnDef<Node>,
   columnHelper.accessor('node.status.nodeInfo.architecture', {
     header: 'Architecture',
-  }) as ColumnDef<Node>, //why ColumnDef<Node> here and not on name?
-] satisfies ColumnDef<Node>[] //why ColumnDef<Node>[] here and not in example
+  }) as ColumnDef<Node>,
+] satisfies ColumnDef<Node>[]
 
 interface NodePoolsDataViewProps {
   nodes: Node[]
