@@ -83,7 +83,6 @@ export default async function NodePoolsPage({ params }: NodePoolsPageProps) {
   const response = await client.nodes.listByCluster(id)
 
   const nodes = response?.resources ?? []
-  console.log('Nodes:', nodes)
 
   return (
     <div>
