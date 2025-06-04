@@ -14,8 +14,19 @@ interface DecodedToken {
 // For debugging use
 const isDev = process.env.NODE_ENV !== 'production'
 
-// Debug route patterns that should bypass authentication
-const debugRoutes = ['/sign-in', '/sign-in-debug', '/auth-debug', '/api/auth']
+// Routes that should bypass authentication
+const bypassRoutes = [
+  // Auth routes
+  '/sign-in',
+  '/sign-in-debug',
+  '/auth-debug',
+  '/api/auth',
+  // Health check routes
+  '/api/health',
+  '/api/healthz',
+  '/health',
+  '/healthz',
+]
 
 export async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname
@@ -24,9 +35,21 @@ export async function middleware(req: NextRequest) {
   console.log(`[MIDDLEWARE] Running for path: ${path}`)
   console.log(`[MIDDLEWARE] Environment: ${process.env.NODE_ENV}`)
 
-  // Skip auth for debug routes
-  if (isDev && debugRoutes.some((route) => path.startsWith(route))) {
-    console.log(`[MIDDLEWARE] Bypassing auth for debug route: ${path}`)
+  // Check if this is a Kubernetes health probe
+  const userAgent = req.headers.get('user-agent') || ''
+  const isKubeProbe = userAgent.includes('kube-probe')
+  // Also check common health endpoints that Kubernetes might probe
+  const isHealthEndpoint =
+    path === '/health' || path === '/healthz' || path === '/api/health' || path === '/api/healthz'
+
+  if (isKubeProbe || isHealthEndpoint) {
+    console.log(`[MIDDLEWARE] Bypassing auth for health check: UA=${userAgent}, path=${path}`)
+    return NextResponse.next()
+  }
+
+  // Skip auth for bypass routes
+  if (bypassRoutes.some((route) => path.startsWith(route))) {
+    console.log(`[MIDDLEWARE] Bypassing auth for route: ${path}`)
     return NextResponse.next()
   }
 
@@ -140,12 +163,13 @@ export const config = {
      * - api (API routes)
      * - _next/static (static files)
      * - _next/image (image optimization files)
+     * - _next/webpack (webpack files)
      * - favicon.ico, sitemap.xml, robots.txt (metadata files)
      * - sign-in (authentication page)
      * - sign-in-debug (authentication debug page)
      * - auth-debug (debugging page)
      * - api/auth (authentication API routes)
      */
-    `/((?!api|_next/static|_next/image|_next/webpack|favicon.ico|sitemap.xml|robots.txt|sign-in|sign-in-debug|auth-debug|mockServiceWorker).*)`,
+    `/((?!api/|_next/static|_next/image|_next/webpack|favicon.ico|sitemap.xml|robots.txt|sign-in|sign-in-debug|auth-debug|mockServiceWorker).*)`,
   ],
 }
