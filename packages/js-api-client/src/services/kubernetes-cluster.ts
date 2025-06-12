@@ -41,9 +41,12 @@ export const createKubernetesClusterService = (request: (requestOptions: Request
     return validateResponse(response, ClustersResponseSchema)
   },
   list: async (otherParams: URLSearchParams) => {
+    console.log('Fetching Kubernetes clusters with list method...')
+
     const params = new URLSearchParams(otherParams)
-    params.set('apiversion', 'v1')
+    params.set('apiversion', 'general.ror.internal/v1alpha1')
     params.set('kind', 'KubernetesCluster')
+    console.log('Request parameters:', params.toString())
 
     const responseSchema = createV2ResourceResponseSchema(KubernetesClusterResponseSchema)
 
@@ -53,15 +56,23 @@ export const createKubernetesClusterService = (request: (requestOptions: Request
       params,
     })
 
+    console.log('Response received:', response)
+    console.log('Response schema received:', responseSchema)
     return validateResponse(response, responseSchema)
   },
   id: async (id: string) => {
-    const response = await request({
-      method: 'GET',
-      path: `/v2/resources/uuid/${id}`,
-    })
-
-    return validateResponse(response, KubernetesClusterSchema)
+    console.log('Fetching Kubernetes cluster by ID:', id)
+    try {
+      const response = await request({
+        method: 'GET',
+        path: `/v2/resources/uid/${id}`,
+      })
+      console.log('Fetching past response:', id)
+      return validateResponse(response, KubernetesClusterSchema)
+    } catch (error) {
+      console.error('Error fetching cluster by ID:', error)
+      throw error
+    }
   },
   idV1: async (id: string) => {
     const response = await request({
