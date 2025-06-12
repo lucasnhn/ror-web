@@ -533,134 +533,136 @@ export const clustersVersion1 = [
 export const clustersVersion2 = {
   resources: [
     {
-      kind: 'KubernetesCluster',
-      apiVersion: 'general.ror.internal/v1alpha1',
-      metadata: {
-        name: 'aaa-001-dev',
-        creationTimestamp: '2022-03-17T14:06:47Z',
-      },
-      rormeta: {
-        version: 'v2',
-        ownerref: {
-          scope: 'workspace',
-          subject: 'trd1-nhn-mgmt',
-        },
-        tags: [
-          {
-            key: 'consumer',
-            value: 'ror',
+      resources: [
+        {
+          apiVersion: 'general.ror.internal/v1alpha1',
+          kind: 'KubernetesCluster',
+          metadata: {
+            name: 'aaa-001-dev',
+            resourceVersion: 'v2',
+            creationTimestamp: '2022-03-17T14:06:47Z',
+            labels: null,
+            annotations: null,
+            uid: null,
+            namespace: null,
+            generation: null,
+            ownerReferences: [],
           },
-          {
-            key: 'environment',
-            value: 'dev',
+          rormeta: {
+            version: 'v2',
+            ownerref: {
+              scope: 'workspace',
+              subject: 'trd1-nhn-mgmt',
+            },
+            tags: [
+              { key: 'consumer', value: 'ror' },
+              { key: 'environment', value: 'dev' },
+              { key: 'criticality', value: '4' },
+              { key: 'sensitivity', value: '2' },
+              { key: 'servicetag', value: '434423' },
+            ],
           },
-          {
-            key: 'criticality',
-            value: '4',
-          },
-          {
-            key: 'sensitivity',
-            value: '2',
-          },
-          {
-            key: 'servicetag',
-            value: '434423',
-          },
-        ],
-      },
-      kubernetescluster: {
-        spec: {
-          data: {
-            clusterId: 'aaa-001-dev-kgfh',
-            provider: 'tanzu',
-            datacenter: 'trd1',
-            region: 'trd',
-            zone: 'trd1cl01',
-            project: 'test',
-            workspace: 'trd1-nhn-mgmt',
-            workorder: 'Intern',
-            environment: 'dev',
-          },
-          topology: {
-            version: 'v1.28.7',
-            controlplane: {
-              replicas: 3,
+          kubernetescluster: {
+            apiVersion: 'general.ror.internal/v1alpha1',
+            kind: 'KubernetesCluster',
+            metaData: {
+              name: 'aaa-001-dev',
+              resourceVersion: 'v2',
+              creationTimestamp: '2022-03-17T14:06:47Z',
+              labels: null,
+              annotations: null,
+              uid: null,
+              namespace: null,
+              generation: null,
+              ownerReferences: [],
+            },
+            spec: {
+              clusterId: 'aaa-001-dev-kgfh',
+              clusterName: 'aaa-001-dev',
+              description: null,
+              project: 'test',
               provider: 'tanzu',
-              machineClass: 'best-effort-large',
-              metadata: {
-                labels: null,
-                annotations: null,
+              createdBy: null,
+              toolingConfig: null,
+              environment: 'dev',
+              providerSpec: {
+                tanzuSpec: {
+                  supervisorClusterName: null,
+                  namespace: null,
+                },
+                azureSpec: {
+                  subscriptionId: null,
+                  resourceGroup: null,
+                },
               },
-              storage: null,
-            },
-            workers: {
-              nodePools: [
-                {
-                  name: 'default',
-                  replicas: 4,
-                  provider: 'tanzu',
-                  machineClass: 'best-effort-cpu-2xlarge',
-                  metadata: {
-                    labels: null,
-                    annotations: null,
-                  },
-                  storage: null,
+              topology: {
+                controlPlane: {
+                  replicas: 3,
+                  version: 'v1.28.7',
+                  machineClass: 'best-effort-large',
                 },
-              ],
-            },
-          },
-        },
-        status: {
-          status: {
-            cluster: {
-              externalId: '0000-0000-0000-0000',
-              resources: [
-                {
-                  name: 'cpu',
-                  allocated: '8',
-                  usage: '8%',
-                },
-                {
-                  name: 'memory',
-                  allocated: '64Gi',
-                  usage: '50%',
-                },
-              ],
-              controlplane: {
-                status: 'Running',
-                message: '3/3 Controllplane is running',
-              },
-              workers: {
-                nodepools: [
+                workers: [
                   {
                     name: 'default',
-                    status: 'Running',
-                    message: '4/4 Workers are running',
+                    replicas: 4,
+                    version: 'v1.28.7',
+                    machineClass: 'best-effort-cpu-2xlarge',
                   },
                 ],
               },
+              endpoints: [
+                {
+                  type: 'argocd',
+                  address: 'MOCK',
+                },
+                {
+                  type: 'grafana',
+                  address: 'MOCK',
+                },
+              ],
             },
-            versions: [
-              {
-                component: 'kubernetes',
-                version: 'v1.28.7',
+            status: {
+              status: 'Running',
+              endpoints: null,
+              phase: 'Running',
+              conditions: [],
+              kubernetesVersion: 'v1.28.7',
+              providerStatus: {},
+              createdTime: '2022-03-17T14:06:47Z',
+              updatedTime: new Date().toISOString(),
+              lastObservedTime: new Date().toISOString(),
+              clusterStatus: {
+                price: {
+                  monthly: 10,
+                  yearly: 120,
+                },
+                nodePools: 1,
+                nodes: 7,
+                cpu: {
+                  capacity: '8',
+                  used: '4',
+                  percentage: 50,
+                },
+                memory: {
+                  capacity: '64Gi',
+                  used: '32Gi',
+                  percentage: 50,
+                },
+                gpu: {
+                  capacity: null,
+                  used: null,
+                  percentage: null,
+                },
+                disk: {
+                  capacity: null,
+                  used: null,
+                  percentage: null,
+                },
               },
-              {
-                component: 'nhntooling',
-                version: 'v1.16.3',
-                branch: 'main',
-              },
-            ],
-            'egress-ip': '10.204.2.10',
-            controlplaneendpoint: '10.204.0.50:6443',
-            lastUpdated: '0001-01-01T00:00:00Z',
-            lastUpdatedBy: 'agentv2',
-            created: '2022-03-17T14:06:47Z',
+            },
           },
-          phase: 'Running',
-          conditions: null,
         },
-      },
+      ],
     },
   ],
 }
