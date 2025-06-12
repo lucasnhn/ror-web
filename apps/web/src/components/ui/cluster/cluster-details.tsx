@@ -1,9 +1,8 @@
 'use client'
 
-import { getCommonClusterTools } from '@/features/clusters/utils/tools'
 import { cn } from '@/utils/clsxm'
 import { User } from 'next-auth'
-import { type Cluster } from '@ror/js-api-client'
+import type { KubernetesCluster } from '@ror/js-api-client'
 import React, { useEffect, useRef, useState } from 'react'
 import GridLayout from 'react-grid-layout'
 import 'react-grid-layout/css/styles.css'
@@ -13,21 +12,18 @@ import { ExternalLink } from 'lucide-react'
 import { Layer, CodeSnippet } from '@ror/react'
 import { format } from 'date-fns'
 import { enZA } from 'date-fns/locale'
-import { ScrollArea, ScrollBar } from '@/components/shadcn/scroll-area'
-import { convertBytes } from '@/utils/bytes'
 
 const standardLayout = [
   { i: 'metrics', x: 0, y: 0, w: 6, h: 8, minW: 6, minH: 8 },
   { i: 'tools', x: 6, y: 0, w: 6, h: 8, minW: 6, minH: 6 },
   { i: 'info', x: 12, y: 0, w: 12, h: 8, minW: 9, minH: 8 },
-  { i: 'accessGroups', x: 0, y: 8, w: 6, h: 8, minW: 6, minH: 4 },
-  { i: 'versions', x: 6, y: 8, w: 6, h: 8, minW: 6, minH: 7 },
-  { i: 'observed', x: 12, y: 8, w: 6, h: 8, minW: 6, minH: 7 },
-  { i: 'prices', x: 18, y: 8, w: 6, h: 8, minW: 6, minH: 4 },
+  { i: 'versions', x: 0, y: 8, w: 6, h: 8, minW: 6, minH: 7 },
+  { i: 'observed', x: 6, y: 8, w: 6, h: 8, minW: 6, minH: 7 },
+  { i: 'prices', x: 12, y: 8, w: 6, h: 8, minW: 6, minH: 4 },
 ]
 
 interface ClusterDetailsProps {
-  cluster: Cluster
+  cluster: KubernetesCluster
   user?: User
   className?: string
 }
@@ -41,12 +37,10 @@ function formatObservationDate(date: string) {
   })
 }
 
-function getHaClusterPlaneValue(cluster: Cluster) {
-  const nodes = cluster.topology.controlPlane.nodes
-
-  if (Array.isArray(nodes) && nodes.length > 1) {
+function getHaClusterPlaneValue(nodes: number) {
+  if (nodes > 1) {
     return 'Yes'
-  } else if (Array.isArray(nodes) && nodes.length === 1) {
+  } else if (nodes === 1) {
     return 'No'
   } else {
     return ''
@@ -54,28 +48,43 @@ function getHaClusterPlaneValue(cluster: Cluster) {
 }
 
 export const ClusterDetails = ({ cluster, user, className }: ClusterDetailsProps) => {
-  const metrics = cluster.metrics
+  const clusterSpec = cluster.kubernetescluster?.spec
+  const clusterStatus = cluster.kubernetescluster?.status
 
-  const firstObserved = formatObservationDate(cluster.firstObserved)
-  const lastObserved = formatObservationDate(cluster.lastObserved)
-  const created = formatObservationDate(cluster.created)
+  const cpu = clusterStatus?.clusterStatus.cpu || { capacity: 0, used: 0, percentage: 0 }
+  const memory = clusterStatus?.clusterStatus.memory || { capacity: 0, used: 0, percentage: 0 }
+  const nodes = clusterStatus?.clusterStatus.nodes || 0
+  const nodePools = clusterStatus?.clusterStatus.nodePools || 0
 
-  const { argo, grafana } = getCommonClusterTools(cluster)
-  const rorLogin = `ror login ${cluster.clusterId}`
-  const serverUrl =
-    cluster.workspace.datacenter.apiEndpoint.length > 0 ? cluster.workspace.datacenter.apiEndpoint : '<missing>'
-  const kubectlLogin = `kubectl vsphere login --server=${serverUrl} -u ${user?.email} --insecure-skip-tls-verify --tanzu-kubernetes-cluster-namespace ${cluster?.workspace?.name} --tanzu-kubernetes-cluster-name ${cluster?.clusterName}`
+  const argocd = clusterSpec?.endpoints?.find(
+    (endpoint: { type?: string | null; address?: string | null }) => endpoint.type === 'argocd'
+  )?.address
+  const grafana = clusterSpec?.endpoints?.find(
+    (endpoint: { type?: string | null; address?: string | null }) => endpoint.type === 'grafana'
+  )?.address
 
-  const accessGroups = cluster.acl.accessGroups
+  const prices = clusterStatus?.clusterStatus.price || { monthly: 0, yearly: 0 }
 
-  const nhnToolingVersion = cluster.versions.nhnTooling.version
-  const nhnToolingBranch = cluster.versions.nhnTooling.branch
+  const firstObserved = 'MOCK TIME' // TODO: MOCK firstObserved
+  const lastObserved = formatObservationDate(cluster.kubernetescluster?.status?.lastObservedTime || '')
+  const created = formatObservationDate(cluster.kubernetescluster?.status?.createdTime || '')
+
+  const rorLogin = `ror login ${cluster.kubernetescluster?.spec.clusterId}`
+  const serverUrl = 'MOCK SERVER URL' // TODO: MOCK server URL
+  const kubectlLogin = `kubectl vsphere login --server=${serverUrl} -u ${user?.email} --insecure-skip-tls-verify --tanzu-kubernetes-cluster-namespace ${'MOCK WORKSPACE'} --tanzu-kubernetes-cluster-name ${cluster.metadata.name}` // TODO: MOCK WORKSPACE
+
+  const versions = {
+    agent: { version: 'MOCK agent', sha: 'MOCK agent sha' },
+    kubernetes: 'MOCK kubernetes',
+    nhnTooling: { version: 'MOCK nhnTooling', branch: 'MOCK nhnTooling branch' },
+  } // TODO: MOCK versions
+  const nhnToolingVersion = versions.nhnTooling.version // TODO: MOCK tooling
+  const nhnToolingBranch = versions.nhnTooling.branch // TODO: MOCK tooling
   const nhnToolingValue =
-    nhnToolingVersion !== 'Missing ...' ? `${nhnToolingVersion} (${nhnToolingBranch})` : 'Missing …'
-
-  const agentVersion = cluster.versions.agent?.version
-  const agentSha = cluster.versions.agent?.sha
-  const agentValue = `${agentVersion} (${agentSha})`
+    nhnToolingVersion !== 'Missing ...' ? `${nhnToolingVersion} (${nhnToolingBranch})` : 'Missing …' // TODO: MOCK tooling
+  const agentVersion = versions.agent?.version // TODO: MOCK tooling
+  const agentSha = versions.agent?.sha // TODO: MOCK tooling
+  const agentValue = `${agentVersion} (${agentSha})` // TODO: MOCK tooling
 
   const containerRef = useRef<HTMLDivElement>(null)
   const [layoutWidth, setLayoutWidth] = useState(0)
@@ -139,25 +148,18 @@ export const ClusterDetails = ({ cluster, user, className }: ClusterDetailsProps
             <div className='flex flex-col'>
               <b>CPU consumption: </b>
               <span>
-                {metrics.cpuConsumed}m of {metrics.cpu} cores - {metrics.cpuPercentage}%
+                {cpu.percentage}% ({cpu.used}m of {cpu.capacity}m cores)
               </span>
             </div>
             <div className='flex flex-col'>
               <b>Memory consumption: </b>
-              <span>
-                {convertBytes(metrics.memoryConsumed, { useBinaryUnits: true, includeUnit: false })} of{' '}
-                {convertBytes(metrics.memory, { useBinaryUnits: true })} - {metrics.memoryPercentage}%
-              </span>
+              {memory.percentage}% ({memory.used} of {memory.capacity})
             </div>
             <div className='flex flex-col'>
               <b>Nodes: </b>
               <span>
-                {metrics.nodeCount} - {metrics.nodePoolCount} node pools
+                {nodes} ({nodePools} node pool{nodePools > 1 ? 's' : ''})
               </span>
-            </div>
-            <div className='flex flex-col'>
-              <b>Clusters: </b>
-              <span>{metrics.clusterCount} cluster</span>
             </div>
           </div>
         </div>
@@ -167,33 +169,33 @@ export const ClusterDetails = ({ cluster, user, className }: ClusterDetailsProps
             <div className='flex flex-1 flex-col gap-2'>
               <div className='flex flex-col'>
                 <b>Cluster ID: </b>
-                <span>{cluster.clusterId}</span>
+                <span>{clusterSpec.clusterId}</span>
               </div>
               <div className='flex flex-col'>
                 <b>Project: </b>
-                <span>{cluster.metadata.project?.name}</span>
+                <span>{clusterSpec.project}</span>
               </div>
               <div className='flex flex-col'>
                 <b>Workspace: </b>
-                <span>{cluster.workspace.name}</span>
+                <span>MOCK WORKSPACE</span>
               </div>
               <div className='flex flex-col'>
                 <b>Datacenter: </b>
-                <span>{cluster.workspace.datacenter.name}</span>
+                <span>MOCK DATACENTER</span>
               </div>
             </div>
             <div className='flex flex-1 flex-col gap-2'>
               <div className='flex flex-col'>
                 <b>Provider: </b>
-                <span>{cluster.workspace.datacenter.provider}</span>
+                <span>{cluster.kubernetescluster?.spec.provider}</span>
               </div>
               <div className='flex flex-col'>
                 <b>HA control plane: </b>
-                <span>{getHaClusterPlaneValue(cluster)}</span>
+                <span>{getHaClusterPlaneValue(nodes)}</span>
               </div>
               <div className='flex flex-col'>
                 <b>Egress IP: </b>
-                <span>{cluster.topology?.egressIp}</span>
+                <span>MOCK EGRESS IP</span>
               </div>
             </div>
           </div>
@@ -219,10 +221,10 @@ export const ClusterDetails = ({ cluster, user, className }: ClusterDetailsProps
           <CardHeader title='Tools' />
           <div className='flex flex-col gap-2'>
             <section className='flex flex-col'>
-              {argo ? (
+              {argocd ? (
                 <a
                   onClick={(e) => e.stopPropagation()}
-                  href={`https://${argo}`}
+                  href={`https://${argocd}`}
                   target='_blank'
                   rel='noopener noreferrer'
                   className='flex gap-2 font-bold text-blue-500 w-fit'
@@ -264,19 +266,6 @@ export const ClusterDetails = ({ cluster, user, className }: ClusterDetailsProps
             </Layer>
           </div>
         </div>
-        <div key='accessGroups' className='drag-handle'>
-          <CardHeader title='Access groups' />
-          <ScrollArea className='w-full h-[calc(100%-64px)] whitespace-nowrap'>
-            <div className='flex flex-col w-max space-x-4'>
-              {accessGroups.map((group: string, index: number) => (
-                <div key={index} className='overflow-hidden rounded-md'>
-                  <span>{group}</span>
-                </div>
-              ))}
-            </div>
-            <ScrollBar orientation='vertical' />
-          </ScrollArea>
-        </div>
         <div key='versions' className='drag-handle min-h-fit min-w-fit'>
           <CardHeader title='Versions' />
           <div className='flex flex-col gap-3'>
@@ -290,7 +279,7 @@ export const ClusterDetails = ({ cluster, user, className }: ClusterDetailsProps
             </div>
             <div className='flex flex-col gap-1'>
               <b>Kubernetes version: </b>
-              <span>{cluster.versions.kubernetes}</span>
+              <span>{versions.kubernetes}</span>
             </div>
           </div>
         </div>
@@ -298,10 +287,10 @@ export const ClusterDetails = ({ cluster, user, className }: ClusterDetailsProps
           <CardHeader title='Prices' />
           <div className='flex flex-col gap-2'>
             <span>
-              <b>Monthly price: </b> {metrics.priceMonth} kr
+              <b>Monthly price: </b> {prices.monthly || 0} kr
             </span>
             <span>
-              <b>Yearly price: </b> {metrics.priceYear} kr
+              <b>Yearly price: </b> {prices.yearly || 0} kr
             </span>
           </div>
         </div>

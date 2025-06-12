@@ -6,7 +6,6 @@ import { Layer } from '@ror/react/components/layer'
 import { Tile } from '@ror/react/components/tile'
 import { User } from 'next-auth'
 import { ArrowRight } from 'lucide-react'
-import { getCommonClusterTools } from '@/features/clusters/utils/tools'
 
 interface ClusterToolsCardProps {
   cluster: Cluster
@@ -18,7 +17,8 @@ export function ClusterToolsCard({ cluster, user, className }: ClusterToolsCardP
   const serverUrl =
     cluster.workspace.datacenter.apiEndpoint.length > 0 ? cluster.workspace.datacenter.apiEndpoint : '<missing>'
 
-  const tools = getCommonClusterTools(cluster)
+  // const tools = getCommonClusterTools(cluster)
+  const tools = { argo: 'MOCK ARGO', grafana: 'MOCK GRAFANA' } // TODO: MOCK
 
   const rorLogin = `ror login ${cluster.clusterId}`
   const kubectlLogin = `kubectl vsphere login --server=${serverUrl} -u ${user?.email} --insecure-skip-tls-verify --tanzu-kubernetes-cluster-namespace ${cluster?.workspace?.name} --tanzu-kubernetes-cluster-name ${cluster?.clusterName}`

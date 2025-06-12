@@ -12,7 +12,7 @@ import { ArrowDownNarrowWide, ArrowDownWideNarrow, Funnel } from 'lucide-react'
 import { cn } from '@/utils/clsxm'
 import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
-import type { Cluster } from '@ror/js-api-client'
+import type { KubernetesCluster } from '@ror/js-api-client'
 import { ClusterSearch } from '@/components/ui/cluster/cluster-search'
 
 interface Params {
@@ -26,7 +26,7 @@ interface Params {
 
 interface PageViewProps {
   className?: string
-  clusters: Cluster[]
+  clusters: KubernetesCluster[]
   params: Params
 }
 
@@ -46,10 +46,6 @@ const displayDataOptions: Option[] = [
   {
     value: 'kubectl',
     label: 'Kubectl',
-  },
-  {
-    value: 'accessGroups',
-    label: 'Access groups',
   },
   {
     value: 'cpu',
@@ -89,10 +85,6 @@ const sortingOptions = [
   {
     value: 'clusterName',
     label: 'Cluster name',
-  },
-  {
-    value: 'accessGroups',
-    label: 'Num of access groups',
   },
   {
     value: 'cpu',
@@ -382,7 +374,7 @@ export const PageView = ({ className, clusters, params }: PageViewProps) => {
     }
   }, [params])
 
-  const [searchResults, setSearchResults] = useState<Cluster[]>(clusters)
+  const [searchResults, setSearchResults] = useState<KubernetesCluster[]>(clusters)
 
   const renderControls = () => (
     <div className='flex flex-wrap items-center justify-between w-full gap-4 [@container(max-width:1000px)]:flex-col [@container(max-width:1000px)]:items-start [@container(max-width:1000px)]:gap-6 '>
@@ -484,7 +476,7 @@ export const PageView = ({ className, clusters, params }: PageViewProps) => {
             {(searchResults ?? clusters).length > 0 ? (
               (searchResults ?? clusters).map((cluster) => (
                 <ClusterCard
-                  key={cluster.clusterId}
+                  key={cluster.kubernetescluster?.spec.clusterId}
                   cluster={cluster}
                   displayData={
                     selectedDisplayData.length > 0

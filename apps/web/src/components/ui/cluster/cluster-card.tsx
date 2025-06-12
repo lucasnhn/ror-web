@@ -3,10 +3,8 @@
 import * as React from 'react'
 
 import { Pill } from '@/components/shadcn/pill'
-import { getCommonClusterTools } from '@/features/clusters/utils/tools'
-import { convertBytes } from '@/utils/bytes'
 import { cn } from '@/utils/clsxm'
-import type { Cluster } from '@ror/js-api-client'
+import type { KubernetesCluster } from '@ror/js-api-client'
 import { CodeSnippet, Layer } from '@ror/react'
 import { ExternalLink } from 'lucide-react'
 import { User } from 'next-auth'
@@ -41,7 +39,6 @@ export type ClusterCardDisplayData =
   | 'grafana'
   | 'rorcli'
   | 'kubectl'
-  | 'accessGroups'
   | 'cpu'
   | 'memory'
   | 'nodes'
@@ -57,7 +54,7 @@ export type ClusterCardDisplayData =
 interface ClusterCardProps {
   className?: string
   user?: User
-  cluster: Cluster
+  cluster: KubernetesCluster
   displayData?: ClusterCardDisplayData[]
 }
 
@@ -69,21 +66,45 @@ export const envColors: Record<string, 'red' | 'yellow' | 'blue' | 'emerald'> = 
 }
 
 const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps) => {
-  const env = cluster.environment
-  const accessGroups = cluster.acl.accessGroups
-  const health = cluster.healthStatus.health
-  const tools = getCommonClusterTools(cluster)
-  const metrics = cluster.metrics
-  const versions = cluster.versions
-  const datacenter = cluster.workspace.datacenter
-  const serverUrl = datacenter.apiEndpoint || '<missing>'
-  const rorLogin = `ror login ${cluster.clusterId}`
-  const kubectlLogin = `kubectl vsphere login --server=${serverUrl} -u ${user?.email} --insecure-skip-tls-verify --tanzu-kubernetes-cluster-namespace ${cluster?.workspace?.name} --tanzu-kubernetes-cluster-name ${cluster?.clusterName}`
+  // TODO: ClusterName is missing
+  const clusterSpec = cluster.kubernetescluster?.spec
+  const clusterStatus = cluster.kubernetescluster?.status
+  const clusterId = clusterSpec?.clusterId
+  const clusterName = cluster.metadata?.name || clusterId
+
+  const env = clusterSpec?.environment || 'dev' // TODO: need to handle when this is undefined
+  const health = 1 // TODO: MOCK health status
+  const tools = { argo: 'TOOLS MOCK ARGO', grafana: 'TOOLS MOCK GRAFANA' } // TODO: MOCK tools
+  const cpu = clusterStatus?.clusterStatus.cpu || { capacity: 0, used: 0, percentage: 0 }
+  const memory = clusterStatus?.clusterStatus.memory || { capacity: 0, used: 0, percentage: 0 }
+  const nodes = clusterStatus?.clusterStatus.nodes || 0
+  const nodePools = clusterStatus?.clusterStatus.nodePools || 0
+  const prices = clusterStatus?.clusterStatus.price || { monthly: 0, yearly: 0 }
+  const argocd = clusterSpec?.endpoints?.find((endpoint) => endpoint.type === 'argocd')?.address
+  const grafana = clusterSpec?.endpoints?.find((endpoint) => endpoint.type === 'grafana')?.address
+  // const conditions = clusterStatus?.conditions // TODO: Implement conditions/health
+  const versions = {
+    agent: { version: 'MOCK agent' },
+    kubernetes: 'MOCK kubernetes',
+    nhnTooling: { version: 'MOCK nhnTooling' },
+  } // TODO: Have versions, but not the same as in v1
+  const datacenter = { name: 'MOCK datacenter', provider: 'MOCK provider' } // TODO: have datacenter, but not the same as in v1 (with name and provider)
+  const serverUrl = 'MOCK SERVER URL' // TODO: MOCK server URL
+  const rorLogin = `ror login ${clusterId}`
+  const kubectlLogin = `kubectl vsphere login --server=${serverUrl} -u ${user?.email} --insecure-skip-tls-verify --tanzu-kubernetes-cluster-namespace ${'MOCK WORKSPACE'} --tanzu-kubernetes-cluster-name ${clusterName}` // TODO: MOCK workspace name
+
+  // TODO: Uncomment when cards are finished, this was the v1 data
+  // const env = cluster.environment
+  // const health = cluster.healthStatus.health
+  // const versions = cluster.versions
+  // const datacenter = cluster.workspace.datacenter
+  // const serverUrl = datacenter.apiEndpoint || '<missing>'
+  // const kubectlLogin = `kubectl vsphere login --server=${serverUrl} -u ${user?.email} --insecure-skip-tls-verify --tanzu-kubernetes-cluster-namespace ${cluster?.workspace?.name} --tanzu-kubernetes-cluster-name ${cluster?.clusterName}`
 
   const router = useRouter()
 
   const handleCardClick = () => {
-    router.push(`/clusters/${cluster.clusterId}`)
+    router.push(`/clusters/${clusterId}`)
   }
 
   return (
@@ -99,7 +120,7 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
     >
       <CardHeader className='m-0 mb-7 p-0 w-full'>
         <CardTitle className={cn('text-2xl rounded-t-xl px-6 py-2 flex', envBgColors[env!][0], envBgColors[env!][1])}>
-          {cluster.clusterName}
+          {(clusterName || 'Unnamed Cluster') as string}
         </CardTitle>
         <HealthCircle className='ml-auto mr-4 top-[-24px] w-[52px] h-[52px] ' health={health} />
       </CardHeader>
@@ -107,7 +128,7 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
       <CardContent className='text-sm flex flex-col gap-3'>
         <section className='grid grid-cols-2'>
           {displayData?.includes('argocd') &&
-            (tools.argo ? (
+            (argocd ? (
               <a
                 onClick={(e) => e.stopPropagation()}
                 href={`https://${tools.argo}`}
@@ -125,7 +146,7 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
               </p>
             ))}
           {displayData?.includes('grafana') &&
-            (tools.grafana ? (
+            (grafana ? (
               <a
                 onClick={(e) => e.stopPropagation()}
                 href={`https://${tools.grafana}`}
@@ -165,28 +186,11 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
         </section>
 
         <section className='flex flex-col gap-1.5 [&>div]:grid [&>div]:grid-cols-2 [@container(max-width:360px)]:[&>div]:grid-cols-1'>
-          {displayData?.includes('accessGroups') && (
-            <div>
-              <p className='font-bold'>Access groups</p>
-              <div className='overflow-hidden text-ellipsis whitespace-nowrap'>
-                {accessGroups.length ? (
-                  accessGroups.map((group, index) => (
-                    <p key={index} title={group}>
-                      {group}
-                    </p>
-                  ))
-                ) : (
-                  <p>No access groups</p>
-                )}
-              </div>
-            </div>
-          )}
-
           {displayData?.includes('cpu') && (
             <div>
               <p className='font-bold'>CPU</p>
               <p>
-                {metrics.cpuPercentage}% ({metrics.cpuConsumed}m of {metrics.cpu} cores)
+                {cpu.percentage}% ({cpu.used}m of {cpu.capacity}m cores)
               </p>
             </div>
           )}
@@ -195,9 +199,7 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
             <div>
               <p className='font-bold'>Memory</p>
               <p>
-                {metrics.memoryPercentage}% (
-                {convertBytes(metrics.memoryConsumed, { useBinaryUnits: true, includeUnit: false })} of&nbsp;
-                {convertBytes(metrics.memory, { useBinaryUnits: true })})
+                {memory.percentage}% ({memory.used} of {memory.capacity})
               </p>
             </div>
           )}
@@ -206,7 +208,7 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
             <div>
               <p className='font-bold'>Nodes</p>
               <p>
-                {metrics.nodeCount} ({metrics.nodePoolCount} node pool{metrics.nodePoolCount > 1 ? 's' : ''})
+                {nodes} ({nodePools} node pool{nodePools > 1 ? 's' : ''})
               </p>
             </div>
           )}
@@ -214,14 +216,14 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
           {displayData?.includes('monthlyPrice') && (
             <div>
               <p className='font-bold'>Monthly price</p>
-              <p>{metrics.priceMonth} kr</p>
+              <p>{prices.monthly || 0} kr</p>
             </div>
           )}
 
           {displayData?.includes('yearlyPrice') && (
             <div>
               <p className='font-bold'>Yearly price</p>
-              <p>{metrics.priceYear} kr</p>
+              <p>{prices.yearly || 0} kr</p>
             </div>
           )}
 

@@ -5,7 +5,6 @@ import clsxm from '@/utils/clsxm'
 import { HealthStatus } from '@/components/ui/cluster/health-status'
 import { convertBytes } from '@/utils/bytes'
 import { EnvironmentTag } from '@/components/ui/environment-tag'
-import { getCommonClusterTools } from '@/features/clusters/utils/tools'
 import { ExternalLink } from 'lucide-react'
 
 interface ClusterCardProps {
@@ -25,7 +24,8 @@ function ClusterCard({ cluster, className }: ClusterCardProps) {
   const bytes = metrics.memory
   const formattedBytes = convertBytes(bytes, { useBinaryUnits: true })
 
-  const tools = getCommonClusterTools(cluster)
+  // const tools = getCommonClusterTools(cluster)
+  const tools = { argo: 'MOCK ARGO', grafana: 'MOCK GRAFANA' } // TODO: MOCK
 
   return (
     <Tile className={classes}>
