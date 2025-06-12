@@ -1,8 +1,8 @@
-import { Cluster } from '@ror/js-api-client'
+// import { KubernetesCluster } from '@ror/js-api-client'
 
-type ExtractToolHostnamesReturnType<T extends Record<string, string>> = {
-  [K in keyof T]: string | null
-}
+// type ExtractToolHostnamesReturnType<T extends Record<string, string>> = {
+//   [K in keyof T]: string | null
+// }
 
 /**
  * Extracts specific tool hostnames from cluster ingresses
@@ -58,53 +58,55 @@ type ExtractToolHostnamesReturnType<T extends Record<string, string>> = {
  * };
  * const result = extractToolHostnames(cluster, specificPatterns);
  */
-export function extractToolHostnames<T extends Record<string, string>>(
-  cluster: { ingresses?: Cluster['ingresses'] },
-  toolPatterns: T
-): ExtractToolHostnamesReturnType<T> {
-  // Initialize result with all tools set to null
-  const result = Object.keys(toolPatterns).reduce(
-    (acc, tool) => ({ ...acc, [tool]: null }),
-    {}
-  ) as ExtractToolHostnamesReturnType<T>
 
-  if (!cluster.ingresses || !Array.isArray(cluster.ingresses)) {
-    return result
-  }
+// TODO: Implement with new KubernetesCluster type
+// export function extractToolHostnames<T extends Record<string, string>>(
+//   cluster: { ingresses?: KubernetesCluster['ingresses'] },
+//   toolPatterns: T
+// ): ExtractToolHostnamesReturnType<T> {
+//   // Initialize result with all tools set to null
+//   const result = Object.keys(toolPatterns).reduce(
+//     (acc, tool) => ({ ...acc, [tool]: null }),
+//     {}
+//   ) as ExtractToolHostnamesReturnType<T>
 
-  // Iterate through ingresses and rules to find matching hostnames
-  cluster.ingresses.forEach((ingress) => {
-    if (!ingress?.ingressrules || !Array.isArray(ingress.ingressrules)) {
-      return
-    }
+//   if (!cluster.ingresses || !Array.isArray(cluster.ingresses)) {
+//     return result
+//   }
 
-    ingress.ingressrules.forEach((rule) => {
-      if (!rule?.hostname) {
-        return
-      }
+//   // Iterate through ingresses and rules to find matching hostnames
+//   cluster.ingresses.forEach((ingress) => {
+//     if (!ingress?.ingressrules || !Array.isArray(ingress.ingressrules)) {
+//       return
+//     }
 
-      // Check each tool pattern against the hostname
-      Object.entries(toolPatterns).forEach(([tool, pattern]) => {
-        if (rule.hostname?.includes(pattern)) {
-          result[tool as keyof T] = rule.hostname
-        }
-      })
-    })
-  })
+//     ingress.ingressrules.forEach((rule) => {
+//       if (!rule?.hostname) {
+//         return
+//       }
 
-  return result
-}
+//       // Check each tool pattern against the hostname
+//       Object.entries(toolPatterns).forEach(([tool, pattern]) => {
+//         if (rule.hostname?.includes(pattern)) {
+//           result[tool as keyof T] = rule.hostname
+//         }
+//       })
+//     })
+//   })
 
-export function getArgoTool(cluster: Cluster): string | null {
-  const tools = extractToolHostnames(cluster, { argo: 'argo' })
-  return tools.argo
-}
+//   return result
+// }
 
-export function getGrafanaTool(cluster: Cluster): string | null {
-  const tools = extractToolHostnames(cluster, { grafana: 'grafana' })
-  return tools.grafana
-}
+// export function getArgoTool(cluster: KubernetesCluster): string | null {
+//   const tools = extractToolHostnames(cluster, { argo: 'argo' })
+//   return tools.argo
+// }
 
-export function getCommonClusterTools(cluster: Cluster) {
+// export function getGrafanaTool(cluster: KubernetesCluster): string | null {
+//   const tools = extractToolHostnames(cluster, { grafana: 'grafana' })
+//   return tools.grafana
+// }
+
+export function getCommonClusterTools(cluster: KubernetesCluster) {
   return extractToolHostnames(cluster, { argo: 'argo', grafana: 'grafana' })
 }
