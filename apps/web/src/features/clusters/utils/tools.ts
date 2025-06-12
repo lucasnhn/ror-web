@@ -107,6 +107,6 @@
 //   return tools.grafana
 // }
 
-export function getCommonClusterTools(cluster: KubernetesCluster) {
-  return extractToolHostnames(cluster, { argo: 'argo', grafana: 'grafana' })
-}
+// export function getCommonClusterTools(cluster: KubernetesCluster) {
+//   return extractToolHostnames(cluster, { argo: 'argo', grafana: 'grafana' })
+// }
