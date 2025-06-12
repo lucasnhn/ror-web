@@ -16,7 +16,7 @@ export default async function ClusterRawDataPage({ params }: ClusterPageProps) {
 
   return (
     <div className=''>
-      <h3>Version 1</h3>
+      <h3>KubernetesCluster</h3>
       <CodeSnippet type='multi' style={{ '--code-snippet-multi-max-height': '40rem' }}>
         {JSON.stringify(cluster, null, 4)}
       </CodeSnippet>
