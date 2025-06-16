@@ -18,7 +18,6 @@ const getHealthColors = (status: string) => {
   }
 }
 
-// health is number from 1 to 3
 const getHealthSymbol = (status: string) => {
   switch (status) {
     case 'ok':

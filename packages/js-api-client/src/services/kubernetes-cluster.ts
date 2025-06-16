@@ -41,12 +41,9 @@ export const createKubernetesClusterService = (request: (requestOptions: Request
     return validateResponse(response, ClustersResponseSchema)
   },
   list: async (otherParams: URLSearchParams) => {
-    console.log('Fetching Kubernetes clusters with list method...')
-
     const params = new URLSearchParams(otherParams)
     params.set('apiversion', 'general.ror.internal/v1alpha1')
     params.set('kind', 'KubernetesCluster')
-    console.log('Request parameters:', params.toString())
 
     const responseSchema = createV2ResourceResponseSchema(KubernetesClusterResponseSchema)
 
@@ -55,9 +52,6 @@ export const createKubernetesClusterService = (request: (requestOptions: Request
       path: '/v2/resources',
       params,
     })
-
-    console.log('Response received:', response)
-    console.log('Response schema received:', responseSchema)
     return validateResponse(response, responseSchema)
   },
   id: async (id: string) => {

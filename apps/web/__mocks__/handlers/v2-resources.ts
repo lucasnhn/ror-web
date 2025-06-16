@@ -12,8 +12,6 @@ export const v2ResourcesHandlers = [
 
     switch (kind) {
       case 'KubernetesCluster':
-        console.log('v2-resources: KubernetesCluster request received')
-        console.log('v2-resources: Returning clustersVersion2 data')
         return HttpResponse.json(clustersVersion2)
       case 'Node':
         return HttpResponse.json(nodes)
