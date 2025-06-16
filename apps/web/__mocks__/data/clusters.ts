@@ -533,134 +533,272 @@ export const clustersVersion1 = [
 export const clustersVersion2 = {
   resources: [
     {
-      kind: 'KubernetesCluster',
-      apiVersion: 'general.ror.internal/v1alpha1',
-      metadata: {
-        name: 'aaa-001-dev',
-        creationTimestamp: '2022-03-17T14:06:47Z',
-      },
-      rormeta: {
-        version: 'v2',
-        ownerref: {
-          scope: 'workspace',
-          subject: 'trd1-nhn-mgmt',
-        },
-        tags: [
-          {
-            key: 'consumer',
-            value: 'ror',
+      resources: [
+        {
+          apiVersion: 'general.ror.internal/v1alpha1',
+          kind: 'KubernetesCluster',
+          metadata: {
+            name: 'aaa-001-dev',
+            resourceVersion: 'v2',
+            creationTimestamp: '2022-03-17T14:06:47Z',
+            labels: null,
+            annotations: null,
+            uid: faker.string.uuid(),
+            namespace: null,
+            generation: null,
+            ownerReferences: [],
           },
-          {
-            key: 'environment',
-            value: 'dev',
-          },
-          {
-            key: 'criticality',
-            value: '4',
-          },
-          {
-            key: 'sensitivity',
-            value: '2',
-          },
-          {
-            key: 'servicetag',
-            value: '434423',
-          },
-        ],
-      },
-      kubernetescluster: {
-        spec: {
-          data: {
-            clusterId: 'aaa-001-dev-kgfh',
-            provider: 'tanzu',
-            datacenter: 'trd1',
-            region: 'trd',
-            zone: 'trd1cl01',
-            project: 'test',
-            workspace: 'trd1-nhn-mgmt',
-            workorder: 'Intern',
-            environment: 'dev',
-          },
-          topology: {
-            version: 'v1.28.7',
-            controlplane: {
-              replicas: 3,
-              provider: 'tanzu',
-              machineClass: 'best-effort-large',
-              metadata: {
-                labels: null,
-                annotations: null,
-              },
-              storage: null,
+          rormeta: {
+            version: 'v2',
+            ownerref: {
+              scope: 'workspace',
+              subject: 'trd1-nhn-mgmt',
             },
-            workers: {
-              nodePools: [
-                {
-                  name: 'default',
-                  replicas: 4,
-                  provider: 'tanzu',
-                  machineClass: 'best-effort-cpu-2xlarge',
-                  metadata: {
-                    labels: null,
-                    annotations: null,
-                  },
-                  storage: null,
-                },
-              ],
-            },
+            tags: null,
           },
-        },
-        status: {
-          status: {
-            cluster: {
-              externalId: '0000-0000-0000-0000',
-              resources: [
-                {
-                  name: 'cpu',
-                  allocated: '8',
-                  usage: '8%',
-                },
-                {
-                  name: 'memory',
-                  allocated: '64Gi',
-                  usage: '50%',
-                },
-              ],
-              controlplane: {
-                status: 'Running',
-                message: '3/3 Controllplane is running',
+          kubernetescluster: {
+            spec: {
+              data: {
+                clusterId: 'aaa-001-dev-kgfh',
+                provider: 'tanzu',
+                datacenter: 'trd1cl02',
+                region: 'trøndelag',
+                zone: 'a',
+                project: 'test',
+                workspace: 'trd1cl02-mrs-prod',
+                workorder: 'wo123',
+                environment: 'dev',
               },
-              workers: {
-                nodepools: [
-                  {
-                    name: 'default',
-                    status: 'Running',
-                    message: '4/4 Workers are running',
-                  },
-                ],
-              },
-            },
-            versions: [
-              {
-                component: 'kubernetes',
+              topology: {
                 version: 'v1.28.7',
+                controlplane: {
+                  replicas: 3,
+                  version: 'v1.28.7',
+                  provider: 'tanzu',
+                  machineClass: 'best-effort-large',
+                  metadata: { labels: {}, annotations: {} },
+                  storage: [],
+                },
+                workers: {
+                  nodePools: [
+                    {
+                      name: 'default',
+                      replicas: 4,
+                      version: 'v1.28.7',
+                      provider: 'tanzu',
+                      machineClass: 'best-effort-cpu-2xlarge',
+                      autoscaling: {
+                        enabled: false,
+                        minReplicas: 0,
+                        maxReplicas: 0,
+                        scalingRules: [],
+                      },
+                      metadata: { labels: {}, annotations: {} },
+                    },
+                  ],
+                },
               },
-              {
-                component: 'nhntooling',
-                version: 'v1.16.3',
-                branch: 'main',
+            },
+            status: {
+              state: {
+                cluster: {
+                  externalId: 'ext-aaa-001',
+                  resources: {
+                    cpu: { capacity: '8', used: '4', percentage: 50 },
+                    memory: { capacity: '64Gi', used: '32Gi', percentage: 50 },
+                    gpu: null,
+                    disk: null,
+                  },
+                  price: { monthly: 10, yearly: 120 },
+                  controlplane: {
+                    status: 'Running',
+                    message: '',
+                    scale: 3,
+                    machineClass: 'best-effort-large',
+                    resources: {
+                      cpu: { capacity: '10', used: '4', percentage: 40 },
+                      memory: { capacity: '64Gi', used: '48Gi', percentage: 75 },
+                      gpu: null,
+                      disk: null,
+                    },
+                  },
+                  nodepools: [
+                    {
+                      name: 'default',
+                      status: 'Running',
+                      message: '',
+                      scale: 4,
+                      machineClass: 'best-effort-cpu-2xlarge',
+                      autoscaling: {
+                        enabled: false,
+                        minReplicas: 0,
+                        maxReplicas: 0,
+                      },
+                      resources: {
+                        cpu: { capacity: '4', used: '2', percentage: 50 },
+                        memory: { capacity: '32Gi', used: '8Gi', percentage: 25 },
+                        gpu: null,
+                        disk: null,
+                      },
+                    },
+                  ],
+                },
+                versions: [{ name: 'kubernetes', version: 'v1.28.7', branch: 'stable' }],
+                endpoints: [
+                  { name: 'argocd', address: 'argo.aaa.local' },
+                  { name: 'grafana', address: 'grafana.aaa.local' },
+                ],
+                egressIP: '192.168.1.10',
+                lastUpdated: new Date().toISOString(),
+                lastUpdatedBy: 'user1',
+                created: '2022-03-17T14:06:47Z',
               },
-            ],
-            'egress-ip': '10.204.2.10',
-            controlplaneendpoint: '10.204.0.50:6443',
-            lastUpdated: '0001-01-01T00:00:00Z',
-            lastUpdatedBy: 'agentv2',
-            created: '2022-03-17T14:06:47Z',
+              phase: 'Running',
+              conditions: [
+                {
+                  type: 'ready',
+                  status: 'error',
+                  lastTransitionTime: '2022-03-17T14:06:47Z',
+                  reason: 'ClusterNotReady',
+                  message: 'Cluster is not ready.',
+                },
+              ],
+            },
           },
-          phase: 'Running',
-          conditions: null,
         },
-      },
+        {
+          apiVersion: 'general.ror.internal/v1alpha1',
+          kind: 'KubernetesCluster',
+          metadata: {
+            name: 'bbb-002-prod',
+            resourceVersion: 'v2',
+            creationTimestamp: '2022-06-11T09:32:20Z',
+            labels: null,
+            annotations: null,
+            uid: faker.string.uuid(),
+            namespace: null,
+            generation: null,
+            ownerReferences: [],
+          },
+          rormeta: {
+            version: 'v2',
+            ownerref: {
+              scope: 'workspace',
+              subject: 'prod-nhn-mgmt',
+            },
+            tags: [],
+          },
+          kubernetescluster: {
+            spec: {
+              data: {
+                clusterId: 'bbb-002-prod-abcd',
+                provider: 'azure',
+                datacenter: 'dc2',
+                region: 'us-central1',
+                zone: 'b',
+                project: 'critical-project',
+                workspace: 'ws2',
+                workorder: 'wo999',
+                environment: 'prod',
+              },
+              topology: {
+                version: 'v1.27.3',
+                controlplane: {
+                  replicas: 5,
+                  version: 'v1.27.3',
+                  provider: 'azure',
+                  machineClass: 'high-performance',
+                  metadata: { labels: {}, annotations: {} },
+                  storage: [],
+                },
+                workers: {
+                  nodePools: [
+                    {
+                      name: 'pool-prod',
+                      replicas: 10,
+                      version: 'v1.27.3',
+                      provider: 'azure',
+                      machineClass: 'high-performance',
+                      autoscaling: {
+                        enabled: true,
+                        minReplicas: 5,
+                        maxReplicas: 15,
+                        scalingRules: ['cpu', 'memory'],
+                      },
+                      metadata: { labels: {}, annotations: {} },
+                    },
+                  ],
+                },
+              },
+            },
+            status: {
+              state: {
+                cluster: {
+                  externalId: 'ext-bbb-002',
+                  resources: {
+                    cpu: { capacity: '64', used: '40', percentage: 62 },
+                    memory: { capacity: '512Gi', used: '320Gi', percentage: 62 },
+                    gpu: null,
+                    disk: null,
+                  },
+                  price: { monthly: 500, yearly: 6000 },
+                  controlplane: {
+                    status: 'Running',
+                    message: '',
+                    scale: 5,
+                    machineClass: 'high-performance',
+                    resources: {
+                      cpu: null,
+                      memory: null,
+                      gpu: null,
+                      disk: null,
+                    },
+                  },
+                  nodepools: [
+                    {
+                      name: 'pool-prod',
+                      status: 'Running',
+                      message: '',
+                      scale: 10,
+                      machineClass: 'high-performance',
+                      autoscaling: {
+                        enabled: true,
+                        minReplicas: 5,
+                        maxReplicas: 15,
+                      },
+                      resources: {
+                        cpu: null,
+                        memory: null,
+                        gpu: null,
+                        disk: null,
+                      },
+                    },
+                  ],
+                },
+                versions: [{ name: 'kubernetes', version: 'v1.27.3', branch: 'stable' }],
+                endpoints: [
+                  { name: 'argocd', address: 'argo.bbb.local' },
+                  { name: 'grafana', address: 'grafana.bbb.local' },
+                ],
+                egressIP: '10.0.0.5',
+                lastUpdated: new Date().toISOString(),
+                lastUpdatedBy: 'admin-prod',
+                created: '2022-06-11T09:32:20Z',
+              },
+              phase: 'Running',
+              conditions: [
+                {
+                  type: 'ready',
+                  status: 'ok',
+                  lastTransitionTime: '2022-06-11T09:32:20Z',
+                  reason: 'ClusterReady',
+                  message: 'Cluster is ready and operational.',
+                },
+              ],
+            },
+          },
+        },
+      ],
     },
   ],
 }

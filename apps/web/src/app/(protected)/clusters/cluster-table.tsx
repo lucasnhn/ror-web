@@ -1,7 +1,7 @@
 'use client'
-import { convertBytes } from '@/utils/bytes'
+
 import { createColumnHelper } from '@tanstack/react-table'
-import type { Cluster } from '@ror/js-api-client'
+import type { KubernetesCluster } from '@ror/js-api-client'
 import Link from 'next/link'
 import { DataTable } from '@/components/ui/data-table'
 import type { DataTableColumnDef, DataTablePagination, DataTableSorting } from '@/components/ui/data-table'
@@ -10,21 +10,20 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { ChangeEvent, useCallback, useEffect, useState } from 'react'
 import { routes } from '@/config/routes'
 import { EnvironmentTag } from '@/components/ui/environment-tag'
-import { getArgoTool, getGrafanaTool } from '@/features/clusters/utils/tools'
 import { ExternalLink } from 'lucide-react'
 import { useDebounce } from '@uidotdev/usehooks'
 
-const columnHelper = createColumnHelper<Cluster>()
+const columnHelper = createColumnHelper<KubernetesCluster>()
 
 const dataTableColumns = [
-  columnHelper.accessor('clusterName', {
+  columnHelper.accessor((row) => row.metadata.name ?? '', {
     header: 'Name',
     enableSorting: true,
     sortingFn: 'text',
     cell: (info) => {
       const clusterName = info.getValue()
-      const rowOriginal = info.row.original
-      const clusterId = rowOriginal.clusterId
+      const clusterId = info.row.original.kubernetescluster?.spec?.data?.clusterId ?? ''
+
       return (
         <Link href={routes.app.cluster.getHref(clusterId)} className='pr-2 text-(--r-link-primary) underline'>
           {clusterName}
@@ -32,15 +31,14 @@ const dataTableColumns = [
       )
     },
   }),
-  columnHelper.accessor('healthStatus.health', {
+  columnHelper.accessor(() => 1, {
+    // TODO: `1` with real health data later
+    id: 'health',
     header: 'Status',
     enableSorting: false,
-    cell: (info) => {
-      const value = info.getValue()
-      return <HealthStatus status={value} />
-    },
+    cell: (info) => <HealthStatus status={info.getValue()} />,
   }),
-  columnHelper.accessor('environment', {
+  columnHelper.accessor((row) => row.kubernetescluster?.spec?.data?.environment ?? '', {
     header: 'Environment',
     enableSorting: false,
     cell: (info) => {
@@ -48,98 +46,101 @@ const dataTableColumns = [
       return <EnvironmentTag environment={value} />
     },
   }),
-  columnHelper.accessor('metrics.cpuPercentage', {
-    header: 'CPU',
-    enableSorting: false,
-    cell: (info) => {
-      const cpuPercentage = info.getValue()
-      const row = info.row.original
-      const cpuCount = row.metrics.cpu
-      return (
-        <span>
-          {cpuPercentage}% ({cpuCount} cores)
-        </span>
-      )
+  columnHelper.accessor(
+    (row) => {
+      const usage = row.kubernetescluster?.status?.state?.cluster.resources.cpu?.used
+      return usage
     },
-  }),
-  columnHelper.accessor('metrics.memoryPercentage', {
+    {
+      id: 'cpuPercentage',
+      header: 'CPU',
+      enableSorting: false,
+      cell: (info) => {
+        const usage = info.getValue()
+        const cores = info.row.original.kubernetescluster?.status?.state?.cluster.resources.cpu?.capacity
+        return (
+          <span>
+            {usage} ({cores} cores)
+          </span>
+        )
+      },
+    }
+  ),
+  columnHelper.accessor((row) => row.kubernetescluster?.status?.state?.cluster.resources.memory?.used, {
+    id: 'memoryPercentage',
     header: 'Memory',
     enableSorting: false,
     cell: (info) => {
-      const memoryPercentage = info.getValue()
-      const bytes = info.row.original.metrics.memory
-      const formattedBytes = convertBytes(bytes, { useBinaryUnits: true })
+      const usage = info.getValue()
+      const memoryRaw = info.row.original.kubernetescluster?.status?.state?.cluster.resources.memory?.capacity
       return (
         <span>
-          {memoryPercentage}% ({formattedBytes})
+          {usage} ({memoryRaw})
         </span>
       )
     },
   }),
-  columnHelper.accessor((info) => info.versions?.nhnTooling.version ?? '', {
-    header: 'Tooling',
-    enableSorting: false,
-    cell: (info) => {
-      const version = info.getValue()
-      return <span>{version}</span>
+  columnHelper.accessor(
+    () => {
+      const tooling = 'MOCK TOOLING'
+      return tooling
     },
-  }),
-  columnHelper.accessor((info) => info.metadata?.project?.name ?? '', {
+    {
+      id: 'tooling',
+      header: 'Tooling',
+      enableSorting: false,
+      cell: (info) => <span>{info.getValue()}</span>,
+    }
+  ),
+  columnHelper.accessor((row) => row.kubernetescluster?.spec?.data?.project ?? '', {
     header: 'Project',
     enableSorting: false,
-    cell: (info) => {
-      const projectName = info.getValue()
-      return <span>{projectName ?? '-'}</span>
-    },
+    cell: (info) => <span>{info.getValue()}</span>,
   }),
   columnHelper.display({
     header: 'Argo',
-    enableSorting: false,
     cell: (info) => {
-      const cluster = info.row.original
-      const argoUrl = getArgoTool(cluster)
-      if (!argoUrl) {
-        return 'Missing…'
-      }
-      return (
+      const url = info.row.original.kubernetescluster?.status?.state?.endpoints.find(
+        (e) => e.name === 'argocd'
+      )?.address
+      return url ? (
         <a
-          href={`https://${argoUrl}`}
+          href={`https://${url}`}
           target='_blank'
           rel='noopener noreferrer'
           className='flex items-center gap-2 text-link'
         >
-          Open Argo
-          <ExternalLink className='w-5 h-5 text-current' />
+          Open Argo <ExternalLink className='w-5 h-5 text-current' />
         </a>
+      ) : (
+        'Missing…'
       )
     },
   }),
   columnHelper.display({
     header: 'Grafana',
-    enableSorting: false,
     cell: (info) => {
-      const cluster = info.row.original
-      const grafanaUrl = getGrafanaTool(cluster)
-      if (!grafanaUrl) {
-        return 'Missing…'
-      }
-      return (
+      const url = info.row.original.kubernetescluster?.status?.state?.endpoints.find(
+        (e) => e.name === 'grafana'
+      )?.address
+      return url ? (
         <a
-          href={`https://${grafanaUrl}`}
+          href={`https://${url}`}
           target='_blank'
           rel='noopener noreferrer'
           className='flex items-center gap-2 text-link'
         >
-          Open Grafana
-          <ExternalLink className='w-5 h-5 text-current' />
+          Open Grafana <ExternalLink className='w-5 h-5 text-current' />
         </a>
+      ) : (
+        'Missing…'
       )
     },
   }),
-] satisfies DataTableColumnDef<Cluster>[]
+] satisfies DataTableColumnDef<KubernetesCluster>[]
 
 interface ClusterTableProps {
-  data: Cluster[]
+  data: KubernetesCluster[]
   totalCount: number
   pageCount: number
   pagination: DataTablePagination

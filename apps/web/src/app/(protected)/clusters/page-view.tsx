@@ -12,7 +12,7 @@ import { ArrowDownNarrowWide, ArrowDownWideNarrow, Funnel } from 'lucide-react'
 import { cn } from '@/utils/clsxm'
 import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
-import type { Cluster } from '@ror/js-api-client'
+import type { KubernetesCluster } from '@ror/js-api-client'
 import { ClusterSearch } from '@/components/ui/cluster/cluster-search'
 
 interface Params {
@@ -26,7 +26,7 @@ interface Params {
 
 interface PageViewProps {
   className?: string
-  clusters: Cluster[]
+  clusters: KubernetesCluster[]
   params: Params
 }
 
@@ -48,16 +48,20 @@ const displayDataOptions: Option[] = [
     label: 'Kubectl',
   },
   {
-    value: 'accessGroups',
-    label: 'Access groups',
-  },
-  {
     value: 'cpu',
     label: 'CPU usage',
   },
   {
     value: 'memory',
     label: 'Memory usage',
+  },
+  {
+    value: 'gpu',
+    label: 'GPU usage',
+  },
+  {
+    value: 'disk',
+    label: 'Disk usage',
   },
   {
     value: 'nodes',
@@ -83,16 +87,24 @@ const displayDataOptions: Option[] = [
     value: 'toolingVersion',
     label: 'NHN tooling version',
   },
+  {
+    value: 'datacenterName',
+    label: 'Datacenter name',
+  },
+  {
+    value: 'datacenterProvider',
+    label: 'Datacenter provider',
+  },
+  {
+    value: 'environment',
+    label: 'Environment',
+  },
 ]
 
 const sortingOptions = [
   {
     value: 'clusterName',
     label: 'Cluster name',
-  },
-  {
-    value: 'accessGroups',
-    label: 'Num of access groups',
   },
   {
     value: 'cpu',
@@ -126,20 +138,32 @@ const sortingOptions = [
     value: 'datacenterProvider',
     label: 'Datacenter provider',
   },
+  {
+    value: 'environment',
+    label: 'Environment',
+  },
 ]
 
 const status: Option[] = [
   {
-    value: 'good',
-    label: 'Good',
+    value: 'ok',
+    label: 'OK',
   },
   {
-    value: 'smelly',
-    label: 'Smelly',
+    value: 'working',
+    label: 'Working',
   },
   {
-    value: 'bad',
-    label: 'Bad',
+    value: 'warning',
+    label: 'Warning',
+  },
+  {
+    value: 'error',
+    label: 'Error',
+  },
+  {
+    value: 'unknown',
+    label: 'Unknown',
   },
 ]
 
@@ -382,7 +406,7 @@ export const PageView = ({ className, clusters, params }: PageViewProps) => {
     }
   }, [params])
 
-  const [searchResults, setSearchResults] = useState<Cluster[]>(clusters)
+  const [searchResults, setSearchResults] = useState<KubernetesCluster[]>(clusters)
 
   const renderControls = () => (
     <div className='flex flex-wrap items-center justify-between w-full gap-4 [@container(max-width:1000px)]:flex-col [@container(max-width:1000px)]:items-start [@container(max-width:1000px)]:gap-6 '>
@@ -484,7 +508,7 @@ export const PageView = ({ className, clusters, params }: PageViewProps) => {
             {(searchResults ?? clusters).length > 0 ? (
               (searchResults ?? clusters).map((cluster) => (
                 <ClusterCard
-                  key={cluster.clusterId}
+                  key={cluster.kubernetescluster?.spec?.data?.clusterId}
                   cluster={cluster}
                   displayData={
                     selectedDisplayData.length > 0

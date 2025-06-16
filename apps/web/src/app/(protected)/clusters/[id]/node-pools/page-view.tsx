@@ -60,6 +60,7 @@ export function PageView({ data }: DataTableProps<Nodepool>) {
   const [remove, setRemove] = useState<boolean>(false)
   const [sorting, setSorting] = useState<SortingState>([])
 
+  // TODO: remove this when the edit and remove modals are implemented, needed to build
   console.log('Edit:', edit)
   console.log('Remove:', remove)
 
