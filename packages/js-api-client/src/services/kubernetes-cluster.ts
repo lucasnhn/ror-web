@@ -61,14 +61,11 @@ export const createKubernetesClusterService = (request: (requestOptions: Request
     return validateResponse(response, responseSchema)
   },
   id: async (id: string) => {
-    console.log('Fetching Kubernetes cluster by ID:', id)
     try {
-      console.log('Try past response:', id)
       const response = await request({
         method: 'GET',
         path: `/v2/resources/uid/${id}`,
       })
-      console.log('Fetching past response:', id)
       return validateResponse(response, KubernetesClusterSchema)
     } catch (error) {
       console.error('Error fetching cluster by ID:', error)
