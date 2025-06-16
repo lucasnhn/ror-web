@@ -56,6 +56,14 @@ const displayDataOptions: Option[] = [
     label: 'Memory usage',
   },
   {
+    value: 'gpu',
+    label: 'GPU usage',
+  },
+  {
+    value: 'disk',
+    label: 'Disk usage',
+  },
+  {
     value: 'nodes',
     label: 'Num of nodes',
   },
@@ -78,6 +86,18 @@ const displayDataOptions: Option[] = [
   {
     value: 'toolingVersion',
     label: 'NHN tooling version',
+  },
+  {
+    value: 'datacenterName',
+    label: 'Datacenter name',
+  },
+  {
+    value: 'datacenterProvider',
+    label: 'Datacenter provider',
+  },
+  {
+    value: 'environment',
+    label: 'Environment',
   },
 ]
 
@@ -118,20 +138,32 @@ const sortingOptions = [
     value: 'datacenterProvider',
     label: 'Datacenter provider',
   },
+  {
+    value: 'environment',
+    label: 'Environment',
+  },
 ]
 
 const status: Option[] = [
   {
-    value: 'good',
-    label: 'Good',
+    value: 'ok',
+    label: 'OK',
   },
   {
-    value: 'smelly',
-    label: 'Smelly',
+    value: 'working',
+    label: 'Working',
   },
   {
-    value: 'bad',
-    label: 'Bad',
+    value: 'warning',
+    label: 'Warning',
+  },
+  {
+    value: 'error',
+    label: 'Error',
+  },
+  {
+    value: 'unknown',
+    label: 'Unknown',
   },
 ]
 
@@ -476,7 +508,7 @@ export const PageView = ({ className, clusters, params }: PageViewProps) => {
             {(searchResults ?? clusters).length > 0 ? (
               (searchResults ?? clusters).map((cluster) => (
                 <ClusterCard
-                  key={cluster.kubernetescluster?.spec.clusterId}
+                  key={cluster.kubernetescluster?.spec?.data?.clusterId}
                   cluster={cluster}
                   displayData={
                     selectedDisplayData.length > 0
