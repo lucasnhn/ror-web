@@ -2,7 +2,6 @@ import { cn } from '@/utils/clsxm'
 import { CircleCheck, TriangleAlert, Skull, CircleHelp } from 'lucide-react'
 
 const getHealthColors = (status: string) => {
-  console.log('getHealthColors', status)
   switch (status) {
     case 'ok':
       return ['bg-cyan-500', 'dark:bg-cyan-600']
