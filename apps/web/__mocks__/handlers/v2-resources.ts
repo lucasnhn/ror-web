@@ -30,7 +30,7 @@ export const v2ResourcesHandlers = [
     const flatResources = clustersVersion2.resources.flatMap((group) => group.resources)
 
     const cluster = flatResources.find(
-      (res) => res.kind === 'KubernetesCluster' && res.kubernetescluster?.spec?.clusterId === id
+      (res) => res.kind === 'KubernetesCluster' && res.kubernetescluster?.spec?.data.clusterId === id
     )
 
     if (!cluster) {
