@@ -573,7 +573,7 @@ export const clustersVersion2 = {
                 version: 'v1.28.7',
                 controlplane: {
                   replicas: 3,
-                  varsion: 'v1.28.7',
+                  version: 'v1.28.7',
                   provider: 'tanzu',
                   machineClass: 'best-effort-large',
                   metadata: { labels: {}, annotations: {} },
@@ -705,7 +705,7 @@ export const clustersVersion2 = {
                 version: 'v1.27.3',
                 controlplane: {
                   replicas: 5,
-                  varsion: 'v1.27.3',
+                  version: 'v1.27.3',
                   provider: 'azure',
                   machineClass: 'high-performance',
                   metadata: { labels: {}, annotations: {} },
