@@ -19,7 +19,7 @@ export function ClusterSearch({ items, onResultsChange }: ClusterSearchProps) {
   const fuse = useMemo(() => {
     const flatClusters = items.map((cluster) => ({
       ...cluster,
-      label: cluster.metadata?.name ?? cluster.kubernetescluster?.spec.clusterId, // fallback
+      label: cluster.metadata?.name ?? cluster.kubernetescluster?.spec?.data?.clusterId, // fallback
     }))
 
     return new Fuse(flatClusters, {

@@ -22,7 +22,8 @@ const dataTableColumns = [
     sortingFn: 'text',
     cell: (info) => {
       const clusterName = info.getValue()
-      const clusterId = info.row.original.kubernetescluster?.spec.clusterId ?? ''
+      const clusterId = info.row.original.kubernetescluster?.spec?.data?.clusterId ?? ''
+
       return (
         <Link href={routes.app.cluster.getHref(clusterId)} className='pr-2 text-(--r-link-primary) underline'>
           {clusterName}
@@ -37,7 +38,7 @@ const dataTableColumns = [
     enableSorting: false,
     cell: (info) => <HealthStatus status={info.getValue()} />,
   }),
-  columnHelper.accessor((row) => row.kubernetescluster?.spec.environment ?? '', {
+  columnHelper.accessor((row) => row.kubernetescluster?.spec?.data?.environment ?? '', {
     header: 'Environment',
     enableSorting: false,
     cell: (info) => {
@@ -47,7 +48,7 @@ const dataTableColumns = [
   }),
   columnHelper.accessor(
     (row) => {
-      const usage = row.kubernetescluster?.status?.clusterStatus.cpu.used
+      const usage = row.kubernetescluster?.status?.state?.cluster.resources.cpu?.used
       return usage
     },
     {
@@ -56,7 +57,7 @@ const dataTableColumns = [
       enableSorting: false,
       cell: (info) => {
         const usage = info.getValue()
-        const cores = info.row.original.kubernetescluster?.status?.clusterStatus.cpu.capacity
+        const cores = info.row.original.kubernetescluster?.status?.state?.cluster.resources.cpu?.capacity
         return (
           <span>
             {usage} ({cores} cores)
@@ -65,25 +66,20 @@ const dataTableColumns = [
       },
     }
   ),
-  columnHelper.accessor(
-    (row) => {
-      return row.kubernetescluster?.status?.clusterStatus.memory.used
+  columnHelper.accessor((row) => row.kubernetescluster?.status?.state?.cluster.resources.memory?.used, {
+    id: 'memoryPercentage',
+    header: 'Memory',
+    enableSorting: false,
+    cell: (info) => {
+      const usage = info.getValue()
+      const memoryRaw = info.row.original.kubernetescluster?.status?.state?.cluster.resources.memory?.capacity
+      return (
+        <span>
+          {usage} ({memoryRaw})
+        </span>
+      )
     },
-    {
-      id: 'memoryPercentage',
-      header: 'Memory',
-      enableSorting: false,
-      cell: (info) => {
-        const usage = info.getValue()
-        const memoryRaw = info.row.original.kubernetescluster?.status?.clusterStatus.memory.capacity
-        return (
-          <span>
-            {usage} ({memoryRaw})
-          </span>
-        )
-      },
-    }
-  ),
+  }),
   columnHelper.accessor(
     () => {
       const tooling = 'MOCK TOOLING'
@@ -96,15 +92,17 @@ const dataTableColumns = [
       cell: (info) => <span>{info.getValue()}</span>,
     }
   ),
-  columnHelper.accessor((row) => row.kubernetescluster?.spec?.project ?? '', {
+  columnHelper.accessor((row) => row.kubernetescluster?.spec?.data?.project ?? '', {
     header: 'Project',
     enableSorting: false,
     cell: (info) => <span>{info.getValue()}</span>,
   }),
   columnHelper.display({
     header: 'Argo',
-    cell: () => {
-      const url = 'argolinktest' // TODO: implement for new KubernetesCluster type
+    cell: (info) => {
+      const url = info.row.original.kubernetescluster?.status?.state?.endpoints.find(
+        (e) => e.name === 'argocd'
+      )?.address
       return url ? (
         <a
           href={`https://${url}`}
@@ -121,8 +119,10 @@ const dataTableColumns = [
   }),
   columnHelper.display({
     header: 'Grafana',
-    cell: () => {
-      const url = 'grafanalinktest' // TODO: implement for new KubernetesCluster type
+    cell: (info) => {
+      const url = info.row.original.kubernetescluster?.status?.state?.endpoints.find(
+        (e) => e.name === 'grafana'
+      )?.address
       return url ? (
         <a
           href={`https://${url}`}

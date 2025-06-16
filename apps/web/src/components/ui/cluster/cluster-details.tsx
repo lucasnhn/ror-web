@@ -14,7 +14,7 @@ import { format } from 'date-fns'
 import { enZA } from 'date-fns/locale'
 
 const standardLayout = [
-  { i: 'metrics', x: 0, y: 0, w: 6, h: 8, minW: 6, minH: 8 },
+  { i: 'memory', x: 0, y: 0, w: 6, h: 8, minW: 6, minH: 8 },
   { i: 'tools', x: 6, y: 0, w: 6, h: 8, minW: 6, minH: 6 },
   { i: 'info', x: 12, y: 0, w: 12, h: 8, minW: 9, minH: 8 },
   { i: 'versions', x: 0, y: 8, w: 6, h: 8, minW: 6, minH: 7 },
@@ -50,41 +50,54 @@ function getHaClusterPlaneValue(nodes: number) {
 export const ClusterDetails = ({ cluster, user, className }: ClusterDetailsProps) => {
   const clusterSpec = cluster.kubernetescluster?.spec
   const clusterStatus = cluster.kubernetescluster?.status
+  const clusterId = clusterSpec?.data?.clusterId
+  const clusterName = cluster.metadata?.name || clusterId
 
-  const cpu = clusterStatus?.clusterStatus.cpu || { capacity: 0, used: 0, percentage: 0 }
-  const memory = clusterStatus?.clusterStatus.memory || { capacity: 0, used: 0, percentage: 0 }
-  const nodes = clusterStatus?.clusterStatus.nodes || 0
-  const nodePools = clusterStatus?.clusterStatus.nodePools || 0
+  const cpuData = clusterStatus?.state.cluster.resources.cpu
+  const cpu = { capacity: cpuData?.capacity, used: cpuData?.used, percentage: cpuData?.percentage }
+  const memoryData = clusterStatus?.state.cluster.resources.memory
+  const memory = { capacity: memoryData?.capacity, used: memoryData?.used, percentage: memoryData?.percentage }
+  const gpuData = clusterStatus?.state.cluster.resources.gpu
+  const gpu = { capacity: gpuData?.capacity, used: gpuData?.used, percentage: gpuData?.percentage }
+  const diskData = clusterStatus?.state.cluster.resources.disk
+  const disk = { capacity: diskData?.capacity, used: diskData?.used, percentage: diskData?.percentage }
 
-  const argocd = clusterSpec?.endpoints?.find(
-    (endpoint: { type?: string | null; address?: string | null }) => endpoint.type === 'argocd'
-  )?.address
-  const grafana = clusterSpec?.endpoints?.find(
-    (endpoint: { type?: string | null; address?: string | null }) => endpoint.type === 'grafana'
-  )?.address
+  const tools = {
+    argo: clusterStatus?.state.endpoints?.find((endpoint) => endpoint.name === 'argocd')?.address,
+    grafana: clusterStatus?.state.endpoints?.find((endpoint) => endpoint.name === 'grafana')?.address,
+  }
 
-  const prices = clusterStatus?.clusterStatus.price || { monthly: 0, yearly: 0 }
+  const prices = {
+    monthly: clusterStatus?.state.cluster.price.monthly || 0,
+    yearly: clusterStatus?.state.cluster.price.yearly || 0,
+  }
 
-  const firstObserved = 'MOCK TIME' // TODO: MOCK firstObserved
-  const lastObserved = formatObservationDate(cluster.kubernetescluster?.status?.lastObservedTime || '')
-  const created = formatObservationDate(cluster.kubernetescluster?.status?.createdTime || '')
+  const lastObserved = clusterStatus?.state.lastUpdated
+  const created = clusterStatus?.state.created
 
-  const rorLogin = `ror login ${cluster.kubernetescluster?.spec.clusterId}`
-  const serverUrl = 'MOCK SERVER URL' // TODO: MOCK server URL
-  const kubectlLogin = `kubectl vsphere login --server=${serverUrl} -u ${user?.email} --insecure-skip-tls-verify --tanzu-kubernetes-cluster-namespace ${'MOCK WORKSPACE'} --tanzu-kubernetes-cluster-name ${cluster.metadata.name}` // TODO: MOCK WORKSPACE
+  const serverUrl =
+    clusterStatus?.state.endpoints?.find((endpoint) => endpoint.name === 'datacenter')?.address || '<missing>'
+  const rorLogin = `ror login ${clusterId}`
+  const kubectlLogin = `kubectl vsphere login --server=${serverUrl} -u ${user?.email} --insecure-skip-tls-verify --tanzu-kubernetes-cluster-namespace ${clusterSpec?.data?.workspace} --tanzu-kubernetes-cluster-name ${clusterName}`
 
   const versions = {
-    agent: { version: 'MOCK agent', sha: 'MOCK agent sha' },
-    kubernetes: 'MOCK kubernetes',
-    nhnTooling: { version: 'MOCK nhnTooling', branch: 'MOCK nhnTooling branch' },
-  } // TODO: MOCK versions
-  const nhnToolingVersion = versions.nhnTooling.version // TODO: MOCK tooling
-  const nhnToolingBranch = versions.nhnTooling.branch // TODO: MOCK tooling
-  const nhnToolingValue =
-    nhnToolingVersion !== 'Missing ...' ? `${nhnToolingVersion} (${nhnToolingBranch})` : 'Missing …' // TODO: MOCK tooling
-  const agentVersion = versions.agent?.version // TODO: MOCK tooling
-  const agentSha = versions.agent?.sha // TODO: MOCK tooling
-  const agentValue = `${agentVersion} (${agentSha})` // TODO: MOCK tooling
+    // TODO: Make sure these are correct names
+    agent: clusterStatus?.state.versions?.find((version) => version.name === 'agent') || {
+      version: 'Version missing',
+      name: 'Agent',
+      branch: '',
+    },
+    kubernetes: clusterStatus?.state.versions?.find((version) => version.name === 'kubernetes') || {
+      version: 'Version missing',
+      name: 'Kubernetes',
+      branch: '',
+    },
+    nhnTooling: clusterStatus?.state.versions?.find((version) => version.name === 'nhnTooling') || {
+      version: 'Version missing',
+      name: 'NHN Tooling',
+      branch: '',
+    },
+  }
 
   const containerRef = useRef<HTMLDivElement>(null)
   const [layoutWidth, setLayoutWidth] = useState(0)
@@ -141,25 +154,95 @@ export const ClusterDetails = ({ cluster, user, className }: ClusterDetailsProps
         width={layoutWidth}
         draggableHandle='.drag-handle'
       >
-        <div key='metrics' className='drag-handle'>
-          <CardHeader title='Metrics' />
+        <div key='memory' className='drag-handle'>
+          <CardHeader title='Memory' />
 
           <div className='flex flex-col gap-2'>
             <div className='flex flex-col'>
-              <b>CPU consumption: </b>
-              <span>
-                {cpu.percentage}% ({cpu.used}m of {cpu.capacity}m cores)
-              </span>
+              <p className='font-bold'>CPU</p>
+              <p>
+                {((cpu.percentage === undefined || cpu.percentage === null) &&
+                  (cpu.capacity === undefined || cpu.capacity === null)) ||
+                ((cpu.percentage === undefined || cpu.percentage === null) &&
+                  (cpu.used === undefined || cpu.used === null)) ? (
+                  'Data missing'
+                ) : (
+                  <>
+                    {cpu.percentage !== undefined && cpu.percentage !== null && `${cpu.percentage}%`}
+                    {cpu.percentage !== undefined &&
+                      cpu.percentage !== null &&
+                      cpu.used !== undefined &&
+                      cpu.capacity !== undefined &&
+                      ' '}
+                    {cpu.used !== undefined && cpu.capacity !== undefined && `(${cpu.used}m of ${cpu.capacity}m cores)`}
+                  </>
+                )}
+              </p>
             </div>
             <div className='flex flex-col'>
-              <b>Memory consumption: </b>
-              {memory.percentage}% ({memory.used} of {memory.capacity})
+              <p className='font-bold'>Memory</p>
+              <p>
+                {((memory.percentage === undefined || memory.percentage === null) &&
+                  (memory.capacity === undefined || memory.capacity === null)) ||
+                ((memory.percentage === undefined || memory.percentage === null) &&
+                  (memory.used === undefined || memory.used === null)) ? (
+                  'Data missing'
+                ) : (
+                  <>
+                    {memory.percentage !== undefined && memory.percentage !== null && `${memory.percentage}%`}
+                    {memory.percentage !== undefined &&
+                      memory.percentage !== null &&
+                      memory.used !== undefined &&
+                      memory.capacity !== undefined &&
+                      ' '}
+                    {memory.used !== undefined &&
+                      memory.capacity !== undefined &&
+                      `(${memory.used} of ${memory.capacity})`}
+                  </>
+                )}
+              </p>
             </div>
             <div className='flex flex-col'>
-              <b>Nodes: </b>
-              <span>
-                {nodes} ({nodePools} node pool{nodePools > 1 ? 's' : ''})
-              </span>
+              <p className='font-bold'>GPU</p>
+              <p>
+                {((gpu.percentage === undefined || gpu.percentage === null) &&
+                  (gpu.capacity === undefined || gpu.capacity === null)) ||
+                ((gpu.percentage === undefined || gpu.percentage === null) &&
+                  (gpu.used === undefined || gpu.used === null)) ? (
+                  'Data missing'
+                ) : (
+                  <>
+                    {gpu.percentage !== undefined && gpu.percentage !== null && `${gpu.percentage}%`}
+                    {gpu.percentage !== undefined &&
+                      gpu.percentage !== null &&
+                      gpu.used !== undefined &&
+                      gpu.capacity !== undefined &&
+                      ' '}
+                    {gpu.used !== undefined && gpu.capacity !== undefined && `(${gpu.used} of ${gpu.capacity})`}
+                  </>
+                )}
+              </p>
+            </div>
+            <div className='flex flex-col'>
+              <p className='font-bold'>Disk</p>
+              <p>
+                {((disk.percentage === undefined || disk.percentage === null) &&
+                  (disk.capacity === undefined || disk.capacity === null)) ||
+                ((disk.percentage === undefined || disk.percentage === null) &&
+                  (disk.used === undefined || disk.used === null)) ? (
+                  'Data missing'
+                ) : (
+                  <>
+                    {disk.percentage !== undefined && disk.percentage !== null && `${disk.percentage}%`}
+                    {disk.percentage !== undefined &&
+                      disk.percentage !== null &&
+                      disk.used !== undefined &&
+                      disk.capacity !== undefined &&
+                      ' '}
+                    {disk.used !== undefined && disk.capacity !== undefined && `(${disk.used} of ${disk.capacity})`}
+                  </>
+                )}
+              </p>
             </div>
           </div>
         </div>
@@ -169,29 +252,29 @@ export const ClusterDetails = ({ cluster, user, className }: ClusterDetailsProps
             <div className='flex flex-1 flex-col gap-2'>
               <div className='flex flex-col'>
                 <b>Cluster ID: </b>
-                <span>{clusterSpec.clusterId}</span>
+                <span>{clusterId}</span>
               </div>
               <div className='flex flex-col'>
                 <b>Project: </b>
-                <span>{clusterSpec.project}</span>
+                <span>{clusterSpec?.data?.project}</span>
               </div>
               <div className='flex flex-col'>
                 <b>Workspace: </b>
-                <span>MOCK WORKSPACE</span>
+                <span>{clusterSpec?.data?.workspace}</span>
               </div>
               <div className='flex flex-col'>
                 <b>Datacenter: </b>
-                <span>MOCK DATACENTER</span>
+                <span>{clusterSpec?.data?.datacenter}</span>
               </div>
             </div>
             <div className='flex flex-1 flex-col gap-2'>
               <div className='flex flex-col'>
                 <b>Provider: </b>
-                <span>{cluster.kubernetescluster?.spec.provider}</span>
+                <span>{cluster.kubernetescluster?.spec.data?.provider}</span>
               </div>
               <div className='flex flex-col'>
                 <b>HA control plane: </b>
-                <span>{getHaClusterPlaneValue(nodes)}</span>
+                <span>{getHaClusterPlaneValue(clusterSpec?.topology?.controlplane?.replicas || 0)}</span>
               </div>
               <div className='flex flex-col'>
                 <b>Egress IP: </b>
@@ -204,16 +287,12 @@ export const ClusterDetails = ({ cluster, user, className }: ClusterDetailsProps
           <CardHeader title='Observed' />
           <div className='flex flex-col gap-2'>
             <div className='flex flex-col'>
-              <b>First observed: </b>
-              <span>{firstObserved}</span>
-            </div>
-            <div className='flex flex-col'>
               <b>Last observed: </b>
-              <span>{lastObserved}</span>
+              <span>{lastObserved ? formatObservationDate(lastObserved.toString()) : 'Missing…'}</span>
             </div>
             <div className='flex flex-col'>
               <b>Created: </b>
-              <span>{created}</span>
+              <span>{created ? formatObservationDate(created.toString()) : 'Missing…'}</span>
             </div>
           </div>
         </div>
@@ -221,10 +300,10 @@ export const ClusterDetails = ({ cluster, user, className }: ClusterDetailsProps
           <CardHeader title='Tools' />
           <div className='flex flex-col gap-2'>
             <section className='flex flex-col'>
-              {argocd ? (
+              {tools.argo ? (
                 <a
                   onClick={(e) => e.stopPropagation()}
-                  href={`https://${argocd}`}
+                  href={`https://${tools.argo}`}
                   target='_blank'
                   rel='noopener noreferrer'
                   className='flex gap-2 font-bold text-blue-500 w-fit'
@@ -239,10 +318,10 @@ export const ClusterDetails = ({ cluster, user, className }: ClusterDetailsProps
                 </p>
               )}
 
-              {grafana ? (
+              {tools.grafana ? (
                 <a
                   onClick={(e) => e.stopPropagation()}
-                  href={`https://${grafana}`}
+                  href={`https://${tools.grafana}`}
                   target='_blank'
                   rel='noopener noreferrer'
                   className='flex gap-2 font-bold text-blue-500 w-fit'
@@ -271,15 +350,15 @@ export const ClusterDetails = ({ cluster, user, className }: ClusterDetailsProps
           <div className='flex flex-col gap-3'>
             <div className='flex flex-col gap-1'>
               <b>Tooling version: </b>
-              <span>{nhnToolingValue}</span>
+              <span>{versions.nhnTooling.version}</span>
             </div>
             <div className='flex flex-col gap-1'>
               <b>Agent version: </b>
-              <span>{agentValue}</span>
+              <span>{versions.agent.version}</span>
             </div>
             <div className='flex flex-col gap-1'>
               <b>Kubernetes version: </b>
-              <span>{versions.kubernetes}</span>
+              <span>{versions.kubernetes.version}</span>
             </div>
           </div>
         </div>

@@ -41,6 +41,8 @@ export type ClusterCardDisplayData =
   | 'kubectl'
   | 'cpu'
   | 'memory'
+  | 'gpu'
+  | 'disk'
   | 'nodes'
   | 'monthlyPrice'
   | 'yearlyPrice'
@@ -58,48 +60,54 @@ interface ClusterCardProps {
   displayData?: ClusterCardDisplayData[]
 }
 
-export const envColors: Record<string, 'red' | 'yellow' | 'blue' | 'emerald'> = {
+export const envColors: Record<string, 'red' | 'yellow' | 'blue' | 'emerald' | 'gray'> = {
   prod: 'red',
   qa: 'yellow',
   dev: 'blue',
   test: 'emerald',
+  undefined: 'gray',
 }
 
 const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps) => {
-  // TODO: ClusterName is missing
   const clusterSpec = cluster.kubernetescluster?.spec
   const clusterStatus = cluster.kubernetescluster?.status
-  const clusterId = clusterSpec?.clusterId
+  const clusterId = clusterSpec?.data?.clusterId
   const clusterName = cluster.metadata?.name || clusterId
 
-  const env = clusterSpec?.environment || 'dev' // TODO: need to handle when this is undefined
-  const health = 1 // TODO: MOCK health status
-  const tools = { argo: 'TOOLS MOCK ARGO', grafana: 'TOOLS MOCK GRAFANA' } // TODO: MOCK tools
-  const cpu = clusterStatus?.clusterStatus.cpu || { capacity: 0, used: 0, percentage: 0 }
-  const memory = clusterStatus?.clusterStatus.memory || { capacity: 0, used: 0, percentage: 0 }
-  const nodes = clusterStatus?.clusterStatus.nodes || 0
-  const nodePools = clusterStatus?.clusterStatus.nodePools || 0
-  const prices = clusterStatus?.clusterStatus.price || { monthly: 0, yearly: 0 }
-  const argocd = clusterSpec?.endpoints?.find((endpoint) => endpoint.type === 'argocd')?.address
-  const grafana = clusterSpec?.endpoints?.find((endpoint) => endpoint.type === 'grafana')?.address
-  // const conditions = clusterStatus?.conditions // TODO: Implement conditions/health
+  const env = clusterSpec?.data?.environment
+  const tools = {
+    argo: clusterStatus?.state.endpoints?.find((endpoint) => endpoint.name === 'argocd')?.address,
+    grafana: clusterStatus?.state.endpoints?.find((endpoint) => endpoint.name === 'grafana')?.address,
+  }
+  const cpuData = clusterStatus?.state.cluster.resources.cpu
+  const cpu = { capacity: cpuData?.capacity, used: cpuData?.used, percentage: cpuData?.percentage }
+  const memoryData = clusterStatus?.state.cluster.resources.memory
+  const memory = { capacity: memoryData?.capacity, used: memoryData?.used, percentage: memoryData?.percentage }
+  const gpuData = clusterStatus?.state.cluster.resources.gpu
+  const gpu = { capacity: gpuData?.capacity, used: gpuData?.used, percentage: gpuData?.percentage }
+  const diskData = clusterStatus?.state.cluster.resources.disk
+  const disk = { capacity: diskData?.capacity, used: diskData?.used, percentage: diskData?.percentage }
+  const nodePools = clusterSpec?.topology?.workers.nodePools
+  const nodePoolsAmount = nodePools?.length || 0
+  const nodesAmount = nodePools?.reduce((total, nodePool) => total + (nodePool.replicas || 0), 0) || 0
+  const prices = {
+    monthly: clusterStatus?.state.cluster.price.monthly || 0,
+    yearly: clusterStatus?.state.cluster.price.yearly || 0,
+  }
+  const healthCondition = clusterStatus?.conditions?.find((condition) => condition.type === 'ready')
   const versions = {
-    agent: { version: 'MOCK agent' },
-    kubernetes: 'MOCK kubernetes',
-    nhnTooling: { version: 'MOCK nhnTooling' },
-  } // TODO: Have versions, but not the same as in v1
-  const datacenter = { name: 'MOCK datacenter', provider: 'MOCK provider' } // TODO: have datacenter, but not the same as in v1 (with name and provider)
-  const serverUrl = 'MOCK SERVER URL' // TODO: MOCK server URL
+    // TODO: Make sure these are correct names
+    agent: clusterStatus?.state.versions?.find((version) => version.name === 'agent')?.version || 'Version missing',
+    kubernetes:
+      clusterStatus?.state.versions?.find((version) => version.name === 'kubernetes')?.version || 'Version missing',
+    nhnTooling:
+      clusterStatus?.state.versions?.find((version) => version.name === 'nhnTooling')?.version || 'Version missing',
+  }
+  const datacenter = { name: clusterSpec?.data?.datacenter, provider: clusterSpec?.data?.provider }
+  const serverUrl =
+    clusterStatus?.state.endpoints?.find((endpoint) => endpoint.name === 'datacenter')?.address || '<missing>'
   const rorLogin = `ror login ${clusterId}`
-  const kubectlLogin = `kubectl vsphere login --server=${serverUrl} -u ${user?.email} --insecure-skip-tls-verify --tanzu-kubernetes-cluster-namespace ${'MOCK WORKSPACE'} --tanzu-kubernetes-cluster-name ${clusterName}` // TODO: MOCK workspace name
-
-  // TODO: Uncomment when cards are finished, this was the v1 data
-  // const env = cluster.environment
-  // const health = cluster.healthStatus.health
-  // const versions = cluster.versions
-  // const datacenter = cluster.workspace.datacenter
-  // const serverUrl = datacenter.apiEndpoint || '<missing>'
-  // const kubectlLogin = `kubectl vsphere login --server=${serverUrl} -u ${user?.email} --insecure-skip-tls-verify --tanzu-kubernetes-cluster-namespace ${cluster?.workspace?.name} --tanzu-kubernetes-cluster-name ${cluster?.clusterName}`
+  const kubectlLogin = `kubectl vsphere login --server=${serverUrl} -u ${user?.email} --insecure-skip-tls-verify --tanzu-kubernetes-cluster-namespace ${clusterSpec?.data?.workspace} --tanzu-kubernetes-cluster-name ${clusterName}`
 
   const router = useRouter()
 
@@ -122,13 +130,13 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
         <CardTitle className={cn('text-2xl rounded-t-xl px-6 py-2 flex', envBgColors[env!][0], envBgColors[env!][1])}>
           {(clusterName || 'Unnamed Cluster') as string}
         </CardTitle>
-        <HealthCircle className='ml-auto mr-4 top-[-24px] w-[52px] h-[52px] ' health={health} />
+        <HealthCircle className='ml-auto mr-4 top-[-24px] w-[52px] h-[52px] ' health={healthCondition} />
       </CardHeader>
 
       <CardContent className='text-sm flex flex-col gap-3'>
         <section className='grid grid-cols-2'>
           {displayData?.includes('argocd') &&
-            (argocd ? (
+            (tools.argo ? (
               <a
                 onClick={(e) => e.stopPropagation()}
                 href={`https://${tools.argo}`}
@@ -146,7 +154,7 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
               </p>
             ))}
           {displayData?.includes('grafana') &&
-            (grafana ? (
+            (tools.grafana ? (
               <a
                 onClick={(e) => e.stopPropagation()}
                 href={`https://${tools.grafana}`}
@@ -190,7 +198,22 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
             <div>
               <p className='font-bold'>CPU</p>
               <p>
-                {cpu.percentage}% ({cpu.used}m of {cpu.capacity}m cores)
+                {((cpu.percentage === undefined || cpu.percentage === null) &&
+                  (cpu.capacity === undefined || cpu.capacity === null)) ||
+                ((cpu.percentage === undefined || cpu.percentage === null) &&
+                  (cpu.used === undefined || cpu.used === null)) ? (
+                  'Data missing'
+                ) : (
+                  <>
+                    {cpu.percentage !== undefined && cpu.percentage !== null && `${cpu.percentage}%`}
+                    {cpu.percentage !== undefined &&
+                      cpu.percentage !== null &&
+                      cpu.used !== undefined &&
+                      cpu.capacity !== undefined &&
+                      ' '}
+                    {cpu.used !== undefined && cpu.capacity !== undefined && `(${cpu.used}m of ${cpu.capacity}m cores)`}
+                  </>
+                )}
               </p>
             </div>
           )}
@@ -199,7 +222,72 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
             <div>
               <p className='font-bold'>Memory</p>
               <p>
-                {memory.percentage}% ({memory.used} of {memory.capacity})
+                {((memory.percentage === undefined || memory.percentage === null) &&
+                  (memory.capacity === undefined || memory.capacity === null)) ||
+                ((memory.percentage === undefined || memory.percentage === null) &&
+                  (memory.used === undefined || memory.used === null)) ? (
+                  'Data missing'
+                ) : (
+                  <>
+                    {memory.percentage !== undefined && memory.percentage !== null && `${memory.percentage}%`}
+                    {memory.percentage !== undefined &&
+                      memory.percentage !== null &&
+                      memory.used !== undefined &&
+                      memory.capacity !== undefined &&
+                      ' '}
+                    {memory.used !== undefined &&
+                      memory.capacity !== undefined &&
+                      `(${memory.used} of ${memory.capacity})`}
+                  </>
+                )}
+              </p>
+            </div>
+          )}
+
+          {displayData?.includes('gpu') && (
+            <div>
+              <p className='font-bold'>GPU</p>
+              <p>
+                {((gpu.percentage === undefined || gpu.percentage === null) &&
+                  (gpu.capacity === undefined || gpu.capacity === null)) ||
+                ((gpu.percentage === undefined || gpu.percentage === null) &&
+                  (gpu.used === undefined || gpu.used === null)) ? (
+                  'Data missing'
+                ) : (
+                  <>
+                    {gpu.percentage !== undefined && gpu.percentage !== null && `${gpu.percentage}%`}
+                    {gpu.percentage !== undefined &&
+                      gpu.percentage !== null &&
+                      gpu.used !== undefined &&
+                      gpu.capacity !== undefined &&
+                      ' '}
+                    {gpu.used !== undefined && gpu.capacity !== undefined && `(${gpu.used} of ${gpu.capacity})`}
+                  </>
+                )}
+              </p>
+            </div>
+          )}
+
+          {displayData?.includes('disk') && (
+            <div>
+              <p className='font-bold'>Disk</p>
+              <p>
+                {((disk.percentage === undefined || disk.percentage === null) &&
+                  (disk.capacity === undefined || disk.capacity === null)) ||
+                ((disk.percentage === undefined || disk.percentage === null) &&
+                  (disk.used === undefined || disk.used === null)) ? (
+                  'Data missing'
+                ) : (
+                  <>
+                    {disk.percentage !== undefined && disk.percentage !== null && `${disk.percentage}%`}
+                    {disk.percentage !== undefined &&
+                      disk.percentage !== null &&
+                      disk.used !== undefined &&
+                      disk.capacity !== undefined &&
+                      ' '}
+                    {disk.used !== undefined && disk.capacity !== undefined && `(${disk.used} of ${disk.capacity})`}
+                  </>
+                )}
               </p>
             </div>
           )}
@@ -208,7 +296,7 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
             <div>
               <p className='font-bold'>Nodes</p>
               <p>
-                {nodes} ({nodePools} node pool{nodePools > 1 ? 's' : ''})
+                {nodesAmount} ({nodePoolsAmount} node pool{nodePoolsAmount > 1 ? 's' : ''})
               </p>
             </div>
           )}
@@ -216,21 +304,21 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
           {displayData?.includes('monthlyPrice') && (
             <div>
               <p className='font-bold'>Monthly price</p>
-              <p>{prices.monthly || 0} kr</p>
+              <p>{prices.monthly} kr</p>
             </div>
           )}
 
           {displayData?.includes('yearlyPrice') && (
             <div>
               <p className='font-bold'>Yearly price</p>
-              <p>{prices.yearly || 0} kr</p>
+              <p>{prices.yearly} kr</p>
             </div>
           )}
 
           {displayData?.includes('agentVersion') && (
             <div>
               <p className='font-bold'>ROR agent version</p>
-              <p>{versions.agent?.version}</p>
+              <p>{versions.agent}</p>
             </div>
           )}
 
@@ -244,7 +332,7 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
           {displayData?.includes('toolingVersion') && (
             <div>
               <p className='font-bold'>NHN tooling version</p>
-              <p>{versions.nhnTooling.version}</p>
+              <p>{versions.nhnTooling}</p>
             </div>
           )}
 
@@ -266,8 +354,8 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
             <div>
               <p className='font-bold'>Environment</p>
               <p>
-                <Pill variant={envColors[env]} className='px-3'>
-                  {env.charAt(0).toUpperCase() + env.slice(1)}
+                <Pill variant={envColors[env ?? 'undefined']} className='px-3'>
+                  {(env ?? 'Undefined').charAt(0).toUpperCase() + (env ?? 'Undefined').slice(1)}
                 </Pill>
               </p>
             </div>
