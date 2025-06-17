@@ -3,6 +3,7 @@ import { rorApiClient } from '@/services/ror-api'
 import { Fragment, ReactNode } from 'react'
 import { routes } from '@/config/routes'
 import { ClusterHeader } from '@/components/ui/cluster/cluster-header'
+import { ClusterProvider } from '@/context/cluster-context'
 
 interface ClusterPageLayoutProps {
   params: Promise<{
@@ -73,12 +74,19 @@ export default async function ClusterPageLayout({ params, children }: ClusterPag
 
   const tabs = createTabNavigationItems(id)
 
+  const clusterContextValue = {
+    id,
+    cluster,
+  }
+
   return (
-    <Fragment>
-      <div className='border-b'>
-        <ClusterHeader cluster={cluster} tabs={tabs} />
-      </div>
-      <div className='pt-2 px-6 md:px-6 md:pt-8'>{children}</div>
-    </Fragment>
+    <ClusterProvider value={clusterContextValue}>
+      <Fragment>
+        <div className='border-b'>
+          <ClusterHeader cluster={cluster} tabs={tabs} />
+        </div>
+        <div className='pt-2 px-6 md:px-6 md:pt-8'>{children}</div>
+      </Fragment>
+    </ClusterProvider>
   )
 }
