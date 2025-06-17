@@ -1,7 +1,7 @@
 'use client'
 
 import { DataView } from '@/components/ui/data-view'
-import { Node } from '@ror/js-api-client'
+import type { Node } from '@ror/js-api-client'
 import { ColumnDef, createColumnHelper, getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table'
 
 const columnHelper = createColumnHelper<Node>()

@@ -1,15 +1,15 @@
 'use client'
 
-import type { Cluster } from '@ror/js-api-client'
+import type { KubernetesCluster } from '@ror/js-api-client'
 import Fuse from 'fuse.js'
 import { useEffect, useMemo, useState } from 'react'
 import { Search } from 'lucide-react'
 import { Input } from '@/components/shadcn/input'
 
 export interface ClusterSearchProps {
-  items: Cluster[]
-  onSelect?: (item: Cluster) => void
-  onResultsChange?: (results: Cluster[]) => void
+  items: KubernetesCluster[]
+  onSelect?: (item: KubernetesCluster) => void
+  onResultsChange?: (results: KubernetesCluster[]) => void
 }
 
 // TODO: Implement that the result is passed back to page, and cards are shown in that order
@@ -19,7 +19,7 @@ export function ClusterSearch({ items, onResultsChange }: ClusterSearchProps) {
   const fuse = useMemo(() => {
     const flatClusters = items.map((cluster) => ({
       ...cluster,
-      label: cluster.clusterName ?? cluster.clusterId, // fallback
+      label: cluster.metadata?.name ?? cluster.kubernetescluster?.spec?.data?.clusterId, // fallback
     }))
 
     return new Fuse(flatClusters, {

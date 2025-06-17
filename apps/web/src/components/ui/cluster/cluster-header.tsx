@@ -1,28 +1,15 @@
 'use client'
 
 import { cn } from '@/utils/clsxm'
-import type { Cluster } from '@ror/js-api-client'
+import type { KubernetesCluster } from '@ror/js-api-client'
 import { HealthCircle } from './health-circle'
 import { navigationItemObject } from '@/app/(protected)/clusters/[id]/layout'
 import { NavigationTabs } from '../navigation-tabs'
 
 interface ClusterHeaderProps {
   className?: string
-  cluster: Cluster
+  cluster: KubernetesCluster
   tabs: navigationItemObject[]
-}
-
-const getHealthStatus = (health: number) => {
-  switch (health) {
-    case 1:
-      return 'Good'
-    case 2:
-      return 'Smelly'
-    case 3:
-      return 'Bad'
-    default:
-      return 'Unknown'
-  }
 }
 
 export const envBgColors: Record<string, string[]> = {
@@ -33,13 +20,17 @@ export const envBgColors: Record<string, string[]> = {
 }
 
 export const ClusterHeader = ({ className, cluster, tabs }: ClusterHeaderProps) => {
-  const [lightmode, darkmode] = envBgColors[cluster.environment!] || ['bg-gray-500', 'dark:bg-gray-600']
+  const environment = cluster.kubernetescluster?.spec?.data?.environment ?? 'unknown'
+  const [lightmode, darkmode] = envBgColors[environment] || ['bg-gray-500', 'dark:bg-gray-600']
+  const healthCondition = cluster.kubernetescluster?.status?.conditions?.find((condition) => condition.type === 'ready')
+  const clusterId = cluster.kubernetescluster?.spec?.data?.clusterId
+  const clusterName: string = cluster.metadata?.name ? String(cluster.metadata.name) : (clusterId ?? 'Unknown Cluster')
 
   return (
     <div>
       <div className={cn(className, 'relative flex h-48 w-full')}>
         <div className='flex flex-col justify-between h-full z-10'>
-          <h1 className='px-12 self-start my-auto'>{cluster.clusterName}</h1>
+          <h1 className='px-12 self-start my-auto'>{clusterName}</h1>
           <NavigationTabs className='mb-0' items={tabs} tabColor={cn(lightmode, darkmode)} />
         </div>
 
@@ -50,10 +41,15 @@ export const ClusterHeader = ({ className, cluster, tabs }: ClusterHeaderProps) 
             darkmode
           )}
         >
-          <HealthCircle className='w-20 h-20' health={cluster.healthStatus.health} />
+          <HealthCircle className='w-20 h-20' health={healthCondition} />
           <div className='flex flex-col w-fit'>
-            <p className='text-lg'>Environment: {cluster.environment?.toUpperCase() ?? 'UNKNOWN'}</p>
-            <p className='text-lg'>Status: {getHealthStatus(cluster.healthStatus.health)}</p>
+            <p className='text-lg'>Environment: {environment?.toUpperCase() ?? 'UNKNOWN'}</p>
+            <p className='text-lg'>
+              Status:{' '}
+              {healthCondition?.status
+                ? healthCondition.status.charAt(0).toUpperCase() + healthCondition.status.slice(1)
+                : 'Unknown'}
+            </p>
           </div>
         </div>
       </div>

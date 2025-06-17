@@ -70,7 +70,7 @@ export default async function ClusterPageLayout({ params, children }: ClusterPag
   const { id } = await params
   const session = await authGuard()
   const client = rorApiClient(session.accessToken)
-  const cluster = await client.kubernetesClusters.idV1(id)
+  const cluster = await client.kubernetesClusters.id(id)
 
   const tabs = createTabNavigationItems(id)
 

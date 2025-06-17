@@ -83,7 +83,7 @@ export default async function NodePoolsPage({ params }: NodePoolsPageProps) {
   const response = await client.nodes.listByCluster(id)
 
   const nodes = response?.resources ?? []
-  console.log('Nodes:', nodes) // TODO: remove when API call is implemented
+  console.log('Nodes:', nodes) // TODO: remove when API call is implemented, needed to build
 
   return (
     <div>
