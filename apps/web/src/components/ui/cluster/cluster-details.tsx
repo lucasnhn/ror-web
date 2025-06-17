@@ -12,6 +12,7 @@ import { ExternalLink } from 'lucide-react'
 import { Layer, CodeSnippet } from '@ror/react'
 import { format } from 'date-fns'
 import { enZA } from 'date-fns/locale'
+import { useClusterContext } from '@/context/cluster-context'
 
 const standardLayout = [
   { i: 'memory', x: 0, y: 0, w: 6, h: 8, minW: 6, minH: 8 },
@@ -47,7 +48,8 @@ function getHaClusterPlaneValue(nodes: number) {
   }
 }
 
-export const ClusterDetails = ({ cluster, user, className }: ClusterDetailsProps) => {
+export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
+  const { cluster } = useClusterContext()
   const clusterSpec = cluster.kubernetescluster?.spec
   const clusterStatus = cluster.kubernetescluster?.status
   const clusterId = clusterSpec?.data?.clusterId
