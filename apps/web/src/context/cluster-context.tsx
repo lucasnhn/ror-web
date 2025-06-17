@@ -1,9 +1,10 @@
+'use client'
+
 import { KubernetesCluster } from '@ror/js-api-client'
 import { createContext, useContext } from 'react'
 
 export interface ClusterContextData {
-  id: string
-  cluster?: KubernetesCluster
+  cluster: KubernetesCluster
 }
 
 // Create a context

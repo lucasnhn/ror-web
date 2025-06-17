@@ -75,7 +75,6 @@ export default async function ClusterPageLayout({ params, children }: ClusterPag
   const tabs = createTabNavigationItems(id)
 
   const clusterContextValue = {
-    id,
     cluster,
   }
 
@@ -83,7 +82,7 @@ export default async function ClusterPageLayout({ params, children }: ClusterPag
     <ClusterProvider value={clusterContextValue}>
       <Fragment>
         <div className='border-b'>
-          <ClusterHeader cluster={cluster} tabs={tabs} />
+          <ClusterHeader tabs={tabs} />
         </div>
         <div className='pt-2 px-6 md:px-6 md:pt-8'>{children}</div>
       </Fragment>
