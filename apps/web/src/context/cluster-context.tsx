@@ -1,8 +1,9 @@
+import { KubernetesCluster } from '@ror/js-api-client'
 import { createContext, useContext } from 'react'
 
 export interface ClusterContextData {
   id: string
-  cluster?: object // not use any!
+  cluster?: KubernetesCluster
 }
 
 // Create a context
@@ -17,7 +18,7 @@ export const useClusterContext = (): ClusterContextData => {
   return context
 }
 
-// Eksport Provider-componenten
+// Provider-component
 interface ClusterProviderProps {
   value: ClusterContextData
   children: React.ReactNode
