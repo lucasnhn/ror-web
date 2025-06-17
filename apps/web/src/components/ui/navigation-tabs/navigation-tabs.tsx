@@ -29,8 +29,6 @@ export function NavigationTabs({ items, className, tabColor }: NavigationTabsPro
         <ul>
           {items.map((item) => {
             const key = item.href
-            console.log('currentPath', currentPath)
-            console.log('item.href', item.href)
             const isActive =
               currentPath === item.href ||
               (currentPath.startsWith(`${item.href}/`) &&
