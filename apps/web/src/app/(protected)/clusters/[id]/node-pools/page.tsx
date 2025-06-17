@@ -1,8 +1,14 @@
+import type { Metadata } from 'next'
 import { authGuard } from '@/features/auth/utils/auth-guard'
 import { rorApiClient } from '@/services/ror-api'
 import { PageView } from './page-view'
 interface NodePoolsPageProps {
   params: Promise<{ id: string }>
+}
+
+export const metadata: Metadata = {
+  title: 'ROR - Node pools',
+  description: 'View and manage node pools',
 }
 
 interface Node {
@@ -87,7 +93,7 @@ export default async function NodePoolsPage({ params }: NodePoolsPageProps) {
 
   return (
     <div>
-      <PageView data={NodepoolExamples} />
+      <PageView data={NodepoolExamples} id={id} />
     </div>
   )
 }

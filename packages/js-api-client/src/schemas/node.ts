@@ -7,10 +7,10 @@ const NodeSpecTaint = z.object({
 })
 
 const NodeSpecSchema = z.object({
-  podCIDR: z.string().optional(),
-  podCIDRs: z.array(z.string()).optional(),
-  providerID: z.string().optional(),
-  taints: z.array(NodeSpecTaint).optional(),
+  podCIDR: z.string().optional().nullable(),
+  podCIDRs: z.array(z.string()).optional().nullable(),
+  providerID: z.string().optional().nullable(),
+  taints: z.array(NodeSpecTaint).optional().nullable(),
 })
 
 const NodeStatusAddress = z.object({

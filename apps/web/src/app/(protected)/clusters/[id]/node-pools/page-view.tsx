@@ -8,6 +8,7 @@ import { Button } from '@/components/shadcn/button'
 import { PencilIcon, Plus, Trash } from 'lucide-react'
 import { TableCell, TableRow } from '@ror/react/components/table/table'
 import Link from 'next/link'
+import { routes } from '@/config/routes'
 
 interface Node {
   name: string
@@ -53,9 +54,10 @@ const NodeCard = ({ node }: { node: Node }) => {
 
 interface DataTableProps<TData> {
   data: TData[]
+  id: string
 }
 
-export function PageView({ data }: DataTableProps<Nodepool>) {
+export function PageView({ data, id }: DataTableProps<Nodepool>) {
   const [edit, setEdit] = useState<boolean>(false)
   const [remove, setRemove] = useState<boolean>(false)
   const [sorting, setSorting] = useState<SortingState>([])
@@ -124,10 +126,12 @@ export function PageView({ data }: DataTableProps<Nodepool>) {
 
   return (
     <div>
-      <Button>
-        <Plus />
-        Create nodepool
-      </Button>
+      <Link href={routes.app.newNodePool.getHref(id)}>
+        <Button>
+          <Plus />
+          Create nodepool
+        </Button>
+      </Link>
       <DataTable
         columns={columns}
         data={data}
