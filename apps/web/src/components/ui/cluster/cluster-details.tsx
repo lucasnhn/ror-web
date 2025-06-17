@@ -24,7 +24,6 @@ const standardLayout = [
 ]
 
 interface ClusterDetailsProps {
-  cluster: KubernetesCluster
   user?: User
   className?: string
 }
