@@ -58,12 +58,10 @@ interface DataTableProps<TData> {
 }
 
 export function PageView({ data, id }: DataTableProps<Nodepool>) {
-  const [edit, setEdit] = useState<boolean>(false)
   const [remove, setRemove] = useState<boolean>(false)
   const [sorting, setSorting] = useState<SortingState>([])
 
-  // TODO: remove this when the edit and remove modals are implemented, needed to build
-  console.log('Edit:', edit)
+  // TODO: remove this when the remove modals are implemented, needed to build
   console.log('Remove:', remove)
 
   const columns: ColumnDef<Nodepool>[] = [
@@ -113,9 +111,11 @@ export function PageView({ data, id }: DataTableProps<Nodepool>) {
       header: 'Actions',
       cell: () => (
         <div className='flex gap-2'>
-          <Button className='flex gap-2' onClick={() => setEdit(true)}>
-            <PencilIcon className='h-5 w-5' />
-          </Button>
+          <Link href={routes.app.editNodePool.getHref(id)}>
+            <Button className='flex gap-2'>
+              <PencilIcon className='h-5 w-5' />
+            </Button>
+          </Link>
           <Button className='flex gap-2' onClick={() => setRemove(true)} variant='destructive'>
             <Trash className='h-5 w-5' />
           </Button>
