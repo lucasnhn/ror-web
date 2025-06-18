@@ -7,13 +7,13 @@ export const metadata: Metadata = {
 }
 
 interface EditNodePoolProps {
-  params: Promise<{
+  params: {
     id: string
-  }>
+  }
 }
 
-export default async function EditNodePoolPage({ params }: EditNodePoolProps) {
-  const { id } = await params
+export default function EditNodePoolPage({ params }: EditNodePoolProps) {
+  const { id } = params
 
   return (
     <div className=''>
