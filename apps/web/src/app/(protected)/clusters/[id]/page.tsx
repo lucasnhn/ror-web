@@ -16,25 +16,9 @@ export const metadata: Metadata = {
 }
 
 export default async function ClusterPage({ params }: ClusterPageProps) {
-  const { id } = await params
-  const session = await authGuard()
-  const client = rorApiClient(session.accessToken)
-  const cluster = await client.kubernetesClusters.id(id)
-
-  if (!cluster) {
-    // TODO: needs to be improved
-    return <div>Loading cluster-data...</div>
-  }
-
-  const clusterContextValue = {
-    cluster,
-  }
-
   return (
-    <ClusterProvider value={clusterContextValue}>
-      <div className='@container'>
-        <ClusterDetails />
-      </div>
-    </ClusterProvider>
+    <div className='@container'>
+      <ClusterDetails />
+    </div>
   )
 }
