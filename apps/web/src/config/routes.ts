@@ -30,6 +30,14 @@ export const routes = {
       label: 'Node pools',
       getHref: (id: string) => `/clusters/${id}/node-pools`,
     },
+    newNodePool: {
+      label: 'Create node pool',
+      getHref: (id: string) => `/clusters/${id}/node-pools/new-node-pool`,
+    },
+    editNodePool: {
+      label: 'Edit node pool',
+      getHref: (id: string) => `/clusters/${id}/node-pools/edit-node-pool`,
+    },
     clusterPolicies: {
       label: 'Policies',
       getHref: (id: string) => `/clusters/${id}/policies`,
