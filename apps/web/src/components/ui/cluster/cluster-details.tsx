@@ -2,7 +2,6 @@
 
 import { cn } from '@/utils/clsxm'
 import { User } from 'next-auth'
-import type { KubernetesCluster } from '@ror/js-api-client'
 import React, { useEffect, useRef, useState } from 'react'
 import GridLayout from 'react-grid-layout'
 import 'react-grid-layout/css/styles.css'
