@@ -10,14 +10,14 @@ import { TableCell, TableRow } from '@ror/react/components/table/table'
 import Link from 'next/link'
 import { routes } from '@/config/routes'
 
-interface Node {
-  name: string
-  role: string
-  image: string
-  architecture: string
-  cpu: string
-  memory: string
-}
+// interface Node {
+//   name: string
+//   role: string
+//   image: string
+//   architecture: string
+//   cpu: string
+//   memory: string
+// }
 
 interface Nodepool {
   name: string
@@ -31,7 +31,7 @@ interface Nodepool {
 const NodeCard = ({ node }: { node: Node }) => {
   return (
     <div className='rounded-lg border p-4 bg-[var(--r-layer)] dark:brightness-125 w-lg flex flex-col gap-2'>
-      <h4 className='font-semibold text-xl text-wrap'>{node.name}</h4>
+      {/* <h4 className='font-semibold text-xl text-wrap'>{node.name}</h4>
       <hr />
       <p className='flex items-center'>
         <span className='font-semibold'>Role: &nbsp;</span> {node.role}
@@ -47,7 +47,7 @@ const NodeCard = ({ node }: { node: Node }) => {
       </p>
       <p className='flex items-center'>
         <span className='font-semibold'>Memory: &nbsp;</span> {node.memory}
-      </p>
+      </p> */}
     </div>
   )
 }
@@ -100,8 +100,9 @@ export function PageView({ data, id }: DataTableProps<Nodepool>) {
     {
       accessorKey: 'nodes',
       header: 'Node links',
+      // TODO: Fix routing with nodepool id
       cell: () => (
-        <Link href='nodes' className='text-blue-500 dark:text-blue-600 hover:underline'>
+        <Link href={routes.app.nodes.getHref(id, '1')} className='text-blue-500 dark:text-blue-600 hover:underline'>
           Nodes
         </Link>
       ),
