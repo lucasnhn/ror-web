@@ -3,13 +3,7 @@
 import { useClusterContext } from '@/context/cluster-context'
 import { CodeSnippet } from '@ror/react/components/code-snippet'
 
-interface ClusterPageProps {
-  params: Promise<{
-    id: string
-  }>
-}
-
-export default async function ClusterRawDataPage({ params }: ClusterPageProps) {
+export default function ClusterRawDataPage() {
   const { cluster } = useClusterContext()
 
   return (
