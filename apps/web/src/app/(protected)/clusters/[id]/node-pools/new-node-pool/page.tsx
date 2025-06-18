@@ -7,13 +7,13 @@ export const metadata: Metadata = {
 }
 
 interface NewNodePoolProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
-export default function NewNodePoolPage({ params }: NewNodePoolProps) {
-  const { id } = params
+export default async function NewNodePoolPage({ params }: NewNodePoolProps) {
+  const { id } = await params
 
   return (
     <div className=''>
