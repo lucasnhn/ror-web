@@ -75,6 +75,11 @@ export async function middleware(req: NextRequest) {
     secureCookie: getTokenOptions.secureCookie,
   })
 
+  if (req.nextUrl.searchParams.has('callbackUrl')) {
+    console.log(`[MIDDLEWARE] Skipping auth for callbackUrl redirect`)
+    return NextResponse.next()
+  }
+
   // Enhanced debugging in dev mode
   if (isDev) {
     console.log(`[MIDDLEWARE] Raw cookies:`, {
@@ -170,6 +175,6 @@ export const config = {
      * - auth-debug (debugging page)
      * - api/auth (authentication API routes)
      */
-    `/((?!api/|_next/static|_next/image|_next/webpack|favicon.ico|sitemap.xml|robots.txt|sign-in|sign-in-debug|auth-debug|mockServiceWorker).*)`,
+    `/((?!api|_next/static|_next/image|_next/webpack|favicon.ico|sitemap.xml|robots.txt|sign-in|sign-in-debug|auth-debug|mockServiceWorker|$).*)`,
   ],
 }
