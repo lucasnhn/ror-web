@@ -1,4 +1,4 @@
-import { signOut } from '@/config/next-auth'
+import { signOut } from '@/types/next-auth'
 import { Button } from '@ror/react/components/button'
 
 export function SignOutButton() {

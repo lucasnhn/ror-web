@@ -1,4 +1,4 @@
-import { signIn } from '@/config/next-auth'
+import { signIn } from '@/types/next-auth'
 import { routes } from '@/config/routes'
 
 /**

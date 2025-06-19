@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation'
-import { auth } from '@/config/next-auth'
+import { auth } from '@/types/next-auth'
 import { routes } from '@/config/routes'
 
 /**
