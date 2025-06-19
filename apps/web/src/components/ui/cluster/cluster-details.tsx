@@ -2,7 +2,6 @@
 
 import { cn } from '@/utils/clsxm'
 import { User } from 'next-auth'
-import type { KubernetesCluster } from '@ror/js-api-client'
 import React, { useEffect, useRef, useState } from 'react'
 import GridLayout from 'react-grid-layout'
 import 'react-grid-layout/css/styles.css'
@@ -12,6 +11,7 @@ import { ExternalLink } from 'lucide-react'
 import { Layer, CodeSnippet } from '@ror/react'
 import { format } from 'date-fns'
 import { enZA } from 'date-fns/locale'
+import { useClusterContext } from '@/context/cluster-context'
 
 const standardLayout = [
   { i: 'memory', x: 0, y: 0, w: 6, h: 8, minW: 6, minH: 8 },
@@ -23,7 +23,6 @@ const standardLayout = [
 ]
 
 interface ClusterDetailsProps {
-  cluster: KubernetesCluster
   user?: User
   className?: string
 }
@@ -47,7 +46,8 @@ function getHaClusterPlaneValue(nodes: number) {
   }
 }
 
-export const ClusterDetails = ({ cluster, user, className }: ClusterDetailsProps) => {
+export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
+  const { cluster } = useClusterContext()
   const clusterSpec = cluster.kubernetescluster?.spec
   const clusterStatus = cluster.kubernetescluster?.status
   const clusterId = clusterSpec?.data?.clusterId

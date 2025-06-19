@@ -1,14 +1,13 @@
 'use client'
 
 import { cn } from '@/utils/clsxm'
-import type { KubernetesCluster } from '@ror/js-api-client'
 import { HealthCircle } from './health-circle'
 import { navigationItemObject } from '@/app/(protected)/clusters/[id]/layout'
 import { NavigationTabs } from '../navigation-tabs'
+import { useClusterContext } from '@/context/cluster-context'
 
 interface ClusterHeaderProps {
   className?: string
-  cluster: KubernetesCluster
   tabs: navigationItemObject[]
 }
 
@@ -19,7 +18,9 @@ export const envBgColors: Record<string, string[]> = {
   test: ['bg-emerald-500', 'dark:bg-emerald-600'],
 }
 
-export const ClusterHeader = ({ className, cluster, tabs }: ClusterHeaderProps) => {
+export const ClusterHeader = ({ className, tabs }: ClusterHeaderProps) => {
+  const { cluster } = useClusterContext()
+
   const environment = cluster.kubernetescluster?.spec?.data?.environment ?? 'unknown'
   const [lightmode, darkmode] = envBgColors[environment] || ['bg-gray-500', 'dark:bg-gray-600']
   const healthCondition = cluster.kubernetescluster?.status?.conditions?.find((condition) => condition.type === 'ready')
