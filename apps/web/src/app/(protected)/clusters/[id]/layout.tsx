@@ -4,6 +4,7 @@ import { Fragment, ReactNode } from 'react'
 import { routes } from '@/config/routes'
 import { ClusterHeader } from '@/components/ui/cluster/cluster-header'
 import { ClusterProvider } from '@/context/cluster-context'
+import { renderApiError } from '@/utils/renderApiError'
 
 interface ClusterPageLayoutProps {
   params: Promise<{
@@ -68,24 +69,29 @@ const createTabNavigationItems = (clusterId: string) => {
 
 export default async function ClusterPageLayout({ params, children }: ClusterPageLayoutProps) {
   const { id } = await params
-  const session = await authGuard()
-  const client = rorApiClient(session.accessToken)
-  const cluster = await client.kubernetesClusters.id(id)
 
-  const tabs = createTabNavigationItems(id)
+  try {
+    const session = await authGuard()
+    const client = rorApiClient(session.accessToken)
+    const cluster = await client.kubernetesClusters.id(id)
 
-  const clusterContextValue = {
-    cluster,
+    const tabs = createTabNavigationItems(id)
+
+    const clusterContextValue = {
+      cluster,
+    }
+
+    return (
+      <ClusterProvider value={clusterContextValue}>
+        <Fragment>
+          <div className='border-b'>
+            <ClusterHeader tabs={tabs} />
+          </div>
+          <div className='pt-2 px-6 md:px-6 md:pt-8'>{children}</div>
+        </Fragment>
+      </ClusterProvider>
+    )
+  } catch (error) {
+    return renderApiError(error)
   }
-
-  return (
-    <ClusterProvider value={clusterContextValue}>
-      <Fragment>
-        <div className='border-b'>
-          <ClusterHeader tabs={tabs} />
-        </div>
-        <div className='pt-2 px-6 md:px-6 md:pt-8'>{children}</div>
-      </Fragment>
-    </ClusterProvider>
-  )
 }
