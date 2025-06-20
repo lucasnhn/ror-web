@@ -55,6 +55,7 @@ export async function middleware(req: NextRequest) {
 
   // Check if cookies exist before trying to get token
   // TODO: find root cause of issue instead of quickfix
+  console.log(`[MIDDLEWARE] Checking cookies for session token`)
   const sessionCookie =
     req.cookies.get('next-auth.session-token') ||
     req.cookies.get('__Secure-next-auth.session-token') ||
