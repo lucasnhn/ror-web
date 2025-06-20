@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { auth } from '@/types/next-auth'
+import { auth } from '@/config/next-auth'
 import { cookies } from 'next/headers'
 import { jwtDecode } from 'jwt-decode'
 

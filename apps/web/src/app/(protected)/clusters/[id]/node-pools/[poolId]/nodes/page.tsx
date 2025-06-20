@@ -22,6 +22,7 @@ export default async function NodesPage({ params }: NodesPageProps) {
 
   const response = await client.nodes.listByCluster(id)
   const nodes = response?.resources ?? []
+  console.log(nodes) // TODO: remove later, needed to build
 
   return (
     <div className=''>

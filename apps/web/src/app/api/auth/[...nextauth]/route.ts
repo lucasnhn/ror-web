@@ -1,4 +1,4 @@
-import { handlers } from '@/types/next-auth'
+import { handlers } from '@/config/next-auth'
 
 /**
  * This route exposes a GET and a POST api handler from next-auth.
