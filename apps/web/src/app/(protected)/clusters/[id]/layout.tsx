@@ -4,7 +4,7 @@ import { Fragment, ReactNode } from 'react'
 import { routes } from '@/config/routes'
 import { ClusterHeader } from '@/components/ui/cluster/cluster-header'
 import { ClusterProvider } from '@/context/cluster-context'
-import { renderApiError } from '@/utils/renderApiError'
+import { RenderApiError } from '@/utils/renderApiError'
 
 interface ClusterPageLayoutProps {
   params: Promise<{
@@ -92,6 +92,6 @@ export default async function ClusterPageLayout({ params, children }: ClusterPag
       </ClusterProvider>
     )
   } catch (error) {
-    return renderApiError(error)
+    return RenderApiError(error)
   }
 }
