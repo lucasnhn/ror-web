@@ -94,9 +94,9 @@ export async function middleware(req: NextRequest) {
   console.log(`[MIDDLEWARE] Checking cookies for session token`)
   const sessionCookie =
     req.cookies.get('next-auth.session-token') ||
-    req.cookies.get('__Secure-next-auth.session-token') ||
+    req.cookies.get('__Secure-next-auth.session-token.1') ||
     req.cookies.get('__Secure-next-auth.session-token.0') ||
-    req.cookies.get('__Secure-next-auth.session-token.1')
+    req.cookies.get('__Secure-next-auth.session-token')
 
   console.log(`[MIDDLEWARE] Cookie check:`, {
     hasCookie: !!sessionCookie,

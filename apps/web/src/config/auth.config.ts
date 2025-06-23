@@ -55,16 +55,6 @@ export const authConfig: NextAuthConfig = {
   },
 
   cookies: {
-    sessionToken: {
-      name: '__Secure-next-auth.session-token',
-      options: {
-        path: '/',
-        httpOnly: true,
-        sameSite: 'lax',
-        secure: true,
-        maxAge: 30 * 24 * 60 * 60,
-      },
-    },
     callbackUrl: {
       name: process.env.NODE_ENV === 'production' ? '__Secure-next-auth.callback-url' : 'next-auth.callback-url',
       options: {
