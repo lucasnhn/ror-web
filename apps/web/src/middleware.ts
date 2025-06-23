@@ -55,6 +55,42 @@ export async function middleware(req: NextRequest) {
 
   // Check if cookies exist before trying to get token
   // TODO: find root cause of issue instead of quickfix
+
+  console.log('[MIDDLEWARE] next-auth.session-token name:', req.cookies.get('next-auth.session-token')?.name)
+  console.log('[MIDDLEWARE] next-auth.session-token value:', req.cookies.get('next-auth.session-token')?.value)
+  console.log(
+    '[MIDDLEWARE] __Secure-next-auth.session-token name:',
+    req.cookies.get('__Secure-next-auth.session-token')?.name
+  )
+  console.log(
+    '[MIDDLEWARE] __Secure-next-auth.session-token value:',
+    req.cookies.get('__Secure-next-auth.session-token')?.value
+  )
+  console.log(
+    '[MIDDLEWARE] __Secure-next-auth.session-token.0 name:',
+    req.cookies.get('__Secure-next-auth.session-token.0')?.name
+  )
+  console.log(
+    '[MIDDLEWARE] __Secure-next-auth.session-token.0 value:',
+    req.cookies.get('__Secure-next-auth.session-token.0')?.value
+  )
+  console.log(
+    '[MIDDLEWARE] __Secure-next-auth.session-token.1 name:',
+    req.cookies.get('__Secure-next-auth.session-token.1')?.name
+  )
+  console.log(
+    '[MIDDLEWARE] __Secure-next-auth.session-token.1 value:',
+    req.cookies.get('__Secure-next-auth.session-token.1')?.value
+  )
+  console.log(
+    '[MIDDLEWARE] __Secure-next-auth.session-token.2 name:',
+    req.cookies.get('__Secure-next-auth.session-token.2')?.name
+  )
+  console.log(
+    '[MIDDLEWARE] __Secure-next-auth.session-token.2 value:',
+    req.cookies.get('__Secure-next-auth.session-token.2')?.value
+  )
+
   console.log(`[MIDDLEWARE] Checking cookies for session token`)
   const sessionCookie =
     req.cookies.get('next-auth.session-token') ||
@@ -104,6 +140,8 @@ export async function middleware(req: NextRequest) {
   })
 
   const token = await getToken(tokenOptions)
+
+  console.log(`[MIDDLEWARE] Token:`, token)
 
   if (!token) {
     console.log(`[MIDDLEWARE] No token found, redirecting to sign-in`)
