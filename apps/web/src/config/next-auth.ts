@@ -83,12 +83,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   // Enhanced cookie configuration to be consistent across environments
   cookies: {
     sessionToken: {
-      name: process.env.NODE_ENV === 'production' ? '__Secure-next-auth.session-token' : 'next-auth.session-token',
+      name: '__Secure-next-auth.session-token',
       options: {
+        path: '/',
         httpOnly: true,
         sameSite: 'lax',
-        path: '/',
-        secure: process.env.NODE_ENV === 'production',
+        secure: true,
         maxAge: 30 * 24 * 60 * 60, // 30 days
       },
     },
