@@ -25,7 +25,7 @@ const dexIdpProvider: Provider = {
     token_endpoint_auth_method: 'client_secret_basic',
   },
   profile(profile) {
-    console.log('[NEXTAUTH] Profile received from Dex:', profile)
+    console.log('[AUTH CONFIG] Profile received from Dex:', profile)
     return {
       id: profile.sub,
       name: profile.name || profile.preferred_username || profile.sub,
@@ -93,13 +93,13 @@ export const authConfig: NextAuthConfig = {
     async jwt({ token, account }) {
       if (account?.provider === 'dex') {
         if (!account.access_token) {
-          console.error('[NEXTAUTH] Missing access_token in account data')
+          console.error('[AUTH CONFIG] Missing access_token in account data')
           throw new Error('Did not receive access_token from DexIdp on login callback')
         }
 
         try {
           const decoded = jwtDecode(account.access_token)
-          console.log('[NEXTAUTH] Decoded access token:', decoded)
+          console.log('[AUTH CONFIG] Decoded access token:', decoded)
 
           return {
             ...token,
@@ -109,7 +109,7 @@ export const authConfig: NextAuthConfig = {
             tokenType: 'Bearer',
           }
         } catch (error) {
-          console.error('[NEXTAUTH] Error decoding access token:', error)
+          console.error('[AUTH CONFIG] Error decoding access token:', error)
           return { ...token, accessToken: account.access_token }
         }
       }
@@ -145,7 +145,7 @@ export const authConfig: NextAuthConfig = {
 
 function validateAuthToken(session: Session | null): boolean {
   if (!session?.accessToken) {
-    console.log('[NEXTAUTH] validateAuthToken: No accessToken in session')
+    console.log('[AUTH CONFIG] validateAuthToken: No accessToken in session')
     return false
   }
 
@@ -153,7 +153,7 @@ function validateAuthToken(session: Session | null): boolean {
     const decoded = jwtDecode(session.accessToken)
 
     if (typeof decoded.exp !== 'number') {
-      console.warn('[NEXTAUTH] validateAuthToken: Token missing expiration')
+      console.warn('[AUTH CONFIG] validateAuthToken: Token missing expiration')
       return false
     }
 
@@ -162,7 +162,7 @@ function validateAuthToken(session: Session | null): boolean {
     const now = Date.now()
     return expirationTime >= now
   } catch (error) {
-    console.error('[NEXTAUTH] Error validating token:', error)
+    console.error('[AUTH CONFIG] Error validating token:', error)
     return false
   }
 }
