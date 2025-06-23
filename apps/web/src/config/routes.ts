@@ -9,12 +9,6 @@ export const routes = {
       getHref: () => '/api/auth/signout',
     },
   },
-  error: {
-    error: {
-      label: 'Error page',
-      getHref: () => '/error',
-    },
-  },
   app: {
     overview: {
       label: 'Overview',
@@ -111,6 +105,10 @@ export const routes = {
     profile: {
       label: 'Profile',
       getHref: () => '/profile',
+    },
+    error: {
+      label: 'Error page',
+      getHref: () => '/error',
     },
   },
 } as const
