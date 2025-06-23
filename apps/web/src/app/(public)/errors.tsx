@@ -7,7 +7,7 @@ interface ErrorpageProps {
   errorCode: string
 }
 
-export default function ErrorPage({ errorText, errorButtonText, errorCode, errorButtonLink }: ErrorpageProps) {
+export default function Error({ errorText, errorButtonText, errorCode, errorButtonLink }: ErrorpageProps) {
   return (
     <div>
       <h2>ERROR</h2>

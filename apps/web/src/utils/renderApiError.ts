@@ -1,4 +1,4 @@
-import ErrorPage from '@/app/(public)/error/page'
+import Error from '@/app/(public)/errors'
 import { routes } from '@/config/routes'
 import { AuthenticationError, AuthorizationError, isApiError, NotFoundError, ValidationError } from '@ror/js-api-client'
 
@@ -13,7 +13,7 @@ export function RenderApiError(error: unknown) {
     console.error('Authentication failed. Please login again.')
     const errorButtonLink = routes.auth.signIn.getHref()
 
-    return ErrorPage({
+    return Error({
       errorCode: '401',
       errorText: 'Forbidden',
       errorButtonText: 'Go to login',
@@ -24,7 +24,7 @@ export function RenderApiError(error: unknown) {
     errorText = 'You do not have permission to access this resource.'
     console.error(errorText)
     errorButtonLink = clustersPage
-    return ErrorPage({
+    return Error({
       errorCode: '403',
       errorText: errorText,
       errorButtonText: buttonTextHomepage,
@@ -35,7 +35,7 @@ export function RenderApiError(error: unknown) {
     errorText = 'The requested resource was not found.'
     console.error(errorText)
     errorButtonLink = clustersPage
-    return ErrorPage({
+    return Error({
       errorCode: '403',
       errorText: errorText,
       errorButtonText: buttonTextHomepage,
@@ -51,7 +51,7 @@ export function RenderApiError(error: unknown) {
       })
       .join('\n')
     console.error(details)
-    return ErrorPage({
+    return Error({
       errorCode: '400',
       errorText: 'Validation error occurred.',
       errorButtonText: buttonTextHomepage,
@@ -64,7 +64,7 @@ export function RenderApiError(error: unknown) {
       console.error(`Details: ${error.details}`)
     }
 
-    return ErrorPage({
+    return Error({
       errorCode: String(error.status),
       errorText: error.message,
       errorButtonText: 'Go Back',
@@ -73,7 +73,7 @@ export function RenderApiError(error: unknown) {
   } else {
     // Handle unexpected errors
     console.error('An unexpected error occurred:', error)
-    return ErrorPage({
+    return Error({
       errorCode: '500',
       errorText: 'An unexpected error occurred.',
       errorButtonText: buttonTextHomepage,
