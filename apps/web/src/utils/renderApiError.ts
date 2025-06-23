@@ -1,4 +1,4 @@
-import ErrorPage from '@/app/error-page'
+import ErrorPage from '@/app/(public)/error/page'
 import { routes } from '@/config/routes'
 import { AuthenticationError, AuthorizationError, isApiError, NotFoundError, ValidationError } from '@ror/js-api-client'
 
