@@ -238,10 +238,16 @@ const bypassRoutes = [
   '/healthz',
 ]
 
+const possibleSessionCookies = [
+  'next-auth.session-token',
+  '__Secure-next-auth.session-token',
+  '__Secure-next-auth.session-token.0',
+  '__Secure-next-auth.session-token.1',
+]
+
 export async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname
   console.log(`[MIDDLEWARE] Running for path: ${path}`)
-  console.log(`[MIDDLEWARE] Environment: ${process.env.NODE_ENV}`)
 
   const userAgent = req.headers.get('user-agent') || ''
   const isKubeProbe = userAgent.includes('kube-probe')
@@ -249,7 +255,7 @@ export async function middleware(req: NextRequest) {
     path === '/health' || path === '/healthz' || path === '/api/health' || path === '/api/healthz'
 
   if (isKubeProbe || isHealthEndpoint) {
-    console.log(`[MIDDLEWARE] Bypassing auth for health check: UA=${userAgent}, path=${path}`)
+    console.log(`[MIDDLEWARE] Bypassing auth for health check`)
     return NextResponse.next()
   }
 
@@ -285,7 +291,7 @@ export async function middleware(req: NextRequest) {
   console.log(`[MIDDLEWARE] Token:`, token)
 
   if (!token) {
-    console.log(`[MIDDLEWARE] No token found, redirecting to sign-in`)
+    console.log(`[MIDDLEWARE] No valid token found, redirecting to sign-in`)
     return NextResponse.redirect(`${req.nextUrl.origin}/sign-in`)
   }
 
@@ -309,7 +315,7 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(`${req.nextUrl.origin}/sign-in`)
   }
 
-  console.log(`[MIDDLEWARE] Valid session token, proceeding`)
+  console.log(`[MIDDLEWARE] Valid session token (cookie: ${usedCookieName}), proceeding`)
   return NextResponse.next()
 }
 
