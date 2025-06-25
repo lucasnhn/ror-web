@@ -196,7 +196,20 @@ const trusthost = Boolean(JSON.parse(env.AUTH_TRUST_HOST))
 
 declare module 'next-auth' {
   interface Session {
-    accessToken?: string
+    user: {
+      id: string
+      name?: string | null
+      email?: string | null
+      image?: string | null
+    }
+    accessToken: string
+  }
+
+  interface User {
+    id: string
+    email?: string | null
+    name?: string | null
+    image?: string | null
   }
 }
 
@@ -237,44 +250,21 @@ export const authConfig: NextAuthConfig = {
 
   callbacks: {
     async jwt({ token, account }) {
-      if (account?.provider === 'dex') {
-        if (!account.access_token) {
-          console.error('[AUTH CONFIG] Missing access_token in account data')
-          throw new Error('Did not receive access_token from DexIdp on login callback')
-        }
-
-        try {
-          const decoded = jwtDecode(account.access_token)
-          console.log('[AUTH CONFIG] Decoded access token:', decoded)
-
-          return {
-            ...token,
-            exp: decoded.exp,
-            sub: decoded.sub,
-            tokenType: 'Bearer',
-            // Do NOT include accessToken in JWT to avoid huge cookies
-          }
-        } catch (error) {
-          console.error('[AUTH CONFIG] Error decoding access token:', error)
-          return { ...token }
-        }
+      if (account?.access_token) {
+        token.accessToken = account.access_token
       }
-
       return token
     },
 
     async session({ session, token }) {
-      // Do not include accessToken in session — fetch it via API if needed
-      if (token.sub && !session.user) {
-        session.user = {
-          id: token.sub as string,
-          name: (token.name as string) || (token.sub as string),
-          email: token.email as string,
-          emailVerified: null,
-          image: null,
-        }
+      session.accessToken = token.accessToken as string
+      session.user = {
+        id: token.sub as string,
+        name: token.name as string,
+        email: token.email as string,
+        image: null,
+        emailVerified: null,
       }
-
       return session
     },
 

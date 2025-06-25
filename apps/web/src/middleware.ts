@@ -238,13 +238,6 @@ const bypassRoutes = [
   '/healthz',
 ]
 
-const possibleSessionCookies = [
-  'next-auth.session-token',
-  '__Secure-next-auth.session-token',
-  '__Secure-next-auth.session-token.0',
-  '__Secure-next-auth.session-token.1',
-]
-
 export async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname
   console.log(`[MIDDLEWARE] Running for path: ${path}`)
@@ -315,7 +308,7 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(`${req.nextUrl.origin}/sign-in`)
   }
 
-  console.log(`[MIDDLEWARE] Valid session token (cookie: ${usedCookieName}), proceeding`)
+  console.log(`[MIDDLEWARE] Valid session token, proceeding`)
   return NextResponse.next()
 }
 
