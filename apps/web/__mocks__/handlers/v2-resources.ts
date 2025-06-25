@@ -21,4 +21,20 @@ export const v2ResourcesHandlers = [
         return HttpResponse.json(null)
     }
   }),
+
+  http.get('http://localhost:10000/v2/resources/uid/:id', ({ params }) => {
+    const { id } = params
+
+    const flatResources = clustersVersion2.resources.flatMap((group) => group.resources)
+
+    const cluster = flatResources.find(
+      (res) => res.kind === 'KubernetesCluster' && res.kubernetescluster?.spec?.data.clusterId === id
+    )
+
+    if (!cluster) {
+      return HttpResponse.json({ message: 'Not found' }, { status: 404 })
+    }
+
+    return HttpResponse.json(cluster)
+  }),
 ]

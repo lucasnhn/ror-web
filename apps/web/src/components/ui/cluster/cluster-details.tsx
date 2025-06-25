@@ -1,9 +1,7 @@
 'use client'
 
-import { getCommonClusterTools } from '@/features/clusters/utils/tools'
 import { cn } from '@/utils/clsxm'
 import { User } from 'next-auth'
-import { type Cluster } from '@ror/js-api-client'
 import React, { useEffect, useRef, useState } from 'react'
 import GridLayout from 'react-grid-layout'
 import 'react-grid-layout/css/styles.css'
@@ -13,21 +11,18 @@ import { ExternalLink } from 'lucide-react'
 import { Layer, CodeSnippet } from '@ror/react'
 import { format } from 'date-fns'
 import { enZA } from 'date-fns/locale'
-import { ScrollArea, ScrollBar } from '@/components/shadcn/scroll-area'
-import { convertBytes } from '@/utils/bytes'
+import { useClusterContext } from '@/context/cluster-context'
 
 const standardLayout = [
-  { i: 'metrics', x: 0, y: 0, w: 6, h: 8, minW: 6, minH: 8 },
+  { i: 'memory', x: 0, y: 0, w: 6, h: 8, minW: 6, minH: 8 },
   { i: 'tools', x: 6, y: 0, w: 6, h: 8, minW: 6, minH: 6 },
   { i: 'info', x: 12, y: 0, w: 12, h: 8, minW: 9, minH: 8 },
-  { i: 'accessGroups', x: 0, y: 8, w: 6, h: 8, minW: 6, minH: 4 },
-  { i: 'versions', x: 6, y: 8, w: 6, h: 8, minW: 6, minH: 7 },
-  { i: 'observed', x: 12, y: 8, w: 6, h: 8, minW: 6, minH: 7 },
-  { i: 'prices', x: 18, y: 8, w: 6, h: 8, minW: 6, minH: 4 },
+  { i: 'versions', x: 0, y: 8, w: 6, h: 8, minW: 6, minH: 7 },
+  { i: 'observed', x: 6, y: 8, w: 6, h: 8, minW: 6, minH: 7 },
+  { i: 'prices', x: 12, y: 8, w: 6, h: 8, minW: 6, minH: 4 },
 ]
 
 interface ClusterDetailsProps {
-  cluster: Cluster
   user?: User
   className?: string
 }
@@ -41,41 +36,68 @@ function formatObservationDate(date: string) {
   })
 }
 
-function getHaClusterPlaneValue(cluster: Cluster) {
-  const nodes = cluster.topology.controlPlane.nodes
-
-  if (Array.isArray(nodes) && nodes.length > 1) {
+function getHaClusterPlaneValue(nodes: number) {
+  if (nodes > 1) {
     return 'Yes'
-  } else if (Array.isArray(nodes) && nodes.length === 1) {
+  } else if (nodes === 1) {
     return 'No'
   } else {
     return ''
   }
 }
 
-export const ClusterDetails = ({ cluster, user, className }: ClusterDetailsProps) => {
-  const metrics = cluster.metrics
+export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
+  const { cluster } = useClusterContext()
+  const clusterSpec = cluster.kubernetescluster?.spec
+  const clusterStatus = cluster.kubernetescluster?.status
+  const clusterId = clusterSpec?.data?.clusterId
+  const clusterName = cluster.metadata?.name || clusterId
 
-  const firstObserved = formatObservationDate(cluster.firstObserved)
-  const lastObserved = formatObservationDate(cluster.lastObserved)
-  const created = formatObservationDate(cluster.created)
+  const cpuData = clusterStatus?.state.cluster.resources.cpu
+  const cpu = { capacity: cpuData?.capacity, used: cpuData?.used, percentage: cpuData?.percentage }
+  const memoryData = clusterStatus?.state.cluster.resources.memory
+  const memory = { capacity: memoryData?.capacity, used: memoryData?.used, percentage: memoryData?.percentage }
+  const gpuData = clusterStatus?.state.cluster.resources.gpu
+  const gpu = { capacity: gpuData?.capacity, used: gpuData?.used, percentage: gpuData?.percentage }
+  const diskData = clusterStatus?.state.cluster.resources.disk
+  const disk = { capacity: diskData?.capacity, used: diskData?.used, percentage: diskData?.percentage }
 
-  const { argo, grafana } = getCommonClusterTools(cluster)
-  const rorLogin = `ror login ${cluster.clusterId}`
+  const tools = {
+    argo: clusterStatus?.state.endpoints?.find((endpoint) => endpoint.name === 'argocd')?.address,
+    grafana: clusterStatus?.state.endpoints?.find((endpoint) => endpoint.name === 'grafana')?.address,
+  }
+
+  const prices = {
+    monthly: clusterStatus?.state.cluster.price.monthly || 0,
+    yearly: clusterStatus?.state.cluster.price.yearly || 0,
+  }
+
+  const lastObserved = clusterStatus?.state.lastUpdated
+  const created = clusterStatus?.state.created
+
   const serverUrl =
-    cluster.workspace.datacenter.apiEndpoint.length > 0 ? cluster.workspace.datacenter.apiEndpoint : '<missing>'
-  const kubectlLogin = `kubectl vsphere login --server=${serverUrl} -u ${user?.email} --insecure-skip-tls-verify --tanzu-kubernetes-cluster-namespace ${cluster?.workspace?.name} --tanzu-kubernetes-cluster-name ${cluster?.clusterName}`
+    clusterStatus?.state.endpoints?.find((endpoint) => endpoint.name === 'datacenter')?.address || '<missing>'
+  const rorLogin = `ror login ${clusterId}`
+  const kubectlLogin = `kubectl vsphere login --server=${serverUrl} -u ${user?.email} --insecure-skip-tls-verify --tanzu-kubernetes-cluster-namespace ${clusterSpec?.data?.workspace} --tanzu-kubernetes-cluster-name ${clusterName}`
 
-  const accessGroups = cluster.acl.accessGroups
-
-  const nhnToolingVersion = cluster.versions.nhnTooling.version
-  const nhnToolingBranch = cluster.versions.nhnTooling.branch
-  const nhnToolingValue =
-    nhnToolingVersion !== 'Missing ...' ? `${nhnToolingVersion} (${nhnToolingBranch})` : 'Missing …'
-
-  const agentVersion = cluster.versions.agent?.version
-  const agentSha = cluster.versions.agent?.sha
-  const agentValue = `${agentVersion} (${agentSha})`
+  const versions = {
+    // TODO: Make sure these are correct names
+    agent: clusterStatus?.state.versions?.find((version) => version.name === 'agent') || {
+      version: 'Version missing',
+      name: 'Agent',
+      branch: '',
+    },
+    kubernetes: clusterStatus?.state.versions?.find((version) => version.name === 'kubernetes') || {
+      version: 'Version missing',
+      name: 'Kubernetes',
+      branch: '',
+    },
+    nhnTooling: clusterStatus?.state.versions?.find((version) => version.name === 'nhnTooling') || {
+      version: 'Version missing',
+      name: 'NHN Tooling',
+      branch: '',
+    },
+  }
 
   const containerRef = useRef<HTMLDivElement>(null)
   const [layoutWidth, setLayoutWidth] = useState(0)
@@ -132,32 +154,95 @@ export const ClusterDetails = ({ cluster, user, className }: ClusterDetailsProps
         width={layoutWidth}
         draggableHandle='.drag-handle'
       >
-        <div key='metrics' className='drag-handle'>
-          <CardHeader title='Metrics' />
+        <div key='memory' className='drag-handle'>
+          <CardHeader title='Memory' />
 
           <div className='flex flex-col gap-2'>
             <div className='flex flex-col'>
-              <b>CPU consumption: </b>
-              <span>
-                {metrics.cpuConsumed}m of {metrics.cpu} cores - {metrics.cpuPercentage}%
-              </span>
+              <p className='font-bold'>CPU</p>
+              <p>
+                {((cpu.percentage === undefined || cpu.percentage === null) &&
+                  (cpu.capacity === undefined || cpu.capacity === null)) ||
+                ((cpu.percentage === undefined || cpu.percentage === null) &&
+                  (cpu.used === undefined || cpu.used === null)) ? (
+                  'Data missing'
+                ) : (
+                  <>
+                    {cpu.percentage !== undefined && cpu.percentage !== null && `${cpu.percentage}%`}
+                    {cpu.percentage !== undefined &&
+                      cpu.percentage !== null &&
+                      cpu.used !== undefined &&
+                      cpu.capacity !== undefined &&
+                      ' '}
+                    {cpu.used !== undefined && cpu.capacity !== undefined && `(${cpu.used}m of ${cpu.capacity}m cores)`}
+                  </>
+                )}
+              </p>
             </div>
             <div className='flex flex-col'>
-              <b>Memory consumption: </b>
-              <span>
-                {convertBytes(metrics.memoryConsumed, { useBinaryUnits: true, includeUnit: false })} of{' '}
-                {convertBytes(metrics.memory, { useBinaryUnits: true })} - {metrics.memoryPercentage}%
-              </span>
+              <p className='font-bold'>Memory</p>
+              <p>
+                {((memory.percentage === undefined || memory.percentage === null) &&
+                  (memory.capacity === undefined || memory.capacity === null)) ||
+                ((memory.percentage === undefined || memory.percentage === null) &&
+                  (memory.used === undefined || memory.used === null)) ? (
+                  'Data missing'
+                ) : (
+                  <>
+                    {memory.percentage !== undefined && memory.percentage !== null && `${memory.percentage}%`}
+                    {memory.percentage !== undefined &&
+                      memory.percentage !== null &&
+                      memory.used !== undefined &&
+                      memory.capacity !== undefined &&
+                      ' '}
+                    {memory.used !== undefined &&
+                      memory.capacity !== undefined &&
+                      `(${memory.used} of ${memory.capacity})`}
+                  </>
+                )}
+              </p>
             </div>
             <div className='flex flex-col'>
-              <b>Nodes: </b>
-              <span>
-                {metrics.nodeCount} - {metrics.nodePoolCount} node pools
-              </span>
+              <p className='font-bold'>GPU</p>
+              <p>
+                {((gpu.percentage === undefined || gpu.percentage === null) &&
+                  (gpu.capacity === undefined || gpu.capacity === null)) ||
+                ((gpu.percentage === undefined || gpu.percentage === null) &&
+                  (gpu.used === undefined || gpu.used === null)) ? (
+                  'Data missing'
+                ) : (
+                  <>
+                    {gpu.percentage !== undefined && gpu.percentage !== null && `${gpu.percentage}%`}
+                    {gpu.percentage !== undefined &&
+                      gpu.percentage !== null &&
+                      gpu.used !== undefined &&
+                      gpu.capacity !== undefined &&
+                      ' '}
+                    {gpu.used !== undefined && gpu.capacity !== undefined && `(${gpu.used} of ${gpu.capacity})`}
+                  </>
+                )}
+              </p>
             </div>
             <div className='flex flex-col'>
-              <b>Clusters: </b>
-              <span>{metrics.clusterCount} cluster</span>
+              <p className='font-bold'>Disk</p>
+              <p>
+                {((disk.percentage === undefined || disk.percentage === null) &&
+                  (disk.capacity === undefined || disk.capacity === null)) ||
+                ((disk.percentage === undefined || disk.percentage === null) &&
+                  (disk.used === undefined || disk.used === null)) ? (
+                  'Data missing'
+                ) : (
+                  <>
+                    {disk.percentage !== undefined && disk.percentage !== null && `${disk.percentage}%`}
+                    {disk.percentage !== undefined &&
+                      disk.percentage !== null &&
+                      disk.used !== undefined &&
+                      disk.capacity !== undefined &&
+                      ' '}
+                    {disk.used !== undefined && disk.capacity !== undefined && `(${disk.used} of ${disk.capacity})`}
+                  </>
+                )}
+              </p>
             </div>
           </div>
         </div>
@@ -167,33 +252,33 @@ export const ClusterDetails = ({ cluster, user, className }: ClusterDetailsProps
             <div className='flex flex-1 flex-col gap-2'>
               <div className='flex flex-col'>
                 <b>Cluster ID: </b>
-                <span>{cluster.clusterId}</span>
+                <span>{clusterId}</span>
               </div>
               <div className='flex flex-col'>
                 <b>Project: </b>
-                <span>{cluster.metadata.project?.name}</span>
+                <span>{clusterSpec?.data?.project}</span>
               </div>
               <div className='flex flex-col'>
                 <b>Workspace: </b>
-                <span>{cluster.workspace.name}</span>
+                <span>{clusterSpec?.data?.workspace}</span>
               </div>
               <div className='flex flex-col'>
                 <b>Datacenter: </b>
-                <span>{cluster.workspace.datacenter.name}</span>
+                <span>{clusterSpec?.data?.datacenter}</span>
               </div>
             </div>
             <div className='flex flex-1 flex-col gap-2'>
               <div className='flex flex-col'>
                 <b>Provider: </b>
-                <span>{cluster.workspace.datacenter.provider}</span>
+                <span>{cluster.kubernetescluster?.spec.data?.provider}</span>
               </div>
               <div className='flex flex-col'>
                 <b>HA control plane: </b>
-                <span>{getHaClusterPlaneValue(cluster)}</span>
+                <span>{getHaClusterPlaneValue(clusterSpec?.topology?.controlplane?.replicas || 0)}</span>
               </div>
               <div className='flex flex-col'>
                 <b>Egress IP: </b>
-                <span>{cluster.topology?.egressIp}</span>
+                <span>MOCK EGRESS IP</span>
               </div>
             </div>
           </div>
@@ -202,16 +287,12 @@ export const ClusterDetails = ({ cluster, user, className }: ClusterDetailsProps
           <CardHeader title='Observed' />
           <div className='flex flex-col gap-2'>
             <div className='flex flex-col'>
-              <b>First observed: </b>
-              <span>{firstObserved}</span>
-            </div>
-            <div className='flex flex-col'>
               <b>Last observed: </b>
-              <span>{lastObserved}</span>
+              <span>{lastObserved ? formatObservationDate(lastObserved.toString()) : 'Missing…'}</span>
             </div>
             <div className='flex flex-col'>
               <b>Created: </b>
-              <span>{created}</span>
+              <span>{created ? formatObservationDate(created.toString()) : 'Missing…'}</span>
             </div>
           </div>
         </div>
@@ -219,10 +300,10 @@ export const ClusterDetails = ({ cluster, user, className }: ClusterDetailsProps
           <CardHeader title='Tools' />
           <div className='flex flex-col gap-2'>
             <section className='flex flex-col'>
-              {argo ? (
+              {tools.argo ? (
                 <a
                   onClick={(e) => e.stopPropagation()}
-                  href={`https://${argo}`}
+                  href={`https://${tools.argo}`}
                   target='_blank'
                   rel='noopener noreferrer'
                   className='flex gap-2 font-bold text-blue-500 w-fit'
@@ -237,10 +318,10 @@ export const ClusterDetails = ({ cluster, user, className }: ClusterDetailsProps
                 </p>
               )}
 
-              {grafana ? (
+              {tools.grafana ? (
                 <a
                   onClick={(e) => e.stopPropagation()}
-                  href={`https://${grafana}`}
+                  href={`https://${tools.grafana}`}
                   target='_blank'
                   rel='noopener noreferrer'
                   className='flex gap-2 font-bold text-blue-500 w-fit'
@@ -264,33 +345,20 @@ export const ClusterDetails = ({ cluster, user, className }: ClusterDetailsProps
             </Layer>
           </div>
         </div>
-        <div key='accessGroups' className='drag-handle'>
-          <CardHeader title='Access groups' />
-          <ScrollArea className='w-full h-[calc(100%-64px)] whitespace-nowrap'>
-            <div className='flex flex-col w-max space-x-4'>
-              {accessGroups.map((group: string, index: number) => (
-                <div key={index} className='overflow-hidden rounded-md'>
-                  <span>{group}</span>
-                </div>
-              ))}
-            </div>
-            <ScrollBar orientation='vertical' />
-          </ScrollArea>
-        </div>
         <div key='versions' className='drag-handle min-h-fit min-w-fit'>
           <CardHeader title='Versions' />
           <div className='flex flex-col gap-3'>
             <div className='flex flex-col gap-1'>
               <b>Tooling version: </b>
-              <span>{nhnToolingValue}</span>
+              <span>{versions.nhnTooling.version}</span>
             </div>
             <div className='flex flex-col gap-1'>
               <b>Agent version: </b>
-              <span>{agentValue}</span>
+              <span>{versions.agent.version}</span>
             </div>
             <div className='flex flex-col gap-1'>
               <b>Kubernetes version: </b>
-              <span>{cluster.versions.kubernetes}</span>
+              <span>{versions.kubernetes.version}</span>
             </div>
           </div>
         </div>
@@ -298,10 +366,10 @@ export const ClusterDetails = ({ cluster, user, className }: ClusterDetailsProps
           <CardHeader title='Prices' />
           <div className='flex flex-col gap-2'>
             <span>
-              <b>Monthly price: </b> {metrics.priceMonth} kr
+              <b>Monthly price: </b> {prices.monthly || 0} kr
             </span>
             <span>
-              <b>Yearly price: </b> {metrics.priceYear} kr
+              <b>Yearly price: </b> {prices.yearly || 0} kr
             </span>
           </div>
         </div>

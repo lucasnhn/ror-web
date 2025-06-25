@@ -45,8 +45,6 @@ export function ClusterMetrics({ className, cluster }: ClusterMetricsProps) {
           <div className='col-span-1'>
             <h4 className='text-sm font-semibold'>CPU</h4>
             <div className='flex flex-col @[515px]:flex-row @[515px]:items-center gap-2 @[515px]:gap-4 mt-3'>
-              {/* TODO: Figure out why cpu and cpuConsumed doesn't give right % and the numbers 
-									doesn't make sense in accordance to each other (maybe just mock data)*/}
               <p className='@[515px]:border-r @[515px]:border-r-(--r-border-subtle) @[515px]:pr-4'>
                 <span className='text-3xl'>{metrics.cpu}</span>{' '}
                 <span className='mb-1'>of {metrics.cpuConsumed} cores</span>

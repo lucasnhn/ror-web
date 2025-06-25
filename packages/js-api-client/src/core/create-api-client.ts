@@ -5,6 +5,12 @@ import { createNodesService } from '../services/nodes'
 import { createUsersService } from '../services/users'
 import { createIngressesService } from '../services/ingresses'
 import { createPodsService } from '../services/pods'
+import { createConfigurationService } from '../services/configurations'
+import { createDeploymentService } from '../services/deployments'
+import { createServiceService } from '../services/services'
+import { createVulnerabilityReportService } from '../services/vulnerability-reports'
+import { createDaemonSetService } from '../services/deamon-sets'
+import { createReplicaSetService } from '../services/replica-sets'
 
 function setDefaultHeaders(config: ApiClientConfig): Record<string, string> {
   return {
@@ -37,6 +43,12 @@ export function createApiClient(config: ApiClientConfig) {
     nodes: createNodesService(request),
     users: createUsersService(request),
     ingresses: createIngressesService(request),
+    configuration: createConfigurationService(request),
+    deployment: createDeploymentService(request),
+    service: createServiceService(request),
+    daemonSet: createDaemonSetService(request),
+    replicaSet: createReplicaSetService(request),
+    vulnerabilityReport: createVulnerabilityReportService(request),
     pods: createPodsService(request),
   }
 

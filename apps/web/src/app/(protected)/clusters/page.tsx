@@ -3,6 +3,7 @@ import { rorApiClient } from '@/services/ror-api'
 import type { Metadata } from 'next'
 import { Header } from '@/components/layout/app-shell/header'
 import { PageView } from './page-view'
+import type { KubernetesCluster } from '@ror/js-api-client'
 
 export const metadata: Metadata = {
   title: 'ROR - Clusters',
@@ -20,9 +21,6 @@ interface ClusterPageProps {
   }>
 }
 
-const DEFAULT_LIMIT = 10
-const DEFAULT_PAGE = 1
-
 export const dynamic = 'force-dynamic'
 
 export default async function ClustersPage({ searchParams }: ClusterPageProps) {
@@ -30,28 +28,17 @@ export default async function ClustersPage({ searchParams }: ClusterPageProps) {
   const client = rorApiClient(session.accessToken)
   const params = await searchParams
 
-  // Parse pagination parameters from URL
-  const limit = Number(params.limit) || DEFAULT_LIMIT
-  const page = Number(params.page) || DEFAULT_PAGE // URL shows 1-based indexing
-  const skip = (page - 1) * limit
+  // Build URL parameters for the list method
+  const listParams = new URLSearchParams()
 
-  // Parse sorting parameters from URL
-  const sort = params.sort ? params.sort : 'clusterName'
-  const order = params.order === 'asc' ? 1 : -1
+  // If needed, add pagination and sorting params to the list request
+  if (params.limit) listParams.set('limit', params.limit.toString())
+  if (params.page) listParams.set('page', params.page.toString())
+  if (params.sort) listParams.set('sort', params.sort)
+  if (params.order) listParams.set('order', params.order)
+  const response = await client.kubernetesClusters.list(listParams)
 
-  const sortOptions = {
-    sortField: sort,
-    sortOrder: order,
-  }
-
-  const requestOptions = {
-    limit,
-    skip,
-    sort: params.sort ? [sortOptions] : [],
-  }
-
-  const clustersResponse = await client.kubernetesClusters.filter(requestOptions)
-  const clusters = clustersResponse.data ?? []
+  const clusters: KubernetesCluster[] = response?.resources?.flatMap((r) => r?.resources ?? []) || []
 
   return (
     <div className='w-full flex flex-col'>
