@@ -9,6 +9,17 @@ import { PencilIcon, Plus, Trash } from 'lucide-react'
 import { TableCell, TableRow } from '@ror/react/components/table/table'
 import Link from 'next/link'
 import { routes } from '@/config/routes'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTrigger,
+} from '@/components/shadcn/alert-dialog'
+import { AlertDialogTitle } from '@radix-ui/react-alert-dialog'
 
 interface Node {
   name: string
@@ -116,9 +127,27 @@ export function PageView({ data, id }: DataTableProps<Nodepool>) {
               <PencilIcon className='h-5 w-5' />
             </Button>
           </Link>
-          <Button className='flex gap-2' onClick={() => setRemove(true)} variant='destructive'>
-            <Trash className='h-5 w-5' />
-          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button className='flex gap-2' variant='destructive'>
+                <Trash className='h-5 w-5' />
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle className='text-2xl'>Are you sure?</AlertDialogTitle>
+                <AlertDialogDescription>Deleting this node pool cannot be undone.</AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel asChild>
+                  <Button variant='outline'>Cancel</Button>
+                </AlertDialogCancel>
+                <AlertDialogAction asChild className='bg-red-500 dark:bg-red-600'>
+                  <Button variant='destructive'>Delete</Button>
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       ),
     },
