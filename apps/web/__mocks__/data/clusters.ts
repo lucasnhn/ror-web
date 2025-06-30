@@ -1,6 +1,9 @@
 import { sub } from 'date-fns'
 import { faker } from '@faker-js/faker'
 
+/**
+ * Mock data for Clusters v1.
+ */
 export const clustersVersion1 = [
   {
     id: '6523967984fddd1597f6166f',
@@ -530,6 +533,9 @@ export const clustersVersion1 = [
   },
 ]
 
+/**
+ * Mock data for KubernetesClusters v2.
+ */
 export const clustersVersion2 = {
   resources: [
     {
