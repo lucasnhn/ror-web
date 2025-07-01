@@ -19,12 +19,18 @@ if (process.env.NEXT_PUBLIC_MOCKING_ENABLED === 'true') {
   })
 }
 
+/**
+ * Inter font
+ */
 const inter = Inter({
   subsets: ['latin'],
   display: 'swap',
   variable: '--r-font-family-sans',
 })
 
+/**
+ * Ubuntu Mono font
+ */
 const ubuntuMono = Ubuntu_Mono({
   subsets: ['latin'],
   display: 'swap',

@@ -11,6 +11,11 @@ interface ProvidersProps {
   children: ReactNode
 }
 
+/**
+ * Wraps the children components with necessary providers.
+ * @param param The children components to be wrapped by the providers.
+ * @returns Children content with providers applied.
+ */
 export async function Providers({ children }: ProvidersProps) {
   const colorScheme = await getDarkModePreferenceAction()
   const cookieStore = await cookies()
