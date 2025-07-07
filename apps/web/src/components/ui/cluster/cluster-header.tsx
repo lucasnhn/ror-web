@@ -42,7 +42,7 @@ export const ClusterHeader = ({ className, tabs }: ClusterHeaderProps) => {
             darkmode
           )}
         >
-          <HealthCircle className='w-20 h-20' health={healthCondition} />
+          <HealthCircle className='w-20 h-20' healthCondition={healthCondition} />
           <div className='flex flex-col w-fit'>
             <p className='text-lg'>Environment: {environment?.toUpperCase() ?? 'UNKNOWN'}</p>
             <p className='text-lg'>

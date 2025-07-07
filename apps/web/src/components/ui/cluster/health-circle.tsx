@@ -37,23 +37,23 @@ const getHealthSymbol = (status: string) => {
 
 interface HealthCircleProps {
   className?: string
-  health:
+  healthCondition:
     | {
-        type: string
-        status: string
-        lastTransitionTime: string
-        reason: string
-        message: string
+        message?: string | null | undefined
+        type?: string | null | undefined
+        status?: string | null | undefined
+        lastTransitionTime?: string | null | undefined
+        reason?: string | null | undefined
       }
     | undefined
 }
 
-export const HealthCircle = ({ className, health }: HealthCircleProps) => (
+export const HealthCircle = ({ className, healthCondition }: HealthCircleProps) => (
   <div className={cn(className, 'bg-neutral-100 p-0.5 rounded-full relative flex items-center justify-center')}>
     <div
-      className={`w-[calc(100%-4px)] h-[calc(100%-4px)] rounded-full flex items-center justify-center ${(getHealthColors(health?.status ?? 'unknown') || ['bg-gray-500', 'dark:bg-gray-600'])[0]} ${(getHealthColors(health?.status ?? 'unknown') || ['bg-gray-500', 'dark:bg-gray-600'])[1]}`}
+      className={`w-[calc(100%-4px)] h-[calc(100%-4px)] rounded-full flex items-center justify-center ${(getHealthColors(healthCondition?.status ?? 'unknown') || ['bg-gray-500', 'dark:bg-gray-600'])[0]} ${(getHealthColors(healthCondition?.status ?? 'unknown') || ['bg-gray-500', 'dark:bg-gray-600'])[1]}`}
     >
-      {health ? getHealthSymbol(health.status) : getHealthSymbol('unknown')}
+      {getHealthSymbol(healthCondition?.status ?? 'unknown')}
     </div>
   </div>
 )
