@@ -14,7 +14,7 @@ export const useCombinedRefs = <T>(...refs: (Ref<T> | undefined)[]) => {
         ref(targetRef.current)
       } else {
         if ('current' in ref) {
-          (ref as React.MutableRefObject<T | null>).current = targetRef.current
+          ;(ref as React.MutableRefObject<T | null>).current = targetRef.current
         }
       }
     })
