@@ -45,7 +45,7 @@ export const createKubernetesClusterService = (request: (requestOptions: Request
     params.set('apiversion', 'general.ror.internal/v1alpha1')
     params.set('kind', 'KubernetesCluster')
 
-    const responseSchema = createV2ResourceResponseSchema(KubernetesClusterResponseSchema)
+    const responseSchema = KubernetesClusterResponseSchema
 
     const response = await request({
       method: 'GET',

@@ -172,6 +172,4 @@ export const KubernetesClusterSchema = V2ResourceSchema.extend({
     .optional(),
 })
 
-// TODO: Decide if we should use createV2ResourceResponseSchema or not
-// export const KubernetesClusterResponseSchema = createV2ResourceResponseSchema(KubernetesClusterSchema)
-export const KubernetesClusterResponseSchema = KubernetesClusterSchema
+export const KubernetesClusterResponseSchema = createV2ResourceResponseSchema(KubernetesClusterSchema)
