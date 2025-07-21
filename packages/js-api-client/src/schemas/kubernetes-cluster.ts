@@ -38,14 +38,14 @@ export const KubernetesClusterSpecControlPlane = z.object({
 
 // If the user has enabled autoscaling, with configuration
 export const KubernetesClusterAutoscalingConfig = z.object({
-  enabled: z.boolean(),
-  minReplicas: z.number(),
-  maxReplicas: z.number(),
+  enabled: z.boolean().nullable().optional(),
+  minReplicas: z.number().nullable().optional(),
+  maxReplicas: z.number().nullable().optional(),
 })
 
 // Extends autoscalingconfig, adds scaling rules
 const KubernetesClusterAutoscalingSpec = KubernetesClusterAutoscalingConfig.extend({
-  scalingRules: z.array(z.string()),
+  scalingRules: z.array(z.string()).nullable().optional(),
 })
 
 // Store information about nodepool
