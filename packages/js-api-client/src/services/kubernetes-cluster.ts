@@ -1,6 +1,5 @@
 import type { RequestOptions } from '../core/request'
 import { validateResponse } from '../core/validation'
-import { createV2ResourceResponseSchema } from '../schemas/common'
 import { KubernetesClusterResponseSchema, KubernetesClusterSchema } from '../schemas/kubernetes-cluster'
 import { ClusterSchema, ClustersResponseSchema } from '../schemas/kubernetes-cluster-v1'
 
