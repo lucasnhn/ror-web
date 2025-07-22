@@ -1,7 +1,8 @@
 import type { RequestOptions } from '../core/request'
 import { validateResponse } from '../core/validation'
-import { KubernetesClusterResponseSchema, KubernetesClusterSchema } from '../schemas/kubernetes-cluster'
+import { KubernetesClusterSchema } from '../schemas/kubernetes-cluster'
 import { ClusterSchema, ClustersResponseSchema } from '../schemas/kubernetes-cluster-v1'
+import { z } from 'zod'
 
 export interface Filter {
   field: string
@@ -44,7 +45,9 @@ export const createKubernetesClusterService = (request: (requestOptions: Request
     params.set('apiversion', 'general.ror.internal/v1alpha1')
     params.set('kind', 'KubernetesCluster')
 
-    const responseSchema = KubernetesClusterResponseSchema
+    const responseSchema = z.object({
+      resources: z.array(KubernetesClusterSchema),
+    })
 
     const response = await request({
       method: 'GET',
