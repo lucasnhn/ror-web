@@ -115,6 +115,8 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
     router.push(`/clusters/${clusterId}`)
   }
 
+  const envColor = envBgColors[env ?? 'undefined'] ?? ['bg-gray-100', 'text-gray-900']
+
   return (
     <Card
       className={cn(
@@ -127,7 +129,7 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
       onKeyDown={(e) => e.key === 'Enter' && handleCardClick()}
     >
       <CardHeader className='m-0 mb-7 p-0 w-full'>
-        <CardTitle className={cn('text-2xl rounded-t-xl px-6 py-2 flex', envBgColors[env!][0], envBgColors[env!][1])}>
+        <CardTitle className={cn('text-2xl rounded-t-xl px-6 py-2 flex', envColor[0], envColor[1])}>
           {(clusterName || 'Unnamed Cluster') as string}
         </CardTitle>
         <HealthCircle className='ml-auto mr-4 top-[-24px] w-[52px] h-[52px] ' healthCondition={healthCondition} />

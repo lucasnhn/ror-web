@@ -513,10 +513,9 @@ export const PageView = ({ className, clusters, params }: PageViewProps) => {
           <div className='flex flex-wrap gap-6'>
             {(searchResults ?? safeClusters).length > 0 ? (
               (searchResults ?? safeClusters).map((cluster) => {
-                const clusterId = cluster.kubernetescluster?.spec?.data?.clusterId ?? crypto.randomUUID()
                 return (
                   <ClusterCard
-                    key={clusterId}
+                    key={crypto.randomUUID()} // TODO: Use clusterId when available
                     cluster={cluster}
                     displayData={
                       selectedDisplayData?.length > 0
