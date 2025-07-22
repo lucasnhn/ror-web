@@ -519,9 +519,9 @@ export const PageView = ({ className, clusters, params }: PageViewProps) => {
                     key={clusterId}
                     cluster={cluster}
                     displayData={
-                      selectedDisplayData.length > 0
+                      selectedDisplayData?.length > 0
                         ? selectedDisplayData
-                        : displayDataOptions.map((o) => o.value as ClusterCardDisplayData)
+                        : displayDataOptions?.map((o) => o.value as ClusterCardDisplayData) || []
                     }
                   />
                 )

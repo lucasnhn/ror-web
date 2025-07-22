@@ -44,6 +44,10 @@ export default async function ClustersPage({ searchParams }: ClusterPageProps) {
     '[ClusterPage] KubernetesClusters:',
     clusters.map((c) => c.kubernetescluster)
   )
+  console.dir(
+    clusters.map((c) => c.kubernetescluster),
+    { depth: null }
+  )
 
   return (
     <div className='w-full flex flex-col'>
