@@ -406,7 +406,13 @@ export const PageView = ({ className, clusters, params }: PageViewProps) => {
     }
   }, [params])
 
-  const [searchResults, setSearchResults] = useState<KubernetesCluster[]>(() => clusters ?? [])
+  const [searchResults, setSearchResults] = useState<KubernetesCluster[]>(() => safeClusters)
+
+  const safeClusters = useMemo(() => {
+    return clusters.filter(
+      (cluster) => cluster.kubernetescluster?.spec?.data && typeof cluster.kubernetescluster.spec.data === 'object'
+    )
+  }, [clusters])
 
   const renderControls = () => (
     <div className='flex flex-wrap items-center justify-between w-full gap-4 [@container(max-width:1000px)]:flex-col [@container(max-width:1000px)]:items-start [@container(max-width:1000px)]:gap-6 '>
@@ -498,16 +504,16 @@ export const PageView = ({ className, clusters, params }: PageViewProps) => {
         {params.view === 'list' ? (
           <ClustersTable
             key='table'
-            data={clusters}
+            data={safeClusters}
             pagination={paginationState}
-            totalCount={clusters.length}
+            totalCount={safeClusters.length}
             pageCount={pageCount}
           />
         ) : (
           <div className='flex flex-wrap gap-6'>
-            {(searchResults ?? clusters).length > 0 ? (
-              (searchResults ?? clusters).map((cluster) => {
-                const clusterId = cluster.kubernetescluster?.spec?.data?.clusterId ?? crypto.randomUUID() // or null or fallback
+            {(searchResults ?? safeClusters).length > 0 ? (
+              (searchResults ?? safeClusters).map((cluster) => {
+                const clusterId = cluster.kubernetescluster?.spec?.data?.clusterId ?? crypto.randomUUID()
                 return (
                   <ClusterCard
                     key={clusterId}
