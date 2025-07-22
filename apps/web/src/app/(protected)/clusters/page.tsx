@@ -40,6 +40,10 @@ export default async function ClustersPage({ searchParams }: ClusterPageProps) {
 
   const clusters: KubernetesCluster[] = response?.resources ?? []
   console.debug('[ClusterPage] Clusters:', clusters)
+  console.debug(
+    '[ClusterPage] KubernetesClusters:',
+    clusters.map((c) => c.kubernetescluster)
+  )
 
   return (
     <div className='w-full flex flex-col'>
