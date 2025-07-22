@@ -406,13 +406,13 @@ export const PageView = ({ className, clusters, params }: PageViewProps) => {
     }
   }, [params])
 
-  const [searchResults, setSearchResults] = useState<KubernetesCluster[]>(() => safeClusters)
-
   const safeClusters = useMemo(() => {
     return clusters.filter(
       (cluster) => cluster.kubernetescluster?.spec?.data && typeof cluster.kubernetescluster.spec.data === 'object'
     )
   }, [clusters])
+
+  const [searchResults, setSearchResults] = useState<KubernetesCluster[]>(() => safeClusters)
 
   const renderControls = () => (
     <div className='flex flex-wrap items-center justify-between w-full gap-4 [@container(max-width:1000px)]:flex-col [@container(max-width:1000px)]:items-start [@container(max-width:1000px)]:gap-6 '>
