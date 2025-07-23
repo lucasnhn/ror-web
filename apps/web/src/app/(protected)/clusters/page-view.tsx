@@ -144,29 +144,6 @@ const sortingOptions = [
   },
 ]
 
-const status: Option[] = [
-  {
-    value: 'ok',
-    label: 'OK',
-  },
-  {
-    value: 'working',
-    label: 'Working',
-  },
-  {
-    value: 'warning',
-    label: 'Warning',
-  },
-  {
-    value: 'error',
-    label: 'Error',
-  },
-  {
-    value: 'unknown',
-    label: 'Unknown',
-  },
-]
-
 const environments: Option[] = [
   {
     value: 'dev',
