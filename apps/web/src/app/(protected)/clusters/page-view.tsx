@@ -270,8 +270,6 @@ export const PageView = ({ className, clusters, params }: PageViewProps) => {
     pageSize: limit,
   }
 
-  const pageCount = Math.ceil(clusters.length / limit)
-
   const toggleParams = useMemo(() => {
     const newParams = new URLSearchParams(params as string[][] | Record<string, string> | string | URLSearchParams)
     if (filtersOpen) {
@@ -323,6 +321,112 @@ export const PageView = ({ className, clusters, params }: PageViewProps) => {
       )
     })
   }, [safeClusters, selectedFilters])
+
+  // Sort clusters based on the selected sort parameter and order
+  const sortedClusters = useMemo(() => {
+    if (!params.sort) return filteredClusters
+
+    const sortOrder = params.order === 'desc' ? -1 : 1
+
+    // Determine if current sort is a numeric field where highest values should appear first by default
+    const isNumericMetric = ['cpu', 'memory', 'nodes', 'monthlyPrice', 'yearlyPrice'].includes(params.sort || '')
+
+    return [...filteredClusters].sort((a, b) => {
+      let valueA, valueB
+
+      switch (params.sort) {
+        case 'clusterName':
+          valueA = a.metadata?.name || ''
+          valueB = b.metadata?.name || ''
+          break
+        case 'cpu':
+          valueA = a.kubernetescluster?.status?.state?.cluster?.resources?.cpu?.percentage || 0
+          valueB = b.kubernetescluster?.status?.state?.cluster?.resources?.cpu?.percentage || 0
+          // Show highest CPU usage first
+          return (valueB - valueA) * sortOrder
+        case 'memory':
+          valueA = a.kubernetescluster?.status?.state?.cluster?.resources?.memory?.percentage || 0
+          valueB = b.kubernetescluster?.status?.state?.cluster?.resources?.memory?.percentage || 0
+          // Show highest memory usage first
+          return (valueB - valueA) * sortOrder
+        case 'nodes':
+          // Sum up all nodepool scales to get total node count
+          valueA =
+            a.kubernetescluster?.status?.state?.cluster?.nodepools?.reduce(
+              (sum, nodepool) => sum + (nodepool?.scale || 0),
+              0
+            ) || 0
+          valueB =
+            b.kubernetescluster?.status?.state?.cluster?.nodepools?.reduce(
+              (sum, nodepool) => sum + (nodepool?.scale || 0),
+              0
+            ) || 0
+          // Show highest node count first
+          return (valueB - valueA) * sortOrder
+        case 'monthlyPrice':
+          valueA = a.kubernetescluster?.status?.state?.cluster?.price?.monthly || 0
+          valueB = b.kubernetescluster?.status?.state?.cluster?.price?.monthly || 0
+          // Show highest price first
+          return (valueB - valueA) * sortOrder
+        case 'yearlyPrice':
+          valueA = a.kubernetescluster?.status?.state?.cluster?.price?.yearly || 0
+          valueB = b.kubernetescluster?.status?.state?.cluster?.price?.yearly || 0
+          // Show highest price first
+          return (valueB - valueA) * sortOrder
+        case 'agentVersion': {
+          // Find agent version in versions array
+          const agentVersionA =
+            a.kubernetescluster?.status?.state?.versions?.find((v) => v?.name === 'agent')?.version || ''
+          const agentVersionB =
+            b.kubernetescluster?.status?.state?.versions?.find((v) => v?.name === 'agent')?.version || ''
+          valueA = agentVersionA
+          valueB = agentVersionB
+          break
+        }
+        case 'toolingVersion': {
+          // Find tooling version in versions array
+          const toolingVersionA =
+            a.kubernetescluster?.status?.state?.versions?.find((v) => v?.name === 'tooling')?.version || ''
+          const toolingVersionB =
+            b.kubernetescluster?.status?.state?.versions?.find((v) => v?.name === 'tooling')?.version || ''
+          valueA = toolingVersionA
+          valueB = toolingVersionB
+          break
+        }
+        case 'datacenterName':
+          valueA = a.kubernetescluster?.spec?.data?.datacenter || ''
+          valueB = b.kubernetescluster?.spec?.data?.datacenter || ''
+          break
+        case 'datacenterProvider':
+          valueA = a.kubernetescluster?.spec?.data?.provider || '' // Using provider instead of datacenterProvider
+          valueB = b.kubernetescluster?.spec?.data?.provider || ''
+          break
+        case 'environment':
+          valueA = a.kubernetescluster?.spec?.data?.environment || ''
+          valueB = b.kubernetescluster?.spec?.data?.environment || ''
+          break
+        default:
+          valueA = a.metadata?.name || ''
+          valueB = b.metadata?.name || ''
+      }
+
+      // For numeric fields, we want to show highest values first by default
+      if (isNumericMetric && typeof valueA === 'number' && typeof valueB === 'number') {
+        return (valueB - valueA) * sortOrder
+      }
+
+      // Handle string comparison for alphabetic fields
+      if (typeof valueA === 'string' && typeof valueB === 'string') {
+        return valueA.localeCompare(valueB) * sortOrder
+      }
+
+      // Default case: compare as strings
+      return String(valueA).localeCompare(String(valueB)) * sortOrder
+    })
+  }, [filteredClusters, params.sort, params.order])
+
+  // Calculate page count based on filtered clusters
+  const pageCount = Math.ceil(filteredClusters.length / limit)
 
   const renderControls = () => (
     <div className='flex flex-wrap items-center justify-between w-full gap-4 [@container(max-width:1000px)]:flex-col [@container(max-width:1000px)]:items-start [@container(max-width:1000px)]:gap-6 '>
@@ -420,20 +524,29 @@ export const PageView = ({ className, clusters, params }: PageViewProps) => {
         {params.view === 'list' ? (
           <ClustersTable
             key='table'
-            data={safeClusters}
+            data={params.sort ? sortedClusters : filteredClusters}
             pagination={paginationState}
-            totalCount={safeClusters.length}
+            totalCount={filteredClusters.length}
             pageCount={pageCount}
           />
         ) : (
           <div className='flex flex-wrap gap-6'>
             {searchResults.filter((c) => filteredClusters.includes(c)).length > 0 ? (
+              // Apply sorting to the filtered search results
               searchResults
                 .filter((c) => filteredClusters.includes(c))
+                .sort((a, b) => {
+                  // Find the index of each cluster in the sortedClusters array
+                  // to maintain the same sort order
+                  const indexA = sortedClusters.indexOf(a)
+                  const indexB = sortedClusters.indexOf(b)
+                  return indexA - indexB
+                })
                 .map((cluster) => {
+                  const clusterId = cluster.kubernetescluster?.spec?.data?.clusterId || crypto.randomUUID()
                   return (
                     <ClusterCard
-                      key={crypto.randomUUID()} // TODO: Use clusterId when available
+                      key={clusterId}
                       cluster={cluster}
                       displayData={
                         selectedDisplayData?.length > 0
