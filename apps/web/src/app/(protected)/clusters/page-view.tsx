@@ -123,14 +123,6 @@ const sortingOptions = [
     label: 'Price',
   },
   {
-    value: 'agentVersion',
-    label: 'ROR agent version',
-  },
-  {
-    value: 'toolingVersion',
-    label: 'NHN tooling version',
-  },
-  {
     value: 'datacenterName',
     label: 'Datacenter',
   },
@@ -299,6 +291,11 @@ export const PageView = ({ className, clusters, params }: PageViewProps) => {
 
   const [searchResults, setSearchResults] = useState<KubernetesCluster[]>(safeClusters)
 
+  // Reset search results when safeClusters changes (initial load or data refresh)
+  useEffect(() => {
+    setSearchResults(safeClusters)
+  }, [safeClusters])
+
   const filteredClusters = useMemo(() => {
     return safeClusters.filter((cluster) => {
       const env = cluster.kubernetescluster?.spec?.data?.environment
@@ -351,16 +348,8 @@ export const PageView = ({ className, clusters, params }: PageViewProps) => {
           return (valueB - valueA) * sortOrder
         case 'nodes':
           // Sum up all nodepool scales to get total node count
-          valueA =
-            a.kubernetescluster?.status?.state?.cluster?.nodepools?.reduce(
-              (sum, nodepool) => sum + (nodepool?.scale || 0),
-              0
-            ) || 0
-          valueB =
-            b.kubernetescluster?.status?.state?.cluster?.nodepools?.reduce(
-              (sum, nodepool) => sum + (nodepool?.scale || 0),
-              0
-            ) || 0
+          valueA = a.kubernetescluster?.status?.state?.cluster?.nodepools?.length || 0
+          valueB = b.kubernetescluster?.status?.state?.cluster?.nodepools?.length || 0
           // Show highest node count first
           return (valueB - valueA) * sortOrder
         case 'monthlyPrice':
@@ -373,26 +362,6 @@ export const PageView = ({ className, clusters, params }: PageViewProps) => {
           valueB = b.kubernetescluster?.status?.state?.cluster?.price?.yearly || 0
           // Show highest price first
           return (valueB - valueA) * sortOrder
-        case 'agentVersion': {
-          // Find agent version in versions array
-          const agentVersionA =
-            a.kubernetescluster?.status?.state?.versions?.find((v) => v?.name === 'agent')?.version || ''
-          const agentVersionB =
-            b.kubernetescluster?.status?.state?.versions?.find((v) => v?.name === 'agent')?.version || ''
-          valueA = agentVersionA
-          valueB = agentVersionB
-          break
-        }
-        case 'toolingVersion': {
-          // Find tooling version in versions array
-          const toolingVersionA =
-            a.kubernetescluster?.status?.state?.versions?.find((v) => v?.name === 'tooling')?.version || ''
-          const toolingVersionB =
-            b.kubernetescluster?.status?.state?.versions?.find((v) => v?.name === 'tooling')?.version || ''
-          valueA = toolingVersionA
-          valueB = toolingVersionB
-          break
-        }
         case 'datacenterName':
           valueA = a.kubernetescluster?.spec?.data?.datacenter || ''
           valueB = b.kubernetescluster?.spec?.data?.datacenter || ''
@@ -531,16 +500,41 @@ export const PageView = ({ className, clusters, params }: PageViewProps) => {
           />
         ) : (
           <div className='flex flex-wrap gap-6'>
-            {searchResults.filter((c) => filteredClusters.includes(c)).length > 0 ? (
-              // Apply sorting to the filtered search results
+            {searchResults.length > 0 ? (
+              // Apply filtering and sorting to the search results
               searchResults
-                .filter((c) => filteredClusters.includes(c))
+                // Filter by ID instead of object reference to handle search results better
+                .filter((searchCluster) =>
+                  filteredClusters.some(
+                    (filteredCluster) =>
+                      searchCluster.metadata?.name === filteredCluster.metadata?.name ||
+                      searchCluster.kubernetescluster?.spec?.data?.clusterId ===
+                        filteredCluster.kubernetescluster?.spec?.data?.clusterId
+                  )
+                )
                 .sort((a, b) => {
-                  // Find the index of each cluster in the sortedClusters array
-                  // to maintain the same sort order
-                  const indexA = sortedClusters.indexOf(a)
-                  const indexB = sortedClusters.indexOf(b)
-                  return indexA - indexB
+                  // If we have a sort parameter, use the sorted order
+                  if (params.sort) {
+                    // Find matching clusters in sortedClusters by name/id
+                    const sortedA = sortedClusters.find(
+                      (sc) =>
+                        sc.metadata?.name === a.metadata?.name ||
+                        sc.kubernetescluster?.spec?.data?.clusterId === a.kubernetescluster?.spec?.data?.clusterId
+                    )
+                    const sortedB = sortedClusters.find(
+                      (sc) =>
+                        sc.metadata?.name === b.metadata?.name ||
+                        sc.kubernetescluster?.spec?.data?.clusterId === b.kubernetescluster?.spec?.data?.clusterId
+                    )
+
+                    // Get indices from sortedClusters (or use max value if not found)
+                    const indexA = sortedA ? sortedClusters.indexOf(sortedA) : Number.MAX_SAFE_INTEGER
+                    const indexB = sortedB ? sortedClusters.indexOf(sortedB) : Number.MAX_SAFE_INTEGER
+
+                    return indexA - indexB
+                  }
+                  // If no sort parameter, maintain search result order
+                  return 0
                 })
                 .map((cluster) => {
                   const clusterId = cluster.kubernetescluster?.spec?.data?.clusterId || crypto.randomUUID()
@@ -557,7 +551,11 @@ export const PageView = ({ className, clusters, params }: PageViewProps) => {
                   )
                 })
             ) : (
-              <p className='text-muted-foreground'>No cluster matching this name and filters exists.</p>
+              <p className='text-muted-foreground'>
+                {searchResults.length === 0
+                  ? 'No cluster matching this search query exists.'
+                  : 'No cluster matching both search query and filters exists.'}
+              </p>
             )}
           </div>
         )}
