@@ -5,5 +5,5 @@ export const worker = setupWorker(...handlers)
 
 // @ts-expect-error - hack to prevent hot reload errors
 module.hot?.dispose(() => {
-  worker.stop()
+  worker.stop() // Stop the worker when the module is replaced (HMR)
 })

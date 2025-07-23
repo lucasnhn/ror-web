@@ -1,6 +1,9 @@
 import { faker } from '@faker-js/faker'
 import { NodeResponse } from '@ror/js-api-client'
 
+/**
+ * Mock data for nodes (4 nodes).
+ */
 const nodes: NodeResponse = {
   resources: [
     {

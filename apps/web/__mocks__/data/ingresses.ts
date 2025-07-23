@@ -1,5 +1,9 @@
 import { faker } from '@faker-js/faker'
 
+/**
+ * Mock data for Ingresses.
+ * This data structure is used to represent Kubernetes Ingress resources.
+ */
 export const ingressesResponse = {
   resources: [
     {
