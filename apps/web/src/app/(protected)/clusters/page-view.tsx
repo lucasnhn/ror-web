@@ -406,7 +406,13 @@ export const PageView = ({ className, clusters, params }: PageViewProps) => {
     }
   }, [params])
 
-  const [searchResults, setSearchResults] = useState<KubernetesCluster[]>(clusters)
+  const safeClusters = useMemo(() => {
+    return clusters.filter(
+      (cluster) => cluster.kubernetescluster?.spec?.data && typeof cluster.kubernetescluster.spec.data === 'object'
+    )
+  }, [clusters])
+
+  const [searchResults, setSearchResults] = useState<KubernetesCluster[]>(safeClusters)
 
   const renderControls = () => (
     <div className='flex flex-wrap items-center justify-between w-full gap-4 [@container(max-width:1000px)]:flex-col [@container(max-width:1000px)]:items-start [@container(max-width:1000px)]:gap-6 '>
@@ -498,25 +504,27 @@ export const PageView = ({ className, clusters, params }: PageViewProps) => {
         {params.view === 'list' ? (
           <ClustersTable
             key='table'
-            data={clusters}
+            data={safeClusters}
             pagination={paginationState}
-            totalCount={clusters.length}
+            totalCount={safeClusters.length}
             pageCount={pageCount}
           />
         ) : (
           <div className='flex flex-wrap gap-6'>
-            {(searchResults ?? clusters).length > 0 ? (
-              (searchResults ?? clusters).map((cluster) => (
-                <ClusterCard
-                  key={cluster.kubernetescluster?.spec?.data?.clusterId}
-                  cluster={cluster}
-                  displayData={
-                    selectedDisplayData.length > 0
-                      ? selectedDisplayData
-                      : displayDataOptions.map((o) => o.value as ClusterCardDisplayData)
-                  }
-                />
-              ))
+            {(searchResults ?? safeClusters).length > 0 ? (
+              (searchResults ?? safeClusters).map((cluster) => {
+                return (
+                  <ClusterCard
+                    key={crypto.randomUUID()} // TODO: Use clusterId when available
+                    cluster={cluster}
+                    displayData={
+                      selectedDisplayData?.length > 0
+                        ? selectedDisplayData
+                        : displayDataOptions?.map((o) => o.value as ClusterCardDisplayData) || []
+                    }
+                  />
+                )
+              })
             ) : (
               <p className='text-muted-foreground'>No cluster with a similar name exists.</p>
             )}

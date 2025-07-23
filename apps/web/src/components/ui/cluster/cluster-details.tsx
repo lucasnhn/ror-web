@@ -53,46 +53,46 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
   const clusterId = clusterSpec?.data?.clusterId
   const clusterName = cluster.metadata?.name || clusterId
 
-  const cpuData = clusterStatus?.state.cluster.resources.cpu
+  const cpuData = clusterStatus?.state?.cluster?.resources?.cpu
   const cpu = { capacity: cpuData?.capacity, used: cpuData?.used, percentage: cpuData?.percentage }
-  const memoryData = clusterStatus?.state.cluster.resources.memory
+  const memoryData = clusterStatus?.state?.cluster?.resources?.memory
   const memory = { capacity: memoryData?.capacity, used: memoryData?.used, percentage: memoryData?.percentage }
-  const gpuData = clusterStatus?.state.cluster.resources.gpu
+  const gpuData = clusterStatus?.state?.cluster?.resources?.gpu
   const gpu = { capacity: gpuData?.capacity, used: gpuData?.used, percentage: gpuData?.percentage }
-  const diskData = clusterStatus?.state.cluster.resources.disk
+  const diskData = clusterStatus?.state?.cluster?.resources?.disk
   const disk = { capacity: diskData?.capacity, used: diskData?.used, percentage: diskData?.percentage }
 
   const tools = {
-    argo: clusterStatus?.state.endpoints?.find((endpoint) => endpoint.name === 'argocd')?.address,
-    grafana: clusterStatus?.state.endpoints?.find((endpoint) => endpoint.name === 'grafana')?.address,
+    argo: clusterStatus?.state?.endpoints?.find((endpoint) => endpoint.name === 'argocd')?.address,
+    grafana: clusterStatus?.state?.endpoints?.find((endpoint) => endpoint.name === 'grafana')?.address,
   }
 
   const prices = {
-    monthly: clusterStatus?.state.cluster.price.monthly || 0,
-    yearly: clusterStatus?.state.cluster.price.yearly || 0,
+    monthly: clusterStatus?.state?.cluster?.price?.monthly || 0,
+    yearly: clusterStatus?.state?.cluster?.price?.yearly || 0,
   }
 
-  const lastObserved = clusterStatus?.state.lastUpdated
-  const created = clusterStatus?.state.created
+  const lastObserved = clusterStatus?.state?.lastUpdated
+  const created = clusterStatus?.state?.created
 
   const serverUrl =
-    clusterStatus?.state.endpoints?.find((endpoint) => endpoint.name === 'datacenter')?.address || '<missing>'
+    clusterStatus?.state?.endpoints?.find((endpoint) => endpoint.name === 'datacenter')?.address || '<missing>'
   const rorLogin = `ror login ${clusterId}`
   const kubectlLogin = `kubectl vsphere login --server=${serverUrl} -u ${user?.email} --insecure-skip-tls-verify --tanzu-kubernetes-cluster-namespace ${clusterSpec?.data?.workspace} --tanzu-kubernetes-cluster-name ${clusterName}`
 
   const versions = {
     // TODO: Make sure these are correct names
-    agent: clusterStatus?.state.versions?.find((version) => version.name === 'agent') || {
+    agent: clusterStatus?.state?.versions?.find((version) => version.name === 'agent') || {
       version: 'Version missing',
       name: 'Agent',
       branch: '',
     },
-    kubernetes: clusterStatus?.state.versions?.find((version) => version.name === 'kubernetes') || {
+    kubernetes: clusterStatus?.state?.versions?.find((version) => version.name === 'kubernetes') || {
       version: 'Version missing',
       name: 'Kubernetes',
       branch: '',
     },
-    nhnTooling: clusterStatus?.state.versions?.find((version) => version.name === 'nhnTooling') || {
+    nhnTooling: clusterStatus?.state?.versions?.find((version) => version.name === 'nhnTooling') || {
       version: 'Version missing',
       name: 'NHN Tooling',
       branch: '',
@@ -270,7 +270,7 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
             <div className='flex flex-1 flex-col gap-2'>
               <div className='flex flex-col'>
                 <b>Provider: </b>
-                <span>{cluster.kubernetescluster?.spec.data?.provider}</span>
+                <span>{cluster.kubernetescluster?.spec?.data?.provider}</span>
               </div>
               <div className='flex flex-col'>
                 <b>HA control plane: </b>

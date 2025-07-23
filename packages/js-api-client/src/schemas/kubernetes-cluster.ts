@@ -2,74 +2,74 @@ import { z } from 'zod'
 import { createV2ResourceResponseSchema, V2ResourceSchema } from './common'
 
 export const KubernetesClusterSpecData = z.object({
-  clusterId: z.string(),
-  provider: z.string(),
-  datacenter: z.string(),
-  region: z.string(),
-  zone: z.string(),
-  project: z.string(),
-  workspace: z.string(),
-  workorder: z.string(),
-  environment: z.string(),
+  clusterId: z.string().nullable().optional(),
+  provider: z.string().nullable().optional(),
+  datacenter: z.string().nullable().optional(),
+  region: z.string().nullable().optional(),
+  zone: z.string().nullable().optional(),
+  project: z.string().nullable().optional(),
+  workspace: z.string().nullable().optional(),
+  workorder: z.string().nullable().optional(),
+  environment: z.string().nullable().optional(),
 })
 
 // Extra metadata for machines
 export const KubernetesClusterSpecMetadataDetails = z.object({
-  labels: z.record(z.string(), z.string()), // stricter what you can have in label, so often used in selectors that give me those with this label
-  annotations: z.record(z.string(), z.string()), // less strict, often just additional information
+  labels: z.record(z.string(), z.string()).nullable().optional(), // stricter what you can have in label, so often used in selectors that give me those with this label
+  annotations: z.record(z.string(), z.string()).nullable().optional(), // less strict, often just additional information
 })
 
 export const KubernetesClusterStorage = z.object({
-  class: z.string(),
-  path: z.string(),
-  size: z.string(),
+  class: z.string().nullable().optional(),
+  path: z.string().nullable().optional(),
+  size: z.string().nullable().optional(),
 })
 
 // Control plane: some machines in the cluster must hold processes internally in the cluster, so management. Often smaller because it only runs internal stuff. Master in master/slave terminology
 // TODO: CHECK CAUSE THIS IS CHANGED
 export const KubernetesClusterSpecControlPlane = z.object({
-  replicas: z.number(),
-  version: z.string(), // Kubernetes version
-  provider: z.string(),
-  machineClass: z.string(),
-  metadata: KubernetesClusterSpecMetadataDetails,
-  storage: z.array(KubernetesClusterStorage),
+  replicas: z.number().nullable().optional(),
+  version: z.string().nullable().optional(), // Kubernetes version
+  provider: z.string().nullable().optional(),
+  machineClass: z.string().nullable().optional(),
+  metadata: KubernetesClusterSpecMetadataDetails.nullable().optional(),
+  storage: z.array(KubernetesClusterStorage).nullable().optional(),
 })
 
 // If the user has enabled autoscaling, with configuration
 export const KubernetesClusterAutoscalingConfig = z.object({
-  enabled: z.boolean(),
-  minReplicas: z.number(),
-  maxReplicas: z.number(),
+  enabled: z.boolean().nullable().optional(),
+  minReplicas: z.number().nullable().optional(),
+  maxReplicas: z.number().nullable().optional(),
 })
 
 // Extends autoscalingconfig, adds scaling rules
 const KubernetesClusterAutoscalingSpec = KubernetesClusterAutoscalingConfig.extend({
-  scalingRules: z.array(z.string()),
+  scalingRules: z.array(z.string()).nullable().optional(),
 })
 
 // Store information about nodepool
 // TODO: CHECK CAUSE THIS IS CHANGED
 export const KubernetesClusterNodePool = z.object({
-  machineClass: z.string(),
-  provider: z.string(),
-  version: z.string(), // Kubernetes version
-  name: z.string(),
-  replicas: z.number(), // Number of nodes
-  autoscaling: KubernetesClusterAutoscalingSpec,
-  metadata: KubernetesClusterSpecMetadataDetails,
+  machineClass: z.string().nullable().optional(),
+  provider: z.string().nullable().optional(),
+  version: z.string().nullable().optional(), // Kubernetes version
+  name: z.string().nullable().optional(),
+  replicas: z.number().nullable().optional(), // Number of nodes
+  autoscaling: KubernetesClusterAutoscalingSpec.nullable().optional(),
+  metadata: KubernetesClusterSpecMetadataDetails.nullable().optional(),
 })
 
 // Worker is basically slave in master/slave terminology
 export const KubernetesClusterWorkers = z.object({
-  nodePools: z.array(KubernetesClusterNodePool),
+  nodePools: z.array(KubernetesClusterNodePool).nullable().optional(),
 })
 
 // Specification of the cluster, what is used to create it
 export const KubernetesClusterSpecTopology = z.object({
-  version: z.string(), // Kubernetes version
-  controlplane: KubernetesClusterSpecControlPlane, // Contains control plan configuration
-  workers: KubernetesClusterWorkers, // Contains worker nodes configuration
+  version: z.string().nullable().optional(), // Kubernetes version
+  controlplane: KubernetesClusterSpecControlPlane.nullable().optional(), // Contains control plan configuration
+  workers: KubernetesClusterWorkers.nullable().optional(), // Contains worker nodes configuration
 })
 
 export const KubernetesClusterSpec = z.object({
@@ -79,9 +79,9 @@ export const KubernetesClusterSpec = z.object({
 
 // cpu, memory, gpu, disk
 export const KubernetesClusterStatusClusterStatusResource = z.object({
-  capacity: z.string(),
-  used: z.string(),
-  percentage: z.number(),
+  capacity: z.string().nullable().optional(),
+  used: z.string().nullable().optional(),
+  percentage: z.number().nullable().optional(),
 })
 
 export const KubernetesClusterStatusClusterStatusResources = z.object({
@@ -92,70 +92,70 @@ export const KubernetesClusterStatusClusterStatusResources = z.object({
 })
 
 export const KubernetesClusterNodePoolStatus = z.object({
-  name: z.string(),
-  status: z.string(),
-  message: z.string(),
-  scale: z.number(), // Number of nodes in the nodepool
-  machineClass: z.string(), // Size of machines in nodes
-  autoscaling: KubernetesClusterAutoscalingConfig,
-  resources: KubernetesClusterStatusClusterStatusResources,
+  name: z.string().nullable().optional(),
+  status: z.string().nullable().optional(),
+  message: z.string().nullable().optional(),
+  scale: z.number().nullable().optional(), // Number of nodes in the nodepool
+  machineClass: z.string().nullable().optional(), // Size of machines in nodes
+  autoscaling: KubernetesClusterAutoscalingConfig.nullable().optional(),
+  resources: KubernetesClusterStatusClusterStatusResources.nullable().optional(),
 })
 
 export const KubernetesClusterStatusPrice = z.object({
-  monthly: z.number(),
-  yearly: z.number(),
+  monthly: z.number().nullable().optional(),
+  yearly: z.number().nullable().optional(),
 })
 
 export const KubernetesClusterControlPlaneStatus = z.object({
-  status: z.string(),
-  message: z.string(),
-  scale: z.number(),
-  machineClass: z.string(),
-  resources: KubernetesClusterStatusClusterStatusResources,
+  status: z.string().nullable().optional(),
+  message: z.string().nullable().optional(),
+  scale: z.number().nullable().optional(),
+  machineClass: z.string().nullable().optional(),
+  resources: KubernetesClusterStatusClusterStatusResources.nullable().optional(),
 })
 
 export const KubernetesClusterClusterDetails = z.object({
-  externalId: z.string(), // Cluster's ID from the outside, for the ones who have made cluster, like Tanzu
-  resources: KubernetesClusterStatusClusterStatusResources,
-  price: KubernetesClusterStatusPrice,
-  controlplane: KubernetesClusterControlPlaneStatus,
-  nodepools: z.array(KubernetesClusterNodePoolStatus), // TODO: Check if this changed in ror repo
+  externalId: z.string().nullable().optional(), // Cluster's ID from the outside, for the ones who have made cluster, like Tanzu
+  resources: KubernetesClusterStatusClusterStatusResources.nullable().optional(),
+  price: KubernetesClusterStatusPrice.nullable().optional(),
+  controlplane: KubernetesClusterControlPlaneStatus.nullable().optional(),
+  nodepools: z.array(KubernetesClusterNodePoolStatus).nullable().optional(), // TODO: Check if this changed in ror repo
 })
 
 // NHN tooling, agent, kubernetes
 export const KubernetesClusterVersion = z.object({
-  name: z.string(),
-  version: z.string(),
-  branch: z.string(),
+  name: z.string().nullable().optional(),
+  version: z.string().nullable().optional(),
+  branch: z.string().nullable().optional(),
 })
 
 export const KubernetesClusterEndpoint = z.object({
-  name: z.string(), // Name of the endpoint, "controlplane", "kubernetes", "api", "dashboard, grafana, argocd", "datacenter"
-  address: z.string(), // Address of the endpoint
+  name: z.string().nullable().optional(), // Name of the endpoint, "controlplane", "kubernetes", "api", "dashboard, grafana, argocd", "datacenter"
+  address: z.string().nullable().optional(), // Address of the endpoint
 })
 
 export const KubernetesClusterClusterState = z.object({
-  cluster: KubernetesClusterClusterDetails,
-  versions: z.array(KubernetesClusterVersion),
-  endpoints: z.array(KubernetesClusterEndpoint),
-  egressIP: z.string(), // IP that load balancers use to route traffic out of the cluster, used to reach the cluster from the outside, e.g. to firewalls
-  lastUpdated: z.coerce.date(),
-  lastUpdatedBy: z.string(),
-  created: z.coerce.date(),
+  cluster: KubernetesClusterClusterDetails.nullable().optional(),
+  versions: z.array(KubernetesClusterVersion).nullable().optional(),
+  endpoints: z.array(KubernetesClusterEndpoint).nullable().optional(),
+  egressIP: z.string().nullable().optional(), // IP that load balancers use to route traffic out of the cluster, used to reach the cluster from the outside, e.g. to firewalls
+  lastUpdated: z.coerce.date().nullable().optional(),
+  lastUpdatedBy: z.string().nullable().optional(),
+  created: z.coerce.date().nullable().optional(),
 })
 
 export const KubernetesClusterCondition = z.object({
-  type: z.string(), // Type is the type of the condition. For example, "ready", "available", etc.
-  status: z.string(), // Status is the status of the condition. Valid vales are: ok, warning, error, working, unknown.
-  lastTransitionTime: z.string(), // LastTransitionTime is the last time the condition transitioned from one status to another.
-  reason: z.string(), // Reason is a brief reason for the condition's last transition.
-  message: z.string(), // Message is a human-readable message indicating details about the condition.
+  type: z.string().nullable().optional(), // Type is the type of the condition. For example, "ready", "available", etc.
+  status: z.string().nullable().optional(), // Status is the status of the condition. Valid vales are: ok, warning, error, working, unknown.
+  lastTransitionTime: z.string().nullable().optional(), // LastTransitionTime is the last time the condition transitioned from one status to another.
+  reason: z.string().nullable().optional(), // Reason is a brief reason for the condition's last transition.
+  message: z.string().nullable().optional(), // Message is a human-readable message indicating details about the condition.
 })
 
 export const KubernetesClusterStatus = z.object({
-  state: KubernetesClusterClusterState,
-  phase: z.string(),
-  conditions: z.array(KubernetesClusterCondition),
+  state: KubernetesClusterClusterState.nullable().optional(),
+  phase: z.string().nullable().optional(),
+  conditions: z.array(KubernetesClusterCondition).nullable().optional(),
 })
 
 export const KubernetesClusterSchema = V2ResourceSchema.extend({
@@ -163,7 +163,7 @@ export const KubernetesClusterSchema = V2ResourceSchema.extend({
     .object({
       // The spec defines how the cluster is configured and provisioned.
       // e.g. how it should be
-      spec: KubernetesClusterSpec,
+      spec: KubernetesClusterSpec.nullable().optional(),
       // The status defines the current state of the cluster.
       // e.g. how it is
       status: KubernetesClusterStatus.nullable().optional(),

@@ -38,7 +38,16 @@ export default async function ClustersPage({ searchParams }: ClusterPageProps) {
   if (params.order) listParams.set('order', params.order)
   const response = await client.kubernetesClusters.list(listParams)
 
-  const clusters: KubernetesCluster[] = response?.resources?.flatMap((r) => r?.resources ?? []) || []
+  const clusters: KubernetesCluster[] = response?.resources ?? []
+  console.debug('[ClusterPage] Clusters:', clusters)
+  console.debug(
+    '[ClusterPage] KubernetesClusters:',
+    clusters.map((c) => c.kubernetescluster)
+  )
+  console.dir(
+    clusters.map((c) => c.kubernetescluster),
+    { depth: null }
+  )
 
   return (
     <div className='w-full flex flex-col'>

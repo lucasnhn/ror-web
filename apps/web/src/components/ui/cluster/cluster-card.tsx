@@ -76,36 +76,36 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
 
   const env = clusterSpec?.data?.environment
   const tools = {
-    argo: clusterStatus?.state.endpoints?.find((endpoint) => endpoint.name === 'argocd')?.address,
-    grafana: clusterStatus?.state.endpoints?.find((endpoint) => endpoint.name === 'grafana')?.address,
+    argo: clusterStatus?.state?.endpoints?.find((endpoint) => endpoint.name === 'argocd')?.address,
+    grafana: clusterStatus?.state?.endpoints?.find((endpoint) => endpoint.name === 'grafana')?.address,
   }
-  const cpuData = clusterStatus?.state.cluster.resources.cpu
+  const cpuData = clusterStatus?.state?.cluster?.resources?.cpu
   const cpu = { capacity: cpuData?.capacity, used: cpuData?.used, percentage: cpuData?.percentage }
-  const memoryData = clusterStatus?.state.cluster.resources.memory
+  const memoryData = clusterStatus?.state?.cluster?.resources?.memory
   const memory = { capacity: memoryData?.capacity, used: memoryData?.used, percentage: memoryData?.percentage }
-  const gpuData = clusterStatus?.state.cluster.resources.gpu
+  const gpuData = clusterStatus?.state?.cluster?.resources?.gpu
   const gpu = { capacity: gpuData?.capacity, used: gpuData?.used, percentage: gpuData?.percentage }
-  const diskData = clusterStatus?.state.cluster.resources.disk
+  const diskData = clusterStatus?.state?.cluster?.resources?.disk
   const disk = { capacity: diskData?.capacity, used: diskData?.used, percentage: diskData?.percentage }
-  const nodePools = clusterSpec?.topology?.workers.nodePools
+  const nodePools = clusterSpec?.topology?.workers?.nodePools
   const nodePoolsAmount = nodePools?.length || 0
   const nodesAmount = nodePools?.reduce((total, nodePool) => total + (nodePool.replicas || 0), 0) || 0
   const prices = {
-    monthly: clusterStatus?.state.cluster.price.monthly || 0,
-    yearly: clusterStatus?.state.cluster.price.yearly || 0,
+    monthly: clusterStatus?.state?.cluster?.price?.monthly || 0,
+    yearly: clusterStatus?.state?.cluster?.price?.yearly || 0,
   }
   const healthCondition = clusterStatus?.conditions?.find((condition) => condition.type === 'ready')
   const versions = {
     // TODO: Make sure these are correct names
-    agent: clusterStatus?.state.versions?.find((version) => version.name === 'agent')?.version || 'Version missing',
+    agent: clusterStatus?.state?.versions?.find((version) => version.name === 'agent')?.version || 'Version missing',
     kubernetes:
-      clusterStatus?.state.versions?.find((version) => version.name === 'kubernetes')?.version || 'Version missing',
+      clusterStatus?.state?.versions?.find((version) => version.name === 'kubernetes')?.version || 'Version missing',
     nhnTooling:
-      clusterStatus?.state.versions?.find((version) => version.name === 'nhnTooling')?.version || 'Version missing',
+      clusterStatus?.state?.versions?.find((version) => version.name === 'nhnTooling')?.version || 'Version missing',
   }
   const datacenter = { name: clusterSpec?.data?.datacenter, provider: clusterSpec?.data?.provider }
   const serverUrl =
-    clusterStatus?.state.endpoints?.find((endpoint) => endpoint.name === 'datacenter')?.address || '<missing>'
+    clusterStatus?.state?.endpoints?.find((endpoint) => endpoint.name === 'datacenter')?.address || '<missing>'
   const rorLogin = `ror login ${clusterId}`
   const kubectlLogin = `kubectl vsphere login --server=${serverUrl} -u ${user?.email} --insecure-skip-tls-verify --tanzu-kubernetes-cluster-namespace ${clusterSpec?.data?.workspace} --tanzu-kubernetes-cluster-name ${clusterName}`
 
@@ -114,6 +114,8 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
   const handleCardClick = () => {
     router.push(`/clusters/${clusterId}`)
   }
+
+  const envColor = envBgColors[env ?? 'undefined'] ?? ['bg-gray-100', 'text-gray-900']
 
   return (
     <Card
@@ -127,10 +129,10 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
       onKeyDown={(e) => e.key === 'Enter' && handleCardClick()}
     >
       <CardHeader className='m-0 mb-7 p-0 w-full'>
-        <CardTitle className={cn('text-2xl rounded-t-xl px-6 py-2 flex', envBgColors[env!][0], envBgColors[env!][1])}>
+        <CardTitle className={cn('text-2xl rounded-t-xl px-6 py-2 flex', envColor[0], envColor[1])}>
           {(clusterName || 'Unnamed Cluster') as string}
         </CardTitle>
-        <HealthCircle className='ml-auto mr-4 top-[-24px] w-[52px] h-[52px] ' health={healthCondition} />
+        <HealthCircle className='ml-auto mr-4 top-[-24px] w-[52px] h-[52px] ' healthCondition={healthCondition} />
       </CardHeader>
 
       <CardContent className='text-sm flex flex-col gap-3'>
