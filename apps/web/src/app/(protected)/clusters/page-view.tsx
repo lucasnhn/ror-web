@@ -467,7 +467,7 @@ export const PageView = ({ className, clusters, params }: PageViewProps) => {
                   )
                 })
             ) : (
-              <p className='text-muted-foreground'>No cluster matching this name and filters does not exist.</p>
+              <p className='text-muted-foreground'>No cluster matching this name and filters exists.</p>
             )}
           </div>
         )}
