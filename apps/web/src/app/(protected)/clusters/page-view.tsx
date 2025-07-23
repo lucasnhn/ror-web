@@ -169,10 +169,6 @@ const status: Option[] = [
 
 const environments: Option[] = [
   {
-    value: 'development',
-    label: 'Development',
-  },
-  {
     value: 'dev',
     label: 'Dev',
   },
@@ -254,84 +250,7 @@ const workspaces: Option[] = [
   },
 ]
 
-// TODO: Fetch this from somewhere
-const toolingVersions: Option[] = [
-  {
-    value: 'null',
-    label: 'null',
-  },
-  {
-    value: '1-6-10',
-    label: '1.6.10',
-  },
-  {
-    value: '1-6-18',
-    label: '1.6.18',
-  },
-  {
-    value: '1-6-19',
-    label: '1.6.19',
-  },
-  {
-    value: '1-6-20',
-    label: '1.6.20',
-  },
-  {
-    value: '1-6-21',
-    label: '1.6.21',
-  },
-  {
-    value: 'missing',
-    label: 'Missing',
-  },
-]
-
-// TODO: Fetch this from somewhere
-const kubernetesVersions: Option[] = [
-  {
-    value: 'v1-26-13',
-    label: 'v1.26.13',
-  },
-  {
-    value: 'v1-27-10',
-    label: 'v1.27.10',
-  },
-  {
-    value: 'v1-27-11',
-    label: 'v1.27.11',
-  },
-  {
-    value: 'v1-28-7',
-    label: 'v1.28.7',
-  },
-  {
-    value: 'v1-30-11',
-    label: 'v1.30.11',
-  },
-  {
-    value: 'v1-31-4',
-    label: 'v1.31.4',
-  },
-  {
-    value: 'v1-31-6',
-    label: 'v1.31.6',
-  },
-  {
-    value: 'v1-32-1',
-    label: 'v1.32.1',
-  },
-  {
-    value: 'v1-32-3',
-    label: 'v1.32.3',
-  },
-]
-
 const filterOptions = [
-  {
-    label: 'Status',
-    placeholder: 'Set status',
-    data: status,
-  },
   {
     label: 'Environments',
     placeholder: 'Set environments',
@@ -347,16 +266,6 @@ const filterOptions = [
     placeholder: 'Set workspaces',
     data: workspaces,
   },
-  {
-    label: 'Tooling versions',
-    placeholder: 'Set tooling versions',
-    data: toolingVersions,
-  },
-  {
-    label: 'Kubernetes versions',
-    placeholder: 'Set kubernetes versions',
-    data: kubernetesVersions,
-  },
 ]
 
 export const PageView = ({ className, clusters, params }: PageViewProps) => {
@@ -368,6 +277,7 @@ export const PageView = ({ className, clusters, params }: PageViewProps) => {
   const filtersOpen = params.filters === 'open'
 
   const [selectedDisplayData, setSelectedDisplayData] = useState<ClusterCardDisplayData[]>([])
+  const [selectedFilters, setSelectedFilters] = useState<Record<string, string[]>>({})
 
   useEffect(() => {
     const stored = localStorage.getItem('selectedDisplayData')
@@ -413,6 +323,29 @@ export const PageView = ({ className, clusters, params }: PageViewProps) => {
   }, [clusters])
 
   const [searchResults, setSearchResults] = useState<KubernetesCluster[]>(safeClusters)
+
+  const filteredClusters = useMemo(() => {
+    return safeClusters.filter((cluster) => {
+      const env = cluster.kubernetescluster?.spec?.data?.environment
+      const dc = cluster.kubernetescluster?.spec?.data?.datacenter
+      const ws = cluster.kubernetescluster?.spec?.data?.workspace
+
+      const envFilter = selectedFilters['Environments']
+      const dcFilter = selectedFilters['Datacenters']
+      const wsFilter = selectedFilters['Workspaces']
+
+      // If a filter is applied and the value is missing => exclude
+      if (envFilter?.length && !env) return false
+      if (dcFilter?.length && !dc) return false
+      if (wsFilter?.length && !ws) return false
+
+      return (
+        (!envFilter?.length || (env && envFilter.includes(env))) &&
+        (!dcFilter?.length || (dc && dcFilter.includes(dc))) &&
+        (!wsFilter?.length || (ws && wsFilter.includes(ws)))
+      )
+    })
+  }, [safeClusters, selectedFilters])
 
   const renderControls = () => (
     <div className='flex flex-wrap items-center justify-between w-full gap-4 [@container(max-width:1000px)]:flex-col [@container(max-width:1000px)]:items-start [@container(max-width:1000px)]:gap-6 '>
@@ -478,12 +411,18 @@ export const PageView = ({ className, clusters, params }: PageViewProps) => {
               key={option.label}
               className='w-52'
               commandProps={{ label: option.label }}
-              value={[]}
+              value={(selectedFilters[option.label] || []).map((v) => ({ value: v, label: v }))}
+              onChange={(selectedOptions) => {
+                setSelectedFilters((prev) => ({
+                  ...prev,
+                  [option.label]: selectedOptions.map((opt) => opt.value),
+                }))
+              }}
               defaultOptions={option.data}
               placeholder={option.placeholder}
               hideClearAllButton
               hidePlaceholderWhenSelected
-              emptyIndicator={<p className='text-center text-sm '>No results found</p>}
+              emptyIndicator={<p className='text-center text-sm'>No results found</p>}
             />
           ))}
         </div>
@@ -511,22 +450,24 @@ export const PageView = ({ className, clusters, params }: PageViewProps) => {
           />
         ) : (
           <div className='flex flex-wrap gap-6'>
-            {(searchResults ?? safeClusters).length > 0 ? (
-              (searchResults ?? safeClusters).map((cluster) => {
-                return (
-                  <ClusterCard
-                    key={crypto.randomUUID()} // TODO: Use clusterId when available
-                    cluster={cluster}
-                    displayData={
-                      selectedDisplayData?.length > 0
-                        ? selectedDisplayData
-                        : displayDataOptions?.map((o) => o.value as ClusterCardDisplayData) || []
-                    }
-                  />
-                )
-              })
+            {searchResults.filter((c) => filteredClusters.includes(c)).length > 0 ? (
+              searchResults
+                .filter((c) => filteredClusters.includes(c))
+                .map((cluster) => {
+                  return (
+                    <ClusterCard
+                      key={crypto.randomUUID()} // TODO: Use clusterId when available
+                      cluster={cluster}
+                      displayData={
+                        selectedDisplayData?.length > 0
+                          ? selectedDisplayData
+                          : displayDataOptions?.map((o) => o.value as ClusterCardDisplayData) || []
+                      }
+                    />
+                  )
+                })
             ) : (
-              <p className='text-muted-foreground'>No cluster with a similar name exists.</p>
+              <p className='text-muted-foreground'>No cluster matching this name and filters does not exist.</p>
             )}
           </div>
         )}
