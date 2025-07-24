@@ -14,6 +14,7 @@ import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
 import type { KubernetesCluster } from '@ror/js-api-client'
 import { ClusterSearch } from '@/components/ui/cluster/cluster-search'
+import { User } from 'next-auth'
 
 interface Params {
   view?: 'grid' | 'list'
@@ -26,6 +27,7 @@ interface Params {
 
 interface PageViewProps {
   className?: string
+  user: User
   clusters: KubernetesCluster[]
   params: Params
 }
@@ -150,10 +152,6 @@ const environments: Option[] = [
     label: 'Staging',
   },
   {
-    value: 'production',
-    label: 'Production',
-  },
-  {
     value: 'prod',
     label: 'Prod',
   },
@@ -237,7 +235,7 @@ const filterOptions = [
   },
 ]
 
-export const PageView = ({ className, clusters, params }: PageViewProps) => {
+export const PageView = ({ className, user, clusters, params }: PageViewProps) => {
   const DEFAULT_LIMIT = 10
   const DEFAULT_PAGE = 1
 
@@ -493,9 +491,30 @@ export const PageView = ({ className, clusters, params }: PageViewProps) => {
         {params.view === 'list' ? (
           <ClustersTable
             key='table'
-            data={params.sort ? sortedClusters : filteredClusters}
+            user={user}
+            data={(params.sort ? sortedClusters : filteredClusters)
+              .filter((c) =>
+                searchResults.some(
+                  (sr) =>
+                    sr.metadata?.name === c.metadata?.name ||
+                    sr.kubernetescluster?.spec?.data?.clusterId === c.kubernetescluster?.spec?.data?.clusterId
+                )
+              )
+              .slice(
+                paginationState.pageIndex * paginationState.pageSize,
+                (paginationState.pageIndex + 1) * paginationState.pageSize
+              )}
+            selectedDisplayData={selectedDisplayData}
             pagination={paginationState}
-            totalCount={filteredClusters.length}
+            totalCount={
+              (params.sort ? sortedClusters : filteredClusters).filter((c) =>
+                searchResults.some(
+                  (sr) =>
+                    sr.metadata?.name === c.metadata?.name ||
+                    sr.kubernetescluster?.spec?.data?.clusterId === c.kubernetescluster?.spec?.data?.clusterId
+                )
+              ).length
+            }
             pageCount={pageCount}
           />
         ) : (
@@ -541,6 +560,7 @@ export const PageView = ({ className, clusters, params }: PageViewProps) => {
                   return (
                     <ClusterCard
                       key={clusterId}
+                      user={user}
                       cluster={cluster}
                       displayData={
                         selectedDisplayData?.length > 0

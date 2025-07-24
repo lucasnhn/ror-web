@@ -27,6 +27,7 @@ export default async function ClustersPage({ searchParams }: ClusterPageProps) {
   const session = await authGuard()
   const client = rorApiClient(session.accessToken)
   const params = await searchParams
+  const user = session.user
 
   // Build URL parameters for the list method
   const listParams = new URLSearchParams()
@@ -52,7 +53,7 @@ export default async function ClustersPage({ searchParams }: ClusterPageProps) {
   return (
     <div className='w-full flex flex-col'>
       <Header title='Clusters' />
-      <PageView clusters={clusters} params={params} />
+      <PageView user={user} clusters={clusters} params={params} />
     </div>
   )
 }

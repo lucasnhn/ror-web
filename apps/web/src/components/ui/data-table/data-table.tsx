@@ -8,22 +8,12 @@ import {
   TableTitle,
   TableSubtitle,
   TableContainer,
-  TableSortHeader,
   TableHeader,
-  TableToolbar,
-  TableToolbarSearch,
 } from '@ror/react/components/table'
 import type { TableProps } from '@ror/react/components/table'
 import { Pagination } from '@ror/react/components/pagination'
-import { SortDirection } from '@ror/react/utils/sorting'
-import {
-  flexRender,
-  getCoreRowModel,
-  getExpandedRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from '@tanstack/react-table'
-import type { ColumnDef, Header, PaginationState, Row, SortingState } from '@tanstack/react-table'
+import { flexRender, getCoreRowModel, getExpandedRowModel, useReactTable } from '@tanstack/react-table'
+import type { ColumnDef, PaginationState, Row } from '@tanstack/react-table'
 import { getItemRangeText } from './pagination'
 import { ChangeEvent, ChangeEventHandler, Fragment, useId } from 'react'
 import { Layer } from '@ror/react'
@@ -35,7 +25,6 @@ import { Layer } from '@ror/react'
 export type DataTableColumnDef<TData> = ColumnDef<TData, any>
 
 export type DataTablePagination = PaginationState
-export type DataTableSorting = SortingState
 
 export interface DataTableProps<TData> extends Omit<TableProps, 'gridTemplateColumns'> {
   /**
@@ -88,18 +77,6 @@ export interface DataTableProps<TData> extends Omit<TableProps, 'gridTemplateCol
    */
   pageSizes?: number[]
 
-  sorting?: SortingState
-  onSortingChange?: (state: SortingState) => void
-
-  /**
-   * The current search query
-   */
-  searchQuery?: string
-  /**
-   * Callback for when the user changes the search query
-   */
-  onSearchChange?: (event: ChangeEvent<HTMLInputElement>) => void
-
   /**
    * If true, table will be expandable
    * @default false
@@ -121,10 +98,6 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
     onPaginationChange,
     pageCount,
     pageSizes = [10, 25, 50, 100],
-    sorting = [],
-    onSortingChange,
-    searchQuery,
-    onSearchChange,
     expandable = false,
   } = props
 
@@ -136,7 +109,6 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
     columns,
     getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
-    getSortedRowModel: getSortedRowModel(),
     getRowCanExpand: () => expandable,
 
     /**
@@ -148,7 +120,7 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
 
     /*
      * Control the pagination ourselves
-     * This assumes that the data is already sorted and paginated.
+     * This assumes that the data is already and paginated.
      */
     manualPagination: true,
 
@@ -162,20 +134,11 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
       }
     },
 
-    enableSorting: true,
-    onSortingChange: (updater) => {
-      if (props.sorting && typeof onSortingChange === 'function') {
-        const newState = updater instanceof Function ? updater(props.sorting) : updater
-        onSortingChange(newState)
-      }
-    },
-
     /**
      * The controlled pagination state
      */
     state: {
       pagination,
-      sorting,
     },
   })
 
@@ -193,24 +156,6 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
 
   const handleOnPaginationForwards = () => {
     table.nextPage()
-  }
-
-  const handleOnSearchChange: ChangeEventHandler<HTMLInputElement> = (event) => {
-    if (typeof onSearchChange === 'function') {
-      onSearchChange(event)
-    }
-  }
-
-  const getSortingOrder = <TData, TValue>(header: Header<TData, TValue>): SortDirection => {
-    const direction = header.column.getIsSorted()
-
-    if (direction === 'asc') {
-      return SortDirection.ASC
-    } else if (direction === 'desc') {
-      return SortDirection.DESC
-    }
-
-    return SortDirection.NONE
   }
 
   // The current page in the pagination
@@ -250,13 +195,6 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
           </div>
         ) : null}
 
-        <TableToolbar>
-          <Layer level={1}>
-            {typeof onSearchChange === 'function' && (
-              <TableToolbarSearch labelText='Search' value={searchQuery} onChange={handleOnSearchChange} />
-            )}
-          </Layer>
-        </TableToolbar>
         <Table
           cellPadding={cellPadding}
           gridTemplateColumns={expandable ? gridTemplateColumnsExpandable : gridTemplateColumns}
@@ -268,41 +206,6 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
                   const child = header.isPlaceholder
                     ? null
                     : flexRender(header.column.columnDef.header, header.getContext())
-
-                  /**
-                   * If the column is sortable, render the sortable th component
-                   */
-                  if (header.column.getCanSort()) {
-                    /**
-                     * Get the current sorting direction for the column
-                     * It maps the value from @tanstack/react-table to the @ror/react SortDirection enum
-                     */
-                    const sortingDirection = getSortingOrder(header)
-
-                    /**
-                     * Callback handler for when sort direction is changed
-                     */
-                    const handleOnToggleSort = (_id: string, nextDirection: SortDirection) => {
-                      if (nextDirection === SortDirection.NONE) {
-                        header.column.clearSorting()
-                      } else {
-                        const isDescending = nextDirection === SortDirection.DESC
-                        header.column.toggleSorting(isDescending)
-                      }
-                    }
-
-                    return (
-                      <TableSortHeader
-                        key={header.id}
-                        id={header.id}
-                        colSpan={header.colSpan}
-                        direction={sortingDirection}
-                        onToggleSort={handleOnToggleSort}
-                      >
-                        {child}
-                      </TableSortHeader>
-                    )
-                  }
 
                   return (
                     <TableHeader key={header.id} id={header.id} colSpan={header.colSpan}>
