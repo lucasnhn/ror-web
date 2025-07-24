@@ -112,7 +112,7 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
   const router = useRouter()
 
   const handleCardClick = () => {
-    router.push(`/clusters/${clusterId}`)
+    window.open(`/clusters/${clusterId}`, '_blank')
   }
 
   const envColor = envBgColors[env ?? 'undefined'] ?? ['bg-gray-100', 'text-gray-900']
