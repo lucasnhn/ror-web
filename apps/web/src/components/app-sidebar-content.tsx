@@ -11,7 +11,7 @@ import {
   SidebarMenuSubItem,
 } from './shadcn/sidebar'
 
-type SidebarItem = { title: string } | { title: string; url: string }
+export type SidebarItem = { title: string } | { title: string; url: string }
 
 interface Section {
   title: string
@@ -85,7 +85,7 @@ const sections: Section[] = [
   //     items: [
   //         {
   //             title: 'Data centers',
-  //             url: '#',
+  //             url: '/datacenters',
   //         },
   //         {
   //             title: 'Policy reports',
@@ -151,7 +151,7 @@ export function AppSidebarContent() {
               <SidebarMenuItem>
                 {section.items.length === 1 ? (
                   <div className='flex flex-row items-center'>
-                    <SidebarMenuButton tooltip={section.title}>
+                    <SidebarMenuButton popoverContent={{ title: section.title, items: section.items }}>
                       <section.icon />
                       {'url' in section.items[0] ? (
                         <Link href={section.items[0].url}>{section.items[0].title}</Link>
@@ -162,7 +162,7 @@ export function AppSidebarContent() {
                   </div>
                 ) : (
                   <CollapsibleTrigger asChild>
-                    <SidebarMenuButton tooltip={section.title}>
+                    <SidebarMenuButton popoverContent={{ title: section.title, items: section.items }}>
                       <section.icon />
                       <span>{section.title}</span>
                       <ChevronRight className='ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90' />
