@@ -15,8 +15,7 @@ import { Pagination } from '@ror/react/components/pagination'
 import { flexRender, getCoreRowModel, getExpandedRowModel, useReactTable } from '@tanstack/react-table'
 import type { ColumnDef, PaginationState, Row } from '@tanstack/react-table'
 import { getItemRangeText } from './pagination'
-import { ChangeEvent, ChangeEventHandler, Fragment, useId } from 'react'
-import { Layer } from '@ror/react'
+import { Fragment, useId } from 'react'
 
 /**
  * DataTableColumnDef is a type that represents a column definition for a DataTable.

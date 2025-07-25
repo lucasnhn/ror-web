@@ -1,10 +1,8 @@
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useCallback } from 'react'
-import type { DataTablePagination, DataTableSorting } from './data-table'
+import type { DataTablePagination } from './data-table'
 
 interface UseDataTable {
-  sortingState: DataTableSorting
-  onSortChange: (state: DataTableSorting) => void
   onPaginationChange: (state: DataTablePagination) => void
 }
 
@@ -35,22 +33,6 @@ export function useDataTable(): UseDataTable {
     },
     [router, pathname]
   )
-
-  const handleOnSortChange = useCallback(
-    (state: DataTableSorting) => {
-      const params = new URLSearchParams(currentSearchParams)
-      if (Array.isArray(state) && typeof state[0] === 'object') {
-        params.set('sort', state[0].id)
-        params.set('order', state[0].desc ? 'desc' : 'asc')
-      } else if (Array.isArray(state) && state.length === 0) {
-        params.delete('sort')
-        params.delete('order')
-      }
-      updateSearchParams(params)
-    },
-    [currentSearchParams, updateSearchParams]
-  )
-
   const handleOnPaginationChange = useCallback(
     (state: DataTablePagination) => {
       const params = new URLSearchParams(currentSearchParams)
@@ -61,21 +43,7 @@ export function useDataTable(): UseDataTable {
     [currentSearchParams, updateSearchParams]
   )
 
-  const sortByField = currentSearchParams.get('sort')
-  const sortDirection = currentSearchParams.get('order')
-
-  const sortingState: DataTableSorting = sortByField
-    ? [
-        {
-          id: sortByField,
-          desc: sortDirection === 'desc',
-        },
-      ]
-    : []
-
   return {
-    sortingState,
-    onSortChange: handleOnSortChange,
     onPaginationChange: handleOnPaginationChange,
   }
 }
