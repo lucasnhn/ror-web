@@ -1,13 +1,11 @@
 import { Tag, TagColor, TagProps } from '@ror/react'
 
-type Environment = 'development' | 'dev' | 'test' | 'staging' | 'production' | 'prod' | 'qa'
+type Environment = 'dev' | 'test' | 'staging' | 'prod' | 'qa'
 
 const mapEnvironmentToColor: Record<Environment | string, TagColor> = {
   dev: 'blue',
-  development: 'blue',
   staging: 'purple',
   test: 'green',
-  production: 'red',
   prod: 'red',
   qa: 'yellow',
 }

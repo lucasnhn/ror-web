@@ -14,6 +14,7 @@ import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
 import type { KubernetesCluster } from '@ror/js-api-client'
 import { ClusterSearch } from '@/components/ui/cluster/cluster-search'
+import { User } from 'next-auth'
 
 interface Params {
   view?: 'grid' | 'list'
@@ -26,6 +27,7 @@ interface Params {
 
 interface PageViewProps {
   className?: string
+  user: User
   clusters: KubernetesCluster[]
   params: Params
 }
@@ -123,14 +125,6 @@ const sortingOptions = [
     label: 'Price',
   },
   {
-    value: 'agentVersion',
-    label: 'ROR agent version',
-  },
-  {
-    value: 'toolingVersion',
-    label: 'NHN tooling version',
-  },
-  {
     value: 'datacenterName',
     label: 'Datacenter',
   },
@@ -144,34 +138,7 @@ const sortingOptions = [
   },
 ]
 
-const status: Option[] = [
-  {
-    value: 'ok',
-    label: 'OK',
-  },
-  {
-    value: 'working',
-    label: 'Working',
-  },
-  {
-    value: 'warning',
-    label: 'Warning',
-  },
-  {
-    value: 'error',
-    label: 'Error',
-  },
-  {
-    value: 'unknown',
-    label: 'Unknown',
-  },
-]
-
 const environments: Option[] = [
-  {
-    value: 'development',
-    label: 'Development',
-  },
   {
     value: 'dev',
     label: 'Dev',
@@ -183,10 +150,6 @@ const environments: Option[] = [
   {
     value: 'staging',
     label: 'Staging',
-  },
-  {
-    value: 'production',
-    label: 'Production',
   },
   {
     value: 'prod',
@@ -254,84 +217,7 @@ const workspaces: Option[] = [
   },
 ]
 
-// TODO: Fetch this from somewhere
-const toolingVersions: Option[] = [
-  {
-    value: 'null',
-    label: 'null',
-  },
-  {
-    value: '1-6-10',
-    label: '1.6.10',
-  },
-  {
-    value: '1-6-18',
-    label: '1.6.18',
-  },
-  {
-    value: '1-6-19',
-    label: '1.6.19',
-  },
-  {
-    value: '1-6-20',
-    label: '1.6.20',
-  },
-  {
-    value: '1-6-21',
-    label: '1.6.21',
-  },
-  {
-    value: 'missing',
-    label: 'Missing',
-  },
-]
-
-// TODO: Fetch this from somewhere
-const kubernetesVersions: Option[] = [
-  {
-    value: 'v1-26-13',
-    label: 'v1.26.13',
-  },
-  {
-    value: 'v1-27-10',
-    label: 'v1.27.10',
-  },
-  {
-    value: 'v1-27-11',
-    label: 'v1.27.11',
-  },
-  {
-    value: 'v1-28-7',
-    label: 'v1.28.7',
-  },
-  {
-    value: 'v1-30-11',
-    label: 'v1.30.11',
-  },
-  {
-    value: 'v1-31-4',
-    label: 'v1.31.4',
-  },
-  {
-    value: 'v1-31-6',
-    label: 'v1.31.6',
-  },
-  {
-    value: 'v1-32-1',
-    label: 'v1.32.1',
-  },
-  {
-    value: 'v1-32-3',
-    label: 'v1.32.3',
-  },
-]
-
 const filterOptions = [
-  {
-    label: 'Status',
-    placeholder: 'Set status',
-    data: status,
-  },
   {
     label: 'Environments',
     placeholder: 'Set environments',
@@ -347,19 +233,9 @@ const filterOptions = [
     placeholder: 'Set workspaces',
     data: workspaces,
   },
-  {
-    label: 'Tooling versions',
-    placeholder: 'Set tooling versions',
-    data: toolingVersions,
-  },
-  {
-    label: 'Kubernetes versions',
-    placeholder: 'Set kubernetes versions',
-    data: kubernetesVersions,
-  },
 ]
 
-export const PageView = ({ className, clusters, params }: PageViewProps) => {
+export const PageView = ({ className, user, clusters, params }: PageViewProps) => {
   const DEFAULT_LIMIT = 10
   const DEFAULT_PAGE = 1
 
@@ -368,6 +244,7 @@ export const PageView = ({ className, clusters, params }: PageViewProps) => {
   const filtersOpen = params.filters === 'open'
 
   const [selectedDisplayData, setSelectedDisplayData] = useState<ClusterCardDisplayData[]>([])
+  const [selectedFilters, setSelectedFilters] = useState<Record<string, string[]>>({})
 
   useEffect(() => {
     const stored = localStorage.getItem('selectedDisplayData')
@@ -382,8 +259,6 @@ export const PageView = ({ className, clusters, params }: PageViewProps) => {
     pageIndex: page - 1,
     pageSize: limit,
   }
-
-  const pageCount = Math.ceil(clusters.length / limit)
 
   const toggleParams = useMemo(() => {
     const newParams = new URLSearchParams(params as string[][] | Record<string, string> | string | URLSearchParams)
@@ -406,7 +281,119 @@ export const PageView = ({ className, clusters, params }: PageViewProps) => {
     }
   }, [params])
 
-  const [searchResults, setSearchResults] = useState<KubernetesCluster[]>(clusters)
+  const safeClusters = useMemo(() => {
+    return clusters.filter(
+      (cluster) => cluster.kubernetescluster?.spec?.data && typeof cluster.kubernetescluster.spec.data === 'object'
+    )
+  }, [clusters])
+
+  const [searchResults, setSearchResults] = useState<KubernetesCluster[]>(safeClusters)
+
+  // Reset search results when safeClusters changes (initial load or data refresh)
+  useEffect(() => {
+    setSearchResults(safeClusters)
+  }, [safeClusters])
+
+  const filteredClusters = useMemo(() => {
+    return safeClusters.filter((cluster) => {
+      const env = cluster.kubernetescluster?.spec?.data?.environment
+      const dc = cluster.kubernetescluster?.spec?.data?.datacenter
+      const ws = cluster.kubernetescluster?.spec?.data?.workspace
+
+      const envFilter = selectedFilters['Environments']
+      const dcFilter = selectedFilters['Datacenters']
+      const wsFilter = selectedFilters['Workspaces']
+
+      // If a filter is applied and the value is missing => exclude
+      if (envFilter?.length && !env) return false
+      if (dcFilter?.length && !dc) return false
+      if (wsFilter?.length && !ws) return false
+
+      return (
+        (!envFilter?.length || (env && envFilter.includes(env))) &&
+        (!dcFilter?.length || (dc && dcFilter.includes(dc))) &&
+        (!wsFilter?.length || (ws && wsFilter.includes(ws)))
+      )
+    })
+  }, [safeClusters, selectedFilters])
+
+  // Sort clusters based on the selected sort parameter and order
+  const sortedClusters = useMemo(() => {
+    if (!params.sort) return filteredClusters
+
+    const sortOrder = params.order === 'desc' ? -1 : 1
+
+    // Determine if current sort is a numeric field where highest values should appear first by default
+    const isNumericMetric = ['cpu', 'memory', 'nodes', 'monthlyPrice', 'yearlyPrice'].includes(params.sort || '')
+
+    return [...filteredClusters].sort((a, b) => {
+      let valueA, valueB
+
+      switch (params.sort) {
+        case 'clusterName':
+          valueA = a.metadata?.name || ''
+          valueB = b.metadata?.name || ''
+          break
+        case 'cpu':
+          valueA = a.kubernetescluster?.status?.state?.cluster?.resources?.cpu?.percentage || 0
+          valueB = b.kubernetescluster?.status?.state?.cluster?.resources?.cpu?.percentage || 0
+          // Show highest CPU usage first
+          return (valueB - valueA) * sortOrder
+        case 'memory':
+          valueA = a.kubernetescluster?.status?.state?.cluster?.resources?.memory?.percentage || 0
+          valueB = b.kubernetescluster?.status?.state?.cluster?.resources?.memory?.percentage || 0
+          // Show highest memory usage first
+          return (valueB - valueA) * sortOrder
+        case 'nodes':
+          // Sum up all nodepool scales to get total node count
+          valueA = a.kubernetescluster?.status?.state?.cluster?.nodepools?.length || 0
+          valueB = b.kubernetescluster?.status?.state?.cluster?.nodepools?.length || 0
+          // Show highest node count first
+          return (valueB - valueA) * sortOrder
+        case 'monthlyPrice':
+          valueA = a.kubernetescluster?.status?.state?.cluster?.price?.monthly || 0
+          valueB = b.kubernetescluster?.status?.state?.cluster?.price?.monthly || 0
+          // Show highest price first
+          return (valueB - valueA) * sortOrder
+        case 'yearlyPrice':
+          valueA = a.kubernetescluster?.status?.state?.cluster?.price?.yearly || 0
+          valueB = b.kubernetescluster?.status?.state?.cluster?.price?.yearly || 0
+          // Show highest price first
+          return (valueB - valueA) * sortOrder
+        case 'datacenterName':
+          valueA = a.kubernetescluster?.spec?.data?.datacenter || ''
+          valueB = b.kubernetescluster?.spec?.data?.datacenter || ''
+          break
+        case 'datacenterProvider':
+          valueA = a.kubernetescluster?.spec?.data?.provider || '' // Using provider instead of datacenterProvider
+          valueB = b.kubernetescluster?.spec?.data?.provider || ''
+          break
+        case 'environment':
+          valueA = a.kubernetescluster?.spec?.data?.environment || ''
+          valueB = b.kubernetescluster?.spec?.data?.environment || ''
+          break
+        default:
+          valueA = a.metadata?.name || ''
+          valueB = b.metadata?.name || ''
+      }
+
+      // For numeric fields, we want to show highest values first by default
+      if (isNumericMetric && typeof valueA === 'number' && typeof valueB === 'number') {
+        return (valueB - valueA) * sortOrder
+      }
+
+      // Handle string comparison for alphabetic fields
+      if (typeof valueA === 'string' && typeof valueB === 'string') {
+        return valueA.localeCompare(valueB) * sortOrder
+      }
+
+      // Default case: compare as strings
+      return String(valueA).localeCompare(String(valueB)) * sortOrder
+    })
+  }, [filteredClusters, params.sort, params.order])
+
+  // Calculate page count based on filtered clusters
+  const pageCount = Math.ceil(filteredClusters.length / limit)
 
   const renderControls = () => (
     <div className='flex flex-wrap items-center justify-between w-full gap-4 [@container(max-width:1000px)]:flex-col [@container(max-width:1000px)]:items-start [@container(max-width:1000px)]:gap-6 '>
@@ -472,12 +459,18 @@ export const PageView = ({ className, clusters, params }: PageViewProps) => {
               key={option.label}
               className='w-52'
               commandProps={{ label: option.label }}
-              value={[]}
+              value={(selectedFilters[option.label] || []).map((v) => ({ value: v, label: v }))}
+              onChange={(selectedOptions) => {
+                setSelectedFilters((prev) => ({
+                  ...prev,
+                  [option.label]: selectedOptions.map((opt) => opt.value),
+                }))
+              }}
               defaultOptions={option.data}
               placeholder={option.placeholder}
               hideClearAllButton
               hidePlaceholderWhenSelected
-              emptyIndicator={<p className='text-center text-sm '>No results found</p>}
+              emptyIndicator={<p className='text-center text-sm'>No results found</p>}
             />
           ))}
         </div>
@@ -498,27 +491,91 @@ export const PageView = ({ className, clusters, params }: PageViewProps) => {
         {params.view === 'list' ? (
           <ClustersTable
             key='table'
-            data={clusters}
+            user={user}
+            data={(params.sort ? sortedClusters : filteredClusters)
+              .filter((c) =>
+                searchResults.some(
+                  (sr) =>
+                    sr.metadata?.name === c.metadata?.name ||
+                    sr.kubernetescluster?.spec?.data?.clusterId === c.kubernetescluster?.spec?.data?.clusterId
+                )
+              )
+              .slice(
+                paginationState.pageIndex * paginationState.pageSize,
+                (paginationState.pageIndex + 1) * paginationState.pageSize
+              )}
+            selectedDisplayData={selectedDisplayData}
             pagination={paginationState}
-            totalCount={clusters.length}
+            totalCount={
+              (params.sort ? sortedClusters : filteredClusters).filter((c) =>
+                searchResults.some(
+                  (sr) =>
+                    sr.metadata?.name === c.metadata?.name ||
+                    sr.kubernetescluster?.spec?.data?.clusterId === c.kubernetescluster?.spec?.data?.clusterId
+                )
+              ).length
+            }
             pageCount={pageCount}
           />
         ) : (
           <div className='flex flex-wrap gap-6'>
-            {(searchResults ?? clusters).length > 0 ? (
-              (searchResults ?? clusters).map((cluster) => (
-                <ClusterCard
-                  key={cluster.kubernetescluster?.spec?.data?.clusterId}
-                  cluster={cluster}
-                  displayData={
-                    selectedDisplayData.length > 0
-                      ? selectedDisplayData
-                      : displayDataOptions.map((o) => o.value as ClusterCardDisplayData)
+            {searchResults.length > 0 ? (
+              // Apply filtering and sorting to the search results
+              searchResults
+                // Filter by ID instead of object reference to handle search results better
+                .filter((searchCluster) =>
+                  filteredClusters.some(
+                    (filteredCluster) =>
+                      searchCluster.metadata?.name === filteredCluster.metadata?.name ||
+                      searchCluster.kubernetescluster?.spec?.data?.clusterId ===
+                        filteredCluster.kubernetescluster?.spec?.data?.clusterId
+                  )
+                )
+                .sort((a, b) => {
+                  // If we have a sort parameter, use the sorted order
+                  if (params.sort) {
+                    // Find matching clusters in sortedClusters by name/id
+                    const sortedA = sortedClusters.find(
+                      (sc) =>
+                        sc.metadata?.name === a.metadata?.name ||
+                        sc.kubernetescluster?.spec?.data?.clusterId === a.kubernetescluster?.spec?.data?.clusterId
+                    )
+                    const sortedB = sortedClusters.find(
+                      (sc) =>
+                        sc.metadata?.name === b.metadata?.name ||
+                        sc.kubernetescluster?.spec?.data?.clusterId === b.kubernetescluster?.spec?.data?.clusterId
+                    )
+
+                    // Get indices from sortedClusters (or use max value if not found)
+                    const indexA = sortedA ? sortedClusters.indexOf(sortedA) : Number.MAX_SAFE_INTEGER
+                    const indexB = sortedB ? sortedClusters.indexOf(sortedB) : Number.MAX_SAFE_INTEGER
+
+                    return indexA - indexB
                   }
-                />
-              ))
+                  // If no sort parameter, maintain search result order
+                  return 0
+                })
+                .map((cluster) => {
+                  const clusterId = cluster.kubernetescluster?.spec?.data?.clusterId || crypto.randomUUID()
+                  return (
+                    <ClusterCard
+                      key={clusterId}
+                      user={user}
+                      cluster={cluster}
+                      displayData={
+                        selectedDisplayData?.length > 0
+                          ? selectedDisplayData
+                          : displayDataOptions?.map((o) => o.value as ClusterCardDisplayData) || []
+                      }
+                    />
+                  )
+                })
             ) : (
-              <p className='text-muted-foreground'>No cluster with a similar name exists.</p>
+              <p className='text-muted-foreground'>
+                {searchResults.length === 0
+                  ? 'No cluster matching this search query exists.'
+                  : 'No cluster matching both search query and filters exists.'}
+              </p>
             )}
           </div>
         )}
