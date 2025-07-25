@@ -32,11 +32,8 @@ export const v2ResourcesHandlers = [
   http.get('http://localhost:10000/v2/resources/uid/:id', ({ params }) => {
     const { id } = params // Extract the resource ID from the URL
 
-    // Flatten nested resource groups into one array of resources
-    const flatResources = clustersVersion2.resources.flatMap((group) => group.resources)
-
     // Find a cluster resource with the matching clusterId
-    const cluster = flatResources.find(
+    const cluster = clustersVersion2.resources.find(
       (res) => res.kind === 'KubernetesCluster' && res.kubernetescluster?.spec?.data.clusterId === id
     )
 
