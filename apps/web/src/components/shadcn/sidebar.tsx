@@ -507,8 +507,6 @@ const SidebarMenuButton = React.forwardRef<
       return button
     }
 
-    console.log('[SIDEBAR] popoverContent:', popoverContent)
-
     return (
       <Popover>
         <PopoverTrigger asChild>{button}</PopoverTrigger>
