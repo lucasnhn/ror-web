@@ -32,18 +32,6 @@ export function ClusterSearch({ items, onResultsChange }: ClusterSearchProps) {
     })
   }, [items])
 
-  // const fuse = useMemo(() => {
-  //   const flatClusters = items.map((cluster) => ({
-  //     ...cluster,
-  //     _searchable: JSON.stringify(cluster).toLowerCase(),
-  //   }))
-
-  //   return new Fuse(flatClusters, {
-  //     keys: ['_searchable'],
-  //     threshold: 0.3,
-  //   })
-  // }, [items])
-
   const results = useMemo(() => {
     return query ? fuse.search(query).map((result) => result.item) : items
   }, [query, fuse, items])
