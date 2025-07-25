@@ -8,7 +8,6 @@ import type { KubernetesCluster } from '@ror/js-api-client'
 import { CodeSnippet, Layer } from '@ror/react'
 import { ExternalLink } from 'lucide-react'
 import { User } from 'next-auth'
-import { useRouter } from 'next/navigation'
 import { envBgColors } from './cluster-header'
 import { HealthCircle } from './health-circle'
 
@@ -108,8 +107,6 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
     clusterStatus?.state?.endpoints?.find((endpoint) => endpoint.name === 'datacenter')?.address || '<missing>'
   const rorLogin = `ror login ${clusterId}`
   const kubectlLogin = `kubectl vsphere login --server=${serverUrl} -u ${user?.email} --insecure-skip-tls-verify --tanzu-kubernetes-cluster-namespace ${clusterSpec?.data?.workspace} --tanzu-kubernetes-cluster-name ${clusterName}`
-
-  const router = useRouter()
 
   const handleCardClick = () => {
     window.open(`/clusters/${clusterId}`, '_blank')
