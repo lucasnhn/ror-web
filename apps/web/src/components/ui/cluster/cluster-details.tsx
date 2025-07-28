@@ -2,7 +2,7 @@
 
 import { cn } from '@/utils/clsxm'
 import { User } from 'next-auth'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useState } from 'react'
 import { Responsive, WidthProvider } from 'react-grid-layout'
 import type { Layout, Layouts } from 'react-grid-layout'
 import 'react-grid-layout/css/styles.css'
