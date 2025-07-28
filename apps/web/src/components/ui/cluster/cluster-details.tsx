@@ -39,9 +39,9 @@ const standardLayouts: Layouts = {
     { i: 'memory', x: 0, y: 0, w: 6, h: 8 },
     { i: 'tools', x: 6, y: 0, w: 6, h: 8 },
     { i: 'info', x: 0, y: 8, w: 12, h: 8 },
-    { i: 'versions', x: 0, y: 8, w: 6, h: 8 },
-    { i: 'observed', x: 6, y: 8, w: 6, h: 8 },
-    { i: 'prices', x: 0, y: 16, w: 6, h: 8 },
+    { i: 'versions', x: 0, y: 16, w: 6, h: 8 },
+    { i: 'observed', x: 6, y: 16, w: 6, h: 8 },
+    { i: 'prices', x: 0, y: 24, w: 6, h: 8 },
   ],
   xs: [
     { i: 'memory', x: 0, y: 0, w: 6, h: 8 },
@@ -146,7 +146,7 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
 
   return (
     <div>
-      <div className='flex gap-2 mb-3'>
+      <div className='flex sm:flex-row flex-col gap-2 mb-3'>
         <Button
           onClick={() => {
             setSavedLayouts((prev) => ({
@@ -199,8 +199,8 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
           )}
           key={layoutKey}
           layouts={savedLayouts}
-          breakpoints={{ lg: 1856, md: 1200, sm: 512 }}
-          cols={{ lg: 42, md: 24, sm: 12 }}
+          breakpoints={{ lg: 1856, md: 1200, sm: 640, xs: 512 }}
+          cols={{ lg: 42, md: 24, sm: 12, xs: 6 }}
           rowHeight={30}
           draggableHandle='.drag-handle'
           draggableCancel='.no-drag'
