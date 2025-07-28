@@ -50,7 +50,8 @@ export function CopyButton({ onClick, className, children, size = 'md' }: CopyBu
   useEffect(() => {
     return () => {
       if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current)
+        const timeout = timeoutRef.current
+        clearTimeout(timeout)
       }
     }
   }, [])
@@ -60,7 +61,7 @@ export function CopyButton({ onClick, className, children, size = 'md' }: CopyBu
     onClick?.(e)
   }
 
-  const classes = clsx('r-copy-btn', className)
+  const classes = clsx('r-copy-btn', 'no-drag', className)
 
   return (
     <>
