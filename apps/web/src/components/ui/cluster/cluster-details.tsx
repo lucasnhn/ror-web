@@ -3,26 +3,55 @@
 import { cn } from '@/utils/clsxm'
 import { User } from 'next-auth'
 import React, { useEffect, useRef, useState } from 'react'
-import GridLayout from 'react-grid-layout'
-import type { Layout } from 'react-grid-layout'
+import { Responsive, WidthProvider } from 'react-grid-layout'
+import type { Layout, Layouts } from 'react-grid-layout'
 import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
 
 import { ExternalLink } from 'lucide-react'
-import { Layer, CodeSnippet } from '@ror/react'
+import { Layer } from '@ror/react'
 import { format } from 'date-fns'
 import { enZA } from 'date-fns/locale'
 import { useClusterContext } from '@/context/cluster-context'
 import { Button } from '@/components/shadcn/button'
+import { CodeSnippet } from '../code-snippet'
 
-const standardLayout = [
-  { i: 'memory', x: 0, y: 0, w: 6, h: 8, minW: 6, minH: 8 },
-  { i: 'tools', x: 6, y: 0, w: 6, h: 8, minW: 6, minH: 6 },
-  { i: 'info', x: 12, y: 0, w: 12, h: 8, minW: 9, minH: 8 },
-  { i: 'versions', x: 0, y: 8, w: 6, h: 8, minW: 6, minH: 7 },
-  { i: 'observed', x: 6, y: 8, w: 6, h: 8, minW: 6, minH: 7 },
-  { i: 'prices', x: 12, y: 8, w: 6, h: 8, minW: 6, minH: 4 },
-]
+const ResponsiveGridLayout = WidthProvider(Responsive)
+
+const standardLayouts: Layouts = {
+  lg: [
+    { i: 'memory', x: 0, y: 0, w: 6, h: 8 },
+    { i: 'tools', x: 6, y: 0, w: 6, h: 8 },
+    { i: 'info', x: 12, y: 0, w: 12, h: 8 },
+    { i: 'versions', x: 24, y: 0, w: 6, h: 8 },
+    { i: 'observed', x: 30, y: 0, w: 6, h: 8 },
+    { i: 'prices', x: 36, y: 0, w: 6, h: 8 },
+  ],
+  md: [
+    { i: 'memory', x: 0, y: 0, w: 6, h: 8 },
+    { i: 'tools', x: 6, y: 0, w: 6, h: 8 },
+    { i: 'info', x: 12, y: 0, w: 12, h: 8 },
+    { i: 'versions', x: 0, y: 8, w: 6, h: 8 },
+    { i: 'observed', x: 6, y: 8, w: 6, h: 8 },
+    { i: 'prices', x: 12, y: 8, w: 6, h: 8 },
+  ],
+  sm: [
+    { i: 'memory', x: 0, y: 0, w: 6, h: 8 },
+    { i: 'tools', x: 6, y: 0, w: 6, h: 8 },
+    { i: 'info', x: 0, y: 8, w: 12, h: 8 },
+    { i: 'versions', x: 0, y: 8, w: 6, h: 8 },
+    { i: 'observed', x: 6, y: 8, w: 6, h: 8 },
+    { i: 'prices', x: 0, y: 16, w: 6, h: 8 },
+  ],
+  xs: [
+    { i: 'memory', x: 0, y: 0, w: 6, h: 8 },
+    { i: 'tools', x: 6, y: 0, w: 6, h: 8 },
+    { i: 'info', x: 0, y: 8, w: 12, h: 8 },
+    { i: 'versions', x: 0, y: 8, w: 6, h: 8 },
+    { i: 'observed', x: 6, y: 8, w: 6, h: 8 },
+    { i: 'prices', x: 0, y: 16, w: 6, h: 8 },
+  ],
+}
 
 interface ClusterDetailsProps {
   user?: User
@@ -50,9 +79,10 @@ function getHaClusterPlaneValue(nodes: number) {
 
 export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
   const { cluster } = useClusterContext()
-  const [layout, setLayout] = useState<Layout[]>(standardLayout)
   const [layoutKey, setLayoutKey] = useState(0)
-  const [savedLayout, setSavedLayout] = useState<Layout[]>(standardLayout)
+  const [layout, setLayout] = useState<Layout[]>(standardLayouts.lg)
+  const [savedLayouts, setSavedLayouts] = useState<Layouts>(standardLayouts)
+  const [currentBreakpoint, setCurrentBreakpoint] = useState('lg')
 
   const clusterSpec = cluster.kubernetescluster?.spec
   const clusterStatus = cluster.kubernetescluster?.status
@@ -106,14 +136,11 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
   }
 
   const containerRef = useRef<HTMLDivElement>(null)
-  const [layoutWidth, setLayoutWidth] = useState(0)
 
   useEffect(() => {
     if (!containerRef.current) return
 
-    const observer = new ResizeObserver(([entry]) => {
-      setLayoutWidth(entry.contentRect.width)
-    })
+    const observer = new ResizeObserver(() => {})
 
     observer.observe(containerRef.current)
 
@@ -134,22 +161,30 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
       <div className='flex gap-2 mb-3'>
         <Button
           onClick={() => {
-            setSavedLayout([...layout])
+            setSavedLayouts((prev) => ({
+              ...prev,
+              [currentBreakpoint]: layout,
+            }))
           }}
         >
           Save layout
         </Button>
+
         <Button
           onClick={() => {
-            setLayout([...savedLayout])
-            setLayoutKey((prev) => prev + 1)
+            const saved = savedLayouts[currentBreakpoint]
+            if (saved) {
+              setLayout([...saved])
+              setLayoutKey((prev) => prev + 1)
+            }
           }}
         >
           Reset to saved
         </Button>
         <Button
           onClick={() => {
-            setLayout([...standardLayout])
+            setLayout([...standardLayouts.lg])
+            setSavedLayouts({ ...standardLayouts })
             setLayoutKey((prev) => prev + 1)
           }}
         >
@@ -168,19 +203,25 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
             .dark .react-grid-item.react-grid-placeholder { background-color: #3e88c5; }
           `}
         </style>
-        <GridLayout
+        <ResponsiveGridLayout
           className={cn(
             'layout w-full',
             '[&>div]:bg-[var(--r-layer)] [&>div]:rounded-lg [&>div]:p-4 [&>div]:shadow [&>div]:cursor-move',
             className
           )}
           key={layoutKey}
-          layout={layout}
-          cols={24}
+          layouts={savedLayouts}
+          breakpoints={{ lg: 1856, md: 1200, sm: 512 }}
+          cols={{ lg: 42, md: 24, sm: 12 }}
           rowHeight={30}
-          width={layoutWidth}
           draggableHandle='.drag-handle'
-          onLayoutChange={(newLayout) => setLayout(newLayout)}
+          draggableCancel='.no-drag'
+          onLayoutChange={(layout) => {
+            setLayout(layout)
+          }}
+          onBreakpointChange={(breakpoint) => {
+            setCurrentBreakpoint(breakpoint)
+          }}
         >
           <div key='memory' className='drag-handle'>
             <CardHeader title='Memory' />
@@ -403,7 +444,7 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
               </span>
             </div>
           </div>
-        </GridLayout>
+        </ResponsiveGridLayout>
       </div>
     </div>
   )
