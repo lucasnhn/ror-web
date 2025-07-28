@@ -135,18 +135,6 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
     },
   }
 
-  const containerRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    if (!containerRef.current) return
-
-    const observer = new ResizeObserver(() => {})
-
-    observer.observe(containerRef.current)
-
-    return () => observer.disconnect()
-  }, [])
-
   const CardHeader = ({ title }: { title: string }) => {
     return (
       <div className='mb-2'>
@@ -191,7 +179,7 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
           Reset to default
         </Button>
       </div>
-      <div ref={containerRef} className='w-full border rounded-xl p-2'>
+      <div className='w-full border rounded-xl p-2'>
         <style>
           {`
             .react-resizable-handle :after { border-color: black; }
