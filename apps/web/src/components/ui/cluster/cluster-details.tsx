@@ -171,8 +171,11 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
         </Button>
         <Button
           onClick={() => {
-            setLayout([...standardLayouts.lg])
-            setSavedLayouts({ ...standardLayouts })
+            setLayout([...standardLayouts[currentBreakpoint]])
+            setSavedLayouts((prev) => ({
+              ...prev,
+              [currentBreakpoint]: [...standardLayouts[currentBreakpoint]],
+            }))
             setLayoutKey((prev) => prev + 1)
           }}
         >
