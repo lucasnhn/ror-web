@@ -134,7 +134,6 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
       <div className='flex gap-2 mb-3'>
         <Button
           onClick={() => {
-            console.log('Saving layout')
             setSavedLayout([...layout])
           }}
         >
@@ -142,7 +141,6 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
         </Button>
         <Button
           onClick={() => {
-            console.log('Resetting to saved layout')
             setLayout([...savedLayout])
             setLayoutKey((prev) => prev + 1)
           }}
@@ -151,7 +149,6 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
         </Button>
         <Button
           onClick={() => {
-            console.log('Resetting layout to default')
             setLayout([...standardLayout])
             setLayoutKey((prev) => prev + 1)
           }}
