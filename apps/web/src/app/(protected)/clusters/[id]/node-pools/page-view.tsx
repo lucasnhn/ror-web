@@ -2,7 +2,7 @@
 
 import { convertBytes } from '@/utils/bytes'
 import { ColumnDef } from '@tanstack/react-table'
-import React, { useState } from 'react'
+import React, { memo, useState } from 'react'
 import { DataTable } from '@/components/ui/data-table'
 import { Button } from '@/components/shadcn/button'
 import { PencilIcon, Plus, Trash } from 'lucide-react'
@@ -24,7 +24,7 @@ interface Nodepool {
   machineClass: string
   nodeCount: number
   cores: number
-  memory: number
+  memory: string
   nodes: Node[]
 }
 
@@ -94,7 +94,6 @@ export function PageView({ data, id }: DataTableProps<Nodepool>) {
     {
       accessorKey: 'memory',
       header: 'Memory',
-      cell: ({ row }) => convertBytes(row.original.memory),
     },
     {
       accessorKey: 'nodes',
