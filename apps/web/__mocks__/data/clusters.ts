@@ -1,5 +1,6 @@
 import { sub } from 'date-fns'
 import { faker } from '@faker-js/faker'
+import nodes from './nodes'
 
 /**
  * Mock data for Clusters v1.
@@ -628,6 +629,7 @@ export const clustersVersion2 = {
                   gpu: null,
                   disk: null,
                 },
+                nodes: [],
               },
               nodepools: [
                 {
@@ -647,6 +649,7 @@ export const clustersVersion2 = {
                     gpu: null,
                     disk: null,
                   },
+                  nodes: [],
                 },
               ],
             },
@@ -760,6 +763,7 @@ export const clustersVersion2 = {
                   gpu: null,
                   disk: null,
                 },
+                nodes: [],
               },
               nodepools: [
                 {
@@ -779,6 +783,7 @@ export const clustersVersion2 = {
                     gpu: null,
                     disk: null,
                   },
+                  nodes: [],
                 },
               ],
             },
