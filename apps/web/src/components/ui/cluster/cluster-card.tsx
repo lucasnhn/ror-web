@@ -130,7 +130,7 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
         <CardTitle className={cn('text-2xl rounded-t-xl px-6 py-2 flex', envColor[0], envColor[1])}>
           {(clusterName || 'Unnamed Cluster') as string}
         </CardTitle>
-        <HealthCircle className='ml-auto mr-4 top-[-24px] w-[52px] h-[52px] ' healthCondition={healthCondition} />
+        <HealthCircle className='ml-auto mr-4 mt-[-24px] w-[52px] h-[52px] ' healthCondition={healthCondition} />
       </CardHeader>
 
       <CardContent className='text-sm flex flex-col gap-3'>
