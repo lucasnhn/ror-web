@@ -560,7 +560,29 @@ export const clustersVersion2 = {
           scope: 'workspace',
           subject: 'trd1-nhn-mgmt',
         },
-        tags: null,
+        tags: [
+          {
+            key: 'environment',
+            value: 'production',
+            properties: {
+              color: '#FF5733',
+            },
+          },
+          {
+            key: 'team',
+            value: 'platform',
+            properties: {
+              color: '#33C1FF',
+            },
+          },
+          {
+            key: 'region',
+            value: 'eu-north-1',
+            properties: {
+              color: '#A1FF33',
+            },
+          },
+        ],
       },
       kubernetescluster: {
         spec: {
@@ -694,7 +716,13 @@ export const clustersVersion2 = {
           scope: 'workspace',
           subject: 'prod-nhn-mgmt',
         },
-        tags: [],
+        tags: [
+          {
+            key: 'environment',
+            value: 'development',
+            properties: { color: '#00FF00' },
+          },
+        ],
       },
       kubernetescluster: {
         spec: {

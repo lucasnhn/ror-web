@@ -101,6 +101,10 @@ const displayDataOptions: Option[] = [
     value: 'environment',
     label: 'Environment',
   },
+  {
+    value: 'serviceTags',
+    label: 'Service tags',
+  },
 ]
 
 const sortingOptions = [
