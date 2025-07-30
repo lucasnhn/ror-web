@@ -41,5 +41,5 @@ export type VulnerabilityReport = z.infer<typeof VulnerabilityReportSchema>
 export type VulnerabilityReportResponse = z.infer<typeof VulnerabilityReportResponseSchema>
 export type Replicaset = z.infer<typeof ReplicaSetSchema>
 export type ReplicasetResponse = z.infer<typeof ReplicaSetResponseSchema>
-export type RorMetaDataSchema = z.infer<typeof RorMetaDataSchema>
-export type RorMetaDataResponseSchema = z.infer<typeof RorMetaDataResponseSchema>
+export type RorMetaData = z.infer<typeof RorMetaDataSchema>
+export type RorMetaDataResponse = z.infer<typeof RorMetaDataResponseSchema>

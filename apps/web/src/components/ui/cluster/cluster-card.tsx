@@ -4,7 +4,7 @@ import * as React from 'react'
 
 import { Pill } from '@/components/shadcn/pill'
 import { cn } from '@/utils/clsxm'
-import type { KubernetesCluster } from '@ror/js-api-client'
+import type { KubernetesCluster, RorMetaData } from '@ror/js-api-client'
 import { Layer } from '@ror/react'
 import { ExternalLink } from 'lucide-react'
 import { User } from 'next-auth'
@@ -366,9 +366,9 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
             <div>
               <p className='font-bold'>Service tags</p>
               <p className='flex flex-wrap gap-1'>
-                {serviceTags.map((tag: { key: string; value: string; properties: { color: string } }) => (
-                  <Pill key={tag.key} style={{ backgroundColor: tag.properties.color }}>
-                    {tag.value}
+                {(serviceTags as RorMetaData).tags?.map(({ key, value, properties }) => (
+                  <Pill key={key} style={{ backgroundColor: properties.color }}>
+                    {value}
                   </Pill>
                 ))}
               </p>
