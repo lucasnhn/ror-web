@@ -4,7 +4,7 @@ import * as React from 'react'
 
 import { Pill } from '@/components/shadcn/pill'
 import { cn } from '@/utils/clsxm'
-import type { KubernetesCluster, RorMetaData } from '@ror/js-api-client'
+import type { KubernetesCluster } from '@ror/js-api-client'
 import { Layer } from '@ror/react'
 import { ExternalLink } from 'lucide-react'
 import { User } from 'next-auth'
