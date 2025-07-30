@@ -2,7 +2,47 @@ import { z } from 'zod'
 
 // TODO: Define schemas
 const ResourceMetaDataSchema = z.object({}).passthrough()
-const RorMetaDataSchema = z.object({}).passthrough()
+
+export const ResourceAction = z.enum(['Add', 'Delete', 'Update'])
+
+export const Acl2Scope = z.enum(['', 'ror', 'cluster', 'project', 'datacenter', 'virtualmachine'])
+
+export const Acl2Subject = z.enum([
+  'globalscope',
+  'cluster',
+  'project',
+  'acl',
+  'apikey',
+  'datacenter',
+  'workspace',
+  'price',
+  'virtualmachine',
+])
+
+export const ResourceTagProperties = z.enum(['color'])
+
+export const RorResourceOwnerReference = z.object({
+  scope: Acl2Scope,
+  subject: Acl2Subject,
+})
+
+export const ResourceTag = z.object({
+  key: z.string(),
+  value: z.string(),
+  properties: z.record(z.string()),
+})
+
+export const RorMetaDataSchema = z.object({
+  version: z.string().optional(),
+  lastReported: z.string().optional(),
+  internal: z.boolean().optional(),
+  hash: z.string().optional(),
+  ownerref: RorResourceOwnerReference.optional(),
+  action: ResourceAction.optional(),
+  tags: z.array(ResourceTag).optional(),
+})
+
+export const RorMetaDataResponseSchema = createV2ResourceResponseSchema(RorMetaDataSchema)
 
 /**
  * A schema for all v2 resources
