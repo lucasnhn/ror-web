@@ -1,6 +1,4 @@
-import { sub } from 'date-fns'
 import { faker } from '@faker-js/faker'
-import nodes from './nodes'
 
 /**
  * Mock data for Clusters v1.
