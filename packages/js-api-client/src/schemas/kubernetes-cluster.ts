@@ -99,6 +99,7 @@ export const KubernetesClusterNodePoolStatus = z.object({
   machineClass: z.string().nullable().optional(), // Size of machines in nodes
   autoscaling: KubernetesClusterAutoscalingConfig.nullable().optional(),
   resources: KubernetesClusterStatusClusterStatusResources.nullable().optional(),
+  nodes: z.array(z.string()).nullable().optional(), // List of node names in the nodepool
 })
 
 export const KubernetesClusterStatusPrice = z.object({
@@ -112,6 +113,7 @@ export const KubernetesClusterControlPlaneStatus = z.object({
   scale: z.number().nullable().optional(),
   machineClass: z.string().nullable().optional(),
   resources: KubernetesClusterStatusClusterStatusResources.nullable().optional(),
+  nodes: z.array(z.string()).optional().nullable(),
 })
 
 export const KubernetesClusterClusterDetails = z.object({

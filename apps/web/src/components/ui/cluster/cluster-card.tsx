@@ -5,9 +5,10 @@ import * as React from 'react'
 import { Pill } from '@/components/shadcn/pill'
 import { cn } from '@/utils/clsxm'
 import type { KubernetesCluster } from '@ror/js-api-client'
-import { CodeSnippet, Layer } from '@ror/react'
+import { Layer } from '@ror/react'
 import { ExternalLink } from 'lucide-react'
 import { User } from 'next-auth'
+import { CodeSnippet } from '../code-snippet'
 import { envBgColors } from './cluster-header'
 import { HealthCircle } from './health-circle'
 
@@ -129,7 +130,7 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
         <CardTitle className={cn('text-2xl rounded-t-xl px-6 py-2 flex', envColor[0], envColor[1])}>
           {(clusterName || 'Unnamed Cluster') as string}
         </CardTitle>
-        <HealthCircle className='ml-auto mr-4 top-[-24px] w-[52px] h-[52px] ' healthCondition={healthCondition} />
+        <HealthCircle className='ml-auto mr-4 mt-[-24px] w-[52px] h-[52px] ' healthCondition={healthCondition} />
       </CardHeader>
 
       <CardContent className='text-sm flex flex-col gap-3'>

@@ -10,9 +10,11 @@ import { Input } from '@/components/shadcn/input'
 import { Separator } from '@/components/shadcn/separator'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/shadcn/sheet'
 import { Skeleton } from '@/components/shadcn/skeleton'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/shadcn/tooltip'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/shadcn/popover'
 import { useIsMobile } from '@/hooks/use-mobile'
 import { cn } from '@/utils/clsxm'
+import { SidebarItem } from '../app-sidebar-content'
+import Link from 'next/link'
 
 const SIDEBAR_COOKIE_NAME = 'sidebar_state'
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
@@ -29,6 +31,11 @@ type SidebarContextProps = {
   setOpenMobile: (open: boolean) => void
   isMobile: boolean
   toggleSidebar: () => void
+}
+
+type PopoverContent = {
+  title: string
+  items: SidebarItem[]
 }
 
 const SidebarContext = React.createContext<SidebarContextProps | null>(null)
@@ -122,22 +129,20 @@ function SidebarProvider({
 
   return (
     <SidebarContext.Provider value={contextValue}>
-      <TooltipProvider delayDuration={0}>
-        <div
-          data-slot='sidebar-wrapper'
-          style={
-            {
-              '--sidebar-width': SIDEBAR_WIDTH,
-              '--sidebar-width-icon': SIDEBAR_WIDTH_ICON,
-              ...style,
-            } as React.CSSProperties
-          }
-          className={cn('group/sidebar-wrapper has-data-[variant=inset]:bg-sidebar flex min-h-svh w-full', className)}
-          {...props}
-        >
-          {children}
-        </div>
-      </TooltipProvider>
+      <div
+        data-slot='sidebar-wrapper'
+        style={
+          {
+            '--sidebar-width': SIDEBAR_WIDTH,
+            '--sidebar-width-icon': SIDEBAR_WIDTH_ICON,
+            ...style,
+          } as React.CSSProperties
+        }
+        className={cn('group/sidebar-wrapper has-data-[variant=inset]:bg-sidebar flex min-h-svh w-full', className)}
+        {...props}
+      >
+        {children}
+      </div>
     </SidebarContext.Provider>
   )
 }
@@ -476,41 +481,69 @@ const SidebarMenuButton = React.forwardRef<
   React.ComponentProps<'button'> & {
     asChild?: boolean
     isActive?: boolean
-    tooltip?: string | React.ComponentProps<typeof TooltipContent>
+    popoverContent?: PopoverContent
   } & VariantProps<typeof sidebarMenuButtonVariants>
->(({ asChild = false, isActive = false, variant = 'default', size = 'default', tooltip, className, ...props }, ref) => {
-  const Comp = asChild ? Slot : 'button'
-  const { isMobile, state } = useSidebar()
+>(
+  (
+    { asChild = false, isActive = false, variant = 'default', size = 'default', popoverContent, className, ...props },
+    ref
+  ) => {
+    const Comp = asChild ? Slot : 'button'
+    const { isMobile, state } = useSidebar()
 
-  const button = (
-    <Comp
-      ref={ref}
-      data-slot='sidebar-menu-button'
-      data-sidebar='menu-button'
-      data-size={size}
-      data-active={isActive}
-      className={cn(sidebarMenuButtonVariants({ variant, size }), className)}
-      {...props}
-    />
-  )
+    const button = (
+      <Comp
+        ref={ref}
+        data-slot='sidebar-menu-button'
+        data-sidebar='menu-button'
+        data-size={size}
+        data-active={isActive}
+        className={cn(sidebarMenuButtonVariants({ variant, size }), className)}
+        {...props}
+      />
+    )
 
-  if (!tooltip) {
-    return button
-  }
-
-  if (typeof tooltip === 'string') {
-    tooltip = {
-      children: tooltip,
+    if (!popoverContent) {
+      return button
     }
-  }
 
-  return (
-    <Tooltip>
-      <TooltipTrigger asChild>{button}</TooltipTrigger>
-      <TooltipContent side='right' align='center' hidden={state !== 'collapsed' || isMobile} {...tooltip} />
-    </Tooltip>
-  )
-})
+    return (
+      <Popover>
+        <PopoverTrigger asChild>{button}</PopoverTrigger>
+        <PopoverContent
+          side='right'
+          align='start'
+          hidden={state !== 'collapsed' || isMobile}
+          className='min-w-[12rem] p-2'
+        >
+          {popoverContent.items.length === 1 ? (
+            'url' in popoverContent.items[0] ? (
+              <div className='hover:bg-[var(--r-layer)] rounded-md px-2 pt-1'>
+                <Link className='pt-1' href={popoverContent.items[0].url}>
+                  {popoverContent.items[0].title}
+                </Link>
+              </div>
+            ) : (
+              <span>{popoverContent.items[0].title}</span>
+            )
+          ) : (
+            <div>
+              <span className='ml-2'>{popoverContent.title}</span>
+              <hr />
+              <div className='mt-2'>
+                {popoverContent.items.map((item) => (
+                  <div key={item.title} className='hover:bg-[var(--r-layer)] rounded-md px-2 pt-2'>
+                    {'url' in item ? <Link href={item.url}>{item.title}</Link> : <span>{item.title}</span>}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </PopoverContent>
+      </Popover>
+    )
+  }
+)
 
 SidebarMenuButton.displayName = 'SidebarMenuButton'
 
