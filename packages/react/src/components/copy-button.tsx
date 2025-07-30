@@ -80,7 +80,6 @@ export function CopyButton({ onClick, className, children, size = 'md' }: CopyBu
 
   return (
     <>
-      <Toaster richColors position='bottom-right' theme={theme} />
       <Button icon={<Copy />} iconOnly onClick={handleOnClick} className={classes} size={size}>
         {children}
       </Button>
