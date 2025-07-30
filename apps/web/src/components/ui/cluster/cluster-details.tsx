@@ -48,7 +48,7 @@ const standardLayouts: Layouts = {
     { i: 'tools', x: 0, y: 8, w: 6, h: 8, minW: 4, minH: 6 },
     { i: 'info', x: 0, y: 16, w: 12, h: 8, minW: 9, minH: 8 },
     { i: 'versions', x: 0, y: 24, w: 6, h: 8, minW: 4, minH: 7 },
-    { i: 'observed', x: 6, y: 32, w: 6, h: 8, minW: 4, minH: 5 },
+    { i: 'observed', x: 0, y: 32, w: 6, h: 8, minW: 4, minH: 5 },
     { i: 'prices', x: 0, y: 40, w: 6, h: 8, minW: 4, minH: 4 },
   ],
 }
