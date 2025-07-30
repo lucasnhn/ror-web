@@ -42,7 +42,9 @@ export const RorMetaDataSchema = z.object({
   tags: z.array(ResourceTag).optional(),
 })
 
-export const RorMetaDataResponseSchema = createV2ResourceResponseSchema(RorMetaDataSchema)
+export const RorMetaDataResponseSchema = z.object({
+  metadata: RorMetaDataSchema,
+});
 
 /**
  * A schema for all v2 resources
