@@ -22,8 +22,8 @@ export const Acl2Subject = z.enum([
 export const ResourceTagProperties = z.enum(['color'])
 
 export const RorResourceOwnerReference = z.object({
-  scope: Acl2Scope,
-  subject: Acl2Subject,
+  scope: z.string(),
+  subject: z.string(),
 })
 
 export const ResourceTag = z.object({

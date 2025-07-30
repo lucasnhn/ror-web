@@ -52,6 +52,7 @@ export type ClusterCardDisplayData =
   | 'datacenterName'
   | 'datacenterProvider'
   | 'environment'
+  | 'serviceTags'
 
 interface ClusterCardProps {
   className?: string
@@ -108,6 +109,7 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
     clusterStatus?.state?.endpoints?.find((endpoint) => endpoint.name === 'datacenter')?.address || '<missing>'
   const rorLogin = `ror login ${clusterId}`
   const kubectlLogin = `kubectl vsphere login --server=${serverUrl} -u ${user?.email} --insecure-skip-tls-verify --tanzu-kubernetes-cluster-namespace ${clusterSpec?.data?.workspace} --tanzu-kubernetes-cluster-name ${clusterName}`
+  const serviceTags = cluster.rormeta.tags || []
 
   const handleCardClick = () => {
     window.open(`/clusters/${clusterId}`, '_blank')
@@ -357,6 +359,18 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
                 <Pill variant={envColors[env ?? 'undefined']} className='px-3'>
                   {(env ?? 'Undefined').charAt(0).toUpperCase() + (env ?? 'Undefined').slice(1)}
                 </Pill>
+              </p>
+            </div>
+          )}
+          {displayData?.includes('serviceTags') && (
+            <div>
+              <p className='font-bold'>Service tags</p>
+              <p className='flex flex-wrap gap-1'>
+                {serviceTags.map((tag: { key: string; value: string; properties: { color: string } }) => (
+                  <Pill key={tag.key} style={{ backgroundColor: tag.properties.color }}>
+                    {tag.value}
+                  </Pill>
+                ))}
               </p>
             </div>
           )}
