@@ -366,7 +366,7 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
             <div>
               <p className='font-bold'>Service tags</p>
               <p className='flex flex-wrap gap-1'>
-                {(serviceTags as RorMetaData).tags?.map(({ key, value, properties }) => (
+                {serviceTags.map(({ key, value, properties }) => (
                   <Pill key={key} style={{ backgroundColor: properties.color }}>
                     {value}
                   </Pill>
