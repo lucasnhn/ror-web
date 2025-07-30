@@ -4,7 +4,7 @@ import type { ReactNode } from 'react'
 import { useEffect, useRef, useState } from 'react'
 import { clsx } from 'clsx'
 import { Button, ButtonSize } from './button'
-import { toast, Toaster } from 'sonner'
+import { toast } from 'sonner'
 
 export interface CopyButtonProps {
   /**
