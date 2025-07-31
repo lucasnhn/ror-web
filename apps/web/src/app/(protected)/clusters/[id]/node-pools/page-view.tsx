@@ -1,6 +1,5 @@
 'use client'
 
-import { convertBytes } from '@/utils/bytes'
 import { ColumnDef } from '@tanstack/react-table'
 import React, { useState } from 'react'
 import { DataTable } from '@/components/ui/data-table'
@@ -22,9 +21,9 @@ interface Node {
 interface Nodepool {
   name: string
   machineClass: string
-  nodeCount: number
+  nodeCount: string
   cores: number
-  memory: number
+  memory: string
   nodes: Node[]
 }
 
@@ -94,7 +93,6 @@ export function PageView({ data, id }: DataTableProps<Nodepool>) {
     {
       accessorKey: 'memory',
       header: 'Memory',
-      cell: ({ row }) => convertBytes(row.original.memory),
     },
     {
       accessorKey: 'nodes',

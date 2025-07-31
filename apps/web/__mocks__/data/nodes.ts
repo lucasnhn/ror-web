@@ -73,9 +73,9 @@ const nodes: NodeResponse = {
         status: {
           addresses: null,
           capacity: {
-            cpu: '',
+            cpu: '2',
             ephemeralStorage: '',
-            memory: '',
+            memory: '7.68Gi',
             pods: '',
           },
           conditions: null,
@@ -117,9 +117,9 @@ const nodes: NodeResponse = {
         status: {
           addresses: null,
           capacity: {
-            cpu: '',
+            cpu: '16',
             ephemeralStorage: '',
-            memory: '',
+            memory: '6.32Gi',
             pods: '',
           },
           conditions: null,
@@ -161,9 +161,9 @@ const nodes: NodeResponse = {
         status: {
           addresses: null,
           capacity: {
-            cpu: '',
+            cpu: '2',
             ephemeralStorage: '',
-            memory: '',
+            memory: '6.32Gi',
             pods: '',
           },
           conditions: null,
