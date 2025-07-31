@@ -22,7 +22,7 @@ interface Node {
 interface Nodepool {
   name: string
   machineClass: string
-  nodeCount: number
+  nodeCount: string
   cores: number
   memory: string
   nodes: Node[]
