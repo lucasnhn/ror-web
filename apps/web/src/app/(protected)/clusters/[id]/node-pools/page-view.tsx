@@ -1,8 +1,7 @@
 'use client'
 
-import { convertBytes } from '@/utils/bytes'
 import { ColumnDef } from '@tanstack/react-table'
-import React, { memo, useState } from 'react'
+import React, { useState } from 'react'
 import { DataTable } from '@/components/ui/data-table'
 import { Button } from '@/components/shadcn/button'
 import { PencilIcon, Plus, Trash } from 'lucide-react'
