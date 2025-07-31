@@ -669,7 +669,7 @@ export const clustersVersion2 = {
                     gpu: null,
                     disk: null,
                   },
-                  nodes: [],
+                  nodes: ['t-aaa-001-workers-f4jpw-f4hxf-h5g2n', 't-aaa-001-workers-f4jpw-f4hxf-lmcrl'],
                 },
               ],
             },
