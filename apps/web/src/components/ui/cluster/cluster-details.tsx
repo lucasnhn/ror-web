@@ -1,20 +1,21 @@
 'use client'
 
+import { Button } from '@/components/shadcn/button'
+import { useClusterContext } from '@/context/cluster-context'
 import { cn } from '@/utils/clsxm'
-import { User } from 'next-auth'
-import React, { useState } from 'react'
-import { Responsive, WidthProvider } from 'react-grid-layout'
-import type { Layout, Layouts } from 'react-grid-layout'
-import 'react-grid-layout/css/styles.css'
-import 'react-resizable/css/styles.css'
-
-import { ExternalLink } from 'lucide-react'
+import { getSavedUserPreferenceObject, PREFERENCES_KEY, updateUserPreferenceObject } from '@/utils/user-preferences'
 import { Layer } from '@ror/react'
 import { format } from 'date-fns'
 import { enZA } from 'date-fns/locale'
-import { useClusterContext } from '@/context/cluster-context'
-import { Button } from '@/components/shadcn/button'
+import { ExternalLink } from 'lucide-react'
+import { User } from 'next-auth'
+import { useEffect, useState } from 'react'
+import type { Layout, Layouts } from 'react-grid-layout'
+import { Responsive, WidthProvider } from 'react-grid-layout'
+import 'react-grid-layout/css/styles.css'
+import 'react-resizable/css/styles.css'
 import { CodeSnippet } from '../code-snippet'
+import { toast } from 'sonner'
 
 const ResponsiveGridLayout = WidthProvider(Responsive)
 
@@ -135,6 +136,13 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
     },
   }
 
+  useEffect(() => {
+    const preferences = getSavedUserPreferenceObject(PREFERENCES_KEY)
+    const layouts = preferences.clusterCards?.layouts || standardLayouts
+    setSavedLayouts(layouts)
+    setLayout(layouts[currentBreakpoint] || [])
+  }, [])
+
   const CardHeader = ({ title }: { title: string }) => {
     return (
       <div className='mb-2'>
@@ -149,10 +157,19 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
       <div className='flex sm:flex-row flex-col gap-2 mb-3'>
         <Button
           onClick={() => {
-            setSavedLayouts((prev) => ({
-              ...prev,
+            const newLayouts = {
+              ...savedLayouts,
               [currentBreakpoint]: layout,
-            }))
+            }
+            setSavedLayouts(newLayouts)
+
+            updateUserPreferenceObject(PREFERENCES_KEY, {
+              clusterCards: {
+                layouts: newLayouts,
+              },
+            })
+
+            toast.info('Layout saved')
           }}
         >
           Save layout
