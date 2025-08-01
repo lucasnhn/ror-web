@@ -1,18 +1,10 @@
-import { authGuard } from '@/features/auth/utils/auth-guard'
-import { rorApiClient } from '@/services/ror-api'
+'use client'
+
+import { useClusterContext } from '@/context/cluster-context'
 import { CodeSnippet } from '@ror/react/components/code-snippet'
 
-interface ClusterPageProps {
-  params: Promise<{
-    id: string
-  }>
-}
-
-export default async function ClusterRawDataPage({ params }: ClusterPageProps) {
-  const { id } = await params
-  const session = await authGuard()
-  const client = rorApiClient(session.accessToken)
-  const cluster = await client.kubernetesClusters.id(id)
+export default function ClusterRawDataPage() {
+  const { cluster } = useClusterContext()
 
   return (
     <div className=''>

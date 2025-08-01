@@ -1,7 +1,6 @@
 'use client'
 
-import { convertBytes } from '@/utils/bytes'
-import { ColumnDef, SortingState } from '@tanstack/react-table'
+import { ColumnDef } from '@tanstack/react-table'
 import React, { useState } from 'react'
 import { DataTable } from '@/components/ui/data-table'
 import { Button } from '@/components/shadcn/button'
@@ -14,9 +13,9 @@ import { Node } from '@ror/js-api-client'
 interface Nodepool {
   name: string
   machineClass: string
-  nodeCount: number
+  nodeCount: string
   cores: number
-  memory: number
+  memory: string
   nodes: Node[]
 }
 
@@ -52,7 +51,6 @@ interface DataTableProps<TData> {
 
 export function PageView({ data, id }: DataTableProps<Nodepool>) {
   const [remove, setRemove] = useState<boolean>(false)
-  const [sorting, setSorting] = useState<SortingState>([])
 
   // TODO: remove this when the remove modals are implemented, needed to build
   console.log('Remove:', remove)
@@ -88,7 +86,6 @@ export function PageView({ data, id }: DataTableProps<Nodepool>) {
     {
       accessorKey: 'memory',
       header: 'Memory',
-      cell: ({ row }) => convertBytes(row.original.memory),
     },
     {
       accessorKey: 'nodes',
@@ -131,8 +128,6 @@ export function PageView({ data, id }: DataTableProps<Nodepool>) {
         data={data}
         totalCount={data.length}
         expandable
-        sorting={sorting}
-        onSortingChange={setSorting}
         renderExpandedRow={(row) => (
           <TableRow className='contents'>
             <TableCell colSpan={columns.length} className='p-0' style={{ gridColumn: '1 / -1' }}>

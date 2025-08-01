@@ -1,20 +1,33 @@
-export const ignoreList: string[] = ['_next', '__next', 'stream', 'http://localhost:4318/v1/traces']
+// List of request patterns that should be ignored by the MSW unhandled request warning
+export const ignoreList: string[] = [
+  '_next', // Next.js internal assets like /_next/static/...
+  '__next', // Older Next.js asset path format or potential typo backup
+  'stream', // Streaming endpoints (e.g., server-sent events or WebSocket setups)
+  'http://localhost:4318/v1/traces', // OpenTelemetry trace reporting endpoint
+]
 
+/**
+ * Custom handler for MSW's onUnhandledRequest lifecycle event.
+ * Decides whether to suppress or show a warning for unmocked requests.
+ */
 export function onUnhandledRequest(request: Request, print: { warning: () => void }) {
-  // Get just the path part of the URL
+  // Parse the full request URL to extract its path
   const url = new URL(request.url)
   const path = url.pathname
 
+  // Check if the request should be ignored based on the ignore list
   const onIgnoreList = ignoreList.some(
     (ignore) =>
-      path.startsWith(`/${ignore}`) || // Check if path starts with the ignored prefix
-      path.includes(ignore) || // Check if path includes the ignored string
-      ignore === request.url // Check for exact URL match
+      path.startsWith(`/${ignore}`) || // Path starts with ignored prefix (e.g., /_next)
+      path.includes(ignore) || // Path contains ignore string anywhere
+      ignore === request.url // Full URL matches exactly
   )
 
+  // If the request matches any ignore condition, do not print a warning
   if (onIgnoreList) {
     return
   }
 
+  // Otherwise, trigger MSW's warning to alert developers about an unhandled request
   return print.warning()
 }

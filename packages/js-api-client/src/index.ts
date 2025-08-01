@@ -29,6 +29,8 @@ export type {
   User,
   ReplicaSet,
   ReplicaSetResponse,
+  RorMetaData,
+  RorMetaDataResponse,
   Service,
   ServiceResponse,
   VulnerabilityReport,

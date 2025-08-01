@@ -19,11 +19,15 @@ export function ClusterSearch({ items, onResultsChange }: ClusterSearchProps) {
   const fuse = useMemo(() => {
     const flatClusters = items.map((cluster) => ({
       ...cluster,
-      label: cluster.metadata?.name ?? cluster.kubernetescluster?.spec?.data?.clusterId, // fallback
+      label: cluster.metadata?.name ?? cluster.kubernetescluster?.spec?.data?.clusterId,
+      datacenterName: cluster.kubernetescluster?.spec?.data?.datacenter,
+      datacenterProvider: cluster.kubernetescluster?.spec?.data?.provider,
+      environment: cluster.kubernetescluster?.spec?.data?.environment,
+      // TODO: Add health
     }))
 
     return new Fuse(flatClusters, {
-      keys: ['label', 'workspace.name', 'topology.controlPlaneEndpoint', 'environment'], // Customize fields as needed
+      keys: ['label', 'datacenterName', 'datacenterProvider', 'environment'],
       threshold: 0.3,
     })
   }, [items])

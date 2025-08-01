@@ -110,5 +110,9 @@ export const routes = {
       label: 'Profile',
       getHref: () => '/profile',
     },
+    error: {
+      label: 'Error page',
+      getHref: () => '/error',
+    },
   },
 } as const

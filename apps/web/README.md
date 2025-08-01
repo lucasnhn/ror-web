@@ -71,3 +71,12 @@ apps/web/
 - `src/features/`: Feature-based code organization for more complex features
 - `src/services/`: External service integrations
 - `src/utils/`: Utility functions for common operations across the app
+
+## Health Checks
+
+The application provides health check endpoints for Kubernetes and other monitoring systems:
+
+- `/api/health`: Liveness probe endpoint for Kubernetes that returns basic status
+- `/api/healthz`: Readiness probe endpoint with more detailed application state
+
+These endpoints are accessible without authentication and are automatically bypassed by the middleware.
