@@ -5,9 +5,10 @@ import * as React from 'react'
 import { Pill } from '@/components/shadcn/pill'
 import { cn } from '@/utils/clsxm'
 import type { KubernetesCluster } from '@ror/js-api-client'
-import { CodeSnippet, Layer } from '@ror/react'
+import { Layer } from '@ror/react'
 import { ExternalLink } from 'lucide-react'
 import { User } from 'next-auth'
+import { CodeSnippet } from '../code-snippet'
 import { envBgColors } from './cluster-header'
 import { HealthCircle } from './health-circle'
 
@@ -51,6 +52,7 @@ export type ClusterCardDisplayData =
   | 'datacenterName'
   | 'datacenterProvider'
   | 'environment'
+  | 'serviceTags'
 
 interface ClusterCardProps {
   className?: string
@@ -107,6 +109,7 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
     clusterStatus?.state?.endpoints?.find((endpoint) => endpoint.name === 'datacenter')?.address || '<missing>'
   const rorLogin = `ror login ${clusterId}`
   const kubectlLogin = `kubectl vsphere login --server=${serverUrl} -u ${user?.email} --insecure-skip-tls-verify --tanzu-kubernetes-cluster-namespace ${clusterSpec?.data?.workspace} --tanzu-kubernetes-cluster-name ${clusterName}`
+  const serviceTags = cluster.rormeta.tags || []
 
   const handleCardClick = () => {
     window.open(`/clusters/${clusterId}`, '_blank')
@@ -129,7 +132,7 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
         <CardTitle className={cn('text-2xl rounded-t-xl px-6 py-2 flex', envColor[0], envColor[1])}>
           {(clusterName || 'Unnamed Cluster') as string}
         </CardTitle>
-        <HealthCircle className='ml-auto mr-4 top-[-24px] w-[52px] h-[52px] ' healthCondition={healthCondition} />
+        <HealthCircle className='ml-auto mr-4 mt-[-24px] w-[52px] h-[52px] ' healthCondition={healthCondition} />
       </CardHeader>
 
       <CardContent className='text-sm flex flex-col gap-3'>
@@ -356,6 +359,18 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
                 <Pill variant={envColors[env ?? 'undefined']} className='px-3'>
                   {(env ?? 'Undefined').charAt(0).toUpperCase() + (env ?? 'Undefined').slice(1)}
                 </Pill>
+              </p>
+            </div>
+          )}
+          {displayData?.includes('serviceTags') && (
+            <div>
+              <p className='font-bold'>Service tags</p>
+              <p className='flex flex-wrap gap-1'>
+                {serviceTags.map(({ key, value, properties }) => (
+                  <Pill key={key} style={{ backgroundColor: properties.color }}>
+                    {value}
+                  </Pill>
+                ))}
               </p>
             </div>
           )}

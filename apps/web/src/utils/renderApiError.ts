@@ -55,7 +55,7 @@ export function RenderApiError(error: unknown) {
       errorCode: '400',
       errorText: 'Validation error occurred.',
       errorButtonText: buttonTextHomepage,
-      errorButtonLink: routes.app.clusters.getHref(),
+      errorButtonLink: clustersPage,
     })
   } else if (isApiError(error)) {
     // Handle other API errors
@@ -68,7 +68,7 @@ export function RenderApiError(error: unknown) {
       errorCode: String(error.status),
       errorText: error.message,
       errorButtonText: 'Go Back',
-      errorButtonLink: routes.app.clusters.getHref(),
+      errorButtonLink: clustersPage,
     })
   } else {
     // Handle unexpected errors

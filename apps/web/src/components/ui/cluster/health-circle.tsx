@@ -49,9 +49,18 @@ interface HealthCircleProps {
 }
 
 export const HealthCircle = ({ className, healthCondition }: HealthCircleProps) => (
-  <div className={cn(className, 'bg-neutral-100 p-0.5 rounded-full relative flex items-center justify-center')}>
+  <div
+    className={cn(
+      'flex items-center justify-center rounded-full border-[4px] border-neutral-100',
+      'w-10 h-10', // outer size
+      className
+    )}
+  >
     <div
-      className={`w-[calc(100%-4px)] h-[calc(100%-4px)] rounded-full flex items-center justify-center ${(getHealthColors(healthCondition?.status ?? 'unknown') || ['bg-gray-500', 'dark:bg-gray-600'])[0]} ${(getHealthColors(healthCondition?.status ?? 'unknown') || ['bg-gray-500', 'dark:bg-gray-600'])[1]}`}
+      className={cn(
+        'flex items-center justify-center rounded-full w-full h-full',
+        ...(getHealthColors(healthCondition?.status ?? 'unknown') || ['bg-gray-500', 'dark:bg-gray-600'])
+      )}
     >
       {getHealthSymbol(healthCondition?.status ?? 'unknown')}
     </div>

@@ -3,8 +3,8 @@ import { Copy } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { useEffect, useRef } from 'react'
 import { clsx } from 'clsx'
-import { Button, ButtonSize } from './button'
 import { toast } from 'sonner'
+import { Button, ButtonSize } from '@ror/react'
 
 export interface CopyButtonProps {
   /**
@@ -50,18 +50,18 @@ export function CopyButton({ onClick, className, children, size = 'md' }: CopyBu
   useEffect(() => {
     return () => {
       if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current)
+        const timeout = timeoutRef.current
+        clearTimeout(timeout)
       }
     }
   }, [])
-
   const handleOnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     toast.info('Copied to clipboard')
     e.stopPropagation()
     onClick?.(e)
   }
 
-  const classes = clsx('r-copy-btn', className)
+  const classes = clsx('r-copy-btn', 'no-drag', className)
 
   return (
     <>
