@@ -9,15 +9,7 @@ import { PencilIcon, Plus, Trash } from 'lucide-react'
 import { TableCell, TableRow } from '@ror/react/components/table/table'
 import Link from 'next/link'
 import { routes } from '@/config/routes'
-
-// interface Node {
-//   name: string
-//   role: string
-//   image: string
-//   architecture: string
-//   cpu: string
-//   memory: string
-// }
+import { Node } from '@ror/js-api-client'
 
 interface Nodepool {
   name: string
@@ -31,6 +23,7 @@ interface Nodepool {
 const NodeCard = ({ node }: { node: Node }) => {
   return (
     <div className='rounded-lg border p-4 bg-[var(--r-layer)] dark:brightness-125 w-lg flex flex-col gap-2'>
+      {node.apiVersion}
       {/* <h4 className='font-semibold text-xl text-wrap'>{node.name}</h4>
       <hr />
       <p className='flex items-center'>

@@ -17,8 +17,13 @@ export const useCombinedRefs = <T>(...refs: (Ref<T> | undefined)[]) => {
 
       if (typeof ref === 'function') {
         ref(targetRef.current)
-      } else {
-        ref.current = targetRef.current
+      } else if ('current' in ref) {
+        // Only assign if 'current' is writable
+        try {
+          ;(ref as React.MutableRefObject<T | null>).current = targetRef.current
+        } catch {
+          // Ignore if 'current' is read-only
+        }
       }
     })
   }, [refs])
