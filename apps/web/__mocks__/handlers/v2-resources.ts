@@ -1,7 +1,7 @@
 import { http, HttpResponse } from 'msw'
-import { clustersVersion2 } from '../data/clusters'
 import nodes from '../data/nodes'
 import { ingressesResponse } from '../data/ingresses'
+import { clustersVersion2 } from '../data/clusters'
 
 /**
  * Define mock handlers for v2 resource-related endpoints
