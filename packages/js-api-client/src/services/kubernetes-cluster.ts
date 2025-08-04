@@ -75,6 +75,11 @@ export const createKubernetesClusterService = (request: (requestOptions: Request
     })
     return validateResponse(response, ClusterSchema)
   },
+
+  /**
+   * Nodepool API call
+   */
+
   removeNodePool: async (id: string, poolName: string) => {
     const getRes = await request({
       method: 'GET',
