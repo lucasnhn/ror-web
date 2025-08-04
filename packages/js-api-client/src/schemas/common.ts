@@ -1,7 +1,45 @@
 import { z } from 'zod'
 
-// TODO: Define schemas
-const ResourceMetaDataSchema = z.object({}).passthrough()
+export const ResourceMetaDataSchema = z.object({
+  name: z.string().optional(),
+  generateName: z.string().optional(),
+  namespace: z.string().optional(),
+  selfLink: z.string().optional(),
+  uid: z.string().optional(),
+  resourceVersion: z.string().optional(),
+  generation: z.number().int().optional(),
+  creationTimestamp: z.string().optional(),
+  deletionTimestamp: z.string().optional(),
+  deletionGracePeriodSeconds: z.number().int().optional(),
+  labels: z.record(z.string()).optional(),
+  annotations: z.record(z.string()).optional(),
+  ownerReferences: z
+    .array(
+      z.object({
+        apiVersion: z.string().optional(),
+        kind: z.string().optional(),
+        name: z.string().optional(),
+        uid: z.string().optional(),
+        controller: z.boolean().optional(),
+        blockOwnerDeletion: z.boolean().optional(),
+      })
+    )
+    .optional(),
+  finalizers: z.array(z.string()).optional(),
+  managedFields: z
+    .array(
+      z.object({
+        manager: z.string().optional(),
+        operation: z.string().optional(),
+        apiVersion: z.string().optional(),
+        time: z.string().optional(),
+        fieldsType: z.string().optional(),
+        fieldsV1: z.record(z.any()).optional(),
+        subresource: z.string().optional(),
+      })
+    )
+    .optional(),
+})
 
 export const ResourceAction = z.enum(['Add', 'Delete', 'Update'])
 
