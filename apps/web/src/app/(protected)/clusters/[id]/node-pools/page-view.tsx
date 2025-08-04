@@ -173,8 +173,6 @@ export function PageView({ data, id }: DataTableProps<Nodepool>) {
     },
   ]
 
-  console.log(data)
-
   return (
     <div>
       <Link href={routes.app.newNodePool.getHref(id)}>
