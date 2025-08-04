@@ -17,13 +17,18 @@
     "prune:docs": "turbo prune @ror/web --docker",
     "format": "turbo format",
     "format:fix": "turbo format:fix",
-    "prepare": "husky"
+    "prepare": "husky",
+    "test": "jest"
   },
   "devDependencies": {
     "@turbo/gen": "2.5.2",
+    "@types/jest": "30.0.0",
     "husky": "9.1.7",
+    "jest": "30.0.5",
     "prettier": "3.5.3",
     "prettier-plugin-packagejson": "2.5.10",
+    "ts-jest": "29.4.1",
+    "ts-node": "10.9.2",
     "ts-to-zod": "3.15.0",
     "turbo": "2.5.2"
   },

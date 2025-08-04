@@ -75,4 +75,29 @@ export const createKubernetesClusterService = (request: (requestOptions: Request
     })
     return validateResponse(response, ClusterSchema)
   },
+
+  /**
+   * Nodepool API call
+   */
+
+  removeNodePool: async (id: string, poolName: string) => {
+    const getRes = await request({
+      method: 'GET',
+      path: `/v2/resources/uid/${id}`,
+    })
+    const cluster = validateResponse(getRes, KubernetesClusterSchema)
+    const nodePools = cluster.kubernetescluster?.spec?.topology?.workers?.nodePools
+    if (Array.isArray(nodePools)) {
+      cluster.kubernetescluster!.spec!.topology!.workers!.nodePools! = nodePools.filter(
+        (pool) => pool.name !== poolName
+      )
+    }
+    const res = await request({
+      method: 'PUT',
+      path: `/v2/resources/uid/${id}`,
+      body: cluster,
+    })
+
+    return validateResponse(res, KubernetesClusterSchema)
+  },
 })
