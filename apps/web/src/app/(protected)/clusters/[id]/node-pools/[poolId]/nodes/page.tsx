@@ -1,6 +1,41 @@
+// import { authGuard } from '@/features/auth/utils/auth-guard'
+// import { rorApiClient } from '@/services/ror-api'
+// import type { Metadata } from 'next'
+// import { NodesDataView } from './nodes-data-view'
+// import { getNodesInPool } from '@/utils/get-nodes-in-pool'
+// export default async function NodesPage({ params }: NodesPageProps) {
+//   const { id, poolId } = await params
+//   const session = await authGuard()
+//   const client = rorApiClient(session.accessToken)
+
+//   const [nodesResponse, clusterResponse] = await Promise.all([
+//     client.nodes.listByCluster(id),
+//     client.kubernetesClusters.id(id),
+//   ])
+
+//   const nodes = nodesResponse?.resources ?? []
+//   const cluster = clusterResponse?.kubernetescluster
+//   const pools = cluster?.status?.state?.cluster?.nodepools ?? []
+//   const pool = pools.find((p) => p.name === poolId)
+
+//   console.log('[POOLS]:', pools)
+
+//   const nodesInPool = getNodesInPool(pool?.nodes, nodes, pool?.name ?? undefined)
+
+//   console.log('[NODES IN POOL]:', nodesInPool)
+
+//   return (
+//     <div className=''>
+//       <NodesDataView data={nodesInPool} />
+//     </div>
+//   )
+// }
+
+import { findPoolByName, getNodesInPool } from '@/utils/get-nodes-in-pool'
+import { NodesDataView } from './nodes-data-view'
+import type { Metadata } from 'next'
 import { authGuard } from '@/features/auth/utils/auth-guard'
 import { rorApiClient } from '@/services/ror-api'
-import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'ROR - Nodes',
@@ -16,20 +51,25 @@ interface NodesPageProps {
 
 export default async function NodesPage({ params }: NodesPageProps) {
   const { id, poolId } = await params
-  // TODO: implement that you get the nodes of the nodepool from the API
   const session = await authGuard()
   const client = rorApiClient(session.accessToken)
 
-  const response = await client.nodes.listByCluster(id)
-  const nodes = response?.resources ?? []
-  console.log(nodes) // TODO: remove later, needed to build
+  const [nodesResponse, clusterResponse] = await Promise.all([
+    client.nodes.listByCluster(id),
+    client.kubernetesClusters.id(id),
+  ])
+
+  const nodes = nodesResponse?.resources ?? []
+  const cluster = clusterResponse?.kubernetescluster
+  const pools = cluster?.status?.state?.cluster?.nodepools ?? []
+
+  const pool = findPoolByName(pools, poolId)
+
+  const nodesInPool = getNodesInPool(pool?.nodes ?? null, nodes, pool?.name ?? decodeURIComponent(poolId))
 
   return (
     <div className=''>
-      <h1>
-        Nodes in node pool {poolId} in cluster {id}
-      </h1>
-      {/* TODO: Implement data table that displays the nodes */}
+      <NodesDataView data={nodesInPool} />
     </div>
   )
 }
