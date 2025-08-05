@@ -5,6 +5,7 @@ import { parseQuantity } from '@/utils/parse-quantity'
 import { Node } from '@ror/js-api-client'
 import type { Metadata } from 'next'
 import { PageView } from './page-view'
+import { getNodesInPool } from '@/utils/get-nodes-in-pool'
 
 interface NodePoolsPageProps {
   params: Promise<{ id: string }>
@@ -58,9 +59,7 @@ export default async function NodePoolsPage({ params }: NodePoolsPageProps) {
     const spec = specPools.find((s) => s.name === pool.name)
     const replicas = spec?.replicas ?? 0
 
-    const nodesInPool = (pool.nodes ?? [])
-      .map((nodeId) => nodes.find((node) => node.metadata.name === nodeId))
-      .filter((node): node is Node => !!node)
+    const nodesInPool = getNodesInPool(pool?.nodes, nodes, pool?.name ?? undefined)
 
     return {
       name: pool.name ?? 'Data missing',

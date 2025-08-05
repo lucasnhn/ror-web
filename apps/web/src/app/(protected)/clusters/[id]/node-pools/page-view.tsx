@@ -27,7 +27,6 @@ const NodeCard = ({ node }: { node: Node }) => {
       <p className='flex items-center'>
         <span className='font-semibold'>tags: &nbsp;</span> {node.rormeta.tags?.join(', ')}
       </p>
-      ---------------------------------
       <p className='flex items-center'>
         <span className='font-semibold'>addresses: &nbsp;</span>{' '}
         {node.node.status.addresses?.map((address) => `${address.type}=${address.address}`).join(', ')}
@@ -84,7 +83,6 @@ const NodeCard = ({ node }: { node: Node }) => {
       <p className='flex items-center'>
         <span className='font-semibold'>systemUUID: &nbsp;</span> {node.node.status.nodeInfo.systemUUID}
       </p>
-      ---------------------------------
       <p className='flex items-center'>
         <span className='font-semibold'>podCIDR: &nbsp;</span> {node.node.spec.podCIDR}
       </p>
@@ -148,12 +146,17 @@ export function PageView({ data, id }: DataTableProps<Nodepool>) {
     {
       accessorKey: 'nodes',
       header: 'Node links',
-      // TODO: Fix routing with nodepool id
-      cell: () => (
-        <Link href={routes.app.nodes.getHref(id, '1')} className='text-blue-500 dark:text-blue-600 hover:underline'>
-          Nodes
-        </Link>
-      ),
+      cell: ({ row }) => {
+        const pool = row.original as Nodepool
+        return (
+          <Link
+            href={routes.app.nodes.getHref(id, pool.name)}
+            className='text-blue-500 dark:text-blue-600 hover:underline'
+          >
+            Nodes
+          </Link>
+        )
+      },
     },
     {
       accessorKey: 'actions',
