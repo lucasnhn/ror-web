@@ -1,6 +1,6 @@
 import type { RequestOptions } from '../core/request'
 import { validateResponse } from '../core/validation'
-import { KubernetesClusterSchema } from '../schemas/kubernetes-cluster'
+import { KubernetesClusterSchema, type KubernetesClusterNodePoolType } from '../schemas/kubernetes-cluster'
 import { ClusterSchema, ClustersResponseSchema } from '../schemas/kubernetes-cluster-v1'
 import { z } from 'zod'
 
@@ -18,18 +18,6 @@ export interface FilterRequestOptions {
     sortOrder: number
   }[]
   filter?: Filter[]
-}
-
-export interface NodePool {
-  name: string
-  replicas?: number
-  machineClass: string
-  labels?: Record<string, string>
-  taints?: { key: string; value: string; effect: string }[]
-  minSize?: number
-  maxSize?: number
-  diskSize?: number
-  autoscaling?: { enabled: boolean }
 }
 
 export const createKubernetesClusterService = (request: (requestOptions: RequestOptions) => Promise<unknown>) => ({
@@ -112,7 +100,7 @@ export const createKubernetesClusterService = (request: (requestOptions: Request
 
     return validateResponse(res, KubernetesClusterSchema)
   },
-  createOrUpdateNodePools: async (id: string, nodePool: NodePool) => {
+  createOrUpdateNodePools: async (id: string, nodePool: KubernetesClusterNodePoolType) => {
     if (!nodePool || !nodePool.name?.trim() || !nodePool.machineClass?.trim()) {
       throw new Error('Node pool must have name and machineType')
     }
