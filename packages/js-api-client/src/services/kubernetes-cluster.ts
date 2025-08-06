@@ -1,6 +1,6 @@
 import type { RequestOptions } from '../core/request'
 import { validateResponse } from '../core/validation'
-import { KubernetesClusterSchema } from '../schemas/kubernetes-cluster'
+import { KubernetesClusterSchema, type KubernetesClusterNodePoolType } from '../schemas/kubernetes-cluster'
 import { ClusterSchema, ClustersResponseSchema } from '../schemas/kubernetes-cluster-v1'
 import { z } from 'zod'
 
@@ -77,7 +77,7 @@ export const createKubernetesClusterService = (request: (requestOptions: Request
   },
 
   /**
-   * Nodepool API call
+   * Node pool API call
    */
 
   removeNodePool: async (id: string, poolName: string) => {
@@ -92,6 +92,39 @@ export const createKubernetesClusterService = (request: (requestOptions: Request
         (pool) => pool.name !== poolName
       )
     }
+    const res = await request({
+      method: 'PUT',
+      path: `/v2/resources/uid/${id}`,
+      body: cluster,
+    })
+
+    return validateResponse(res, KubernetesClusterSchema)
+  },
+  createOrUpdateNodePools: async (id: string, nodePool: KubernetesClusterNodePoolType) => {
+    if (!nodePool || !nodePool.name?.trim() || !nodePool.machineClass?.trim()) {
+      throw new Error('Node pool must have name and machineType')
+    }
+    const getRes = await request({
+      method: 'GET',
+      path: `/v2/resources/uid/${id}`,
+    })
+    const cluster = validateResponse(getRes, KubernetesClusterSchema)
+    const workers = cluster.kubernetescluster?.spec?.topology?.workers
+
+    if (!workers) {
+      throw new Error('Cluster does not have workers or nodePools defined')
+    }
+    const nodePools = workers.nodePools || []
+    const index = nodePools.findIndex((pool) => pool.name === nodePool.name)
+
+    if (index !== -1) {
+      // Update existing node pool
+      nodePools[index] = { ...nodePools[index], ...nodePool }
+    } else {
+      // Create new node pool
+      nodePools.push(nodePool)
+    }
+
     const res = await request({
       method: 'PUT',
       path: `/v2/resources/uid/${id}`,
