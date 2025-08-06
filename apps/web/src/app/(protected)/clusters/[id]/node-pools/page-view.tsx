@@ -8,15 +8,7 @@ import { PencilIcon, Plus, Trash } from 'lucide-react'
 import { TableCell, TableRow } from '@ror/react/components/table/table'
 import Link from 'next/link'
 import { routes } from '@/config/routes'
-
-interface Node {
-  name: string
-  role: string
-  image: string
-  architecture: string
-  cpu: string
-  memory: string
-}
+import { Node } from '@ror/js-api-client'
 
 interface Nodepool {
   name: string
@@ -30,22 +22,79 @@ interface Nodepool {
 const NodeCard = ({ node }: { node: Node }) => {
   return (
     <div className='rounded-lg border p-4 bg-[var(--r-layer)] dark:brightness-125 w-lg flex flex-col gap-2'>
-      <h4 className='font-semibold text-xl text-wrap'>{node.name}</h4>
+      <h4 className='font-semibold text-xl text-wrap'>{node.metadata.name}</h4>
       <hr />
       <p className='flex items-center'>
-        <span className='font-semibold'>Role: &nbsp;</span> {node.role}
+        <span className='font-semibold'>tags: &nbsp;</span> {node.rormeta.tags?.join(', ')}
       </p>
       <p className='flex items-center'>
-        <span className='font-semibold'>Image: &nbsp;</span> {node.image}
+        <span className='font-semibold'>addresses: &nbsp;</span>{' '}
+        {node.node.status.addresses?.map((address) => `${address.type}=${address.address}`).join(', ')}
       </p>
       <p className='flex items-center'>
-        <span className='font-semibold'>Arch: &nbsp;</span> {node.architecture}
+        <span className='font-semibold'>cpu: &nbsp;</span> {node.node.status.capacity.cpu}
       </p>
       <p className='flex items-center'>
-        <span className='font-semibold'>CPU: &nbsp;</span> {node.cpu}
+        <span className='font-semibold'>ephemeralStorage: &nbsp;</span> {node.node.status.capacity.ephemeralStorage}
       </p>
       <p className='flex items-center'>
-        <span className='font-semibold'>Memory: &nbsp;</span> {node.memory}
+        <span className='font-semibold'>memory: &nbsp;</span> {node.node.status.capacity.memory}
+      </p>
+      <p className='flex items-center'>
+        <span className='font-semibold'>pods: &nbsp;</span> {node.node.status.capacity.pods}
+      </p>
+      <p className='flex items-center'>
+        <span className='font-semibold'>conditions: &nbsp;</span>{' '}
+        {node.node.status.conditions
+          ?.map(
+            (condition) =>
+              `${condition.lastHeartbeatTime}, ${condition.lastTransitionTime}, ${condition.message}, ${condition.reason}, ${condition.status}, ${condition.type}`
+          )
+          .join(', ')}
+      </p>
+      <p className='flex items-center'>
+        <span className='font-semibold'>architecture: &nbsp;</span> {node.node.status.nodeInfo.architecture}
+      </p>
+      <p className='flex items-center'>
+        <span className='font-semibold'>bootID: &nbsp;</span> {node.node.status.nodeInfo.bootID}
+      </p>
+      <p className='flex items-center'>
+        <span className='font-semibold'>containerRuntimeVersion: &nbsp;</span>{' '}
+        {node.node.status.nodeInfo.containerRuntimeVersion}
+      </p>
+      <p className='flex items-center'>
+        <span className='font-semibold'>kernelVersion: &nbsp;</span> {node.node.status.nodeInfo.kernelVersion}
+      </p>
+      <p className='flex items-center'>
+        <span className='font-semibold'>kubeProxyVersion: &nbsp;</span> {node.node.status.nodeInfo.kubeProxyVersion}
+      </p>
+      <p className='flex items-center'>
+        <span className='font-semibold'>kubeletVersion: &nbsp;</span> {node.node.status.nodeInfo.kubeletVersion}
+      </p>
+      <p className='flex items-center'>
+        <span className='font-semibold'>machineID: &nbsp;</span> {node.node.status.nodeInfo.machineID}
+      </p>
+      <p className='flex items-center'>
+        <span className='font-semibold'>operatingSystem: &nbsp;</span> {node.node.status.nodeInfo.operatingSystem}
+      </p>
+      <p className='flex items-center'>
+        <span className='font-semibold'>osImage: &nbsp;</span> {node.node.status.nodeInfo.osImage}
+      </p>
+      <p className='flex items-center'>
+        <span className='font-semibold'>systemUUID: &nbsp;</span> {node.node.status.nodeInfo.systemUUID}
+      </p>
+      <p className='flex items-center'>
+        <span className='font-semibold'>podCIDR: &nbsp;</span> {node.node.spec.podCIDR}
+      </p>
+      <p className='flex items-center'>
+        <span className='font-semibold'>podCIDRs: &nbsp;</span> {node.node.spec.podCIDRs}
+      </p>
+      <p className='flex items-center'>
+        <span className='font-semibold'>providerID: &nbsp;</span> {node.node.spec.providerID}
+      </p>
+      <p className='flex items-center'>
+        <span className='font-semibold'>taints: &nbsp;</span>{' '}
+        {node.node.spec.taints?.map((taint) => `${taint.key}=${taint.effect}`).join(', ')}
       </p>
     </div>
   )
@@ -97,11 +146,17 @@ export function PageView({ data, id }: DataTableProps<Nodepool>) {
     {
       accessorKey: 'nodes',
       header: 'Node links',
-      cell: () => (
-        <Link href='nodes' className='text-blue-500 dark:text-blue-600 hover:underline'>
-          Nodes
-        </Link>
-      ),
+      cell: ({ row }) => {
+        const pool = row.original as Nodepool
+        return (
+          <Link
+            href={routes.app.nodes.getHref(id, pool.name)}
+            className='text-blue-500 dark:text-blue-600 hover:underline'
+          >
+            Nodes
+          </Link>
+        )
+      },
     },
     {
       accessorKey: 'actions',
@@ -140,7 +195,7 @@ export function PageView({ data, id }: DataTableProps<Nodepool>) {
               <div className='w-full bg-[var(--r-layer)] brightness-102 dark:brightness-110 px-4 py-4'>
                 <div className='flex flex-wrap gap-4'>
                   {(row.original as Nodepool).nodes.map((node) => (
-                    <NodeCard key={node.name} node={node} />
+                    <NodeCard key={node.metadata.uid} node={node} />
                   ))}
                 </div>
               </div>

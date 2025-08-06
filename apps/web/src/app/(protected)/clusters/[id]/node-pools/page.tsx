@@ -1,25 +1,14 @@
-import type { Metadata } from 'next'
 import { authGuard } from '@/features/auth/utils/auth-guard'
 import { rorApiClient } from '@/services/ror-api'
-import { PageView } from './page-view'
-import { parseQuantity } from '@/utils/parse-quantity'
 import { convertBytes } from '@/utils/bytes'
+import { parseQuantity } from '@/utils/parse-quantity'
+import { Node } from '@ror/js-api-client'
+import type { Metadata } from 'next'
+import { PageView } from './page-view'
+import { getNodesInPool } from '@/utils/get-nodes-in-pool'
+
 interface NodePoolsPageProps {
   params: Promise<{ id: string }>
-}
-
-export const metadata: Metadata = {
-  title: 'ROR - Node pools',
-  description: 'View and manage node pools',
-}
-
-interface Node {
-  name: string
-  role: string
-  image: string
-  architecture: string
-  cpu: string
-  memory: string
 }
 
 interface Nodepool {
@@ -30,6 +19,11 @@ interface Nodepool {
   memory: string
   nodes: Node[]
   actions: React.ReactNode
+}
+
+export const metadata: Metadata = {
+  title: 'ROR - Node pools',
+  description: 'View and manage node pools',
 }
 
 function convertMemory(memory: string): string {
@@ -55,54 +49,28 @@ export default async function NodePoolsPage({ params }: NodePoolsPageProps) {
   const session = await authGuard()
   const client = rorApiClient(session.accessToken)
 
-  const response = await client.nodes.listByCluster(id)
-  const nodes = response?.resources ?? []
+  const nodes = (await client.nodes.listByCluster(id))?.resources ?? []
+  const cluster = (await client.kubernetesClusters.id(id))?.kubernetescluster
 
-  const nodesObject: Node[] = nodes.map((node) => {
-    const nodeMemory = node.node.status?.capacity?.memory || '0'
-    const nodeMemoryConverted = convertMemory(nodeMemory)
+  const statePools = cluster?.status?.state?.cluster?.nodepools ?? []
+  const specPools = cluster?.spec?.topology?.workers?.nodePools ?? []
 
-    return {
-      name: typeof node.metadata.name == 'string' ? node.metadata.name : 'Unnamed Node',
-      role: 'worker', // TODO: node.metadata.labels?.['kubernetes.io/role'] ?
-      image: node.node.status.nodeInfo.osImage,
-      architecture: node.node.status.nodeInfo.architecture,
-      cpu: node.node.status.capacity.cpu ? `${node.node.status.capacity.cpu}` : 'Data missing',
-      memory: nodeMemoryConverted,
-    }
-  })
+  const nodePools: Nodepool[] = statePools.map((pool) => {
+    const spec = specPools.find((s) => s.name === pool.name)
+    const replicas = spec?.replicas ?? 0
 
-  // Find cluster data to retrieve nodePools
-  const clusterResp = await client.kubernetesClusters.id(id)
-
-  const nodePoolState = clusterResp?.kubernetescluster?.status?.state?.cluster?.nodepools ?? []
-  const nodePoolSpec = clusterResp?.kubernetescluster?.spec?.topology?.workers?.nodePools ?? []
-
-  const nodepoolsObjects: Nodepool[] = nodePoolState.map((pool) => {
-    const spec = nodePoolSpec.find((spec) => spec.name === pool.name) || {}
-    const replicas = spec.replicas ?? 0
-
-    const nodesInPool = (pool.nodes ?? [])
-      .map((nodeId: string) => nodesObject.find((node) => node.name === nodeId))
-      .filter((node): node is Node => node !== undefined)
-
-    const nodePoolMemory = pool.resources?.memory?.capacity || '0'
-    const nodePoolMemooryConverted = convertMemory(nodePoolMemory)
+    const nodesInPool = getNodesInPool(pool?.nodes, nodes, pool?.name ?? undefined)
 
     return {
       name: pool.name ?? 'Data missing',
       machineClass: pool.machineClass ?? '',
       nodeCount: `${pool.scale ?? 0} / ${replicas}`,
-      cores: pool.resources?.cpu?.capacity ? Number(pool.resources?.cpu?.capacity) : 0,
-      memory: nodePoolMemooryConverted,
+      cores: Number(pool.resources?.cpu?.capacity ?? 0),
+      memory: convertMemory(pool.resources?.memory?.capacity ?? '0'),
       nodes: nodesInPool,
       actions: <button className='text-blue-500 hover:underline'>Edit</button>,
     }
   })
 
-  return (
-    <div>
-      <PageView data={nodepoolsObjects} id={id} />
-    </div>
-  )
+  return <PageView data={nodePools} id={id} />
 }
