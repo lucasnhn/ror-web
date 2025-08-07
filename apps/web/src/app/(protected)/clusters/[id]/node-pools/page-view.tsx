@@ -1,7 +1,7 @@
 'use client'
 
 import { ColumnDef } from '@tanstack/react-table'
-import React, { useState } from 'react'
+import React from 'react'
 import { DataTable } from '@/components/ui/data-table'
 import { Button } from '@/components/shadcn/button'
 import { PencilIcon, Plus, Trash } from 'lucide-react'
@@ -118,11 +118,6 @@ interface DataTableProps<TData> {
 }
 
 export function PageView({ data, id }: DataTableProps<Nodepool>) {
-  const [remove, setRemove] = useState<boolean>(false)
-
-  // TODO: remove this when the remove modals are implemented, needed to build
-  console.log('Remove:', remove)
-
   const columns: ColumnDef<Nodepool>[] = [
     {
       id: 'expander',
