@@ -1,4 +1,7 @@
-import { clustersHandlers } from './handlers/clusters'
+// import { clustersHandlers } from './handlers/clusters'
 import { v2ResourcesHandlers } from './handlers/v2-resources'
 
-export const handlers = [...clustersHandlers, ...v2ResourcesHandlers]
+/**
+ * Mock handlers for the application.
+ */
+export const handlers = [...v2ResourcesHandlers]

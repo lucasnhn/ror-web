@@ -8,6 +8,7 @@ import { onUnhandledRequest } from '@/__mocks__/utils/on-unhandled-request'
 import '@/styles/tailwind.css'
 import '@/styles/globals.scss'
 import { Providers } from './providers'
+import { RenderApiError } from '@/utils/renderApiError'
 
 /**
  * Register the server-side mock server
@@ -19,12 +20,18 @@ if (process.env.NEXT_PUBLIC_MOCKING_ENABLED === 'true') {
   })
 }
 
+/**
+ * Inter font
+ */
 const inter = Inter({
   subsets: ['latin'],
   display: 'swap',
   variable: '--r-font-family-sans',
 })
 
+/**
+ * Ubuntu Mono font
+ */
 const ubuntuMono = Ubuntu_Mono({
   subsets: ['latin'],
   display: 'swap',
@@ -42,20 +49,24 @@ interface RootLayoutProps {
 }
 
 export default async function RootLayout({ children }: Readonly<RootLayoutProps>) {
-  // Retrieve the user's preferred color scheme
-  // otherwise it defaults to "system"
-  const theme = await getDarkModePreferenceAction()
+  try {
+    // Retrieve the user's preferred color scheme
+    // otherwise it defaults to "system"
+    const theme = await getDarkModePreferenceAction()
 
-  const classes = clsx(inter.variable, ubuntuMono.variable)
+    const classes = clsx(inter.variable, ubuntuMono.variable)
 
-  return (
-    <html lang='en' className={classes} data-color-scheme={theme}>
-      <head>
-        <PublicEnvScript />
-      </head>
-      <body>
-        <Providers>{children}</Providers>
-      </body>
-    </html>
-  )
+    return (
+      <html lang='en' className={classes} data-color-scheme={theme}>
+        <head>
+          <PublicEnvScript />
+        </head>
+        <body>
+          <Providers>{children}</Providers>
+        </body>
+      </html>
+    )
+  } catch (error) {
+    return RenderApiError(error)
+  }
 }

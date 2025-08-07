@@ -1,9 +1,24 @@
-import type { Metadata } from 'next'
 import { authGuard } from '@/features/auth/utils/auth-guard'
 import { rorApiClient } from '@/services/ror-api'
+import { convertBytes } from '@/utils/bytes'
+import { parseQuantity } from '@/utils/parse-quantity'
+import { Node } from '@ror/js-api-client'
+import type { Metadata } from 'next'
 import { PageView } from './page-view'
+import { getNodesInPool } from '@/utils/get-nodes-in-pool'
+
 interface NodePoolsPageProps {
   params: Promise<{ id: string }>
+}
+
+interface Nodepool {
+  name: string
+  machineClass: string
+  nodeCount: string
+  cores: number
+  memory: string
+  nodes: Node[]
+  actions: React.ReactNode
 }
 
 export const metadata: Metadata = {
@@ -11,89 +26,51 @@ export const metadata: Metadata = {
   description: 'View and manage node pools',
 }
 
-interface Node {
-  name: string
-  role: string
-  image: string
-  architecture: string
-  cpu: string
-  memory: string
+function convertMemory(memory: string): string {
+  const memoryBytes = parseQuantity(memory)
+  const memoryGiB = memoryBytes / 1024 ** 3
+  const decimals = memoryGiB.toFixed(2).split('.')[1]
+
+  const roundingPrecision = decimals === '00' ? 0 : 2
+
+  return convertBytes(memoryBytes, {
+    useBinaryUnits: true, // KiB/MiB/GiB...
+    roundingPrecision,
+    includeUnit: true,
+    localizeOptions: {
+      language: 'en',
+      plurals: { one: 'Byte', other: 'Bytes' },
+    },
+  })
 }
-
-interface Nodepool {
-  name: string
-  machineClass: string
-  nodeCount: number
-  cores: number
-  memory: number
-  nodes: Node[]
-  actions: React.ReactNode
-}
-
-const npNodes: Node[] = [
-  {
-    name: 'aclusterkind-np-1-pgmsg-cvjvs-l7nqq',
-    role: 'worker',
-    image: 'VMware Photon OS/Linux',
-    architecture: 'amd64',
-    cpu: '11% (224 mi / 2)',
-    memory: '50% (3.91 GiB / 7.68 GiB)',
-  },
-  {
-    name: 'aclusterkind-np-1-pgmsg-cvjvs-qlw82',
-    role: 'worker',
-    image: 'VMware Photon OS/Linux',
-    architecture: 'amd64',
-    cpu: '6% (133 mi / 2)',
-    memory: '53% (4.11 GiB / 7.68 GiB)',
-  },
-]
-
-const workerNodes: Node[] = [
-  {
-    name: 'aclusterkind-workers-taint-xzxdr-bgjrh-7g2jt',
-    role: 'worker',
-    image: 'VMware Photon OS/Linux',
-    architecture: 'amd64',
-    cpu: '5% (107 mi / 2)',
-    memory: '31% (1.17 GiB / 3.74 GiB)',
-  },
-]
-
-const NodepoolExamples: Nodepool[] = [
-  {
-    name: 'Np',
-    machineClass: 'best-effort-medium',
-    nodeCount: 2,
-    cores: 4,
-    memory: 15360000000,
-    nodes: npNodes,
-    actions: <button className='text-blue-500 hover:underline'>Edit</button>,
-  },
-  {
-    name: 'Workers',
-    machineClass: 'best-effort-small',
-    nodeCount: 1,
-    cores: 2,
-    memory: 37400000000,
-    nodes: workerNodes,
-    actions: <button className='text-blue-500 hover:underline'>Edit</button>,
-  },
-]
 
 export default async function NodePoolsPage({ params }: NodePoolsPageProps) {
   const { id } = await params
   const session = await authGuard()
   const client = rorApiClient(session.accessToken)
 
-  const response = await client.nodes.listByCluster(id)
+  const nodes = (await client.nodes.listByCluster(id))?.resources ?? []
+  const cluster = (await client.kubernetesClusters.id(id))?.kubernetescluster
 
-  const nodes = response?.resources ?? []
-  console.log('Nodes:', nodes) // TODO: remove when API call is implemented, needed to build
+  const statePools = cluster?.status?.state?.cluster?.nodepools ?? []
+  const specPools = cluster?.spec?.topology?.workers?.nodePools ?? []
 
-  return (
-    <div>
-      <PageView data={NodepoolExamples} id={id} />
-    </div>
-  )
+  const nodePools: Nodepool[] = statePools.map((pool) => {
+    const spec = specPools.find((s) => s.name === pool.name)
+    const replicas = spec?.replicas ?? 0
+
+    const nodesInPool = getNodesInPool(pool?.nodes, nodes, pool?.name ?? undefined)
+
+    return {
+      name: pool.name ?? 'Data missing',
+      machineClass: pool.machineClass ?? '',
+      nodeCount: `${pool.scale ?? 0} / ${replicas}`,
+      cores: Number(pool.resources?.cpu?.capacity ?? 0),
+      memory: convertMemory(pool.resources?.memory?.capacity ?? '0'),
+      nodes: nodesInPool,
+      actions: <button className='text-blue-500 hover:underline'>Edit</button>,
+    }
+  })
+
+  return <PageView data={nodePools} id={id} />
 }

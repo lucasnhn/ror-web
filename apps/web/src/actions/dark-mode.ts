@@ -4,6 +4,10 @@ import { authGuard } from '@/features/auth/utils/auth-guard'
 import { deleteSavedPreference, getSavedPreference, setSavedPreference } from '@/utils/cookies'
 import { COLOR_SCHEME_COOKIE_KEY, ColorScheme, validateColorScheme } from '@/utils/dark-mode'
 
+/**
+ * Save the user's dark mode preference.
+ * @param value The user's dark mode preference.
+ */
 export async function saveDarkModePreferenceAction(value: ColorScheme) {
   await authGuard()
   try {

@@ -11,6 +11,7 @@ import { ReplicaSetSchema, ReplicaSetResponseSchema } from '../schemas/replica-s
 import { DaemonSetResponseSchema, DaemonSetSchema } from '../schemas/daemon-set'
 import { ConfigurationSchema, configurationResponseSchema } from '../schemas/configuration'
 import { VulnerabilityReportResponseSchema, VulnerabilityReportSchema } from '../schemas/vulnerability-report'
+import { RorMetaDataResponseSchema, RorMetaDataSchema } from '../schemas/common'
 
 export type Ingress = z.infer<typeof IngressSchema>
 export type IngressResponse = z.infer<typeof IngressResponseSchema>
@@ -40,3 +41,5 @@ export type VulnerabilityReport = z.infer<typeof VulnerabilityReportSchema>
 export type VulnerabilityReportResponse = z.infer<typeof VulnerabilityReportResponseSchema>
 export type Replicaset = z.infer<typeof ReplicaSetSchema>
 export type ReplicasetResponse = z.infer<typeof ReplicaSetResponseSchema>
+export type RorMetaData = z.infer<typeof RorMetaDataSchema>
+export type RorMetaDataResponse = z.infer<typeof RorMetaDataResponseSchema>

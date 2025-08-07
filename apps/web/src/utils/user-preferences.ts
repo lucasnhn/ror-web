@@ -2,7 +2,9 @@
 
 import { z } from 'zod'
 
-const clusterCardSchema = z.object({})
+const clusterCardSchema = z.object({
+  layouts: z.record(z.string(), z.array(z.any())),
+})
 
 const userPreferencesSchema = z.object({
   key: z.string(),
@@ -14,11 +16,18 @@ const userPreferencesSchema = z.object({
 export type ClusterCard = z.infer<typeof clusterCardSchema>
 export type Preferences = z.infer<typeof userPreferencesSchema>
 
+function getInitialDarkMode(): boolean {
+  if (typeof window !== 'undefined') {
+    return window.matchMedia('(prefers-color-scheme: dark)').matches
+  }
+  return false // fallback during SSR
+}
+
 export const PREFERENCES_KEY = 'user-preferences'
 export const DEFAULT_USERPREFERENCES: Preferences = {
   key: PREFERENCES_KEY,
   language: 'nb',
-  darkMode: window.matchMedia('(prefers-color-scheme: dark)').matches,
+  darkMode: getInitialDarkMode(),
   clusterCards: {} as ClusterCard,
 }
 

@@ -1,8 +1,8 @@
 import type { RequestOptions } from '../core/request'
 import { validateResponse } from '../core/validation'
-import { createV2ResourceResponseSchema } from '../schemas/common'
-import { KubernetesClusterResponseSchema, KubernetesClusterSchema } from '../schemas/kubernetes-cluster'
+import { KubernetesClusterSchema } from '../schemas/kubernetes-cluster'
 import { ClusterSchema, ClustersResponseSchema } from '../schemas/kubernetes-cluster-v1'
+import { z } from 'zod'
 
 export interface Filter {
   field: string
@@ -45,7 +45,9 @@ export const createKubernetesClusterService = (request: (requestOptions: Request
     params.set('apiversion', 'general.ror.internal/v1alpha1')
     params.set('kind', 'KubernetesCluster')
 
-    const responseSchema = createV2ResourceResponseSchema(KubernetesClusterResponseSchema)
+    const responseSchema = z.object({
+      resources: z.array(KubernetesClusterSchema),
+    })
 
     const response = await request({
       method: 'GET',
@@ -72,5 +74,46 @@ export const createKubernetesClusterService = (request: (requestOptions: Request
       path: `/v1/clusters/${id}`,
     })
     return validateResponse(response, ClusterSchema)
+  },
+
+  /**
+   * Nodepool API call
+   */
+
+  removeNodePool: async (id: string, poolName: string) => {
+    const getRes = await request({
+      method: 'GET',
+      path: `/v2/resources/uid/${id}`,
+    })
+    const cluster = validateResponse(getRes, KubernetesClusterSchema)
+    const nodePools = cluster.kubernetescluster?.spec?.topology?.workers?.nodePools
+    console.log(
+      'Node pools before removal:',
+      nodePools?.map((p) => p.name)
+    )
+
+    if (Array.isArray(nodePools)) {
+      cluster.kubernetescluster!.spec!.topology!.workers!.nodePools! = nodePools.filter(
+        (pool) => pool.name !== poolName
+      )
+    }
+    const res = await request({
+      method: 'PUT',
+      path: `/v2/resources/uid/${id}`,
+      body: cluster,
+    })
+
+    const getRes2 = await request({
+      method: 'GET',
+      path: `/v2/resources/uid/${id}`,
+    })
+    const cluster2 = validateResponse(getRes2, KubernetesClusterSchema)
+    const nodePools2 = cluster2.kubernetescluster?.spec?.topology?.workers?.nodePools
+    console.log(
+      'Node pools after removal:',
+      nodePools2?.map((p) => p.name)
+    )
+
+    return validateResponse(res, KubernetesClusterSchema)
   },
 })

@@ -23,6 +23,19 @@ import { logValidationError } from './logger'
  */
 export function validateResponse<T>(data: unknown, schema: z.ZodType<T>): T {
   try {
+    // This solution handles the case where the data is an empty object,
+    // like when the user does not have access to any clusters.
+    // This could benefit from being fixed in the API, but for now we handle it here.
+    // TODO: Ask Håvard or Roger if this should be fixed in the API when they are back from holidays.
+    if (
+      typeof data === 'object' &&
+      data !== null &&
+      Object.keys(data).length === 0 &&
+      schema.safeParse({ resources: [] }).success
+    ) {
+      return schema.parse({ resources: [] })
+    }
+
     return schema.parse(data)
   } catch (error) {
     if (error instanceof z.ZodError) {

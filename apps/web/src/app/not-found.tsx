@@ -1,5 +1,8 @@
 import Link from 'next/link'
 
+/**
+ * @returns A simple 404 Not Found page.
+ */
 export default function NotFound() {
   return (
     <div>

@@ -11,6 +11,7 @@ export interface PaginatedResponse<T> {
 }
 
 /**
+ * Is not used, because it is only used in file used for v1 clusters, but will keep for reference
  * Create a mocked paginated response following the same structure provided by the ROR API
  */
 export const createPaginatedResponse = <T>(
