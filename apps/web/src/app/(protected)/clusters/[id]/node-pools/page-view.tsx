@@ -1,14 +1,26 @@
 'use client'
 
 import { ColumnDef } from '@tanstack/react-table'
-import React, { useState } from 'react'
+import React from 'react'
 import { DataTable } from '@/components/ui/data-table'
 import { Button } from '@/components/shadcn/button'
 import { PencilIcon, Plus, Trash } from 'lucide-react'
 import { TableCell, TableRow } from '@ror/react/components/table/table'
 import Link from 'next/link'
 import { routes } from '@/config/routes'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTrigger,
+} from '@/components/shadcn/alert-dialog'
+import { AlertDialogTitle } from '@radix-ui/react-alert-dialog'
 import { Node } from '@ror/js-api-client'
+import { deleteNodePoolAction } from '@/utils/node-pool-actions'
 
 interface Nodepool {
   name: string
@@ -106,11 +118,6 @@ interface DataTableProps<TData> {
 }
 
 export function PageView({ data, id }: DataTableProps<Nodepool>) {
-  const [remove, setRemove] = useState<boolean>(false)
-
-  // TODO: remove this when the remove modals are implemented, needed to build
-  console.log('Remove:', remove)
-
   const columns: ColumnDef<Nodepool>[] = [
     {
       id: 'expander',
@@ -161,18 +168,48 @@ export function PageView({ data, id }: DataTableProps<Nodepool>) {
     {
       accessorKey: 'actions',
       header: 'Actions',
-      cell: () => (
-        <div className='flex gap-2'>
-          <Link href={routes.app.editNodePool.getHref(id)}>
-            <Button className='flex gap-2'>
-              <PencilIcon className='h-5 w-5' />
-            </Button>
-          </Link>
-          <Button className='flex gap-2' onClick={() => setRemove(true)} variant='destructive'>
-            <Trash className='h-5 w-5' />
-          </Button>
-        </div>
-      ),
+      cell: ({ row }) => {
+        const pool = row.original as Nodepool
+        return (
+          <div className='flex gap-2'>
+            {/* edit */}
+            <Link href={routes.app.editNodePool.getHref(id)}>
+              <Button className='flex gap-2'>
+                <PencilIcon className='h-5 w-5' />
+              </Button>
+            </Link>
+
+            {/* delete */}
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button className='flex gap-2' variant='destructive'>
+                  <Trash className='h-5 w-5' />
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle className='text-2xl'>Are you sure?</AlertDialogTitle>
+                  <AlertDialogDescription>Deleting this node pool cannot be undone.</AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel asChild>
+                    <Button variant='outline'>Cancel</Button>
+                  </AlertDialogCancel>
+
+                  {/* The trick: bind params and pass the action to the form */}
+                  <form action={deleteNodePoolAction.bind(null, id, pool.name)}>
+                    <AlertDialogAction asChild className='bg-red-500 dark:bg-red-600'>
+                      <Button type='submit' variant='destructive'>
+                        Delete
+                      </Button>
+                    </AlertDialogAction>
+                  </form>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        )
+      },
     },
   ]
 

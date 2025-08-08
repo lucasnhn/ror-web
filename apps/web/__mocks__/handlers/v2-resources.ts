@@ -3,6 +3,9 @@ import nodes from '../data/nodes'
 import { ingressesResponse } from '../data/ingresses'
 import { clustersVersion2 } from '../data/clusters'
 
+type Resource = (typeof clustersVersion2.resources)[number]
+type NotFound = { message: string }
+
 /**
  * Define mock handlers for v2 resource-related endpoints
  */
@@ -45,4 +48,22 @@ export const v2ResourcesHandlers = [
     // Return the found cluster resource
     return HttpResponse.json(cluster)
   }),
+
+  http.put<{ id: string }, Resource | NotFound, Resource | NotFound>(
+    'http://localhost:10000/v2/resources/uid/:id',
+    async ({ params, request }) => {
+      const { id } = params
+      const updated = (await request.json()) as Resource
+
+      const i = clustersVersion2.resources.findIndex(
+        (res) => res.kind === 'KubernetesCluster' && res.kubernetescluster?.spec?.data?.clusterId === id
+      )
+      if (i === -1) {
+        return HttpResponse.json<NotFound>({ message: 'Not found' }, { status: 404 })
+      }
+
+      clustersVersion2.resources[i] = updated
+      return HttpResponse.json<Resource>(updated, { status: 200 })
+    }
+  ),
 ]

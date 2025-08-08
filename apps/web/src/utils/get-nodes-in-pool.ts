@@ -19,7 +19,6 @@ export function getNodesInPool(
   allNodes: Node[],
   poolName?: string
 ): Node[] {
-  console.log('[GET NODES IN POOL]:', poolNodes, allNodes, poolName)
   if (Array.isArray(poolNodes) && poolNodes.length) {
     const wanted = new Set(poolNodes.map((n) => (typeof n === 'string' ? n : n?.name)).filter(Boolean) as string[])
     return allNodes.filter((n) => wanted.has(n?.metadata?.name ?? ''))

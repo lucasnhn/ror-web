@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker'
+import { machine } from 'os'
 
 /**
  * Mock data for Clusters v1.
@@ -615,6 +616,20 @@ export const clustersVersion2 = {
                   version: 'v1.28.7',
                   provider: 'tanzu',
                   machineClass: 'best-effort-cpu-2xlarge',
+                  autoscaling: {
+                    enabled: false,
+                    minReplicas: 0,
+                    maxReplicas: 0,
+                    scalingRules: [],
+                  },
+                  metadata: { labels: {}, annotations: {} },
+                },
+                {
+                  name: 'test',
+                  replicas: 4,
+                  version: 'v1.28.7',
+                  provider: 'tanzu',
+                  machineClass: 'best-effort-cpu-xlarge',
                   autoscaling: {
                     enabled: false,
                     minReplicas: 0,
