@@ -87,11 +87,6 @@ export const createKubernetesClusterService = (request: (requestOptions: Request
     })
     const cluster = validateResponse(getRes, KubernetesClusterSchema)
     const nodePools = cluster.kubernetescluster?.spec?.topology?.workers?.nodePools
-    console.log(
-      'Node pools before removal:',
-      nodePools?.map((p) => p.name)
-    )
-
     if (Array.isArray(nodePools)) {
       cluster.kubernetescluster!.spec!.topology!.workers!.nodePools! = nodePools.filter(
         (pool) => pool.name !== poolName
@@ -102,17 +97,6 @@ export const createKubernetesClusterService = (request: (requestOptions: Request
       path: `/v2/resources/uid/${id}`,
       body: cluster,
     })
-
-    const getRes2 = await request({
-      method: 'GET',
-      path: `/v2/resources/uid/${id}`,
-    })
-    const cluster2 = validateResponse(getRes2, KubernetesClusterSchema)
-    const nodePools2 = cluster2.kubernetescluster?.spec?.topology?.workers?.nodePools
-    console.log(
-      'Node pools after removal:',
-      nodePools2?.map((p) => p.name)
-    )
 
     return validateResponse(res, KubernetesClusterSchema)
   },
