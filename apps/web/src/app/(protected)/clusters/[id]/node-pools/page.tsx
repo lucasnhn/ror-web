@@ -1,5 +1,6 @@
-import { authGuard } from '@/features/auth/utils/auth-guard'
-import { rorApiClient } from '@/services/ror-api'
+// import { authGuard } from '@/features/auth/utils/auth-guard'
+// import { getRorApi, rorApiClient } from '@/services/ror-api'
+import { getRorApi } from '@/services/ror-api'
 import { convertBytes } from '@/utils/bytes'
 import { parseQuantity } from '@/utils/parse-quantity'
 import { Node } from '@ror/js-api-client'
@@ -46,11 +47,12 @@ function convertMemory(memory: string): string {
 
 export default async function NodePoolsPage({ params }: NodePoolsPageProps) {
   const { id } = await params
-  const session = await authGuard()
-  const client = rorApiClient(session.accessToken)
+  // const session = await authGuard()
+  // const client = rorApiClient(session.accessToken)
+  const api = await getRorApi()
 
-  const nodes = (await client.nodes.listByCluster(id))?.resources ?? []
-  const cluster = (await client.kubernetesClusters.id(id))?.kubernetescluster
+  const nodes = (await api.nodes.listByCluster(id))?.resources ?? []
+  const cluster = (await api.kubernetesClusters.id(id))?.kubernetescluster
 
   const statePools = cluster?.status?.state?.cluster?.nodepools ?? []
   const specPools = cluster?.spec?.topology?.workers?.nodePools ?? []

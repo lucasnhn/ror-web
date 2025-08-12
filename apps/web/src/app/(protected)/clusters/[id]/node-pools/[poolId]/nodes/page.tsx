@@ -34,8 +34,9 @@
 import { findPoolByName, getNodesInPool } from '@/utils/get-nodes-in-pool'
 import { NodesDataView } from './nodes-data-view'
 import type { Metadata } from 'next'
-import { authGuard } from '@/features/auth/utils/auth-guard'
-import { rorApiClient } from '@/services/ror-api'
+// import { authGuard } from '@/features/auth/utils/auth-guard'
+// import { getRorApi, rorApiClient } from '@/services/ror-api'
+import { getRorApi } from '@/services/ror-api'
 
 export const metadata: Metadata = {
   title: 'ROR - Nodes',
@@ -51,12 +52,13 @@ interface NodesPageProps {
 
 export default async function NodesPage({ params }: NodesPageProps) {
   const { id, poolId } = await params
-  const session = await authGuard()
-  const client = rorApiClient(session.accessToken)
+  // const session = await authGuard()
+  // const client = rorApiClient(session.accessToken)
+  const api = await getRorApi()
 
   const [nodesResponse, clusterResponse] = await Promise.all([
-    client.nodes.listByCluster(id),
-    client.kubernetesClusters.id(id),
+    api.nodes.listByCluster(id),
+    api.kubernetesClusters.id(id),
   ])
 
   const nodes = nodesResponse?.resources ?? []

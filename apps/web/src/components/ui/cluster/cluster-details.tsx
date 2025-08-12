@@ -141,7 +141,7 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
     const layouts = preferences.clusterCards?.layouts || standardLayouts
     setSavedLayouts(layouts)
     setLayout(layouts[currentBreakpoint] || [])
-  }, [])
+  }, [currentBreakpoint])
 
   const CardHeader = ({ title }: { title: string }) => {
     return (

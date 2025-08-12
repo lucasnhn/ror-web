@@ -1,5 +1,6 @@
 import { authGuard } from '@/features/auth/utils/auth-guard'
-import { rorApiClient } from '@/services/ror-api'
+// import { getRorApi, rorApiClient } from '@/services/ror-api'
+import { getRorApi } from '@/services/ror-api'
 import { localizeDate } from '@/utils/time-and-date'
 import { CodeSnippet } from '@ror/react/components/code-snippet'
 import { DefinitionDescription, DefinitionList, DefinitionTerm } from '@ror/react/components/definition-list'
@@ -12,9 +13,10 @@ export const dynamic = 'force-dynamic'
 
 export default async function ProfilePage() {
   const session = await authGuard()
-  const client = rorApiClient(session.accessToken)
+  // const client = rorApiClient(session.accessToken)
+  const api = await getRorApi()
   const decodedAuthToken = jwtDecode(session.accessToken)
-  const self = await client.users.self()
+  const self = await api.users.self()
   return (
     <div className='p-10'>
       <header>

@@ -1,5 +1,6 @@
 import { authGuard } from '@/features/auth/utils/auth-guard'
-import { rorApiClient } from '@/services/ror-api'
+// import { getRorApi, rorApiClient } from '@/services/ror-api'
+import { getRorApi } from '@/services/ror-api'
 import type { Metadata } from 'next'
 import { Header } from '@/components/layout/app-shell/header'
 import { PageView } from './page-view'
@@ -25,11 +26,12 @@ export const dynamic = 'force-dynamic'
 
 export default async function ClustersPage({ searchParams }: ClusterPageProps) {
   const session = await authGuard()
-  const client = rorApiClient(session.accessToken)
-  const params = await searchParams
+  // removed this: const client = rorApiClient(session.accessToken)
   const user = session.user
+  const api = await getRorApi()
 
   // Build URL parameters for the list method
+  const params = await searchParams
   const listParams = new URLSearchParams()
 
   // If needed, add pagination and sorting params to the list request
@@ -37,7 +39,7 @@ export default async function ClustersPage({ searchParams }: ClusterPageProps) {
   if (params.page) listParams.set('page', params.page.toString())
   if (params.sort) listParams.set('sort', params.sort)
   if (params.order) listParams.set('order', params.order)
-  const response = await client.kubernetesClusters.list(listParams)
+  const response = await api.kubernetesClusters.list(listParams)
 
   const clusters: KubernetesCluster[] = response?.resources ?? []
   console.debug('[ClusterPage] Clusters:', clusters)
