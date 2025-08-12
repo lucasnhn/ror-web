@@ -10,12 +10,39 @@ import words from 'an-array-of-english-words'
 import { Fragment, useState } from 'react'
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/shadcn/select'
 import { Checkbox } from '@/components/shadcn/checkbox'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
+import { rorApiClient } from '@/services/ror-api'
+import { KubernetesCluster } from '@ror/js-api-client'
+import { createOrUpdateNodePoolAction } from '@/utils/node-pool-actions'
+
+// Local payload type aligned with @ror/js-api-client schema
+type NodePoolPayload = {
+  name?: string | null
+  machineClass?: string | null
+  provider?: string | null
+  version?: string | null
+  replicas?: number | null
+  autoscaling?: {
+    enabled?: boolean | null
+    minReplicas?: number | null
+    maxReplicas?: number | null
+    scalingRules?: string[] | null
+  } | null
+  metadata?: {
+    labels?: Record<string, string> | null
+    annotations?: Record<string, string> | null
+  } | null
+}
 
 interface CreateEditViewProps {
   className?: string
   id: string
   title: string
   buttonText: string
+  cluster: KubernetesCluster
+  onSubmit: (formData: FormData) => Promise<void>
 }
 
 const generateRandomName = (): string => {
@@ -25,7 +52,17 @@ const generateRandomName = (): string => {
   return `${randomWord1}-${randomWord2}`
 }
 
-const NumPicker = ({ title, value, setValue }: { title: string; value: number; setValue: (v: number) => void }) => {
+const NumPicker = ({
+  title,
+  value,
+  setValue,
+  name,
+}: {
+  title: string
+  value: number
+  setValue: (v: number) => void
+  name: string
+}) => {
   const increment = () => setValue(value + 1)
   const decrement = () => setValue(Math.max(1, value - 1))
   return (
@@ -42,17 +79,18 @@ const NumPicker = ({ title, value, setValue }: { title: string; value: number; s
           <Plus />
         </Button>
       </div>
+      <input type='hidden' name={name} value={String(value)} />
     </div>
   )
 }
 
-export const CreateEditView = ({ className, id, title, buttonText }: CreateEditViewProps) => {
+export const CreateEditView = ({ className, id, title, buttonText, cluster, onSubmit }: CreateEditViewProps) => {
   const [name, setName] = useState('')
   const [autoscaling, setAutoscaling] = useState(false)
   const [nodeCount, setNodeCount] = useState(1)
   const [minNodes, setMinNodes] = useState(1)
   const [maxNodes, setMaxNodes] = useState(1)
-  const [labels, setLabels] = useState<Record<string, string>>({ 'Key 1': 'Value 1', 'Key 2': 'Value 2' })
+  const [labels, setLabels] = useState<Record<string, string>>({})
   const [newLabelKey, setNewLabelKey] = useState('')
   const [newLabelValue, setNewLabelValue] = useState('')
   const [taints, setTaints] = useState<Record<string, { value: string; effect: string }>>({})
@@ -62,35 +100,51 @@ export const CreateEditView = ({ className, id, title, buttonText }: CreateEditV
   const [nameError, setNameError] = useState(false)
   const [classError, setClassError] = useState(false)
   const [selectedEffect, setSelectedEffect] = useState('')
+  // const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    let valid = true
-    if (!name) {
-      setNameError(true)
-      valid = false
-    } else {
-      setNameError(false)
-    }
-    if (!selectedMachineClass) {
-      setClassError(true)
-      valid = false
-    } else {
-      setClassError(false)
-    }
-    if (!valid) return
-    const payload = {
-      name,
-      autoscaling,
-      nodeCount: autoscaling ? undefined : nodeCount,
-      minNodes: autoscaling ? minNodes : undefined,
-      maxNodes: autoscaling ? maxNodes : undefined,
-      labels,
-      taints,
-      selectedMachineClass,
-    }
-    alert(JSON.stringify(payload, null, 2))
-  }
+  // const handleSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault()
+  //   let valid = true
+  //   if (!name) {
+  //     setNameError(true)
+  //     valid = false
+  //   } else {
+  //     setNameError(false)
+  //   }
+  //   if (!selectedMachineClass) {
+  //     setClassError(true)
+  //     valid = false
+  //   } else {
+  //     setClassError(false)
+  //   }
+  //   if (!valid) return
+
+  //   // Map form state to API schema
+  //   const nodePool: NodePoolPayload = {
+  //     name,
+  //     machineClass: selectedMachineClass,
+  //     replicas: autoscaling ? null : nodeCount,
+  //     autoscaling: autoscaling
+  //       ? {
+  //           enabled: true,
+  //           minReplicas: minNodes,
+  //           maxReplicas: maxNodes,
+  //         }
+  //       : null,
+  //     metadata: Object.keys(labels).length > 0 ? { labels } : null,
+  //   }
+
+  //   try {
+  //     setIsSubmitting(true)
+  //     toast.success(`Node pool "${name}" saved successfully`)
+  //   } catch (error) {
+  //     console.error('Failed to save node pool', error)
+  //     const message = error instanceof Error ? error.message : 'Unknown error'
+  //     toast.error(`Failed to save node pool: ${message}`)
+  //   } finally {
+  //     setIsSubmitting(false)
+  //   }
+  // }
 
   return (
     <div className={cn(className)}>
@@ -100,8 +154,15 @@ export const CreateEditView = ({ className, id, title, buttonText }: CreateEditV
       </Link>
       <h2>{title}</h2>
       <div className='flex flex-row gap-32'>
-        <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
+        <form action={createOrUpdateNodePoolAction} className='flex flex-col gap-4'>
           <section>
+            <input type='hidden' name='id' value={id} />
+            <input type='hidden' name='name' value={name} />
+            <input type='hidden' name='machineClass' value={selectedMachineClass} />
+            <input type='hidden' name='autoscaling' value={String(autoscaling)} />
+            <input type='hidden' name='labels' value={JSON.stringify(labels)} />
+            <input type='hidden' name='taints' value={JSON.stringify(taints)} />
+
             <h3>Name</h3>
             <div className='flex flex-row gap-4 items-center'>
               <Input type='text' value={name} placeholder='Enter name...' onChange={(e) => setName(e.target.value)} />
@@ -117,10 +178,8 @@ export const CreateEditView = ({ className, id, title, buttonText }: CreateEditV
             <h3>Machine class</h3>
             <div className='flex flex-row gap-4 items-center'>
               {/* TODO: implement actual machine classes */}
-              <Select onValueChange={setSelectedMachineClass} value={selectedMachineClass}>
-                <SelectTrigger className='w-52'>
-                  {selectedMachineClass ? selectedMachineClass : 'Select machine class'}
-                </SelectTrigger>
+              <Select value={selectedMachineClass} onValueChange={setSelectedMachineClass}>
+                <SelectTrigger className='w-52'>{selectedMachineClass || 'Select machine class'}</SelectTrigger>
                 <SelectContent className='w-52'>
                   <SelectItem value='small'>Small</SelectItem>
                   <SelectItem value='medium'>Medium</SelectItem>
@@ -138,22 +197,20 @@ export const CreateEditView = ({ className, id, title, buttonText }: CreateEditV
               {autoscaling ? (
                 <div className='flex flex-row gap-4'>
                   <NumPicker
+                    name='minReplicas'
                     title='Min nodes'
                     value={minNodes}
-                    setValue={(v) => {
-                      if (v <= maxNodes) setMinNodes(v)
-                    }}
+                    setValue={(v) => v <= maxNodes && setMinNodes(v)}
                   />
                   <NumPicker
+                    name='maxReplicas'
                     title='Max nodes'
                     value={maxNodes}
-                    setValue={(v) => {
-                      if (v >= minNodes) setMaxNodes(v)
-                    }}
+                    setValue={(v) => v >= minNodes && setMaxNodes(v)}
                   />
                 </div>
               ) : (
-                <NumPicker title='Node count' value={nodeCount} setValue={setNodeCount} />
+                <NumPicker name='replicas' title='Node count' value={nodeCount} setValue={setNodeCount} />
               )}
               <div className='flex flex-row items-center gap-2 mt-2'>
                 <Checkbox
@@ -296,7 +353,9 @@ export const CreateEditView = ({ className, id, title, buttonText }: CreateEditV
           </section>
 
           <div className='mt-6'>
-            <Button type='submit'>{buttonText}</Button>
+            <div className='mt-6'>
+              <Button type='submit'>{buttonText}</Button>
+            </div>
           </div>
         </form>
 
