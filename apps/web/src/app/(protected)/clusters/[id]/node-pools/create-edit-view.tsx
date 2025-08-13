@@ -104,51 +104,6 @@ export const CreateEditView = ({ className, id, title, buttonText, cluster, onSu
   const [classError, setClassError] = useState(false)
   const [providerError, setProviderError] = useState(false)
   const [selectedEffect, setSelectedEffect] = useState('')
-  // const [isSubmitting, setIsSubmitting] = useState(false)
-
-  // const handleSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault()
-  //   let valid = true
-  //   if (!name) {
-  //     setNameError(true)
-  //     valid = false
-  //   } else {
-  //     setNameError(false)
-  //   }
-  //   if (!selectedMachineClass) {
-  //     setClassError(true)
-  //     valid = false
-  //   } else {
-  //     setClassError(false)
-  //   }
-  //   if (!valid) return
-
-  //   // Map form state to API schema
-  //   const nodePool: NodePoolPayload = {
-  //     name,
-  //     machineClass: selectedMachineClass,
-  //     replicas: autoscaling ? null : nodeCount,
-  //     autoscaling: autoscaling
-  //       ? {
-  //           enabled: true,
-  //           minReplicas: minNodes,
-  //           maxReplicas: maxNodes,
-  //         }
-  //       : null,
-  //     metadata: Object.keys(labels).length > 0 ? { labels } : null,
-  //   }
-
-  //   try {
-  //     setIsSubmitting(true)
-  //     toast.success(`Node pool "${name}" saved successfully`)
-  //   } catch (error) {
-  //     console.error('Failed to save node pool', error)
-  //     const message = error instanceof Error ? error.message : 'Unknown error'
-  //     toast.error(`Failed to save node pool: ${message}`)
-  //   } finally {
-  //     setIsSubmitting(false)
-  //   }
-  // }
 
   return (
     <div className={cn(className)}>
