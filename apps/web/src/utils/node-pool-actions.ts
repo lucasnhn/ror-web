@@ -45,7 +45,7 @@ export async function createOrUpdateNodePoolAction(formData: FormData) {
   }
 
   const nodePool: KubernetesClusterNodePool = {
-    name: name,
+    name: name as string,
     version: version,
     metadata: nodePoolMetaData,
     provider: provider,
