@@ -10,39 +10,14 @@ import words from 'an-array-of-english-words'
 import { Fragment, useState } from 'react'
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/shadcn/select'
 import { Checkbox } from '@/components/shadcn/checkbox'
-import { useSession } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-import { rorApiClient } from '@/services/ror-api'
-import { KubernetesCluster } from '@ror/js-api-client'
 import { createOrUpdateNodePoolAction } from '@/utils/node-pool-actions'
-
-// Local payload type aligned with @ror/js-api-client schema
-type NodePoolPayload = {
-  name?: string | null
-  machineClass?: string | null
-  provider?: string | null
-  version?: string | null
-  replicas?: number | null
-  autoscaling?: {
-    enabled?: boolean | null
-    minReplicas?: number | null
-    maxReplicas?: number | null
-    scalingRules?: string[] | null
-  } | null
-  metadata?: {
-    labels?: Record<string, string> | null
-    annotations?: Record<string, string> | null
-  } | null
-}
 
 interface CreateEditViewProps {
   className?: string
   id: string
   title: string
   buttonText: string
-  cluster: KubernetesCluster
-  onSubmit: (formData: FormData) => Promise<void>
 }
 
 const generateRandomName = (): string => {
@@ -84,7 +59,7 @@ const NumPicker = ({
   )
 }
 
-export const CreateEditView = ({ className, id, title, buttonText, cluster, onSubmit }: CreateEditViewProps) => {
+export const CreateEditView = ({ className, id, title, buttonText }: CreateEditViewProps) => {
   const [name, setName] = useState('')
   const [version, setVersion] = useState('')
   const [provider, setProvider] = useState('')
