@@ -86,6 +86,8 @@ const NumPicker = ({
 
 export const CreateEditView = ({ className, id, title, buttonText, cluster, onSubmit }: CreateEditViewProps) => {
   const [name, setName] = useState('')
+  const [version, setVersion] = useState('')
+  const [provider, setProvider] = useState('')
   const [autoscaling, setAutoscaling] = useState(false)
   const [nodeCount, setNodeCount] = useState(1)
   const [minNodes, setMinNodes] = useState(1)
@@ -98,7 +100,9 @@ export const CreateEditView = ({ className, id, title, buttonText, cluster, onSu
   const [newTaintValue, setNewTaintValue] = useState('')
   const [selectedMachineClass, setSelectedMachineClass] = useState('')
   const [nameError, setNameError] = useState(false)
+  const [versionError, setVersionError] = useState(false)
   const [classError, setClassError] = useState(false)
+  const [providerError, setProviderError] = useState(false)
   const [selectedEffect, setSelectedEffect] = useState('')
   // const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -154,10 +158,74 @@ export const CreateEditView = ({ className, id, title, buttonText, cluster, onSu
       </Link>
       <h2>{title}</h2>
       <div className='flex flex-row gap-32'>
-        <form action={createOrUpdateNodePoolAction} className='flex flex-col gap-4'>
+        <form
+          onSubmit={async (e) => {
+            e.preventDefault()
+
+            let hasError = false
+
+            if (!name) {
+              setNameError(true)
+              hasError = true
+            } else {
+              setNameError(false)
+            }
+
+            if (!selectedMachineClass) {
+              setClassError(true)
+              hasError = true
+            } else {
+              setClassError(false)
+            }
+
+            if (!provider) {
+              setProviderError(true)
+              hasError = true
+            } else {
+              setProviderError(false)
+            }
+
+            if (!version) {
+              setVersionError(true)
+              hasError = true
+            } else {
+              setVersionError(false)
+            }
+
+            if (hasError) {
+              return // Prevent submission
+            }
+
+            // If valid, construct form data and call your server action
+            const formData = new FormData()
+            formData.append('id', id)
+            formData.append('name', name)
+            formData.append('provider', provider)
+            formData.append('version', version)
+            formData.append('machineClass', selectedMachineClass)
+            formData.append('autoscaling', String(autoscaling))
+            formData.append('labels', JSON.stringify(labels))
+            formData.append('taints', JSON.stringify(taints))
+            if (autoscaling) {
+              formData.append('minReplicas', String(minNodes))
+              formData.append('maxReplicas', String(maxNodes))
+            } else {
+              formData.append('replicas', String(nodeCount))
+            }
+
+            try {
+              await createOrUpdateNodePoolAction(formData)
+              toast.success(`Node pool "${name}" saved successfully`)
+            } catch {
+              toast.error('Failed to create node pool')
+            }
+          }}
+        >
           <section>
             <input type='hidden' name='id' value={id} />
             <input type='hidden' name='name' value={name} />
+            <input type='hidden' name='version' value={version} />
+            <input type='hidden' name='provider' value={provider} />
             <input type='hidden' name='machineClass' value={selectedMachineClass} />
             <input type='hidden' name='autoscaling' value={String(autoscaling)} />
             <input type='hidden' name='labels' value={JSON.stringify(labels)} />
@@ -172,6 +240,28 @@ export const CreateEditView = ({ className, id, title, buttonText, cluster, onSu
               </Button>
             </div>
             {nameError && <p className='text-red-500 dark:text-red-600 text-sm'>Please enter a name.</p>}
+          </section>
+
+          <section>
+            <h3>Provider</h3>
+            <Input
+              type='text'
+              value={provider}
+              placeholder='Enter provider...'
+              onChange={(e) => setProvider(e.target.value)}
+            />
+            {providerError && <p className='text-red-500 dark:text-red-600 text-sm'>Please enter a provider.</p>}
+          </section>
+
+          <section>
+            <h3>Version</h3>
+            <Input
+              type='text'
+              value={version}
+              placeholder='Enter version...'
+              onChange={(e) => setVersion(e.target.value)}
+            />
+            {versionError && <p className='text-red-500 dark:text-red-600 text-sm'>Please enter a version.</p>}
           </section>
 
           <section>
@@ -364,6 +454,10 @@ export const CreateEditView = ({ className, id, title, buttonText, cluster, onSu
           <div className='grid grid-cols-2 gap-2'>
             <p className='font-medium'>Name:</p>
             <p>{name || ''}</p>
+            <p className='font-medium'>Provider:</p>
+            <p>{provider || ''}</p>
+            <p className='font-medium'>Version:</p>
+            <p>{version || ''}</p>
             <p className='font-medium'>Machine Class:</p>
             <p>{selectedMachineClass || ''}</p>
             <p className='font-medium'>Autoscaling:</p>
