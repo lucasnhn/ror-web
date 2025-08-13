@@ -10,6 +10,8 @@ import words from 'an-array-of-english-words'
 import { Fragment, useState } from 'react'
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/shadcn/select'
 import { Checkbox } from '@/components/shadcn/checkbox'
+import { toast } from 'sonner'
+import { createOrUpdateNodePoolAction } from '@/utils/node-pool-actions'
 
 interface CreateEditViewProps {
   className?: string
@@ -25,7 +27,17 @@ const generateRandomName = (): string => {
   return `${randomWord1}-${randomWord2}`
 }
 
-const NumPicker = ({ title, value, setValue }: { title: string; value: number; setValue: (v: number) => void }) => {
+const NumPicker = ({
+  title,
+  value,
+  setValue,
+  name,
+}: {
+  title: string
+  value: number
+  setValue: (v: number) => void
+  name: string
+}) => {
   const increment = () => setValue(value + 1)
   const decrement = () => setValue(Math.max(1, value - 1))
   return (
@@ -42,17 +54,20 @@ const NumPicker = ({ title, value, setValue }: { title: string; value: number; s
           <Plus />
         </Button>
       </div>
+      <input type='hidden' name={name} value={String(value)} />
     </div>
   )
 }
 
 export const CreateEditView = ({ className, id, title, buttonText }: CreateEditViewProps) => {
   const [name, setName] = useState('')
+  const [version, setVersion] = useState('')
+  const [provider, setProvider] = useState('')
   const [autoscaling, setAutoscaling] = useState(false)
   const [nodeCount, setNodeCount] = useState(1)
   const [minNodes, setMinNodes] = useState(1)
   const [maxNodes, setMaxNodes] = useState(1)
-  const [labels, setLabels] = useState<Record<string, string>>({ 'Key 1': 'Value 1', 'Key 2': 'Value 2' })
+  const [labels, setLabels] = useState<Record<string, string>>({})
   const [newLabelKey, setNewLabelKey] = useState('')
   const [newLabelValue, setNewLabelValue] = useState('')
   const [taints, setTaints] = useState<Record<string, { value: string; effect: string }>>({})
@@ -60,37 +75,10 @@ export const CreateEditView = ({ className, id, title, buttonText }: CreateEditV
   const [newTaintValue, setNewTaintValue] = useState('')
   const [selectedMachineClass, setSelectedMachineClass] = useState('')
   const [nameError, setNameError] = useState(false)
+  const [versionError, setVersionError] = useState(false)
   const [classError, setClassError] = useState(false)
+  const [providerError, setProviderError] = useState(false)
   const [selectedEffect, setSelectedEffect] = useState('')
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    let valid = true
-    if (!name) {
-      setNameError(true)
-      valid = false
-    } else {
-      setNameError(false)
-    }
-    if (!selectedMachineClass) {
-      setClassError(true)
-      valid = false
-    } else {
-      setClassError(false)
-    }
-    if (!valid) return
-    const payload = {
-      name,
-      autoscaling,
-      nodeCount: autoscaling ? undefined : nodeCount,
-      minNodes: autoscaling ? minNodes : undefined,
-      maxNodes: autoscaling ? maxNodes : undefined,
-      labels,
-      taints,
-      selectedMachineClass,
-    }
-    alert(JSON.stringify(payload, null, 2))
-  }
 
   return (
     <div className={cn(className)}>
@@ -100,8 +88,79 @@ export const CreateEditView = ({ className, id, title, buttonText }: CreateEditV
       </Link>
       <h2>{title}</h2>
       <div className='flex flex-row gap-32'>
-        <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
+        <form
+          onSubmit={async (e) => {
+            e.preventDefault()
+
+            let hasError = false
+
+            if (!name) {
+              setNameError(true)
+              hasError = true
+            } else {
+              setNameError(false)
+            }
+
+            if (!selectedMachineClass) {
+              setClassError(true)
+              hasError = true
+            } else {
+              setClassError(false)
+            }
+
+            if (!provider) {
+              setProviderError(true)
+              hasError = true
+            } else {
+              setProviderError(false)
+            }
+
+            if (!version) {
+              setVersionError(true)
+              hasError = true
+            } else {
+              setVersionError(false)
+            }
+
+            if (hasError) {
+              return // Prevent submission
+            }
+
+            // If valid, construct form data and call your server action
+            const formData = new FormData()
+            formData.append('id', id)
+            formData.append('name', name)
+            formData.append('provider', provider)
+            formData.append('version', version)
+            formData.append('machineClass', selectedMachineClass)
+            formData.append('autoscaling', String(autoscaling))
+            formData.append('labels', JSON.stringify(labels))
+            formData.append('taints', JSON.stringify(taints))
+            if (autoscaling) {
+              formData.append('minReplicas', String(minNodes))
+              formData.append('maxReplicas', String(maxNodes))
+            } else {
+              formData.append('replicas', String(nodeCount))
+            }
+
+            try {
+              await createOrUpdateNodePoolAction(formData)
+              toast.success(`Node pool "${name}" saved successfully`)
+            } catch {
+              toast.error('Failed to create node pool')
+            }
+          }}
+        >
           <section>
+            <input type='hidden' name='id' value={id} />
+            <input type='hidden' name='name' value={name} />
+            <input type='hidden' name='version' value={version} />
+            <input type='hidden' name='provider' value={provider} />
+            <input type='hidden' name='machineClass' value={selectedMachineClass} />
+            <input type='hidden' name='autoscaling' value={String(autoscaling)} />
+            <input type='hidden' name='labels' value={JSON.stringify(labels)} />
+            <input type='hidden' name='taints' value={JSON.stringify(taints)} />
+
             <h3>Name</h3>
             <div className='flex flex-row gap-4 items-center'>
               <Input type='text' value={name} placeholder='Enter name...' onChange={(e) => setName(e.target.value)} />
@@ -114,13 +173,33 @@ export const CreateEditView = ({ className, id, title, buttonText }: CreateEditV
           </section>
 
           <section>
+            <h3>Provider</h3>
+            <Input
+              type='text'
+              value={provider}
+              placeholder='Enter provider...'
+              onChange={(e) => setProvider(e.target.value)}
+            />
+            {providerError && <p className='text-red-500 dark:text-red-600 text-sm'>Please enter a provider.</p>}
+          </section>
+
+          <section>
+            <h3>Version</h3>
+            <Input
+              type='text'
+              value={version}
+              placeholder='Enter version...'
+              onChange={(e) => setVersion(e.target.value)}
+            />
+            {versionError && <p className='text-red-500 dark:text-red-600 text-sm'>Please enter a version.</p>}
+          </section>
+
+          <section>
             <h3>Machine class</h3>
             <div className='flex flex-row gap-4 items-center'>
               {/* TODO: implement actual machine classes */}
-              <Select onValueChange={setSelectedMachineClass} value={selectedMachineClass}>
-                <SelectTrigger className='w-52'>
-                  {selectedMachineClass ? selectedMachineClass : 'Select machine class'}
-                </SelectTrigger>
+              <Select value={selectedMachineClass} onValueChange={setSelectedMachineClass}>
+                <SelectTrigger className='w-52'>{selectedMachineClass || 'Select machine class'}</SelectTrigger>
                 <SelectContent className='w-52'>
                   <SelectItem value='small'>Small</SelectItem>
                   <SelectItem value='medium'>Medium</SelectItem>
@@ -138,22 +217,20 @@ export const CreateEditView = ({ className, id, title, buttonText }: CreateEditV
               {autoscaling ? (
                 <div className='flex flex-row gap-4'>
                   <NumPicker
+                    name='minReplicas'
                     title='Min nodes'
                     value={minNodes}
-                    setValue={(v) => {
-                      if (v <= maxNodes) setMinNodes(v)
-                    }}
+                    setValue={(v) => v <= maxNodes && setMinNodes(v)}
                   />
                   <NumPicker
+                    name='maxReplicas'
                     title='Max nodes'
                     value={maxNodes}
-                    setValue={(v) => {
-                      if (v >= minNodes) setMaxNodes(v)
-                    }}
+                    setValue={(v) => v >= minNodes && setMaxNodes(v)}
                   />
                 </div>
               ) : (
-                <NumPicker title='Node count' value={nodeCount} setValue={setNodeCount} />
+                <NumPicker name='replicas' title='Node count' value={nodeCount} setValue={setNodeCount} />
               )}
               <div className='flex flex-row items-center gap-2 mt-2'>
                 <Checkbox
@@ -296,7 +373,9 @@ export const CreateEditView = ({ className, id, title, buttonText }: CreateEditV
           </section>
 
           <div className='mt-6'>
-            <Button type='submit'>{buttonText}</Button>
+            <div className='mt-6'>
+              <Button type='submit'>{buttonText}</Button>
+            </div>
           </div>
         </form>
 
@@ -305,6 +384,10 @@ export const CreateEditView = ({ className, id, title, buttonText }: CreateEditV
           <div className='grid grid-cols-2 gap-2'>
             <p className='font-medium'>Name:</p>
             <p>{name || ''}</p>
+            <p className='font-medium'>Provider:</p>
+            <p>{provider || ''}</p>
+            <p className='font-medium'>Version:</p>
+            <p>{version || ''}</p>
             <p className='font-medium'>Machine Class:</p>
             <p>{selectedMachineClass || ''}</p>
             <p className='font-medium'>Autoscaling:</p>

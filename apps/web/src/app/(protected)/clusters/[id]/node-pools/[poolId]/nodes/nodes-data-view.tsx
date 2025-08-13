@@ -9,8 +9,6 @@ interface PageViewProps<TData> {
 }
 
 export const NodesDataView = ({ data }: PageViewProps<Node>) => {
-  console.log('[PAGEVIEW NODES]:', data)
-
   const columns: ColumnDef<Node>[] = [
     {
       header: 'Name',

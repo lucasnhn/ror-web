@@ -22,6 +22,8 @@ export type {
   DeploymentResponse,
   KubernetesCluster,
   KubernetesClusterResponse,
+  KubernetesClusterNodePool,
+  KubernetesClusterNodePoolType,
   Node,
   NodeResponse,
   Pod,
