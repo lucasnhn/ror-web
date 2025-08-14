@@ -176,3 +176,4 @@ export const KubernetesClusterSchema = V2ResourceSchema.extend({
 
 export const KubernetesClusterResponseSchema = createV2ResourceResponseSchema(KubernetesClusterSchema)
 export type KubernetesClusterNodePoolType = z.infer<typeof KubernetesClusterNodePool>
+export type KubernetesClusterNodePoolStatusType = z.infer<typeof KubernetesClusterNodePoolStatus>
