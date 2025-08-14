@@ -12,12 +12,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/s
 import { Checkbox } from '@/components/shadcn/checkbox'
 import { toast } from 'sonner'
 import { createOrUpdateNodePoolAction } from '@/utils/node-pool-actions'
+import { KubernetesClusterNodePoolStatusType } from '@ror/js-api-client'
 
 interface CreateEditViewProps {
   className?: string
   id: string
   title: string
   buttonText: string
+  nodePool?: KubernetesClusterNodePoolStatusType
 }
 
 const generateRandomName = (): string => {
@@ -59,26 +61,28 @@ const NumPicker = ({
   )
 }
 
-export const CreateEditView = ({ className, id, title, buttonText }: CreateEditViewProps) => {
-  const [name, setName] = useState('')
-  const [version, setVersion] = useState('')
-  const [provider, setProvider] = useState('')
-  const [autoscaling, setAutoscaling] = useState(false)
-  const [nodeCount, setNodeCount] = useState(1)
-  const [minNodes, setMinNodes] = useState(1)
-  const [maxNodes, setMaxNodes] = useState(1)
+export const CreateEditView = ({ className, id, title, buttonText, nodePool }: CreateEditViewProps) => {
+  const [name, setName] = useState(nodePool?.name || '')
+  const [version, setVersion] = useState('NO VERSION IN STATUS')
+  const [provider, setProvider] = useState('NO PROVIDER IN STATUS')
+  const [autoscaling, setAutoscaling] = useState(!nodePool?.autoscaling || false)
+  const [nodeCount, setNodeCount] = useState(nodePool?.scale || 1)
+  const [minNodes, setMinNodes] = useState(nodePool?.autoscaling?.minReplicas || 1)
+  const [maxNodes, setMaxNodes] = useState(nodePool?.autoscaling?.maxReplicas || 1)
   const [labels, setLabels] = useState<Record<string, string>>({})
-  const [newLabelKey, setNewLabelKey] = useState('')
-  const [newLabelValue, setNewLabelValue] = useState('')
+  const [newLabelKey, setNewLabelKey] = useState('NO LABEL KEY IN STATUS')
+  const [newLabelValue, setNewLabelValue] = useState('NO LABEL VALUE IN STATUS')
   const [taints, setTaints] = useState<Record<string, { value: string; effect: string }>>({})
-  const [newTaintKey, setNewTaintKey] = useState('')
-  const [newTaintValue, setNewTaintValue] = useState('')
-  const [selectedMachineClass, setSelectedMachineClass] = useState('')
+  const [newTaintKey, setNewTaintKey] = useState('NO TAINT KEY IN STATUS')
+  const [newTaintValue, setNewTaintValue] = useState('NO TAINT VALUE IN STATUS')
+  const [selectedMachineClass, setSelectedMachineClass] = useState(nodePool?.machineClass || '')
   const [nameError, setNameError] = useState(false)
   const [versionError, setVersionError] = useState(false)
   const [classError, setClassError] = useState(false)
   const [providerError, setProviderError] = useState(false)
-  const [selectedEffect, setSelectedEffect] = useState('')
+  const [selectedEffect, setSelectedEffect] = useState(false)
+
+  console.log('[CREATE-EDIT-VIEW] nodePool:', nodePool)
 
   return (
     <div className={cn(className)}>
@@ -130,8 +134,12 @@ export const CreateEditView = ({ className, id, title, buttonText }: CreateEditV
             const formData = new FormData()
             formData.append('id', id)
             formData.append('name', name)
-            formData.append('provider', provider)
-            formData.append('version', version)
+            {
+              !nodePool && formData.append('provider', provider)
+            }
+            {
+              !nodePool && formData.append('version', version)
+            }
             formData.append('machineClass', selectedMachineClass)
             formData.append('autoscaling', String(autoscaling))
             formData.append('labels', JSON.stringify(labels))
@@ -172,27 +180,31 @@ export const CreateEditView = ({ className, id, title, buttonText }: CreateEditV
             {nameError && <p className='text-red-500 dark:text-red-600 text-sm'>Please enter a name.</p>}
           </section>
 
-          <section>
-            <h3>Provider</h3>
-            <Input
-              type='text'
-              value={provider}
-              placeholder='Enter provider...'
-              onChange={(e) => setProvider(e.target.value)}
-            />
-            {providerError && <p className='text-red-500 dark:text-red-600 text-sm'>Please enter a provider.</p>}
-          </section>
+          {!nodePool && (
+            <section>
+              <h3>Provider</h3>
+              <Input
+                type='text'
+                value={provider}
+                placeholder='Enter provider...'
+                onChange={(e) => setProvider(e.target.value)}
+              />
+              {providerError && <p className='text-red-500 dark:text-red-600 text-sm'>Please enter a provider.</p>}
+            </section>
+          )}
 
-          <section>
-            <h3>Version</h3>
-            <Input
-              type='text'
-              value={version}
-              placeholder='Enter version...'
-              onChange={(e) => setVersion(e.target.value)}
-            />
-            {versionError && <p className='text-red-500 dark:text-red-600 text-sm'>Please enter a version.</p>}
-          </section>
+          {!nodePool && (
+            <section>
+              <h3>Version</h3>
+              <Input
+                type='text'
+                value={version}
+                placeholder='Enter version...'
+                onChange={(e) => setVersion(e.target.value)}
+              />
+              {versionError && <p className='text-red-500 dark:text-red-600 text-sm'>Please enter a version.</p>}
+            </section>
+          )}
 
           <section>
             <h3>Machine class</h3>
@@ -205,6 +217,7 @@ export const CreateEditView = ({ className, id, title, buttonText }: CreateEditV
                   <SelectItem value='medium'>Medium</SelectItem>
                   <SelectItem value='large'>Large</SelectItem>
                   <SelectItem value='xlarge'>X-Large</SelectItem>
+                  <SelectItem value='best-effort-cpu-2xlarge'>best-effort-cpu-2xlarge</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -249,128 +262,132 @@ export const CreateEditView = ({ className, id, title, buttonText }: CreateEditV
             </div>
           </section>
 
-          <section>
-            <h3>Node labels</h3>
-            <div className='grid [grid-template-columns:15rem_15rem_auto] gap-y-4 items-center'>
-              <b>Key</b>
-              <b>Value</b>
-              <b>Actions</b>
-              {Object.entries(labels).map(([key, value]) => (
-                <Fragment key={key}>
-                  <div>
-                    <span className='font-medium flex'>{key}</span>
-                  </div>
-                  <div>
-                    <span className='font-medium flex'>{value}</span>
-                  </div>
-                  <Button
-                    type='button'
-                    variant='destructive'
-                    className='max-w-fit'
-                    onClick={() =>
-                      setLabels((prev) => {
-                        const newLabels = { ...prev }
-                        delete newLabels[key]
-                        return newLabels
-                      })
-                    }
-                  >
-                    <Trash />
-                  </Button>
-                </Fragment>
-              ))}
-              <Input
-                type='text'
-                placeholder='Enter key...'
-                value={newLabelKey}
-                onChange={(e) => setNewLabelKey(e.target.value)}
-              />
-              <Input
-                type='text'
-                placeholder='Enter value...'
-                value={newLabelValue}
-                onChange={(e) => setNewLabelValue(e.target.value)}
-              />
-              <Button
-                type='button'
-                className='max-w-fit'
-                onClick={() => {
-                  if (!newLabelKey || !newLabelValue) return
-                  setLabels((prev) => ({ ...prev, [newLabelKey]: newLabelValue }))
-                  setNewLabelKey('')
-                  setNewLabelValue('')
-                }}
-              >
-                <PlusIcon />
-                Add
-              </Button>
-            </div>
-          </section>
+          {!nodePool && (
+            <section>
+              <h3>Node labels</h3>
+              <div className='grid [grid-template-columns:15rem_15rem_auto] gap-y-4 items-center'>
+                <b>Key</b>
+                <b>Value</b>
+                <b>Actions</b>
+                {Object.entries(labels).map(([key, value]) => (
+                  <Fragment key={key}>
+                    <div>
+                      <span className='font-medium flex'>{key}</span>
+                    </div>
+                    <div>
+                      <span className='font-medium flex'>{value}</span>
+                    </div>
+                    <Button
+                      type='button'
+                      variant='destructive'
+                      className='max-w-fit'
+                      onClick={() =>
+                        setLabels((prev) => {
+                          const newLabels = { ...prev }
+                          delete newLabels[key]
+                          return newLabels
+                        })
+                      }
+                    >
+                      <Trash />
+                    </Button>
+                  </Fragment>
+                ))}
+                <Input
+                  type='text'
+                  placeholder='Enter key...'
+                  value={newLabelKey}
+                  onChange={(e) => setNewLabelKey(e.target.value)}
+                />
+                <Input
+                  type='text'
+                  placeholder='Enter value...'
+                  value={newLabelValue}
+                  onChange={(e) => setNewLabelValue(e.target.value)}
+                />
+                <Button
+                  type='button'
+                  className='max-w-fit'
+                  onClick={() => {
+                    if (!newLabelKey || !newLabelValue) return
+                    setLabels((prev) => ({ ...prev, [newLabelKey]: newLabelValue }))
+                    setNewLabelKey('')
+                    setNewLabelValue('')
+                  }}
+                >
+                  <PlusIcon />
+                  Add
+                </Button>
+              </div>
+            </section>
+          )}
 
-          <section>
-            <h3>Node taints</h3>
-            <div className='grid [grid-template-columns:15rem_15rem_15rem_auto] gap-y-4 items-center'>
-              <b>Key</b>
-              <b>Value</b>
-              <b>Effect</b>
-              <b>Actions</b>
-              {Object.entries(taints).map(([key, { value, effect }]) => (
-                <Fragment key={key}>
-                  <span className='font-medium flex'>{key}</span>
-                  <span className='font-medium flex'>{value}</span>
-                  <span className='font-medium flex'>{effect}</span>
-                  <Button
-                    type='button'
-                    variant='destructive'
-                    className='max-w-fit'
-                    onClick={() =>
-                      setTaints((prev) => {
-                        const newTaints = { ...prev }
-                        delete newTaints[key]
-                        return newTaints
-                      })
-                    }
-                  >
-                    <Trash />
-                  </Button>
-                </Fragment>
-              ))}
-              <Input
-                type='text'
-                placeholder='Enter key...'
-                value={newTaintKey}
-                onChange={(e) => setNewTaintKey(e.target.value)}
-              />
-              <Input
-                type='text'
-                placeholder='Enter value...'
-                value={newTaintValue}
-                onChange={(e) => setNewTaintValue(e.target.value)}
-              />
-              <Select value={selectedEffect} onValueChange={setSelectedEffect}>
-                <SelectTrigger className='w-52'>{selectedEffect || 'Select effect'}</SelectTrigger>
-                <SelectContent className='w-52'>
-                  <SelectItem value='NoSchedule'>NoSchedule</SelectItem>
-                  <SelectItem value='PreferNoSchedule'>PreferNoSchedule</SelectItem>
-                  <SelectItem value='NoExecute'>NoExecute</SelectItem>
-                </SelectContent>
-              </Select>
-              <Button
-                type='button'
-                className='max-w-fit'
-                onClick={() => {
-                  if (!newTaintKey || !newTaintValue || !selectedEffect) return
-                  setTaints((prev) => ({ ...prev, [newTaintKey]: { value: newTaintValue, effect: selectedEffect } }))
-                  setNewTaintKey('')
-                  setNewTaintValue('')
-                  setSelectedEffect('')
-                }}
-              >
-                <PlusIcon />
-                Add
-              </Button>
-            </div>
-          </section>
+          {!nodePool && (
+            <section>
+              <h3>Node taints</h3>
+              <div className='grid [grid-template-columns:15rem_15rem_15rem_auto] gap-y-4 items-center'>
+                <b>Key</b>
+                <b>Value</b>
+                <b>Effect</b>
+                <b>Actions</b>
+                {Object.entries(taints).map(([key, { value, effect }]) => (
+                  <Fragment key={key}>
+                    <span className='font-medium flex'>{key}</span>
+                    <span className='font-medium flex'>{value}</span>
+                    <span className='font-medium flex'>{effect}</span>
+                    <Button
+                      type='button'
+                      variant='destructive'
+                      className='max-w-fit'
+                      onClick={() =>
+                        setTaints((prev) => {
+                          const newTaints = { ...prev }
+                          delete newTaints[key]
+                          return newTaints
+                        })
+                      }
+                    >
+                      <Trash />
+                    </Button>
+                  </Fragment>
+                ))}
+                <Input
+                  type='text'
+                  placeholder='Enter key...'
+                  value={newTaintKey}
+                  onChange={(e) => setNewTaintKey(e.target.value)}
+                />
+                <Input
+                  type='text'
+                  placeholder='Enter value...'
+                  value={newTaintValue}
+                  onChange={(e) => setNewTaintValue(e.target.value)}
+                />
+                <Select value={selectedEffect} onValueChange={setSelectedEffect}>
+                  <SelectTrigger className='w-52'>{selectedEffect || 'Select effect'}</SelectTrigger>
+                  <SelectContent className='w-52'>
+                    <SelectItem value='NoSchedule'>NoSchedule</SelectItem>
+                    <SelectItem value='PreferNoSchedule'>PreferNoSchedule</SelectItem>
+                    <SelectItem value='NoExecute'>NoExecute</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Button
+                  type='button'
+                  className='max-w-fit'
+                  onClick={() => {
+                    if (!newTaintKey || !newTaintValue || !selectedEffect) return
+                    setTaints((prev) => ({ ...prev, [newTaintKey]: { value: newTaintValue, effect: selectedEffect } }))
+                    setNewTaintKey('')
+                    setNewTaintValue('')
+                    setSelectedEffect('')
+                  }}
+                >
+                  <PlusIcon />
+                  Add
+                </Button>
+              </div>
+            </section>
+          )}
 
           <div className='mt-6'>
             <div className='mt-6'>
@@ -384,11 +401,11 @@ export const CreateEditView = ({ className, id, title, buttonText }: CreateEditV
           <div className='grid grid-cols-2 gap-2'>
             <p className='font-medium'>Name:</p>
             <p>{name || ''}</p>
-            <p className='font-medium'>Provider:</p>
-            <p>{provider || ''}</p>
-            <p className='font-medium'>Version:</p>
-            <p>{version || ''}</p>
-            <p className='font-medium'>Machine Class:</p>
+            {!nodePool && <p className='font-medium'>Provider:</p>}
+            {!nodePool && <p>{provider || ''}</p>}
+            {!nodePool && <p className='font-medium'>Version:</p>}
+            {!nodePool && <p>{version || ''}</p>}
+            <p className='font-medium'>Machine class:</p>
             <p>{selectedMachineClass || ''}</p>
             <p className='font-medium'>Autoscaling:</p>
             <p>{autoscaling ? 'Enabled' : 'Disabled'}</p>
@@ -401,7 +418,7 @@ export const CreateEditView = ({ className, id, title, buttonText }: CreateEditV
               </>
             ) : (
               <>
-                <p className='font-medium'>Node Count:</p>
+                <p className='font-medium'>Node count:</p>
                 <p>{nodeCount}</p>
               </>
             )}
