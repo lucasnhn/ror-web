@@ -131,11 +131,11 @@ export const CreateEditView = ({ className, id, title, buttonText, nodePool }: C
             const formData = new FormData()
             formData.append('id', id)
             formData.append('name', name)
-            {
-              !nodePool && formData.append('provider', provider)
+            if (!nodePool) {
+              formData.append('provider', provider)
             }
-            {
-              !nodePool && formData.append('version', version)
+            if (!nodePool) {
+              formData.append('version', version)
             }
             formData.append('machineClass', selectedMachineClass)
             formData.append('autoscaling', String(autoscaling))
