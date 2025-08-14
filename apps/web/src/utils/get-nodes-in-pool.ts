@@ -6,15 +6,12 @@ export function findPoolByName<T extends { name?: string | null }>(
   statePools: readonly T[],
   rawId: string | undefined
 ): T | KubernetesClusterNodePoolStatusType | undefined {
-  console.log('[GET-NODES-IN-POOL] statePools:', statePools)
-  console.log('[GET-NODES-IN-POOL] rawId:', rawId)
   const id = decodeURIComponent(rawId ?? '').trim()
   if (!id) return undefined
 
   const exact = statePools.find((p) => (p.name ?? '') === id)
   if (exact) return exact
   const returnStatePools = statePools.find((p) => (p.name ?? '').toLowerCase() === id.toLowerCase())
-  console.log('[GET-NODES-IN-POOL] returnStatePools:', returnStatePools)
   return returnStatePools
 }
 

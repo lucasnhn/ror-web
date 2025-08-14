@@ -28,8 +28,6 @@ export default async function EditNodePoolPage({ params }: EditNodePoolProps) {
 
   const pool = findPoolByName(pools, poolId)
 
-  console.log('[EDIT-NODE-POOL] pool:', pool)
-
   return (
     <div className=''>
       <CreateEditView id={id} title='Edit node pool' buttonText='Save changes' nodePool={pool} />
