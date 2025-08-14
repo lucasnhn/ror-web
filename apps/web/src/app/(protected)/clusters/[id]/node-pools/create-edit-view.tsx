@@ -80,7 +80,7 @@ export const CreateEditView = ({ className, id, title, buttonText, nodePool }: C
   const [versionError, setVersionError] = useState(false)
   const [classError, setClassError] = useState(false)
   const [providerError, setProviderError] = useState(false)
-  const [selectedEffect, setSelectedEffect] = useState(false)
+  const [selectedEffect, setSelectedEffect] = useState('')
   return (
     <div className={cn(className)}>
       <Link href={routes.app.clusterNodePools.getHref(id)} className='flex flex-row gap-2 hover:underline mb-2'>

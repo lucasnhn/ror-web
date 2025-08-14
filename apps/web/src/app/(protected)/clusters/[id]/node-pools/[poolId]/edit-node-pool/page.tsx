@@ -10,10 +10,10 @@ export const metadata: Metadata = {
 }
 
 interface EditNodePoolProps {
-  params: {
+  params: Promise<{
     id: string
     poolId: string
-  }
+  }>
 }
 
 export default async function EditNodePoolPage({ params }: EditNodePoolProps) {
