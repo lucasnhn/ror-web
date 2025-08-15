@@ -1,17 +1,18 @@
-import { Node } from '@ror/js-api-client'
+import { KubernetesClusterNodePoolStatusType, Node } from '@ror/js-api-client'
 
 type PoolNodeRef = string | { name?: string } | null | undefined
 
 export function findPoolByName<T extends { name?: string | null }>(
   statePools: readonly T[],
   rawId: string | undefined
-): T | undefined {
+): T | KubernetesClusterNodePoolStatusType | undefined {
   const id = decodeURIComponent(rawId ?? '').trim()
   if (!id) return undefined
 
   const exact = statePools.find((p) => (p.name ?? '') === id)
   if (exact) return exact
-  return statePools.find((p) => (p.name ?? '').toLowerCase() === id.toLowerCase())
+  const returnStatePools = statePools.find((p) => (p.name ?? '').toLowerCase() === id.toLowerCase())
+  return returnStatePools
 }
 
 export function getNodesInPool(

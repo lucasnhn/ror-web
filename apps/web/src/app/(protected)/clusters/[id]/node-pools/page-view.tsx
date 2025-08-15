@@ -173,7 +173,7 @@ export function PageView({ data, id }: DataTableProps<Nodepool>) {
         return (
           <div className='flex gap-2'>
             {/* edit */}
-            <Link href={routes.app.editNodePool.getHref(id)}>
+            <Link href={routes.app.editNodePool.getHref(id, pool.name)}>
               <Button className='flex gap-2'>
                 <PencilIcon className='h-5 w-5' />
               </Button>
