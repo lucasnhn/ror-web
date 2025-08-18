@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getToken } from 'next-auth/jwt'
+import type { JWT as NextAuthJWT } from 'next-auth/jwt'
 
 const isDev = process.env.NODE_ENV !== 'production'
 
@@ -13,6 +14,11 @@ const bypassRoutes = [
   '/health',
   '/healthz',
 ]
+
+type AppJWT = NextAuthJWT & {
+  accessToken?: string
+  accessTokenExpires?: number // ms
+}
 
 export async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname
@@ -39,49 +45,49 @@ export async function middleware(req: NextRequest) {
     secureCookie: process.env.NODE_ENV === 'production',
   }
 
-  console.log(`[MIDDLEWARE] Getting token with options:`, {
-    hasSecret: !!(process.env.NEXTAUTH_SECRET || process.env.AUTH_SECRET),
-    secureCookie: getTokenOptions.secureCookie,
-  })
-
-  if (req.nextUrl.searchParams.has('callbackUrl')) {
-    console.log(`[MIDDLEWARE] Skipping auth for callbackUrl redirect`)
-    return NextResponse.next()
-  }
-
   if (isDev) {
-    console.log(`[MIDDLEWARE] Raw cookies:`, {
-      all: Object.fromEntries(req.cookies.getAll().map((c) => [c.name, c.value])),
-    })
+    // Avoid logging full cookie values; only names and truncated preview
+    const safeCookies = Object.fromEntries(req.cookies.getAll().map((c) => [c.name, (c.value ?? '').slice(0, 8) + '…']))
+    console.log(`[MIDDLEWARE] Cookies (truncated):`, safeCookies)
   }
 
-  const token = await getToken(getTokenOptions)
-
+  const token = (await getToken(getTokenOptions)) as AppJWT | null
   console.log(`[MIDDLEWARE] Token:`, token)
+  console.log('[MIDDLEWARE] Token.accessToken:', token?.accessToken)
+  console.log('[MIDDLEWARE] Token.accessTokenExpires:', token?.accessTokenExpires)
 
   if (!token) {
     console.log(`[MIDDLEWARE] No valid token found, redirecting to sign-in`)
-    return NextResponse.redirect(`${req.nextUrl.origin}/sign-in`)
+    const callbackUrl = encodeURIComponent(req.nextUrl.pathname + req.nextUrl.search)
+    return NextResponse.redirect(`${req.nextUrl.origin}/sign-in?callbackUrl=${callbackUrl}`)
   }
 
-  if (!token.exp) {
-    console.log(`[MIDDLEWARE] Token missing exp field, redirecting`)
-    return NextResponse.redirect(`${req.nextUrl.origin}/sign-in`)
+  // Prefer your custom ms field; fall back to standard exp (seconds)
+  const expMs =
+    typeof token.accessTokenExpires === 'number'
+      ? token.accessTokenExpires
+      : typeof token.exp === 'number'
+        ? token.exp * 1000
+        : undefined
+
+  if (expMs === undefined) {
+    console.log(`[MIDDLEWARE] Token missing expiration, redirecting`)
+    const callbackUrl = encodeURIComponent(req.nextUrl.pathname + req.nextUrl.search)
+    return NextResponse.redirect(`${req.nextUrl.origin}/sign-in?callbackUrl=${callbackUrl}`)
   }
 
-  const currentTime = Date.now()
-  const expirationTime = token.exp * 1000
-
+  const now = Date.now()
   console.log(`[MIDDLEWARE] Token expiration:`, {
-    currentTime: new Date(currentTime).toISOString(),
-    expirationTime: new Date(expirationTime).toISOString(),
-    isExpired: currentTime >= expirationTime,
-    timeRemaining: `${Math.floor((expirationTime - currentTime) / 1000)}s`,
+    currentTime: new Date(now).toISOString(),
+    expirationTime: new Date(expMs).toISOString(),
+    isExpired: now >= expMs,
+    timeRemaining: `${Math.floor((expMs - now) / 1000)}s`,
   })
 
-  if (currentTime >= expirationTime) {
+  if (now >= expMs) {
     console.log(`[MIDDLEWARE] Token expired, redirecting`)
-    return NextResponse.redirect(`${req.nextUrl.origin}/sign-in`)
+    const callbackUrl = encodeURIComponent(req.nextUrl.pathname + req.nextUrl.search)
+    return NextResponse.redirect(`${req.nextUrl.origin}/sign-in?callbackUrl=${callbackUrl}`)
   }
 
   console.log(`[MIDDLEWARE] Valid session token, proceeding`)

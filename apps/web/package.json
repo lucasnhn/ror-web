@@ -14,7 +14,6 @@
     "format:fix": "prettier . --write --cache --cache-location='node_modules/.cache/.prettiercache' --log-level=warn"
   },
   "dependencies": {
-    "@auth/core": "0.39.1",
     "@dnd-kit/core": "6.3.1",
     "@evilmartians/harmony": "^1.4.0",
     "@headlessui/react": "2.2.2",
@@ -59,7 +58,7 @@
     "lucide-react": "0.503.0",
     "motion": "12.9.2",
     "next": "15.3.1",
-    "next-auth": "5.0.0-beta.28",
+    "next-auth": "4.24.11",
     "next-runtime-env": "3.3.0",
     "next-themes": "0.4.6",
     "radash": "12.1.0",
