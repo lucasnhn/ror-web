@@ -482,7 +482,7 @@ import type { JWT } from 'next-auth/jwt'
 import type { OAuthConfig } from 'next-auth/providers/oauth'
 import { jwtDecode } from 'jwt-decode'
 import { env } from '@/config/env'
-import { routes } from './routes'
+// routes import removed (no custom pages.signIn)
 
 /* ========= Module augmentations ========= */
 declare module 'next-auth/jwt' {
@@ -598,15 +598,11 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
   }
 }
 
-/* ========= Dex as generic OAuth/OIDC provider =========
-   NOTE: We only import the TYPE from 'next-auth/providers/oauth'.
-   There is NO default export to import/instantiate. We provide a plain object.
-*/
+/* ========= Dex as generic OAuth/OIDC provider (wellKnown discovery) ========= */
 const DexProvider: OAuthConfig<DexProfile> = {
   id: 'dex',
   name: 'dex',
   type: 'oauth',
-  // OIDC discovery
   wellKnown: `${env.AUTH_ISSUER}/.well-known/openid-configuration`,
   clientId: env.AUTH_CLIENT_ID,
   clientSecret: env.AUTH_CLIENT_SECRET,
@@ -639,7 +635,6 @@ export const authOptions: NextAuthOptions = {
   },
   providers: [DexProvider],
   pages: {
-    signIn: routes.auth.signIn.getHref(),
     error: '/auth-debug',
   },
   callbacks: {
@@ -682,6 +677,56 @@ export const authOptions: NextAuthOptions = {
       }
       if (token.error) session.error = token.error
       return session
+    },
+  },
+  events: {
+    async signIn(message: {
+      user: { id?: string } | null
+      account: { provider?: string } | null
+      isNewUser?: boolean
+    }) {
+      const dbg = process.env.AUTH_DEBUG === 'true' || process.env.NODE_ENV !== 'production'
+      if (!dbg) return
+      try {
+        console.log('[AUTH][EVT] signIn', {
+          provider: message?.account?.provider,
+          userId: message?.user?.id,
+          isNewUser: message?.isNewUser,
+        })
+      } catch {}
+    },
+    async session(message: { session?: Session & { accessToken?: string } }) {
+      const dbg = process.env.AUTH_DEBUG === 'true' || process.env.NODE_ENV !== 'production'
+      if (!dbg) return
+      try {
+        console.log('[AUTH][EVT] session', {
+          userId: message?.session?.user?.id,
+          hasAccessToken: Boolean(message?.session?.accessToken),
+        })
+      } catch {}
+    },
+  },
+  logger: {
+    error(code, metadata) {
+      const dbg = process.env.AUTH_DEBUG === 'true' || process.env.NODE_ENV !== 'production'
+      if (!dbg) return
+      try {
+        console.error('[AUTH][LOG] error', code, metadata)
+      } catch {}
+    },
+    warn(code) {
+      const dbg = process.env.AUTH_DEBUG === 'true' || process.env.NODE_ENV !== 'production'
+      if (!dbg) return
+      try {
+        console.warn('[AUTH][LOG] warn', code)
+      } catch {}
+    },
+    debug(code, metadata) {
+      const dbg = process.env.AUTH_DEBUG === 'true' || process.env.NODE_ENV !== 'production'
+      if (!dbg) return
+      try {
+        console.log('[AUTH][LOG] debug', code, metadata)
+      } catch {}
     },
   },
 }

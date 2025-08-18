@@ -5,7 +5,8 @@
 
 import NextAuth from 'next-auth'
 import { getServerSession } from 'next-auth'
-import { authOptions } from '@/config/auth.config'
+import { authOptions } from './auth.config'
+// import { authOptions } from '@/config/auth.config'
 
 /** Use this in the route handler */
 export const nextAuthHandler = NextAuth(authOptions)
