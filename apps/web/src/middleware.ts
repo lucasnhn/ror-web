@@ -129,6 +129,11 @@ export async function middleware(req: NextRequest) {
   const debug = process.env.AUTH_DEBUG === 'true' || process.env.NODE_ENV !== 'production'
   const path = req.nextUrl.pathname
   if (debug) console.log('[AUTH][MW] start', { path, method: req.method })
+  // Skip static assets (not covered by the default matcher exclusions)
+  if (/\.(?:png|jpg|jpeg|gif|svg|ico|css|js|map|txt|woff|woff2|ttf|eot)$/i.test(path)) {
+    if (debug) console.log('[AUTH][MW] bypass(static)', { path })
+    return NextResponse.next()
+  }
   const bypass = [
     '/sign-in',
     '/sign-in-debug',
