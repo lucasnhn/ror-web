@@ -5,7 +5,7 @@ import {
   KubernetesClusterResponseSchema,
   KubernetesClusterNodePool as KubernetesClusterNodePoolSchema,
 } from '../schemas/kubernetes-cluster'
-import type { KubernetesClusterNodePoolType } from '../schemas/kubernetes-cluster'
+import type { KubernetesClusterNodePoolType, KubernetesClusterNodePoolStatusType } from '../schemas/kubernetes-cluster'
 import { ClusterIngressModelV1, ClusterSchema, ClustersResponseSchema } from '../schemas/kubernetes-cluster-v1'
 import { NodeSchema, NodeResponseSchema } from '../schemas/node'
 import { UserSelfSchema } from '../schemas/user'
@@ -29,6 +29,7 @@ export type KubernetesCluster = z.infer<typeof KubernetesClusterSchema>
 export type KubernetesClusterResponse = z.infer<typeof KubernetesClusterResponseSchema>
 export type KubernetesClusterNodePool = z.infer<typeof KubernetesClusterNodePoolSchema>
 export type { KubernetesClusterNodePoolType }
+export type { KubernetesClusterNodePoolStatusType }
 export type Node = z.infer<typeof NodeSchema>
 export type NodeResponse = z.infer<typeof NodeResponseSchema>
 export type User = z.infer<typeof UserSelfSchema>
