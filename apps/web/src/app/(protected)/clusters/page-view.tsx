@@ -275,8 +275,7 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
   }
 
   const clearUrl = () => {
-    router.push(pathname)
-    router.refresh()
+    router.replace(pathname, { scroll: false })
   }
 
   const handleRefreshFilters = () => {
