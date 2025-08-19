@@ -5,7 +5,7 @@ import { getPublicOrigin } from '@/lib/public-origin'
 export async function GET(req: NextRequest) {
   // Get URL in request
   const url = new URL(req.url)
-  // Makes sure we have the actual beta.ror.nhn.no url, and not a localhost one
+  // Ensures we use the actual public origin URL, and not a localhost one
   const publicOrigin = getPublicOrigin(req, url.origin)
   // Get potential error
   const error = url.searchParams.get('error')
