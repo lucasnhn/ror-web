@@ -8,13 +8,14 @@ import { CodeSnippet } from '@ror/react'
 import { Toggle } from '@/components/shadcn/toggle'
 import { Button } from '@/components/shadcn/button'
 import MultipleSelector, { Option } from '@/components/shadcn/multiselect'
-import { ArrowDownNarrowWide, ArrowDownWideNarrow, Funnel } from 'lucide-react'
+import { ArrowDownNarrowWide, ArrowDownWideNarrow, Funnel, RotateCw } from 'lucide-react'
 import { cn } from '@/utils/clsxm'
 import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
 import type { KubernetesCluster } from '@ror/js-api-client'
 import { ClusterSearch } from '@/components/ui/cluster/cluster-search'
 import { User } from 'next-auth'
+import { useRouter, usePathname } from 'next/navigation'
 
 interface Params {
   view?: 'grid' | 'list'
@@ -246,9 +247,18 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
   const limit = Number(params.limit) || DEFAULT_LIMIT
   const page = Number(params.page) || DEFAULT_PAGE
   const filtersOpen = params.filters === 'open'
+  const router = useRouter()
+  const pathname = usePathname()
+
+  const safeClusters = useMemo(() => {
+    return clusters.filter(
+      (cluster) => cluster.kubernetescluster?.spec?.data && typeof cluster.kubernetescluster.spec.data === 'object'
+    )
+  }, [clusters])
 
   const [selectedDisplayData, setSelectedDisplayData] = useState<ClusterCardDisplayData[]>([])
   const [selectedFilters, setSelectedFilters] = useState<Record<string, string[]>>({})
+  const [searchResults, setSearchResults] = useState<KubernetesCluster[]>(safeClusters)
 
   useEffect(() => {
     const stored = localStorage.getItem('selectedDisplayData')
@@ -262,6 +272,17 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
   const paginationState = {
     pageIndex: page - 1,
     pageSize: limit,
+  }
+
+  const clearUrl = () => {
+    router.push(pathname)
+    router.refresh()
+  }
+
+  const handleRefreshFilters = () => {
+    setSelectedFilters({})
+    setSelectedDisplayData([])
+    clearUrl()
   }
 
   const toggleParams = useMemo(() => {
@@ -284,14 +305,6 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
       isDesc: currentOrder === 'desc',
     }
   }, [params])
-
-  const safeClusters = useMemo(() => {
-    return clusters.filter(
-      (cluster) => cluster.kubernetescluster?.spec?.data && typeof cluster.kubernetescluster.spec.data === 'object'
-    )
-  }, [clusters])
-
-  const [searchResults, setSearchResults] = useState<KubernetesCluster[]>(safeClusters)
 
   // Reset search results when safeClusters changes (initial load or data refresh)
   useEffect(() => {
@@ -449,6 +462,18 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
             <Funnel />
           </Toggle>
         </Link>
+        <Button
+          type='button'
+          onClick={() => {
+            handleRefreshFilters()
+          }}
+          aria-label='Reset filters'
+          title='Reset filters'
+          className='gap-2'
+        >
+          <RotateCw className='h-4 w-4' />
+          Refresh
+        </Button>
         <TabsViewSwitcher />
       </div>
     </div>
