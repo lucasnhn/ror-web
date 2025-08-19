@@ -1,5 +1,3 @@
-// import { authGuard } from '@/features/auth/utils/auth-guard'
-// import { getRorApi, rorApiClient } from '@/services/ror-api'
 import { getRorApi } from '@/services/ror-api'
 import { Fragment, ReactNode } from 'react'
 import { routes } from '@/config/routes'
@@ -72,9 +70,7 @@ export default async function ClusterPageLayout({ params, children }: ClusterPag
   const { id } = await params
 
   try {
-    // const session = await authGuard()
     const api = await getRorApi()
-    // const client = rorApiClient(session.accessToken)
     const cluster = await api.kubernetesClusters.id(id)
 
     const tabs = createTabNavigationItems(id)

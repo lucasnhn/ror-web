@@ -1,8 +1,6 @@
 import { findPoolByName, getNodesInPool } from '@/utils/get-nodes-in-pool'
 import { NodesDataView } from './nodes-data-view'
 import type { Metadata } from 'next'
-// import { authGuard } from '@/features/auth/utils/auth-guard'
-// import { getRorApi, rorApiClient } from '@/services/ror-api'
 import { getRorApi } from '@/services/ror-api'
 
 export const metadata: Metadata = {
@@ -19,8 +17,6 @@ interface NodesPageProps {
 
 export default async function NodesPage({ params }: NodesPageProps) {
   const { id, poolId } = await params
-  // const session = await authGuard()
-  // const client = rorApiClient(session.accessToken)
   const api = await getRorApi()
 
   const [nodesResponse, clusterResponse] = await Promise.all([

@@ -1,5 +1,3 @@
-// import { authGuard } from '@/features/auth/utils/auth-guard'
-// import { getRorApi, rorApiClient } from '@/services/ror-api'
 import { getRorApi } from '@/services/ror-api'
 import { ClusterIngressesDataView } from './ingress-data-view'
 
@@ -12,8 +10,6 @@ interface ClusterIngressesPageProps {
 export default async function ClusterIngressesPage({ params }: ClusterIngressesPageProps) {
   const { id } = await params
 
-  // const session = await authGuard()
-  // const client = rorApiClient(session.accessToken)
   const api = await getRorApi()
 
   const ingressFilter = [

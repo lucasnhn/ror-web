@@ -1,5 +1,3 @@
-// import { authGuard } from '@/features/auth/utils/auth-guard'
-// import { getRorApi, rorApiClient } from '@/services/ror-api'
 import { getRorApi } from '@/services/ror-api'
 import { convertBytes } from '@/utils/bytes'
 import { parseQuantity } from '@/utils/parse-quantity'
@@ -47,8 +45,6 @@ function convertMemory(memory: string): string {
 
 export default async function NodePoolsPage({ params }: NodePoolsPageProps) {
   const { id } = await params
-  // const session = await authGuard()
-  // const client = rorApiClient(session.accessToken)
   const api = await getRorApi()
 
   const nodes = (await api.nodes.listByCluster(id))?.resources ?? []

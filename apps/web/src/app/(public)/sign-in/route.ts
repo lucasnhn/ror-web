@@ -1,29 +1,22 @@
-// import { signIn } from '@/config/next-auth'
-// import { routes } from '@/config/routes'
-
-// /**
-//  * Redirect the user instantly to Dex where they can choose a provider to login with
-//  * We do this to reduce the amount of clicks a user might need to do in order to login.
-//  */
-// export async function GET() {
-//   await signIn('dex', {
-//     redirectTo: routes.app.clusters.getHref(),
-//   })
-// }
-
 import { NextRequest, NextResponse } from 'next/server'
 import { routes } from '@/config/routes'
 import { getPublicOrigin } from '@/lib/public-origin'
 
 export async function GET(req: NextRequest) {
+  // Get URL in request
   const url = new URL(req.url)
+  // Makes sure we have the actual beta.ror.nhn.no url, and not a localhost one
   const publicOrigin = getPublicOrigin(req, url.origin)
+  // Get potential error
   const error = url.searchParams.get('error')
+  // Get attempt number, set to 0 if not present. Will protect against reroutes
   const attempt = Number(url.searchParams.get('attempt') || '0') || 0
 
   // Derive a safe callback URL
   const defaultAfterLogin = routes.app.clusters.getHref()
+  // Search for provided callbackUrl, or use default if not present
   let raw = url.searchParams.get('callbackUrl') || defaultAfterLogin
+  // Debugging output
   const debug = process.env.AUTH_DEBUG === 'true' || process.env.NODE_ENV !== 'production'
   if (debug) console.log('[AUTH][SIGNIN] incoming', { raw, error })
 
@@ -40,11 +33,17 @@ export async function GET(req: NextRequest) {
 
   // Prevent redirect loops back into auth endpoints
   const lower = raw.toLowerCase()
+  // Users should not be sent to static files or API routes
   const staticPrefixes = ['/favicon', '/_next', '/assets', '/public', '/sb-', '/sb_', '/images']
+  // URLs that looks like files are treated like static
   const looksLikeFile = /\.[a-z0-9]{2,4}(?:\?.*)?$/i.test(lower)
+  // If path starts with static prefixes or looks like a file, they should not be accessible
   const isStatic = staticPrefixes.some((p) => lower.startsWith(p)) || looksLikeFile
+  // Avoid redirecting back into the sign-in route or NextAuth API (infinite loop risk)
   const isLoopTarget = lower.startsWith('/sign-in') || lower.startsWith('/api/auth')
+  // Final sanitized callback: if static or loopy, replace with defaultAfterLogin
   const safeCallback = isLoopTarget || isStatic ? defaultAfterLogin : raw
+  // Debugging output
   if (debug) console.log('[AUTH][SIGNIN] sanitized', { safeCallback })
 
   // If NextAuth reported a known error, do NOT bounce to /api/auth/signin because pages.signIn is configured
@@ -67,7 +66,7 @@ export async function GET(req: NextRequest) {
     const to = new URL('/auth-debug', publicOrigin)
     to.searchParams.set('error', error)
     to.searchParams.set('callbackUrl', safeCallback)
-    if (debug) console.log('[AUTH][SIGNIN] redirect(error→auth-debug)', { to: to.toString() })
+    if (debug) console.log('[AUTH][SIGNIN] redirect(error->auth-debug)', { to: to.toString() })
     return NextResponse.redirect(to, { status: 302 })
   }
 
@@ -77,7 +76,7 @@ export async function GET(req: NextRequest) {
     const to = new URL('/sign-in-debug', publicOrigin)
     to.searchParams.set('callbackUrl', safeCallback)
     to.searchParams.set('reason', 'provider-indicated')
-    if (debug) console.log('[AUTH][SIGNIN] redirect(provider-indicated→sign-in-debug)', { to: to.toString() })
+    if (debug) console.log('[AUTH][SIGNIN] redirect(provider-indicated->sign-in-debug)', { to: to.toString() })
     return NextResponse.redirect(to, { status: 302 })
   }
 
@@ -85,7 +84,7 @@ export async function GET(req: NextRequest) {
     const to = new URL('/sign-in-debug', publicOrigin)
     to.searchParams.set('callbackUrl', safeCallback)
     to.searchParams.set('reason', 'attempted')
-    if (debug) console.log('[AUTH][SIGNIN] redirect(attempt-guard→sign-in-debug)', { to: to.toString() })
+    if (debug) console.log('[AUTH][SIGNIN] redirect(attempt-guard->sign-in-debug)', { to: to.toString() })
     return NextResponse.redirect(to, { status: 302 })
   }
 
@@ -106,7 +105,7 @@ export async function GET(req: NextRequest) {
       const to = new URL('/auth-debug', publicOrigin)
       to.searchParams.set('error', 'missing-provider-dex')
       to.searchParams.set('callbackUrl', safeCallback)
-      if (debug) console.log('[AUTH][SIGNIN] redirect(missing-provider→auth-debug)', { to: to.toString() })
+      if (debug) console.log('[AUTH][SIGNIN] redirect(missing-provider->auth-debug)', { to: to.toString() })
       return NextResponse.redirect(to, { status: 302 })
     }
   } catch (e) {

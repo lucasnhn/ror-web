@@ -1,5 +1,4 @@
 import { authGuard } from '@/features/auth/utils/auth-guard'
-// import { getRorApi, rorApiClient } from '@/services/ror-api'
 import { getRorApi } from '@/services/ror-api'
 import type { Metadata } from 'next'
 import { Header } from '@/components/layout/app-shell/header'
@@ -26,7 +25,6 @@ export const dynamic = 'force-dynamic'
 
 export default async function ClustersPage({ searchParams }: ClusterPageProps) {
   const session = await authGuard()
-  // removed this: const client = rorApiClient(session.accessToken)
   const user = session.user
   const api = await getRorApi()
 
