@@ -1,5 +1,3 @@
-import { handlers } from '@/config/next-auth'
-
 /**
  * This route exposes a GET and a POST api handler from next-auth.
  * It is a catch-all route meaning it catches all request for and after the /api/auth/ path.
@@ -10,4 +8,10 @@ import { handlers } from '@/config/next-auth'
  *
  * @see https://authjs.dev/ for more information
  */
-export const { GET, POST } = handlers
+
+import { nextAuthHandler as handler } from '@/config/next-auth'
+
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
+
+export { handler as GET, handler as POST }

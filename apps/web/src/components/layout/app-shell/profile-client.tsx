@@ -1,6 +1,6 @@
 'use client'
 
-import { type User } from '@auth/core/types'
+import type { User } from 'next-auth'
 import { Popover, PopoverContent, PopoverPortal, PopoverTrigger } from '@radix-ui/react-popover'
 import { User as UserIcon } from 'lucide-react'
 import Link from 'next/link'

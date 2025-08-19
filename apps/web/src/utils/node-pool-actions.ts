@@ -1,24 +1,19 @@
 'use server'
 
-import { authGuard } from '@/features/auth/utils/auth-guard'
-import { rorApiClient } from '@/services/ror-api'
+import { getRorApi } from '@/services/ror-api'
 import { KubernetesClusterNodePool } from '@ror/js-api-client'
 import { revalidatePath } from 'next/cache'
 
 export async function deleteNodePoolAction(clusterId: string, poolName: string) {
-  const session = await authGuard()
+  const api = await getRorApi()
 
-  const client = rorApiClient(session.accessToken)
-
-  await client.kubernetesClusters.removeNodePool(clusterId, poolName)
+  await api.kubernetesClusters.removeNodePool(clusterId, poolName)
 
   revalidatePath(`/protected/clusters/${clusterId}/node-pools`)
 }
 
 export async function createOrUpdateNodePoolAction(formData: FormData) {
-  const session = await authGuard()
-
-  const client = rorApiClient(session.accessToken)
+  const api = await getRorApi()
 
   const clusterId = formData.get('id') as string
   const name = formData.get('name') as string | null
@@ -54,6 +49,6 @@ export async function createOrUpdateNodePoolAction(formData: FormData) {
     autoscaling: autoScaling,
   }
 
-  await client.kubernetesClusters.createOrUpdateNodePools(clusterId, nodePool)
+  await api.kubernetesClusters.createOrUpdateNodePools(clusterId, nodePool)
   revalidatePath(`/protected/clusters/${clusterId}/node-pools`)
 }
