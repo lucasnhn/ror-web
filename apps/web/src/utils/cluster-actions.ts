@@ -6,7 +6,6 @@ import type { KubernetesCluster } from '@ror/js-api-client'
 type LoadMoreOpts = { skip: number; limit: number; sort?: string; order?: string }
 
 export async function loadMoreClusters({ skip, limit, sort, order }: LoadMoreOpts) {
-  console.log('[CLUSTER-ACTIONS] Loading more clusters:', { skip, limit, sort, order })
   const api = await getRorApi()
 
   const params = new URLSearchParams()
