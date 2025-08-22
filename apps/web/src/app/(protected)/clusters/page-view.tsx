@@ -16,6 +16,14 @@ import type { KubernetesCluster } from '@ror/js-api-client'
 import { ClusterSearch } from '@/components/ui/cluster/cluster-search'
 import { User } from 'next-auth'
 import { useRouter, usePathname } from 'next/navigation'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/shadcn/dropdown-menu'
 
 interface Params {
   view?: 'grid' | 'list'
@@ -305,6 +313,37 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
     }
   }, [params])
 
+  const toggleExportParams = (format: 'csv' | 'excel', scope: 'filtered' | 'all') => {
+    const newParams = new URLSearchParams(params as string[][] | Record<string, string> | string | URLSearchParams)
+    //console.log('[Export] toggleExportParams called:', { format, scope })
+    //console.log('[Export] Current params:', Object.fromEntries(newParams))
+    newParams.set('export', 'true')
+    newParams.set('format', format)
+    newParams.set('scope', scope)
+    const exportUrl = `/clusters?${newParams.toString()}`
+    //console.log('[Export] Generated export URL:', exportUrl)
+    return exportUrl
+  }
+
+  const handleExportAllCSV = async () => {
+    console.log('[Export] Export All (CSV) button clicked')
+    const response = await fetch('')
+    if (response.ok) {
+      const blob = await response.blob()
+      const url = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = 'clusters-all.csv'
+      document.body.appendChild(link)
+      link.click()
+      link.remove()
+      window.URL.revokeObjectURL(url)
+      console.log('[Export] CSV file downloaded')
+    } else {
+      console.error('Export failed')
+    }
+  }
+
   // Reset search results when safeClusters changes (initial load or data refresh)
   useEffect(() => {
     setSearchResults(safeClusters)
@@ -447,6 +486,44 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
             </Button>
           </Link>
         )}
+
+        <DropdownMenu>
+          <DropdownMenuTrigger>Export</DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuItem>
+              <Link
+                href={toggleExportParams('csv', 'filtered')}
+                onClick={() => console.log('[Export] Export Filtered (CSV) link clicked')}
+              >
+                Export Filtered (CSV)
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link
+                href={toggleExportParams('excel', 'filtered')}
+                onClick={() => console.log('[Export] Export Filtered (Excel) link clicked')}
+              >
+                Export Filtered (Excel)
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                console.log('[Export] Export All (CSV) menu item clicked')
+                handleExportAllCSV()
+              }}
+            >
+              Export All (CSV)
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link
+                href={toggleExportParams('excel', 'all')}
+                onClick={() => console.log('[Export] Export All (Excel) link clicked')}
+              >
+                Export All (Excel)
+              </Link>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
 
         <Link className='[@container(max-width:1000px)]:hidden' href={toggleParams}>
           <Toggle pressed={filtersOpen} variant='outline' aria-label='Open filters'>

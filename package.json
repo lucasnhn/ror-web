@@ -21,8 +21,11 @@
     "test": "jest"
   },
   "devDependencies": {
+    "@esbuild/darwin-arm64": "0.25.9",
+    "@swc/core-darwin-arm64": "1.13.3",
     "@turbo/gen": "2.5.2",
     "@types/jest": "30.0.0",
+    "@types/papaparse": "5.3.16",
     "husky": "9.1.7",
     "jest": "30.0.5",
     "prettier": "3.5.3",
@@ -48,6 +51,7 @@
     "an-array-of-english-words": "2.0.0",
     "date-fns": "4.1.0",
     "fuse.js": "7.1.0",
+    "papaparse": "5.5.3",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },
