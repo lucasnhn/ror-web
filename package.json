@@ -21,10 +21,10 @@
     "test": "jest"
   },
   "devDependencies": {
-    "@esbuild/darwin-arm64": "0.25.9",
-    "@swc/core-darwin-arm64": "1.13.3",
+    "@swc/core": "1.13.3",
     "@turbo/gen": "2.5.2",
     "@types/jest": "30.0.0",
+    "esbuild": "0.25.9",
     "husky": "9.1.7",
     "jest": "30.0.5",
     "prettier": "3.5.3",
