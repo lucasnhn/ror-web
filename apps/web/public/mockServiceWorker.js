@@ -10,8 +10,8 @@
 
 const PACKAGE_VERSION = '2.7.5'
 const INTEGRITY_CHECKSUM = '00729d72e3b82faf54ca8b9621dbb96f'
-const IS_MOCKED_RESPONSE = Symbol('isMockedResponse')
-const activeClientIds = new Set()
+const IS_MOCKED_RESPONSE = Symbol('isMockedResponse') // Internal marker to flag responses as mocked
+const activeClientIds = new Set() // Track active browser clients using MSW
 
 self.addEventListener('install', function () {
   self.skipWaiting()
