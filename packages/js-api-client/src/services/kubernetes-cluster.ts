@@ -75,21 +75,6 @@ export const createKubernetesClusterService = (request: (requestOptions: Request
     })
     return validateResponse(response, ClusterSchema)
   },
-  exportAll: async () => {
-    const params = new URLSearchParams()
-    params.set('apiversion', 'general.ror.internal/v1alpha1')
-    params.set('kind', 'KubernetesCluster')
-    params.set('limit', '999999')
-    const responseSchema = z.object({
-      resources: z.array(KubernetesClusterSchema),
-    })
-    const response = await request({
-      method: 'GET',
-      path: '/v1/resources',
-      params,
-    })
-    return validateResponse(response, responseSchema)
-  },
 
   /**
    * Node pool API call
