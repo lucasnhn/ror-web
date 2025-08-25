@@ -8,7 +8,7 @@ import { CodeSnippet } from '@ror/react'
 import { Toggle } from '@/components/shadcn/toggle'
 import { Button } from '@/components/shadcn/button'
 import MultipleSelector, { Option } from '@/components/shadcn/multiselect'
-import { ArrowDownNarrowWide, ArrowDownWideNarrow, Funnel, RotateCw } from 'lucide-react'
+import { ArrowDownNarrowWide, ArrowDownWideNarrow, Download, Funnel, RotateCw } from 'lucide-react'
 import { cn } from '@/utils/clsxm'
 import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
@@ -16,6 +16,13 @@ import type { KubernetesCluster } from '@ror/js-api-client'
 import { ClusterSearch } from '@/components/ui/cluster/cluster-search'
 import { User } from 'next-auth'
 import { useRouter, usePathname } from 'next/navigation'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/shadcn/dropdown-menu'
+import type { WorkSheet } from 'xlsx'
 
 interface Params {
   view?: 'grid' | 'list'
@@ -34,211 +41,72 @@ interface PageViewProps {
 }
 
 const displayDataOptions: Option[] = [
-  {
-    value: 'argocd',
-    label: 'ArgoCD',
-  },
-  {
-    value: 'grafana',
-    label: 'Grafana',
-  },
-  {
-    value: 'rorcli',
-    label: 'ROR CLI',
-  },
-  {
-    value: 'kubectl',
-    label: 'Kubectl',
-  },
-  {
-    value: 'cpu',
-    label: 'CPU usage',
-  },
-  {
-    value: 'memory',
-    label: 'Memory usage',
-  },
-  {
-    value: 'gpu',
-    label: 'GPU usage',
-  },
-  {
-    value: 'disk',
-    label: 'Disk usage',
-  },
-  {
-    value: 'nodes',
-    label: 'Num of nodes',
-  },
-  {
-    value: 'monthlyPrice',
-    label: 'Monthly price',
-  },
-  {
-    value: 'yearlyPrice',
-    label: 'Yearly price',
-  },
-  {
-    value: 'agentVersion',
-    label: 'ROR agent version',
-  },
-  {
-    value: 'kubernetesVersion',
-    label: 'Kubernetes version',
-  },
-  {
-    value: 'toolingVersion',
-    label: 'NHN tooling version',
-  },
-  {
-    value: 'datacenterName',
-    label: 'Datacenter name',
-  },
-  {
-    value: 'datacenterProvider',
-    label: 'Datacenter provider',
-  },
-  {
-    value: 'environment',
-    label: 'Environment',
-  },
-  {
-    value: 'serviceTags',
-    label: 'Service tags',
-  },
+  { value: 'argocd', label: 'ArgoCD' },
+  { value: 'grafana', label: 'Grafana' },
+  { value: 'rorcli', label: 'ROR CLI' },
+  { value: 'kubectl', label: 'Kubectl' },
+  { value: 'cpu', label: 'CPU usage' },
+  { value: 'memory', label: 'Memory usage' },
+  { value: 'gpu', label: 'GPU usage' },
+  { value: 'disk', label: 'Disk usage' },
+  { value: 'nodes', label: 'Num of nodes' },
+  { value: 'monthlyPrice', label: 'Monthly price' },
+  { value: 'yearlyPrice', label: 'Yearly price' },
+  { value: 'agentVersion', label: 'ROR agent version' },
+  { value: 'kubernetesVersion', label: 'Kubernetes version' },
+  { value: 'toolingVersion', label: 'NHN tooling version' },
+  { value: 'datacenterName', label: 'Datacenter name' },
+  { value: 'datacenterProvider', label: 'Datacenter provider' },
+  { value: 'environment', label: 'Environment' },
+  { value: 'serviceTags', label: 'Service tags' },
 ]
 
 const sortingOptions = [
-  {
-    value: 'clusterName',
-    label: 'Cluster name',
-  },
-  {
-    value: 'cpu',
-    label: 'CPU usage',
-  },
-  {
-    value: 'memory',
-    label: 'Memory usage',
-  },
-  {
-    value: 'nodes',
-    label: 'Num of nodes',
-  },
-  {
-    value: 'monthlyPrice',
-    label: 'Price',
-  },
-  {
-    value: 'datacenterName',
-    label: 'Datacenter',
-  },
-  {
-    value: 'datacenterProvider',
-    label: 'Datacenter provider',
-  },
-  {
-    value: 'environment',
-    label: 'Environment',
-  },
+  { value: 'clusterName', label: 'Cluster name' },
+  { value: 'cpu', label: 'CPU usage' },
+  { value: 'memory', label: 'Memory usage' },
+  { value: 'nodes', label: 'Num of nodes' },
+  { value: 'monthlyPrice', label: 'Price' },
+  { value: 'datacenterName', label: 'Datacenter' },
+  { value: 'datacenterProvider', label: 'Datacenter provider' },
+  { value: 'environment', label: 'Environment' },
 ]
 
 const environments: Option[] = [
-  {
-    value: 'dev',
-    label: 'Dev',
-  },
-  {
-    value: 'test',
-    label: 'Test',
-  },
-  {
-    value: 'staging',
-    label: 'Staging',
-  },
-  {
-    value: 'prod',
-    label: 'Prod',
-  },
-  {
-    value: 'qa',
-    label: 'QA',
-  },
+  { value: 'dev', label: 'Dev' },
+  { value: 'test', label: 'Test' },
+  { value: 'staging', label: 'Staging' },
+  { value: 'prod', label: 'Prod' },
+  { value: 'qa', label: 'QA' },
 ]
 
 // TODO: Fetch this from somewhere
 const datacenters: Option[] = [
-  {
-    value: 'trd1-tanzu',
-    label: 'trd1 - tanzu',
-  },
-  {
-    value: 'osl1-tanzu',
-    label: 'osl1 - tanzu',
-  },
-  {
-    value: 'trd1cl02-tanzu',
-    label: 'trd1cl02 - tanzu',
-  },
-  {
-    value: 'norwayeast-aks',
-    label: 'norwayeast - aks',
-  },
-  {
-    value: 'trd1-talos',
-    label: 'trd1 - talos',
-  },
+  { value: 'trd1-tanzu', label: 'trd1 - tanzu' },
+  { value: 'osl1-tanzu', label: 'osl1 - tanzu' },
+  { value: 'trd1cl02-tanzu', label: 'trd1cl02 - tanzu' },
+  { value: 'norwayeast-aks', label: 'norwayeast - aks' },
+  { value: 'trd1-talos', label: 'trd1 - talos' },
 ]
 
 // TODO: Fetch this from somewhere
 const workspaces: Option[] = [
-  {
-    value: 'trd1-amk-prod',
-    label: 'trd1-amk-prod',
-  },
-  {
-    value: 'trd1cl02-shp-prod',
-    label: 'trd1cl02-shp-prod',
-  },
-  {
-    value: 'trd1cl02-dcn',
-    label: 'trd1cl02-dcn',
-  },
-  {
-    value: 't-nhn',
-    label: 't-nhn',
-  },
-  {
-    value: 'trd1-amk',
-    label: 'trd1-amk',
-  },
-  {
-    value: 'trd1-app',
-    label: 'trd1-app',
-  },
-  {
-    value: 'trd1-team-kjernejournal-portal',
-    label: 'trd1-team-kjernejournal-portal',
-  },
+  { value: 'trd1-amk-prod', label: 'trd1-amk-prod' },
+  { value: 'trd1cl02-shp-prod', label: 'trd1cl02-shp-prod' },
+  { value: 'trd1cl02-dcn', label: 'trd1cl02-dcn' },
+  { value: 't-nhn', label: 't-nhn' },
+  { value: 'trd1-amk', label: 'trd1-amk' },
+  { value: 'trd1-app', label: 'trd1-app' },
+  { value: 'trd1-team-kjernejournal-portal', label: 'trd1-team-kjernejournal-portal' },
 ]
 
 const filterOptions = [
-  {
-    label: 'Environments',
-    placeholder: 'Set environments',
-    data: environments,
-  },
-  {
-    label: 'Datacenters',
-    placeholder: 'Set datacenters',
-    data: datacenters,
-  },
-  {
-    label: 'Workspaces',
-    placeholder: 'Set workspaces',
-    data: workspaces,
-  },
+  { label: 'Environments', placeholder: 'Set environments', data: environments },
+  { label: 'Datacenters', placeholder: 'Set datacenters', data: datacenters },
+  { label: 'Workspaces', placeholder: 'Set workspaces', data: workspaces },
 ]
+
+type WorksheetWithCols = WorkSheet & { ['!cols']?: { wch: number }[] }
 
 export const PageView = ({ className, user, clusters, params }: PageViewProps) => {
   const DEFAULT_LIMIT = 10
@@ -250,11 +118,13 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
   const router = useRouter()
   const pathname = usePathname()
 
-  const safeClusters = useMemo(() => {
-    return clusters.filter(
-      (cluster) => cluster.kubernetescluster?.spec?.data && typeof cluster.kubernetescluster.spec.data === 'object'
-    )
-  }, [clusters])
+  const safeClusters = useMemo(
+    () =>
+      clusters.filter(
+        (cluster) => cluster.kubernetescluster?.spec?.data && typeof cluster.kubernetescluster.spec.data === 'object'
+      ),
+    [clusters]
+  )
 
   const [selectedDisplayData, setSelectedDisplayData] = useState<ClusterCardDisplayData[]>([])
   const [selectedFilters, setSelectedFilters] = useState<Record<string, string[]>>({})
@@ -284,8 +154,104 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
     clearUrl()
   }
 
+  type RorTag = { key?: string; value?: string; properties?: { color?: string } }
+  type WithRorMeta = KubernetesCluster & { rormeta?: { tags?: RorTag[] } }
+
+  const exportableFromCluster = (c: KubernetesCluster) => {
+    const spec = c.kubernetescluster?.spec
+    const data = spec?.data ?? {}
+    const workers = spec?.topology?.workers?.nodePools ?? []
+
+    const state = c.kubernetescluster?.status?.state ?? {}
+    const cluster = state.cluster ?? {}
+    const resources = cluster.resources ?? {}
+    const price = cluster.price ?? {}
+
+    const versions = state.versions ?? []
+    const versionByName = (name: string) => versions.find((v) => v?.name === name)?.version ?? null
+
+    const tagsArr = (c as WithRorMeta)?.rormeta?.tags ?? []
+    const serviceTags = Array.isArray(tagsArr)
+      ? tagsArr
+          .map((t) => t?.value ?? t?.key ?? '')
+          .filter(Boolean)
+          .join(' ')
+      : ''
+
+    const nodePoolCount =
+      Array.isArray(workers) && workers.length > 0
+        ? workers.length
+        : Array.isArray(cluster.nodepools)
+          ? cluster.nodepools.length
+          : null
+
+    return {
+      clusterId: data?.clusterId ?? '',
+      clusterName: c.metadata?.name ?? '',
+      workspaceName: data?.workspace ?? '',
+      datacenterName: data?.datacenter ?? '',
+      provider: data?.provider ?? '',
+      environment: data?.environment ?? '',
+
+      cpuPercentage: resources?.cpu?.percentage ?? null,
+      memoryPercentage: resources?.memory?.percentage ?? null,
+      gpuPercentage: resources?.gpu?.percentage ?? null,
+      diskPercentage: resources?.disk?.percentage ?? null,
+      nodePoolCount,
+
+      monthlyPrice: price?.monthly ?? null,
+      yearlyPrice: price?.yearly ?? null,
+
+      rorAgentVersion: versionByName('agent'),
+      kubernetesVersion: versionByName('kubernetes'),
+      nhnToolingVersion: versionByName('nhnTooling'),
+
+      serviceTags,
+    }
+  }
+
+  const toCSV = (rows: Array<Record<string, unknown>>) => {
+    if (!rows.length) return ''
+    const headers = Object.keys(rows[0])
+    const esc = (v: unknown) => {
+      if (v === null || v === undefined) return ''
+      const s = String(v)
+      return /[",\r\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s
+    }
+    const lines = [headers.join(',')]
+    for (const row of rows) lines.push(headers.map((h) => esc(row[h])).join(','))
+    return lines.join('\n')
+  }
+
+  const downloadBlob = (content: string, filename: string, type = 'text/csv;charset=utf-8;') => {
+    const blob = new Blob([content], { type })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = filename
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+    URL.revokeObjectURL(url)
+  }
+
+  const autosizeCols = (rows: Array<Record<string, unknown>>) => {
+    if (!rows.length) return []
+    const headers = Object.keys(rows[0])
+    return headers.map((h) => {
+      const maxLen = Math.max(h.length, ...rows.map((r) => (r[h] == null ? 0 : String(r[h]).length)))
+      return { wch: Math.min(Math.max(maxLen + 2, 10), 40) }
+    })
+  }
+
+  // ---------- Toggle/Sort params ----------
+
   const toggleParams = useMemo(() => {
-    const newParams = new URLSearchParams(params as string[][] | Record<string, string> | string | URLSearchParams)
+    const entries: [string, string][] = (Object.entries(params) as Array<[string, unknown]>)
+      .filter(([, v]) => v !== undefined && v !== null)
+      .map(([k, v]) => [k, String(v)])
+
+    const newParams = new URLSearchParams(entries)
     if (filtersOpen) {
       newParams.delete('filters')
     } else {
@@ -296,16 +262,17 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
 
   const toggleSortParams = useMemo(() => {
     if (!params.sort) return null
-    const newParams = new URLSearchParams(params as string[][] | Record<string, string> | string | URLSearchParams)
+    const entries: [string, string][] = (Object.entries(params) as Array<[string, unknown]>)
+      .filter(([, v]) => v !== undefined && v !== null)
+      .map(([k, v]) => [k, String(v)])
+
+    const newParams = new URLSearchParams(entries)
     const currentOrder = newParams.get('order') === 'desc' ? 'desc' : 'asc'
     newParams.set('order', currentOrder === 'desc' ? 'asc' : 'desc')
-    return {
-      url: `/clusters?${newParams.toString()}`,
-      isDesc: currentOrder === 'desc',
-    }
+    return { url: `/clusters?${newParams.toString()}`, isDesc: currentOrder === 'desc' }
   }, [params])
 
-  // Reset search results when safeClusters changes (initial load or data refresh)
+  // Reset search results when safeClusters changes
   useEffect(() => {
     setSearchResults(safeClusters)
   }, [safeClusters])
@@ -320,7 +287,6 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
       const dcFilter = selectedFilters['Datacenters']
       const wsFilter = selectedFilters['Workspaces']
 
-      // If a filter is applied and the value is missing => exclude
       if (envFilter?.length && !env) return false
       if (dcFilter?.length && !dc) return false
       if (wsFilter?.length && !ws) return false
@@ -333,18 +299,13 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
     })
   }, [safeClusters, selectedFilters])
 
-  // Sort clusters based on the selected sort parameter and order
   const sortedClusters = useMemo(() => {
     if (!params.sort) return filteredClusters
-
     const sortOrder = params.order === 'desc' ? -1 : 1
-
-    // Determine if current sort is a numeric field where highest values should appear first by default
     const isNumericMetric = ['cpu', 'memory', 'nodes', 'monthlyPrice', 'yearlyPrice'].includes(params.sort || '')
 
     return [...filteredClusters].sort((a, b) => {
-      let valueA, valueB
-
+      let valueA: string | number, valueB: string | number
       switch (params.sort) {
         case 'clusterName':
           valueA = a.metadata?.name || ''
@@ -353,35 +314,29 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
         case 'cpu':
           valueA = a.kubernetescluster?.status?.state?.cluster?.resources?.cpu?.percentage || 0
           valueB = b.kubernetescluster?.status?.state?.cluster?.resources?.cpu?.percentage || 0
-          // Show highest CPU usage first
           return (valueB - valueA) * sortOrder
         case 'memory':
           valueA = a.kubernetescluster?.status?.state?.cluster?.resources?.memory?.percentage || 0
           valueB = b.kubernetescluster?.status?.state?.cluster?.resources?.memory?.percentage || 0
-          // Show highest memory usage first
           return (valueB - valueA) * sortOrder
         case 'nodes':
-          // Sum up all nodepool scales to get total node count
           valueA = a.kubernetescluster?.status?.state?.cluster?.nodepools?.length || 0
           valueB = b.kubernetescluster?.status?.state?.cluster?.nodepools?.length || 0
-          // Show highest node count first
           return (valueB - valueA) * sortOrder
         case 'monthlyPrice':
           valueA = a.kubernetescluster?.status?.state?.cluster?.price?.monthly || 0
           valueB = b.kubernetescluster?.status?.state?.cluster?.price?.monthly || 0
-          // Show highest price first
           return (valueB - valueA) * sortOrder
         case 'yearlyPrice':
           valueA = a.kubernetescluster?.status?.state?.cluster?.price?.yearly || 0
           valueB = b.kubernetescluster?.status?.state?.cluster?.price?.yearly || 0
-          // Show highest price first
           return (valueB - valueA) * sortOrder
         case 'datacenterName':
           valueA = a.kubernetescluster?.spec?.data?.datacenter || ''
           valueB = b.kubernetescluster?.spec?.data?.datacenter || ''
           break
         case 'datacenterProvider':
-          valueA = a.kubernetescluster?.spec?.data?.provider || '' // Using provider instead of datacenterProvider
+          valueA = a.kubernetescluster?.spec?.data?.provider || ''
           valueB = b.kubernetescluster?.spec?.data?.provider || ''
           break
         case 'environment':
@@ -393,22 +348,78 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
           valueB = b.metadata?.name || ''
       }
 
-      // For numeric fields, we want to show highest values first by default
       if (isNumericMetric && typeof valueA === 'number' && typeof valueB === 'number') {
         return (valueB - valueA) * sortOrder
       }
-
-      // Handle string comparison for alphabetic fields
       if (typeof valueA === 'string' && typeof valueB === 'string') {
         return valueA.localeCompare(valueB) * sortOrder
       }
-
-      // Default case: compare as strings
       return String(valueA).localeCompare(String(valueB)) * sortOrder
     })
   }, [filteredClusters, params.sort, params.order])
 
-  // Calculate page count based on filtered clusters
+  const getFilteredClusterList = () => {
+    const base = params.sort ? sortedClusters : filteredClusters
+    return base.filter((c) =>
+      searchResults.some(
+        (sr) =>
+          sr.metadata?.name === c.metadata?.name ||
+          sr.kubernetescluster?.spec?.data?.clusterId === c.kubernetescluster?.spec?.data?.clusterId
+      )
+    )
+  }
+
+  const handleExportAllCSV = () => {
+    try {
+      const rows = safeClusters.map(exportableFromCluster)
+      const csv = toCSV(rows)
+      if (!csv) return console.warn('[Export] No data to export')
+      downloadBlob(csv, 'ror-clusters-all.csv')
+    } catch (e) {
+      console.error('[Export] Export All CSV failed', e)
+    }
+  }
+
+  const handleExportAllExcel = async () => {
+    try {
+      const rows = safeClusters.map(exportableFromCluster)
+      if (!rows.length) return console.warn('[Export] No data to export')
+      const XLSX = await import('xlsx')
+      const ws = XLSX.utils.json_to_sheet(rows) as WorksheetWithCols
+      ws['!cols'] = autosizeCols(rows)
+      const wb = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(wb, ws, 'Clusters')
+      XLSX.writeFile(wb, 'ror-clusters-all.xlsx', { bookType: 'xlsx' })
+    } catch (e) {
+      console.error('[Export] Export All Excel failed', e)
+    }
+  }
+
+  const handleExportFilteredCSV = () => {
+    try {
+      const rows = getFilteredClusterList().map(exportableFromCluster)
+      const csv = toCSV(rows)
+      if (!csv) return console.warn('[Export] No data to export')
+      downloadBlob(csv, 'ror-clusters-filtered.csv')
+    } catch (e) {
+      console.error('[Export] Filtered CSV export failed', e)
+    }
+  }
+
+  const handleExportFilteredExcel = async () => {
+    try {
+      const rows = getFilteredClusterList().map(exportableFromCluster)
+      if (!rows.length) return console.warn('[Export] No data to export')
+      const XLSX = await import('xlsx')
+      const ws = XLSX.utils.json_to_sheet(rows) as WorksheetWithCols
+      ws['!cols'] = autosizeCols(rows)
+      const wb = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(wb, ws, 'Clusters')
+      XLSX.writeFile(wb, 'ror-clusters-filtered.xlsx', { bookType: 'xlsx' })
+    } catch (e) {
+      console.error('[Export] Filtered Excel export failed', e)
+    }
+  }
   const pageCount = Math.ceil(filteredClusters.length / limit)
 
   const renderControls = () => (
@@ -461,11 +472,10 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
             <Funnel />
           </Toggle>
         </Link>
+
         <Button
           type='button'
-          onClick={() => {
-            handleRefreshFilters()
-          }}
+          onClick={handleRefreshFilters}
           aria-label='Reset filters'
           title='Reset filters'
           className='gap-2'
@@ -473,38 +483,51 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
           <RotateCw className='h-4 w-4' />
           Refresh
         </Button>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button>
+              <Download />
+              Export
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuItem onClick={handleExportFilteredCSV}>Export Filtered (CSV)</DropdownMenuItem>
+            <DropdownMenuItem onClick={handleExportFilteredExcel}>Export Filtered (Excel)</DropdownMenuItem>
+            <DropdownMenuItem onClick={handleExportAllCSV}>Export All (CSV)</DropdownMenuItem>
+            <DropdownMenuItem onClick={handleExportAllExcel}>Export All (Excel)</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
         <TabsViewSwitcher />
       </div>
     </div>
   )
 
-  const renderFilterSection = () => {
-    return (
-      filtersOpen && (
-        <div className='flex flex-wrap items-center gap-x-4 gap-y-6 min-h-28 mx-12 mt-6'>
-          {filterOptions.map((option) => (
-            <MultipleSelector
-              key={option.label}
-              className='w-52'
-              commandProps={{ label: option.label }}
-              value={(selectedFilters[option.label] || []).map((v) => ({ value: v, label: v }))}
-              onChange={(selectedOptions) => {
-                setSelectedFilters((prev) => ({
-                  ...prev,
-                  [option.label]: selectedOptions.map((opt) => opt.value),
-                }))
-              }}
-              defaultOptions={option.data}
-              placeholder={option.placeholder}
-              hideClearAllButton
-              hidePlaceholderWhenSelected
-              emptyIndicator={<p className='text-center text-sm'>No results found</p>}
-            />
-          ))}
-        </div>
-      )
+  const renderFilterSection = () =>
+    filtersOpen && (
+      <div className='flex flex-wrap items-center gap-x-4 gap-y-6 min-h-28 mx-12 mt-6'>
+        {filterOptions.map((option) => (
+          <MultipleSelector
+            key={option.label}
+            className='w-52'
+            commandProps={{ label: option.label }}
+            value={(selectedFilters[option.label] || []).map((v) => ({ value: v, label: v }))}
+            onChange={(selectedOptions) => {
+              setSelectedFilters((prev) => ({
+                ...prev,
+                [option.label]: selectedOptions.map((opt) => opt.value),
+              }))
+            }}
+            defaultOptions={option.data}
+            placeholder={option.placeholder}
+            hideClearAllButton
+            hidePlaceholderWhenSelected
+            emptyIndicator={<p className='text-center text-sm'>No results found</p>}
+          />
+        ))}
+      </div>
     )
-  }
 
   return (
     <div className={cn(className, '@container')}>
@@ -548,9 +571,7 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
         ) : (
           <div className='flex flex-wrap gap-6'>
             {searchResults.length > 0 ? (
-              // Apply filtering and sorting to the search results
               searchResults
-                // Filter by ID instead of object reference to handle search results better
                 .filter((searchCluster) =>
                   filteredClusters.some(
                     (filteredCluster) =>
@@ -560,9 +581,7 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
                   )
                 )
                 .sort((a, b) => {
-                  // If we have a sort parameter, use the sorted order
                   if (params.sort) {
-                    // Find matching clusters in sortedClusters by name/id
                     const sortedA = sortedClusters.find(
                       (sc) =>
                         sc.metadata?.name === a.metadata?.name ||
@@ -573,14 +592,10 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
                         sc.metadata?.name === b.metadata?.name ||
                         sc.kubernetescluster?.spec?.data?.clusterId === b.kubernetescluster?.spec?.data?.clusterId
                     )
-
-                    // Get indices from sortedClusters (or use max value if not found)
                     const indexA = sortedA ? sortedClusters.indexOf(sortedA) : Number.MAX_SAFE_INTEGER
                     const indexB = sortedB ? sortedClusters.indexOf(sortedB) : Number.MAX_SAFE_INTEGER
-
                     return indexA - indexB
                   }
-                  // If no sort parameter, maintain search result order
                   return 0
                 })
                 .map((cluster) => {

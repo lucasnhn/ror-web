@@ -21,8 +21,10 @@
     "test": "jest"
   },
   "devDependencies": {
+    "@swc/core": "1.13.3",
     "@turbo/gen": "2.5.2",
     "@types/jest": "30.0.0",
+    "esbuild": "0.25.9",
     "husky": "9.1.7",
     "jest": "30.0.5",
     "prettier": "3.5.3",
@@ -49,7 +51,8 @@
     "date-fns": "4.1.0",
     "fuse.js": "7.1.0",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "xlsx": "0.18.5"
   },
   "overrides": {
     "react": "18.2.0",
