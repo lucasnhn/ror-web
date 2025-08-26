@@ -34,7 +34,6 @@ export default async function NewNodePoolPage({ params }: NewNodePoolProps) {
 
   return (
     <div className=''>
-      {/* <CreateEditView id={id} title='New node pool' buttonText='Create node pool' /> */}
       <CreateEditView id={id} simplePrices={simplePrices} title='New node pool' buttonText='Create node pool' />
     </div>
   )
