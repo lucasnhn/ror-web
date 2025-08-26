@@ -34,7 +34,7 @@ export const ResourceMetaDataSchema = z.object({
         apiVersion: z.string().optional(),
         time: z.string().optional(),
         fieldsType: z.string().optional(),
-        fieldsV1: z.record(z.any(), z.any()).optional(),
+        fieldsV1: z.record(z.string(), z.any()).optional(),
         subresource: z.string().optional(),
       })
     )
