@@ -11,13 +11,13 @@ const ServicePortsSchema = z.object({
 
 const ServiceSpecSchema = z.object({
   type: z.string(),
-  selector: z.record(z.string()),
+  selector: z.record(z.string(), z.string()),
   ports: z.array(ServicePortsSchema),
   clusterIp: z.string(),
-  clusterIPs: z.string(z.string()),
-  externalIPs: z.string(z.string()).optional(),
+  clusterIPs: z.string(),
+  externalIPs: z.string().optional(),
   externalName: z.string().optional(),
-  ipFamilies: z.string(z.string()),
+  ipFamilies: z.string(),
   ipFamilyPolicy: z.string(),
   internalTrafficPolicy: z.string(),
   externalTrafficPolicy: z.string(),

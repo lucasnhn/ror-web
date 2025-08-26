@@ -109,7 +109,7 @@ export const resourceVirtualMachineStatusSchema = z.object({
   lastUpdated: timeSchema,
   location: z.string(),
   cpu: resourceVirtualMachineCpuStatusSchema,
-  tags: z.record(resourceVirtualMachineTagSchema),
+  tags: z.record(z.string(), resourceVirtualMachineTagSchema),
   state: resourceVirtualMachineStateSchema,
   disks: z.array(resourceVirtualMachineDiskStatusSchema),
   memory: resourceVirtualMachineMemoryStatusSchema,
@@ -133,7 +133,7 @@ export const resourceVirtualMachineClassSpecSchema = z.object({
 
 export const resourceVirtualMachineClassSchema = z.object({
   spec: resourceVirtualMachineClassSpecSchema,
-  status: z.record(z.string()),
+  status: z.record(z.string(), z.string()),
 })
 
 export const resourceTanzuKubernetesReleaseStatusConditionSchema = z.object({
@@ -199,7 +199,7 @@ export const resourceTanzuKubernetesClusterStatusSchema = z.object({
 })
 
 export const resourceTanzuKubernetesClusterSpecTopologyNodePoolsVolumesSchema = z.object({
-  capasity: z.record(z.string()),
+  capasity: z.record(z.string(), z.string()),
   mountPath: z.string(),
   name: z.string(),
   storageClass: z.string(),
@@ -226,7 +226,7 @@ export const resourceTanzuKubernetesClusterSpecTopologyNodePoolsTaintsSchema = z
 
 export const resourceTanzuKubernetesClusterSpecTopologyNodePoolsSchema = z.object({
   failureDomain: z.string(),
-  labels: z.record(z.string()),
+  labels: z.record(z.string(), z.string()),
   name: z.string(),
   nodeDrainTimeout: z.string(),
   replicas: z.number(),
@@ -374,7 +374,7 @@ export const resourceServicePortsSchema = z.object({
 
 export const resourceServiceSpecSchema = z.object({
   type: z.string(),
-  selector: z.record(z.string()),
+  selector: z.record(z.string(), z.string()),
   ports: z.array(resourceServicePortsSchema),
   clusterIP: z.string(),
   clusterIPs: z.array(z.string()),
@@ -422,7 +422,7 @@ export const resourceReplicaSetSpecSelectorMatchExpressionsSchema = z.object({
 
 export const resourceReplicaSetSpecSelectorSchema = z.object({
   matchExpressions: z.array(resourceReplicaSetSpecSelectorMatchExpressionsSchema),
-  matchLabels: z.record(z.string()),
+  matchLabels: z.record(z.string(), z.string()),
 })
 
 export const resourceReplicaSetSpecSchema = z.object({
@@ -478,7 +478,7 @@ export const resourcePolicyReportResultsSchema = z.object({
   policy: z.string(),
   message: z.string(),
   category: z.string(),
-  properties: z.record(z.string()),
+  properties: z.record(z.string(), z.string()),
   severity: z.string(),
   result: z.string(),
   resources: z.array(resourcePolicyReportResultsResourcesSchema),
@@ -522,13 +522,13 @@ export const resourcePodSchema = z.object({
 
 export const resourcePersistentVolumeClaimStatusSchema = z.object({
   accessModes: z.array(z.string()),
-  capacity: z.record(z.string()),
+  capacity: z.record(z.string(), z.string()),
   phase: z.string(),
 })
 
 export const resourcePersistentVolumeClaimSpecResourcesSchema = z.object({
-  limits: z.record(z.string()).optional(),
-  requests: z.record(z.string()),
+  limits: z.record(z.string(), z.string()).optional(),
+  requests: z.record(z.string(), z.string()),
 })
 
 export const resourcePersistentVolumeClaimSpecSchema = z.object({
@@ -616,7 +616,7 @@ export const resourceNetworkPolicyStatusSchema = z.object({
 })
 
 export const resourceNetworkPolicyPodSelectorSchema = z.object({
-  matchLabels: z.record(z.string()),
+  matchLabels: z.record(z.string(), z.string()),
 })
 
 export const resourceNetworkPolicyPortSchema = z.object({
@@ -633,7 +633,7 @@ export const resourceNetworkPolicySelectorExpressionSchema = z.object({
 
 export const resourceNetworkPolicySelectorSchema = z.object({
   matchExpressions: z.array(resourceNetworkPolicySelectorExpressionSchema),
-  matchLabels: z.record(z.string()),
+  matchLabels: z.record(z.string(), z.string()),
 })
 
 export const resourceNetworkPolicyIpBlockSchema = z.object({
@@ -752,8 +752,8 @@ export const kubernetesClusterAutoscalingSpecSchema = z.object({
 })
 
 export const kubernetesClusterSpecMetadataDetailsSchema = z.object({
-  labels: z.record(z.string()),
-  annotations: z.record(z.string()),
+  labels: z.record(z.string(), z.string()),
+  annotations: z.record(z.string(), z.string()),
 })
 
 export const kubernetesClusterNodePoolSchema = z.object({
@@ -1091,8 +1091,8 @@ export const resourceClusterOrderSpecSchema = z.object({
   sensitivity: z.number(),
   highAvailability: z.boolean(),
   nodePools: z.array(resourceClusterOrderSpecNodePoolSchema),
-  serviceTags: z.record(z.string()).optional(),
-  providerConfig: z.record(z.any()).optional(),
+  serviceTags: z.record(z.string(), z.string()).optional(),
+  providerConfig: z.record(z.any(), z.any()).optional(),
   ownerGroup: z.string(),
 })
 
@@ -1140,7 +1140,7 @@ export const resourceCertificateSchema = z.object({
 export const resourceIndirectBackupTargetSchema = z.object({
   type: z.string(),
   ids: z.array(z.string()),
-  keyValues: z.record(z.array(z.string())),
+  keyValues: z.record(z.string(), z.array(z.string())),
 })
 
 export const resourceBackupDestinationSchema = z.object({
@@ -1309,7 +1309,7 @@ export const resourceApplicationSchema = z.object({
 export const resourceTagSchema = z.object({
   key: z.string(),
   value: z.string(),
-  properties: z.record(z.string()),
+  properties: z.record(z.string(), z.string()),
 })
 
 export const resourceRorMetaSchema = z.object({
@@ -1345,8 +1345,8 @@ export const objectMetaSchema = z.object({
   creationTimestamp: timeSchema.optional(),
   deletionTimestamp: timeSchema.optional(),
   deletionGracePeriodSeconds: z.number().optional(),
-  labels: z.record(z.string()).optional(),
-  annotations: z.record(z.string()).optional(),
+  labels: z.record(z.string(), z.string()).optional(),
+  annotations: z.record(z.string(), z.string()).optional(),
   ownerReferences: z.array(ownerReferenceSchema).optional(),
   finalizers: z.array(z.string()).optional(),
   managedFields: z.array(managedFieldsEntrySchema).optional(),
@@ -1366,7 +1366,7 @@ export const resourceBackupJobSchema = z.object({
 
 export const resourceClusterVulnerabilityReportSchema = z.object({
   summary: resourceClusterVulnerabilityReportSummarySchema,
-  report: z.record(resourceClusterVulnerabilityReportReportSchema),
+  report: z.record(z.string(), resourceClusterVulnerabilityReportReportSchema),
 })
 
 export const resourceDatacenterSchema = z.object({
