@@ -41,7 +41,7 @@ export function validateResponse<T>(data: unknown, schema: z.ZodType<T>): T {
     if (error instanceof z.ZodError) {
       const formattedErrors: Record<string, string[]> = {}
 
-      for (const issue of error.errors) {
+      for (const issue of error.issues) {
         const path = issue.path.join('.')
         if (!formattedErrors[path]) {
           formattedErrors[path] = []

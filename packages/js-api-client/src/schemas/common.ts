@@ -11,8 +11,8 @@ export const ResourceMetaDataSchema = z.object({
   creationTimestamp: z.string().optional(),
   deletionTimestamp: z.string().optional(),
   deletionGracePeriodSeconds: z.number().int().optional(),
-  labels: z.record(z.string()).optional(),
-  annotations: z.record(z.string()).optional(),
+  labels: z.record(z.string(), z.string()).optional(),
+  annotations: z.record(z.string(), z.string()).optional(),
   ownerReferences: z
     .array(
       z.object({
@@ -34,7 +34,7 @@ export const ResourceMetaDataSchema = z.object({
         apiVersion: z.string().optional(),
         time: z.string().optional(),
         fieldsType: z.string().optional(),
-        fieldsV1: z.record(z.any()).optional(),
+        fieldsV1: z.record(z.string(), z.any()).optional(),
         subresource: z.string().optional(),
       })
     )
@@ -67,7 +67,7 @@ export const RorResourceOwnerReference = z.object({
 export const ResourceTag = z.object({
   key: z.string(),
   value: z.string(),
-  properties: z.record(z.string()),
+  properties: z.record(z.string(), z.string()),
 })
 
 export const RorMetaDataSchema = z.object({

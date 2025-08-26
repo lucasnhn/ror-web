@@ -9,7 +9,7 @@ const ReplicaSetSpecSelectorMatchExpressions = z.object({
 
 const ReplicaSetSpecSelector = z.object({
   mathExpressions: z.array(ReplicaSetSpecSelectorMatchExpressions),
-  matchLabels: z.record(z.string()),
+  matchLabels: z.record(z.string(), z.string()),
 })
 
 const ReplicaSetSpecSchema = z.object({
