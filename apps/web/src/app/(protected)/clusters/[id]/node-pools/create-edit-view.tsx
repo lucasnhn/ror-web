@@ -20,6 +20,7 @@ interface CreateEditViewProps {
   title: string
   buttonText: string
   nodePool?: KubernetesClusterNodePoolStatusType
+  simplePrices?: Array<{ id: string; machineClass: string; price: number }>
 }
 
 const generateRandomName = (): string => {
@@ -61,7 +62,7 @@ const NumPicker = ({
   )
 }
 
-export const CreateEditView = ({ className, id, title, buttonText, nodePool }: CreateEditViewProps) => {
+export const CreateEditView = ({ className, id, title, buttonText, nodePool, simplePrices }: CreateEditViewProps) => {
   const [name, setName] = useState(nodePool?.name || '')
   const [version, setVersion] = useState('')
   const [provider, setProvider] = useState('')
@@ -75,12 +76,16 @@ export const CreateEditView = ({ className, id, title, buttonText, nodePool }: C
   const [taints, setTaints] = useState<Record<string, { value: string; effect: string }>>({})
   const [newTaintKey, setNewTaintKey] = useState('')
   const [newTaintValue, setNewTaintValue] = useState('')
-  const [selectedMachineClass, setSelectedMachineClass] = useState(nodePool?.machineClass || '')
+  const [selectedPriceId, setSelectedPriceId] = useState<string>('')
   const [nameError, setNameError] = useState(false)
   const [versionError, setVersionError] = useState(false)
   const [classError, setClassError] = useState(false)
   const [providerError, setProviderError] = useState(false)
   const [selectedEffect, setSelectedEffect] = useState('')
+
+  const priceById = new Map((simplePrices ?? []).map((p) => [p.id, p]))
+  const selectedClass = selectedPriceId ? (priceById.get(selectedPriceId)?.machineClass ?? '') : ''
+
   return (
     <div className={cn(className)}>
       <Link href={routes.app.clusterNodePools.getHref(id)} className='flex flex-row gap-2 hover:underline mb-2'>
@@ -102,7 +107,7 @@ export const CreateEditView = ({ className, id, title, buttonText, nodePool }: C
               setNameError(false)
             }
 
-            if (!selectedMachineClass) {
+            if (!selectedPriceId) {
               setClassError(true)
               hasError = true
             } else {
@@ -137,7 +142,7 @@ export const CreateEditView = ({ className, id, title, buttonText, nodePool }: C
             if (!nodePool) {
               formData.append('version', version)
             }
-            formData.append('machineClass', selectedMachineClass)
+            formData.append('machineClass', selectedPriceId)
             formData.append('autoscaling', String(autoscaling))
             formData.append('labels', JSON.stringify(labels))
             formData.append('taints', JSON.stringify(taints))
@@ -161,7 +166,7 @@ export const CreateEditView = ({ className, id, title, buttonText, nodePool }: C
             <input type='hidden' name='name' value={name} />
             <input type='hidden' name='version' value={version} />
             <input type='hidden' name='provider' value={provider} />
-            <input type='hidden' name='machineClass' value={selectedMachineClass} />
+            <input type='hidden' name='machineClass' value={selectedPriceId} />
             <input type='hidden' name='autoscaling' value={String(autoscaling)} />
             <input type='hidden' name='labels' value={JSON.stringify(labels)} />
             <input type='hidden' name='taints' value={JSON.stringify(taints)} />
@@ -206,15 +211,14 @@ export const CreateEditView = ({ className, id, title, buttonText, nodePool }: C
           <section>
             <h3>Machine class</h3>
             <div className='flex flex-row gap-4 items-center'>
-              {/* TODO: implement actual machine classes */}
-              <Select value={selectedMachineClass} onValueChange={setSelectedMachineClass}>
-                <SelectTrigger className='w-52'>{selectedMachineClass || 'Select machine class'}</SelectTrigger>
-                <SelectContent className='w-52'>
-                  <SelectItem value='small'>Small</SelectItem>
-                  <SelectItem value='medium'>Medium</SelectItem>
-                  <SelectItem value='large'>Large</SelectItem>
-                  <SelectItem value='xlarge'>X-Large</SelectItem>
-                  <SelectItem value='best-effort-cpu-2xlarge'>best-effort-cpu-2xlarge</SelectItem>
+              <Select value={selectedPriceId} onValueChange={setSelectedPriceId}>
+                <SelectTrigger className='w-80'>{selectedClass || 'Select machine class'}</SelectTrigger>
+                <SelectContent className='w-80'>
+                  {(simplePrices ?? []).map(({ id, machineClass, price }) => (
+                    <SelectItem key={id} value={id}>
+                      {machineClass} - {price}kr
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -403,7 +407,7 @@ export const CreateEditView = ({ className, id, title, buttonText, nodePool }: C
             {!nodePool && <p className='font-medium'>Version:</p>}
             {!nodePool && <p>{version || ''}</p>}
             <p className='font-medium'>Machine class:</p>
-            <p>{selectedMachineClass || ''}</p>
+            <p>{selectedPriceId || ''}</p>
             <p className='font-medium'>Autoscaling:</p>
             <p>{autoscaling ? 'Enabled' : 'Disabled'}</p>
             {autoscaling ? (
