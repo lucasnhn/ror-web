@@ -7,9 +7,8 @@ import { routes } from '@/config/routes'
 import { Input } from '@/components/shadcn/input'
 import { Button } from '@/components/shadcn/button'
 import words from 'an-array-of-english-words'
-import { Fragment, useState } from 'react'
+import { Fragment, useEffect, useMemo, useState } from 'react'
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/shadcn/select'
-import { Checkbox } from '@/components/shadcn/checkbox'
 import { toast } from 'sonner'
 import { createOrUpdateNodePoolAction } from '@/utils/node-pool-actions'
 import { KubernetesClusterNodePoolStatusType } from '@ror/js-api-client'
@@ -66,10 +65,10 @@ export const CreateEditView = ({ className, id, title, buttonText, nodePool, sim
   const [name, setName] = useState(nodePool?.name || '')
   const [version, setVersion] = useState('')
   const [provider, setProvider] = useState('')
-  const [autoscaling, setAutoscaling] = useState<boolean>(!!nodePool?.autoscaling?.enabled)
+  // const [autoscaling, setAutoscaling] = useState<boolean>(!!nodePool?.autoscaling?.enabled)
   const [nodeCount, setNodeCount] = useState(nodePool?.scale || 1)
-  const [minNodes, setMinNodes] = useState(nodePool?.autoscaling?.minReplicas || 1)
-  const [maxNodes, setMaxNodes] = useState(nodePool?.autoscaling?.maxReplicas || 1)
+  // const [minNodes, setMinNodes] = useState(nodePool?.autoscaling?.minReplicas || 1)
+  // const [maxNodes, setMaxNodes] = useState(nodePool?.autoscaling?.maxReplicas || 1)
   const [labels, setLabels] = useState<Record<string, string>>({})
   const [newLabelKey, setNewLabelKey] = useState('')
   const [newLabelValue, setNewLabelValue] = useState('')
@@ -77,14 +76,31 @@ export const CreateEditView = ({ className, id, title, buttonText, nodePool, sim
   const [newTaintKey, setNewTaintKey] = useState('')
   const [newTaintValue, setNewTaintValue] = useState('')
   const [selectedPriceId, setSelectedPriceId] = useState<string>('')
+  // Holds the TOTAL monthly price (unit price * nodes)
+  const [selectedPrice, setSelectedPrice] = useState<number>(0)
+
   const [nameError, setNameError] = useState(false)
   const [versionError, setVersionError] = useState(false)
   const [classError, setClassError] = useState(false)
   const [providerError, setProviderError] = useState(false)
   const [selectedEffect, setSelectedEffect] = useState('')
 
-  const priceById = new Map((simplePrices ?? []).map((p) => [p.id, p]))
+  // Stable price map to avoid effect thrashing
+  const priceById = useMemo(() => new Map((simplePrices ?? []).map((p) => [p.id, p])), [simplePrices])
+  const selectedUnitPrice = selectedPriceId ? (priceById.get(selectedPriceId)?.price ?? 0) : 0
   const selectedClass = selectedPriceId ? (priceById.get(selectedPriceId)?.machineClass ?? '') : ''
+
+  // Recalculate total monthly price whenever class or node counts change
+  useEffect(() => {
+    const unit = selectedUnitPrice
+    // const nodes = autoscaling ? maxNodes : nodeCount
+    const nodes = nodeCount
+    setSelectedPrice(unit * nodes)
+  }, [selectedUnitPrice, nodeCount])
+
+  const handleSelectClass = (id: string) => {
+    setSelectedPriceId(id) // effect will recalc price
+  }
 
   return (
     <div className={cn(className)}>
@@ -114,44 +130,39 @@ export const CreateEditView = ({ className, id, title, buttonText, nodePool, sim
               setClassError(false)
             }
 
-            if (!provider) {
+            if (!provider && !nodePool) {
               setProviderError(true)
               hasError = true
             } else {
               setProviderError(false)
             }
 
-            if (!version) {
+            if (!version && !nodePool) {
               setVersionError(true)
               hasError = true
             } else {
               setVersionError(false)
             }
 
-            if (hasError) {
-              return // Prevent submission
-            }
+            if (hasError) return
 
-            // If valid, construct form data and call your server action
             const formData = new FormData()
             formData.append('id', id)
             formData.append('name', name)
             if (!nodePool) {
               formData.append('provider', provider)
-            }
-            if (!nodePool) {
               formData.append('version', version)
             }
             formData.append('machineClass', selectedPriceId)
-            formData.append('autoscaling', String(autoscaling))
+            // formData.append('autoscaling', String(autoscaling))
             formData.append('labels', JSON.stringify(labels))
             formData.append('taints', JSON.stringify(taints))
-            if (autoscaling) {
-              formData.append('minReplicas', String(minNodes))
-              formData.append('maxReplicas', String(maxNodes))
-            } else {
-              formData.append('replicas', String(nodeCount))
-            }
+            // if (autoscaling) {
+            //   formData.append('minReplicas', String(minNodes))
+            //   formData.append('maxReplicas', String(maxNodes))
+            // } else {
+            formData.append('replicas', String(nodeCount))
+            // }
 
             try {
               await createOrUpdateNodePoolAction(formData)
@@ -167,7 +178,7 @@ export const CreateEditView = ({ className, id, title, buttonText, nodePool, sim
             <input type='hidden' name='version' value={version} />
             <input type='hidden' name='provider' value={provider} />
             <input type='hidden' name='machineClass' value={selectedPriceId} />
-            <input type='hidden' name='autoscaling' value={String(autoscaling)} />
+            {/* <input type='hidden' name='autoscaling' value={String(autoscaling)} /> */}
             <input type='hidden' name='labels' value={JSON.stringify(labels)} />
             <input type='hidden' name='taints' value={JSON.stringify(taints)} />
 
@@ -211,7 +222,7 @@ export const CreateEditView = ({ className, id, title, buttonText, nodePool, sim
           <section>
             <h3>Machine class</h3>
             <div className='flex flex-row gap-4 items-center'>
-              <Select value={selectedPriceId} onValueChange={setSelectedPriceId}>
+              <Select value={selectedPriceId} onValueChange={handleSelectClass}>
                 <SelectTrigger className='w-80'>{selectedClass || 'Select machine class'}</SelectTrigger>
                 <SelectContent className='w-80'>
                   {(simplePrices ?? []).map(({ id, machineClass, price }) => (
@@ -228,7 +239,7 @@ export const CreateEditView = ({ className, id, title, buttonText, nodePool, sim
           <section>
             <h3>Scaling</h3>
             <div>
-              {autoscaling ? (
+              {/* {autoscaling ? (
                 <div className='flex flex-row gap-4'>
                   <NumPicker
                     name='minReplicas'
@@ -243,10 +254,12 @@ export const CreateEditView = ({ className, id, title, buttonText, nodePool, sim
                     setValue={(v) => v >= minNodes && setMaxNodes(v)}
                   />
                 </div>
-              ) : (
-                <NumPicker name='replicas' title='Node count' value={nodeCount} setValue={setNodeCount} />
-              )}
-              <div className='flex flex-row items-center gap-2 mt-2'>
+              ) : ( */}
+              <NumPicker name='replicas' title='Node count' value={nodeCount} setValue={setNodeCount} />
+              {/* )} */}
+
+              {/* TODO: Uncomment when autoscaling toggle is ready */}
+              {/* <div className='flex flex-row items-center gap-2 mt-2'>
                 <Checkbox
                   checked={autoscaling}
                   onCheckedChange={(checked) => setAutoscaling(!!checked)}
@@ -257,9 +270,8 @@ export const CreateEditView = ({ className, id, title, buttonText, nodePool, sim
                 </label>
               </div>
               <p className='text-xs text-gray-500 dark:text-gray-600'>
-                The cluster can be automatically scaled up or down. This can have a significant impact on the pricing of
-                your cluster.
-              </p>
+                The cluster can be automatically scaled up or down. This can have a significant impact on pricing.
+              </p> */}
             </div>
           </section>
 
@@ -407,28 +419,29 @@ export const CreateEditView = ({ className, id, title, buttonText, nodePool, sim
             {!nodePool && <p className='font-medium'>Version:</p>}
             {!nodePool && <p>{version || ''}</p>}
             <p className='font-medium'>Machine class:</p>
-            <p>{selectedPriceId || ''}</p>
-            <p className='font-medium'>Autoscaling:</p>
-            <p>{autoscaling ? 'Enabled' : 'Disabled'}</p>
-            {autoscaling ? (
+            <p>{selectedClass || ''}</p>
+            {/* TODO: Uncomment when autoscaling toggle is ready */}
+            {/* <p className='font-medium'>Autoscaling:</p>
+            <p>{autoscaling ? 'Enabled' : 'Disabled'}</p> */}
+            {/* {autoscaling ? (
               <>
-                <p className='font-medium'>Min Nodes:</p>
+                <p className='font-medium'>Min nodes:</p>
                 <p>{minNodes}</p>
-                <p className='font-medium'>Max Nodes:</p>
+                <p className='font-medium'>Max nodes:</p>
                 <p>{maxNodes}</p>
               </>
-            ) : (
-              <>
-                <p className='font-medium'>Node count:</p>
-                <p>{nodeCount}</p>
-              </>
-            )}
-            <p className='font-medium'>Price calculation:</p>
-            <p>{'Needs to be implemented'}</p>
+            ) : ( */}
+            <>
+              <p className='font-medium'>Node count:</p>
+              <p>{nodeCount}</p>
+            </>
+            {/* )} */}
+            <p className='font-medium'>Price per node:</p>
+            <p>{selectedUnitPrice ? `${selectedUnitPrice} kr` : 'N/A'}</p>
             <p className='font-medium'>Estimated price per month:</p>
-            <p>{'Needs to be implemented'}</p>
+            <p>{selectedPrice ? `${selectedPrice} kr` : 'N/A'}</p>
             <p className='font-medium'>Estimated price per year:</p>
-            <p>{'Needs to be implemented'}</p>
+            <p>{selectedPrice ? `${selectedPrice * 12} kr` : 'N/A'}</p>
           </div>
         </div>
       </div>
