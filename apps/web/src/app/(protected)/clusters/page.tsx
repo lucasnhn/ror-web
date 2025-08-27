@@ -66,10 +66,10 @@ export default async function ClustersPage({ searchParams }: ClusterPageProps) {
   const clusters: KubernetesCluster[] = response?.resources ?? []
   const v1clusters: Cluster[] = v1response?.data ?? []
 
-  console.log('[CLUSTERS PAGE] V2 clusters')
-  console.dir(clusters, { depth: null })
-  console.log('[CLUSTERS PAGE] V1 clusters')
-  console.dir(v1clusters, { depth: null })
+  console.log('[CLUSTERS PAGE] V2 clusters (stringified)')
+  console.log(JSON.stringify(clusters, null, 2))
+  console.log('[CLUSTERS PAGE] V1 clusters (stringified)')
+  console.log(JSON.stringify(v1clusters, null, 2))
 
   return (
     <div className='w-full flex flex-col'>
