@@ -85,10 +85,10 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
   const [savedLayouts, setSavedLayouts] = useState<Layouts>(standardLayouts)
   const [currentBreakpoint, setCurrentBreakpoint] = useState('lg')
 
-  const clusterSpec = cluster.kubernetescluster?.spec
-  const clusterStatus = cluster.kubernetescluster?.status
+  const clusterSpec = cluster?.kubernetescluster?.spec
+  const clusterStatus = cluster?.kubernetescluster?.status
   const clusterId = clusterSpec?.data?.clusterId
-  const clusterName = cluster.metadata?.name || clusterId
+  const clusterName = cluster?.metadata?.name || clusterId
 
   const cpuData = clusterStatus?.state?.cluster?.resources?.cpu
   const cpu = { capacity: cpuData?.capacity, used: cpuData?.used, percentage: cpuData?.percentage }
@@ -349,7 +349,7 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
               <div className='flex flex-1 flex-col gap-2'>
                 <div className='flex flex-col'>
                   <b>Provider: </b>
-                  <span>{cluster.kubernetescluster?.spec?.data?.provider}</span>
+                  <span>{cluster?.kubernetescluster?.spec?.data?.provider}</span>
                 </div>
                 <div className='flex flex-col'>
                   <b>HA control plane: </b>
