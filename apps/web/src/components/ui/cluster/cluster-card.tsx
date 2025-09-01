@@ -372,7 +372,15 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
                 <p className='font-bold'>Service tags</p>
                 <p className='flex flex-wrap gap-1'>
                   {serviceTags.map(
-                    ({ key, value, properties }: { key: string; value: string; properties: { color: string } }) => (
+                    ({
+                      key,
+                      value,
+                      properties,
+                    }: {
+                      key: string
+                      value: string
+                      properties: Record<string, string>
+                    }) => (
                       <Pill key={key} style={{ backgroundColor: properties.color }}>
                         {value}
                       </Pill>
