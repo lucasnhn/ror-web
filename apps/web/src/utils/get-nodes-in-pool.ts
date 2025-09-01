@@ -29,7 +29,6 @@ export function getNodesInPool(
   if (poolName) {
     const key = `${poolName}-`
     const matched = allNodes.filter((n) => (n?.metadata?.name ?? '').includes(key))
-    console.log('getNodesInPool: poolName match', { poolName, key, matched })
     return matched
   }
 
