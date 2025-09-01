@@ -32,6 +32,5 @@ export function getNodesInPool(
     return matched
   }
 
-  console.log('getNodesInPool: no match', { poolNodes, poolName })
   return []
 }
