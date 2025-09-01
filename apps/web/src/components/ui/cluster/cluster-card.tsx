@@ -113,8 +113,13 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
   const serviceTags = cluster.rormeta.tags || []
 
   const handleCardClick = () => {
-    localStorage.setItem('selectedCluster', JSON.stringify(cluster))
-    window.open(`/clusters/${clusterId}`, '_blank')
+    const newTab = window.open(`/clusters/${clusterId}`, '_blank');
+    // If you need to pass more data, use postMessage:
+    if (newTab) {
+      newTab.onload = () => {
+        newTab.postMessage({ selectedCluster: cluster }, window.location.origin);
+      };
+    }
   }
 
   const envColor = envBgColors[env ?? 'undefined'] ?? ['bg-gray-100', 'text-gray-900']
