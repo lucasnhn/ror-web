@@ -15,4 +15,5 @@ export const PriceSchema = z
   })
   .passthrough()
 
+export const PriceListSchema = z.array(PriceSchema)
 export const PriceResponseSchema = createPaginationSchema(PriceSchema)
