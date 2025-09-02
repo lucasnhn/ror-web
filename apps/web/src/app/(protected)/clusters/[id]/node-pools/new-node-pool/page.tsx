@@ -25,7 +25,7 @@ export default async function NewNodePoolPage({ params }: NewNodePoolProps) {
     price: number
   }
 
-  const items: Price[] = Array.isArray(res) ? res : (res?.data ?? [])
+  const items: Price[] = Array.isArray(res) ? res : []
   console.log('[NODEPOOLS PAGE] Prices:', items)
   const simplePrices = items.map(({ id, machineClass, price }) => ({
     id,
