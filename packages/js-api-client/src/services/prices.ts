@@ -9,6 +9,7 @@ export const createPriceService = (request: (requestOptions: RequestOptions) => 
       method: 'GET',
       path: '/v1/prices',
     })
+    console.log('[PRICE SERVICE] Prices:', response)
     return validateResponse(response, PriceResponseSchema)
   },
 })
