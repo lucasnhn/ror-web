@@ -82,6 +82,8 @@ export default function ClusterPageLayout({ params, children }: ClusterPageLayou
       setId(id)
       const stored = localStorage.getItem('selectedCluster')
       setCluster(stored ? JSON.parse(stored) : null)
+      console.log('[CLUSTER LAYOUT] Cluster', { id, cluster: stored ? JSON.parse(stored) : null })
+      console.log('[CLUSTER LAYOUT] ID', id)
     })
   }, [params])
 
