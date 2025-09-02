@@ -112,29 +112,21 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
   const kubectlLogin = `kubectl vsphere login --server=${serverUrl} -u ${user?.email} --insecure-skip-tls-verify --tanzu-kubernetes-cluster-namespace ${clusterSpec?.data?.workspace} --tanzu-kubernetes-cluster-name ${clusterName}`
   const serviceTags = cluster.rormeta.tags || []
 
-  const handleCardClick = () => {
-    const newTab = window.open(`/clusters/${clusterId}`, '_blank');
-    // If you need to pass more data, use postMessage:
-    if (newTab) {
-      newTab.onload = () => {
-        newTab.postMessage({ selectedCluster: cluster }, window.location.origin);
-      };
-    }
-  }
-
   const envColor = envBgColors[env ?? 'undefined'] ?? ['bg-gray-100', 'text-gray-900']
 
   return (
-    <Link href={`/clusters/${clusterId}`}>
+    <Link
+      href={`/clusters/${clusterId}`}
+      onClick={() => localStorage.setItem('selectedCluster', JSON.stringify(cluster))}
+    >
       <Card
         className={cn(
           'w-sm min-w-64 pt-0 hover:bg-[#ededed] dark:hover:bg-neutral-800 hover:cursor-pointer @container container',
           className
         )}
-        onClick={handleCardClick}
         role='button'
         tabIndex={0}
-        onKeyDown={(e) => e.key === 'Enter' && handleCardClick()}
+        onKeyDown={(e) => e.key === 'Enter' && localStorage.setItem('selectedCluster', JSON.stringify(cluster))}
       >
         <CardHeader className='m-0 mb-7 p-0 w-full'>
           <CardTitle className={cn('text-2xl rounded-t-xl px-6 py-2 flex', envColor[0], envColor[1])}>
@@ -372,6 +364,7 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
                 </p>
               </div>
             )}
+
             {displayData?.includes('serviceTags') && (
               <div>
                 <p className='font-bold'>Service tags</p>
