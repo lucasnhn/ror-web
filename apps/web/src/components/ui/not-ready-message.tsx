@@ -1,0 +1,31 @@
+'use client'
+
+import { cn } from '@/utils/clsxm'
+import { X } from 'lucide-react'
+import { useState } from 'react'
+
+interface NotReadyMessageProps {
+  className?: string
+  children?: React.ReactNode
+}
+
+export const NotReadyMessage = ({ className, children }: NotReadyMessageProps) => {
+  const [isVisible, setIsVisible] = useState(true)
+
+  if (!isVisible) return null
+
+  return (
+    <div
+      className={cn(
+        className,
+        'p-5 border-3 rounded-lg flex flex-row items-center text-black',
+        'bg-orange-400 dark:bg-orange-500 border-orange-600 dark:border-orange-700'
+      )}
+    >
+      <div>{children}</div>
+      <button onClick={() => setIsVisible(false)}>
+        <X />
+      </button>
+    </div>
+  )
+}
