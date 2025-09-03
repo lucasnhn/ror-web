@@ -673,9 +673,9 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
           />
         ) : (
           <div>
-            <div className='grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-y-4 gap-x-8'>
+            <div className='flex flex-row flex-wrap gap-6'>
               {displayedItems.map((cluster, idx) => (
-                <div key={cluster.kubernetescluster?.spec?.data?.clusterId || idx} style={{ width: '100%' }}>
+                <div key={cluster.kubernetescluster?.spec?.data?.clusterId || idx}>
                   <ClusterCard
                     user={user}
                     cluster={cluster}
