@@ -38,7 +38,7 @@ import MultipleSelector, { Option } from '@/components/shadcn/multiselect'
 import { ArrowDownNarrowWide, ArrowDownWideNarrow, Download, Funnel, RotateCw } from 'lucide-react'
 import { cn } from '@/utils/clsxm'
 import Link from 'next/link'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { KubernetesCluster } from '@ror/js-api-client'
 import { ClusterSearch } from '@/components/ui/cluster/cluster-search'
 import { User } from 'next-auth'
@@ -151,77 +151,83 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
   const [hasMore, setHasMore] = useState(true)
   const [items, setItems] = useState<KubernetesCluster[]>([])
   const [offset, setOffset] = useState(0)
-  const scrollRef = useRef<HTMLDivElement>(null)
+  // const scrollRef = useRef<HTMLDivElement>(null)
+  const sentinelRef = useRef<HTMLDivElement>(null)
 
   // fetch more clusters
-  const fetchMoreClusters = async (p0: { offset: number; limit: number }) => {
-    if (isLoading || !hasMore) return
-    setIsLoading(true)
-    try {
-      console.log('start to fetch')
-      const params = new URLSearchParams({
-        apiversion: 'general.ror.internal/v1alpha1',
-        kind: 'KubernetesCluster',
-        offset: String(p0.offset),
-        limit: String(p0.limit),
-      })
-      const res = await fetch(`http://localhost:10000/v2/resources?${params.toString()}`)
-      if (!res.ok) {
-        const text = await res.text()
-        console.error('API error: ' + res.status + ' - ' + text)
-        setHasMore(false)
-        return
-      }
-      const data = await res.json()
-      setItems((prev) => {
-        const existingIds = new Set(prev.map((c: KubernetesCluster) => c.kubernetescluster?.spec?.data?.clusterId))
-        const newClusters = (data.resources || []).filter((c: KubernetesCluster) => {
-          const id = c.kubernetescluster?.spec?.data?.clusterId
-          setOffset(offset + data.resources.length)
-          setHasMore(data.resources.length > 0)
-          return id && !existingIds.has(id)
+
+  const fetchMoreClusters = useCallback(
+    async (p0: { offset: number; limit: number }) => {
+      if (isLoading || !hasMore) return
+      setIsLoading(true)
+      try {
+        console.log('start to fetch')
+        const params = new URLSearchParams({
+          apiversion: 'general.ror.internal/v1alpha1',
+          kind: 'KubernetesCluster',
+          offset: String(p0.offset),
+          limit: String(p0.limit),
         })
-        return [...prev, ...newClusters]
-      })
-      console.log('fetch response:', res)
-      if (!data.resources || data.resources.length < p0.limit) {
-        setHasMore(false)
+        const res = await fetch(`http://localhost:10000/v2/resources?${params.toString()}`)
+        if (!res.ok) {
+          const text = await res.text()
+          console.error('API error: ' + res.status + ' - ' + text)
+          setHasMore(false)
+          return
+        }
+        const data = await res.json()
+        setItems((prev) => {
+          const existingIds = new Set(prev.map((c: KubernetesCluster) => c.kubernetescluster?.spec?.data?.clusterId))
+          const newClusters = (data.resources || []).filter((c: KubernetesCluster) => {
+            const id = c.kubernetescluster?.spec?.data?.clusterId
+            setOffset(offset + data.resources.length)
+            setHasMore(data.resources.length > 0)
+            return id && !existingIds.has(id)
+          })
+          return [...prev, ...newClusters]
+        })
+        console.log('fetch response:', res)
+        if (!data.resources || data.resources.length < p0.limit) {
+          setHasMore(false)
+        }
+        console.log('HasMore:', hasMore)
+        console.log('fetch complete')
+        console.log('Items length: ', items.length)
+      } catch (error) {
+        console.error('Error fetching more clusters:', error)
+      } finally {
+        setIsLoading(false)
       }
-      console.log('HasMore:', hasMore)
-      console.log('fetch complete')
-      console.log('Items length: ', items.length)
-    } catch (error) {
-      console.error('Error fetching more clusters:', error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
+    },
+    [isLoading, hasMore, items.length, offset]
+  )
 
   useEffect(() => {
-    const scrollElement = scrollRef.current
-    console.log('[Scroll useEffect] Mounted. scrollRef.current:', scrollElement)
+    const scrollElement = sentinelRef.current
     if (!scrollElement) return
 
-    const handleScroll = () => {
-      const distanceToBottom = scrollElement.scrollHeight - scrollElement.scrollTop - scrollElement.clientHeight
-      console.log('[Scroll event] distanceToBottom:', distanceToBottom, 'isLoading:', isLoading, 'hasMore:', hasMore)
-      console.log('Items length:', items.length)
-      if (distanceToBottom < 200 && !isLoading && hasMore) {
-        console.log('[Scroll event] Trigger fetchMoreClusters. items:', items.length)
-        fetchMoreClusters({ offset: items.length, limit: pageSize })
+    const io = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0]
+        if (entry.isIntersecting && !isLoading && hasMore) {
+          fetchMoreClusters({ offset: items.length, limit: pageSize })
+        }
+      },
+      {
+        root: null,
+        rootMargin: '600px',
+        threshold: 0,
       }
-    }
+    )
 
-    scrollElement.addEventListener('scroll', handleScroll)
-    return () => {
-      scrollElement.removeEventListener('scroll', handleScroll)
-    }
+    io.observe(scrollElement)
+    return () => io.disconnect()
   }, [items.length, isLoading, hasMore, fetchMoreClusters])
 
   useEffect(() => {
     setItems(clusters)
     setOffset(clusters.length)
-  }, [clusters as KubernetesCluster[]])
+  }, [clusters])
 
   const safeClusters = useMemo(
     () =>
@@ -676,15 +682,8 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
             pageCount={pageCount}
           />
         ) : (
-          <div ref={scrollRef} style={{ height: '80vh', overflow: 'auto', position: 'relative' }}>
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-                gap: '16px',
-                position: 'relative',
-              }}
-            >
+          <div>
+            <div className='grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-y-4 gap-x-8'>
               {items.map((cluster, idx) => (
                 <div key={cluster.kubernetescluster?.spec?.data?.clusterId || idx} style={{ width: '100%' }}>
                   <ClusterCard
@@ -698,6 +697,7 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
                   />
                 </div>
               ))}
+              <div ref={sentinelRef} className='h-px' />
             </div>
             {isLoading && <div style={{ textAlign: 'center', padding: 16 }}>Loading...</div>}
             {!hasMore && (
