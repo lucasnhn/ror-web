@@ -5,7 +5,6 @@ import { HealthCircle } from './health-circle'
 import { navigationItemObject } from '@/app/(protected)/clusters/[id]/layout'
 import { NavigationTabs } from '../navigation-tabs'
 import { useClusterContext } from '@/context/cluster-context'
-import { NotReadyMessage } from '../not-ready-message'
 
 interface ClusterHeaderProps {
   className?: string
