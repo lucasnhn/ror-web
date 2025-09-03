@@ -21,6 +21,7 @@ export const NotReadyMessage = ({ className, children }: NotReadyMessageProps) =
         'p-5 border-3 rounded-lg flex flex-row justify-between items-center text-black',
         'bg-orange-400 dark:bg-orange-500 border-orange-600 dark:border-orange-700'
       )}
+      role='alert'
     >
       <div>{children}</div>
       <button onClick={() => setIsVisible(false)}>
