@@ -18,6 +18,7 @@ interface ClusterPageProps {
     sort?: string
     order?: 'asc' | 'desc'
     filters?: string
+    offset?: number
   }>
 }
 
@@ -34,9 +35,12 @@ export default async function ClustersPage({ searchParams }: ClusterPageProps) {
 
   // If needed, add pagination and sorting params to the list request
   if (params.limit) listParams.set('limit', params.limit.toString())
-  if (params.page) listParams.set('page', params.page.toString())
+  if (params.limit && params.page) {
+    const offset = (params.page - 1) * params.limit
+    listParams.set('offset', offset.toString())
+  }
   if (params.sort) listParams.set('sort', params.sort)
-  if (params.order) listParams.set('order', params.order)
+
   const response = await api.kubernetesClusters.list(listParams)
 
   const clusters: KubernetesCluster[] = response?.resources ?? []

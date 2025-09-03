@@ -1,3 +1,30 @@
+/**
+ * Cluster Management Component
+ *
+ * FILE OVERVIEW
+ * ----------------------
+ * This file contains the main React component for displaying and managing clusters in the ROR web application.
+ *
+ * Features:
+ * - Grid and list views for clusters (switchable)
+ * - Infinite scroll with lazy loading: get more clusters from the API when the user tends to scroll down
+ * - Filtering and sorting of clusters by various criteria
+ * - Export functionality (CSV/Excel) for all or filtered clusters
+ * - Responsive controls for search, filters, sorting, and view switching
+ *
+ * Key Sections:
+ * - Imports: UI components, hooks, types, utilities
+ * - Props and types: PageViewProps, Params, Option
+ * - State and hooks: cluster data, filters, pagination, virtualization
+ * - Utility functions: export, fetch, filtering, sorting
+ * - Render logic: controls, filter section, cluster table/grid, pagination info
+ *
+ * For developer orientation:
+ * - The main export is PageView, which handles all cluster display logic
+ * - Filtering, sorting, and export logic are modular and easy to extend
+ * - Comments throughout the file explain major blocks and logic
+ */
+
 'use client'
 
 import { ClusterCard, ClusterCardDisplayData } from '@/components/ui/cluster/cluster-card'
@@ -11,7 +38,7 @@ import MultipleSelector, { Option } from '@/components/shadcn/multiselect'
 import { ArrowDownNarrowWide, ArrowDownWideNarrow, Download, Funnel, RotateCw } from 'lucide-react'
 import { cn } from '@/utils/clsxm'
 import Link from 'next/link'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type { KubernetesCluster } from '@ror/js-api-client'
 import { ClusterSearch } from '@/components/ui/cluster/cluster-search'
 import { User } from 'next-auth'
@@ -109,7 +136,7 @@ const filterOptions = [
 type WorksheetWithCols = WorkSheet & { ['!cols']?: { wch: number }[] }
 
 export const PageView = ({ className, user, clusters, params }: PageViewProps) => {
-  const DEFAULT_LIMIT = 10
+  const DEFAULT_LIMIT = 3
   const DEFAULT_PAGE = 1
 
   const limit = Number(params.limit) || DEFAULT_LIMIT
@@ -117,6 +144,84 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
   const filtersOpen = params.filters === 'open'
   const router = useRouter()
   const pathname = usePathname()
+
+  // pagination
+  const pageSize = 50
+  const [isLoading, setIsLoading] = useState(false)
+  const [hasMore, setHasMore] = useState(true)
+  const [items, setItems] = useState<KubernetesCluster[]>([])
+  const [offset, setOffset] = useState(0)
+  const scrollRef = useRef<HTMLDivElement>(null)
+
+  // fetch more clusters
+  const fetchMoreClusters = async (p0: { offset: number; limit: number }) => {
+    if (isLoading || !hasMore) return
+    setIsLoading(true)
+    try {
+      console.log('start to fetch')
+      const params = new URLSearchParams({
+        apiversion: 'general.ror.internal/v1alpha1',
+        kind: 'KubernetesCluster',
+        offset: String(p0.offset),
+        limit: String(p0.limit),
+      })
+      const res = await fetch(`http://localhost:10000/v2/resources?${params.toString()}`)
+      if (!res.ok) {
+        const text = await res.text()
+        console.error('API error: ' + res.status + ' - ' + text)
+        setHasMore(false)
+        return
+      }
+      const data = await res.json()
+      setItems((prev) => {
+        const existingIds = new Set(prev.map((c: KubernetesCluster) => c.kubernetescluster?.spec?.data?.clusterId))
+        const newClusters = (data.resources || []).filter((c: KubernetesCluster) => {
+          const id = c.kubernetescluster?.spec?.data?.clusterId
+          setOffset(offset + data.resources.length)
+          setHasMore(data.resources.length > 0)
+          return id && !existingIds.has(id)
+        })
+        return [...prev, ...newClusters]
+      })
+      console.log('fetch response:', res)
+      if (!data.resources || data.resources.length < p0.limit) {
+        setHasMore(false)
+      }
+      console.log('HasMore:', hasMore)
+      console.log('fetch complete')
+      console.log('Items length: ', items.length)
+    } catch (error) {
+      console.error('Error fetching more clusters:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    const scrollElement = scrollRef.current
+    console.log('[Scroll useEffect] Mounted. scrollRef.current:', scrollElement)
+    if (!scrollElement) return
+
+    const handleScroll = () => {
+      const distanceToBottom = scrollElement.scrollHeight - scrollElement.scrollTop - scrollElement.clientHeight
+      console.log('[Scroll event] distanceToBottom:', distanceToBottom, 'isLoading:', isLoading, 'hasMore:', hasMore)
+      console.log('Items length:', items.length)
+      if (distanceToBottom < 200 && !isLoading && hasMore) {
+        console.log('[Scroll event] Trigger fetchMoreClusters. items:', items.length)
+        fetchMoreClusters({ offset: items.length, limit: pageSize })
+      }
+    }
+
+    scrollElement.addEventListener('scroll', handleScroll)
+    return () => {
+      scrollElement.removeEventListener('scroll', handleScroll)
+    }
+  }, [items.length, isLoading, hasMore, fetchMoreClusters])
+
+  useEffect(() => {
+    setItems(clusters)
+    setOffset(clusters.length)
+  }, [clusters as KubernetesCluster[]])
 
   const safeClusters = useMemo(
     () =>
@@ -312,24 +417,24 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
           valueB = b.metadata?.name || ''
           break
         case 'cpu':
-          valueA = a.kubernetescluster?.status?.state?.cluster?.resources?.cpu?.percentage || 0
-          valueB = b.kubernetescluster?.status?.state?.cluster?.resources?.cpu?.percentage || 0
+          valueA = Number(a.kubernetescluster?.status?.state?.cluster?.resources?.cpu?.percentage) || 0
+          valueB = Number(b.kubernetescluster?.status?.state?.cluster?.resources?.cpu?.percentage) || 0
           return (valueB - valueA) * sortOrder
         case 'memory':
-          valueA = a.kubernetescluster?.status?.state?.cluster?.resources?.memory?.percentage || 0
-          valueB = b.kubernetescluster?.status?.state?.cluster?.resources?.memory?.percentage || 0
+          valueA = Number(a.kubernetescluster?.status?.state?.cluster?.resources?.memory?.percentage) || 0
+          valueB = Number(b.kubernetescluster?.status?.state?.cluster?.resources?.memory?.percentage) || 0
           return (valueB - valueA) * sortOrder
         case 'nodes':
-          valueA = a.kubernetescluster?.status?.state?.cluster?.nodepools?.length || 0
-          valueB = b.kubernetescluster?.status?.state?.cluster?.nodepools?.length || 0
+          valueA = Number(a.kubernetescluster?.status?.state?.cluster?.nodepools?.length) || 0
+          valueB = Number(b.kubernetescluster?.status?.state?.cluster?.nodepools?.length) || 0
           return (valueB - valueA) * sortOrder
         case 'monthlyPrice':
-          valueA = a.kubernetescluster?.status?.state?.cluster?.price?.monthly || 0
-          valueB = b.kubernetescluster?.status?.state?.cluster?.price?.monthly || 0
+          valueA = Number(a.kubernetescluster?.status?.state?.cluster?.price?.monthly) || 0
+          valueB = Number(b.kubernetescluster?.status?.state?.cluster?.price?.monthly) || 0
           return (valueB - valueA) * sortOrder
         case 'yearlyPrice':
-          valueA = a.kubernetescluster?.status?.state?.cluster?.price?.yearly || 0
-          valueB = b.kubernetescluster?.status?.state?.cluster?.price?.yearly || 0
+          valueA = Number(a.kubernetescluster?.status?.state?.cluster?.price?.yearly) || 0
+          valueB = Number(b.kubernetescluster?.status?.state?.cluster?.price?.yearly) || 0
           return (valueB - valueA) * sortOrder
         case 'datacenterName':
           valueA = a.kubernetescluster?.spec?.data?.datacenter || ''
@@ -504,6 +609,7 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
     </div>
   )
 
+  // Render filter section (multi-selects for environments, datacenters, workspaces)
   const renderFilterSection = () =>
     filtersOpen && (
       <div className='flex flex-wrap items-center gap-x-4 gap-y-6 min-h-28 mx-12 mt-6'>
@@ -529,6 +635,7 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
       </div>
     )
 
+  // Main render: container, controls, filter section, cluster list/grid/table
   return (
     <div className={cn(className, '@container')}>
       <div className={cn('border-b', filtersOpen && 'pb-2')}>
@@ -569,56 +676,32 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
             pageCount={pageCount}
           />
         ) : (
-          <div className='flex flex-wrap gap-6'>
-            {searchResults.length > 0 ? (
-              searchResults
-                .filter((searchCluster) =>
-                  filteredClusters.some(
-                    (filteredCluster) =>
-                      searchCluster.metadata?.name === filteredCluster.metadata?.name ||
-                      searchCluster.kubernetescluster?.spec?.data?.clusterId ===
-                        filteredCluster.kubernetescluster?.spec?.data?.clusterId
-                  )
-                )
-                .sort((a, b) => {
-                  if (params.sort) {
-                    const sortedA = sortedClusters.find(
-                      (sc) =>
-                        sc.metadata?.name === a.metadata?.name ||
-                        sc.kubernetescluster?.spec?.data?.clusterId === a.kubernetescluster?.spec?.data?.clusterId
-                    )
-                    const sortedB = sortedClusters.find(
-                      (sc) =>
-                        sc.metadata?.name === b.metadata?.name ||
-                        sc.kubernetescluster?.spec?.data?.clusterId === b.kubernetescluster?.spec?.data?.clusterId
-                    )
-                    const indexA = sortedA ? sortedClusters.indexOf(sortedA) : Number.MAX_SAFE_INTEGER
-                    const indexB = sortedB ? sortedClusters.indexOf(sortedB) : Number.MAX_SAFE_INTEGER
-                    return indexA - indexB
-                  }
-                  return 0
-                })
-                .map((cluster) => {
-                  const clusterId = cluster.kubernetescluster?.spec?.data?.clusterId || crypto.randomUUID()
-                  return (
-                    <ClusterCard
-                      key={clusterId}
-                      user={user}
-                      cluster={cluster}
-                      displayData={
-                        selectedDisplayData?.length > 0
-                          ? selectedDisplayData
-                          : displayDataOptions?.map((o) => o.value as ClusterCardDisplayData) || []
-                      }
-                    />
-                  )
-                })
-            ) : (
-              <p className='text-muted-foreground'>
-                {searchResults.length === 0
-                  ? 'No cluster matching this search query exists.'
-                  : 'No cluster matching both search query and filters exists.'}
-              </p>
+          <div ref={scrollRef} style={{ height: '80vh', overflow: 'auto', position: 'relative' }}>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+                gap: '16px',
+                position: 'relative',
+              }}
+            >
+              {items.map((cluster, idx) => (
+                <div key={cluster.kubernetescluster?.spec?.data?.clusterId || idx} style={{ width: '100%' }}>
+                  <ClusterCard
+                    user={user}
+                    cluster={cluster}
+                    displayData={
+                      selectedDisplayData?.length > 0
+                        ? selectedDisplayData
+                        : displayDataOptions?.map((o) => o.value as ClusterCardDisplayData) || []
+                    }
+                  />
+                </div>
+              ))}
+            </div>
+            {isLoading && <div style={{ textAlign: 'center', padding: 16 }}>Loading...</div>}
+            {!hasMore && (
+              <div style={{ textAlign: 'center', padding: 16, color: '#888' }}>Alle clustere er lastet inn.</div>
             )}
           </div>
         )}
