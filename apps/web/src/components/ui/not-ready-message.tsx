@@ -18,7 +18,7 @@ export const NotReadyMessage = ({ className, children }: NotReadyMessageProps) =
     <div
       className={cn(
         className,
-        'p-5 border-3 rounded-lg flex flex-row items-center text-black',
+        'p-5 border-3 rounded-lg flex flex-row justify-between items-center text-black',
         'bg-orange-400 dark:bg-orange-500 border-orange-600 dark:border-orange-700'
       )}
     >

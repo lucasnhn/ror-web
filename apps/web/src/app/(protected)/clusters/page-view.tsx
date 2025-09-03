@@ -23,6 +23,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/shadcn/dropdown-menu'
 import type { WorkSheet } from 'xlsx'
+import { NotReadyMessage } from '@/components/ui/not-ready-message'
 
 interface Params {
   view?: 'grid' | 'list'
@@ -537,6 +538,12 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
         </div>
         {renderFilterSection()}
       </div>
+
+      <NotReadyMessage className='mx-12 my-6'>
+        Welcome to the new ROR web! This site is currently under development, so feel free to look around, but don't
+        expect finished functionality or that all data is present. The development team is working hard on delivering a
+        complete product as quick as possible :)
+      </NotReadyMessage>
 
       <section className='px-12 my-8'>
         {params.view === 'list' ? (
