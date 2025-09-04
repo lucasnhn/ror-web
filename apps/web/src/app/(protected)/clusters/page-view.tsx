@@ -38,7 +38,7 @@ import MultipleSelector, { Option } from '@/components/shadcn/multiselect'
 import { ArrowDownNarrowWide, ArrowDownWideNarrow, Download, Funnel, RotateCw } from 'lucide-react'
 import { cn } from '@/utils/clsxm'
 import Link from 'next/link'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { KubernetesCluster } from '@ror/js-api-client'
 import { ClusterSearch } from '@/components/ui/cluster/cluster-search'
 import { User } from 'next-auth'
@@ -135,6 +135,8 @@ const filterOptions = [
 ]
 
 type WorksheetWithCols = WorkSheet & { ['!cols']?: { wch: number }[] }
+type RorTag = { key?: string; value?: string; properties?: { color?: string } }
+type WithRorMeta = KubernetesCluster & { rormeta?: { tags?: RorTag[] } }
 
 export const PageView = ({ className, user, clusters, params }: PageViewProps) => {
   const DEFAULT_LIMIT = 3
@@ -151,90 +153,89 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
   const [isLoading, setIsLoading] = useState(false)
   const [hasMore, setHasMore] = useState(true)
   const [items, setItems] = useState<KubernetesCluster[]>([])
-  const [offset, setOffset] = useState(0)
-  const scrollRef = useRef<HTMLDivElement>(null)
+  // const [offset, setOffset] = useState(0)
+  const sentinelRef = useRef<HTMLDivElement>(null)
 
-  // fetch more clusters
-  const fetchMoreClusters = async (p0: { offset: number; limit: number }) => {
-    if (isLoading || !hasMore) return
-    setIsLoading(true)
-    try {
-      console.log('start to fetch')
-      const params = new URLSearchParams({
-        apiversion: 'general.ror.internal/v1alpha1',
-        kind: 'KubernetesCluster',
-        offset: String(p0.offset),
-        limit: String(p0.limit),
-      })
-      const res = await fetch(`http://localhost:10000/v2/resources?${params.toString()}`)
-      if (!res.ok) {
-        const text = await res.text()
-        console.error('API error: ' + res.status + ' - ' + text)
-        setHasMore(false)
-        return
-      }
-      const data = await res.json()
-      setItems((prev) => {
-        const existingIds = new Set(prev.map((c: KubernetesCluster) => c.kubernetescluster?.spec?.data?.clusterId))
-        const newClusters = (data.resources || []).filter((c: KubernetesCluster) => {
-          const id = c.kubernetescluster?.spec?.data?.clusterId
-          setOffset(offset + data.resources.length)
-          setHasMore(data.resources.length > 0)
-          return id && !existingIds.has(id)
+  const fetchMoreClusters = useCallback(
+    async ({ offset, limit }: { offset: number; limit: number }) => {
+      if (isLoading || !hasMore) return
+      setIsLoading(true)
+      try {
+        console.log('start to fetch')
+        const params = new URLSearchParams({
+          apiversion: 'general.ror.internal/v1alpha1',
+          kind: 'KubernetesCluster',
+          offset: String(offset),
+          limit: String(limit),
         })
-        return [...prev, ...newClusters]
-      })
-      console.log('fetch response:', res)
-      if (!data.resources || data.resources.length < p0.limit) {
-        setHasMore(false)
+        const res = await fetch(`http://localhost:10000/v2/resources?${params.toString()}`)
+        if (!res.ok) {
+          const text = await res.text()
+          console.error('API error: ' + res.status + ' - ' + text)
+          setHasMore(false)
+          return
+        }
+        const data = await res.json()
+        setItems((prev) => {
+          const existingIds = new Set(
+            prev.map((c: KubernetesCluster) => c.kubernetescluster?.spec?.data?.clusterId || c.metadata?.name)
+          )
+          const newClusters = (data.resources ?? []).filter((c: KubernetesCluster) => {
+            const id = c.kubernetescluster?.spec?.data?.clusterId || c.metadata?.name
+            return id && !existingIds.has(id)
+          })
+          return newClusters.length ? [...prev, ...newClusters] : prev
+        })
+        console.log('fetch response:', res)
+        if (!data.resources || data.resources.length < limit) {
+          setHasMore(false)
+        }
+        console.log('HasMore:', hasMore)
+        console.log('fetch complete')
+        console.log('Items length: ', items.length)
+      } catch (error) {
+        console.error('Error fetching more clusters:', error)
+      } finally {
+        setIsLoading(false)
       }
-      console.log('HasMore:', hasMore)
-      console.log('fetch complete')
-      console.log('Items length: ', items.length)
-    } catch (error) {
-      console.error('Error fetching more clusters:', error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
+    },
+    [isLoading, hasMore, items.length]
+  )
 
   useEffect(() => {
-    const scrollElement = scrollRef.current
-    console.log('[Scroll useEffect] Mounted. scrollRef.current:', scrollElement)
+    const scrollElement = sentinelRef.current
     if (!scrollElement) return
 
-    const handleScroll = () => {
-      const distanceToBottom = scrollElement.scrollHeight - scrollElement.scrollTop - scrollElement.clientHeight
-      console.log('[Scroll event] distanceToBottom:', distanceToBottom, 'isLoading:', isLoading, 'hasMore:', hasMore)
-      console.log('Items length:', items.length)
-      if (distanceToBottom < 200 && !isLoading && hasMore) {
-        console.log('[Scroll event] Trigger fetchMoreClusters. items:', items.length)
-        fetchMoreClusters({ offset: items.length, limit: pageSize })
+    const io = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0]
+        if (entry.isIntersecting && !isLoading && hasMore) {
+          fetchMoreClusters({ offset: items.length, limit: pageSize })
+        }
+      },
+      {
+        root: null,
+        rootMargin: '600px',
+        threshold: 0,
       }
-    }
+    )
 
-    scrollElement.addEventListener('scroll', handleScroll)
-    return () => {
-      scrollElement.removeEventListener('scroll', handleScroll)
-    }
+    io.observe(scrollElement)
+    return () => io.disconnect()
   }, [items.length, isLoading, hasMore, fetchMoreClusters])
 
   useEffect(() => {
     setItems(clusters)
-    setOffset(clusters.length)
-  }, [clusters as KubernetesCluster[]])
+  }, [clusters])
 
-  const safeClusters = useMemo(
-    () =>
-      clusters.filter(
-        (cluster) => cluster.kubernetescluster?.spec?.data && typeof cluster.kubernetescluster.spec.data === 'object'
-      ),
-    [clusters]
+  const safeItems = useMemo(
+    () => items.filter((c) => c.kubernetescluster?.spec?.data && typeof c.kubernetescluster.spec.data === 'object'),
+    [items]
   )
 
   const [selectedDisplayData, setSelectedDisplayData] = useState<ClusterCardDisplayData[]>([])
   const [selectedFilters, setSelectedFilters] = useState<Record<string, string[]>>({})
-  const [searchResults, setSearchResults] = useState<KubernetesCluster[]>(safeClusters)
+  const [searchResults, setSearchResults] = useState<KubernetesCluster[]>(safeItems)
 
   useEffect(() => {
     const stored = localStorage.getItem('selectedDisplayData')
@@ -259,9 +260,6 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
     setSelectedDisplayData([])
     clearUrl()
   }
-
-  type RorTag = { key?: string; value?: string; properties?: { color?: string } }
-  type WithRorMeta = KubernetesCluster & { rormeta?: { tags?: RorTag[] } }
 
   const exportableFromCluster = (c: KubernetesCluster) => {
     const spec = c.kubernetescluster?.spec
@@ -378,13 +376,13 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
     return { url: `/clusters?${newParams.toString()}`, isDesc: currentOrder === 'desc' }
   }, [params])
 
-  // Reset search results when safeClusters changes
+  // Reset search results when safeItems changes
   useEffect(() => {
-    setSearchResults(safeClusters)
-  }, [safeClusters])
+    setSearchResults(safeItems)
+  }, [safeItems])
 
-  const filteredClusters = useMemo(() => {
-    return safeClusters.filter((cluster) => {
+  const filteredItems = useMemo(() => {
+    return safeItems.filter((cluster) => {
       const env = cluster.kubernetescluster?.spec?.data?.environment
       const dc = cluster.kubernetescluster?.spec?.data?.datacenter
       const ws = cluster.kubernetescluster?.spec?.data?.workspace
@@ -403,14 +401,14 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
         (!wsFilter?.length || (ws && wsFilter.includes(ws)))
       )
     })
-  }, [safeClusters, selectedFilters])
+  }, [safeItems, selectedFilters])
 
-  const sortedClusters = useMemo(() => {
-    if (!params.sort) return filteredClusters
+  const sortedItems = useMemo(() => {
+    if (!params.sort) return filteredItems
     const sortOrder = params.order === 'desc' ? -1 : 1
     const isNumericMetric = ['cpu', 'memory', 'nodes', 'monthlyPrice', 'yearlyPrice'].includes(params.sort || '')
 
-    return [...filteredClusters].sort((a, b) => {
+    return [...filteredItems].sort((a, b) => {
       let valueA: string | number, valueB: string | number
       switch (params.sort) {
         case 'clusterName':
@@ -462,22 +460,20 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
       }
       return String(valueA).localeCompare(String(valueB)) * sortOrder
     })
-  }, [filteredClusters, params.sort, params.order])
+  }, [filteredItems, params.sort, params.order])
 
-  const getFilteredClusterList = () => {
-    const base = params.sort ? sortedClusters : filteredClusters
-    return base.filter((c) =>
-      searchResults.some(
-        (sr) =>
-          sr.metadata?.name === c.metadata?.name ||
-          sr.kubernetescluster?.spec?.data?.clusterId === c.kubernetescluster?.spec?.data?.clusterId
-      )
-    )
-  }
+  const displayedItems = useMemo(() => {
+    const base = params.sort ? sortedItems : filteredItems
+    if (!searchResults?.length) return base
+
+    const ids = new Set(searchResults.map((sr) => sr.kubernetescluster?.spec?.data?.clusterId || sr.metadata?.name))
+
+    return base.filter((c) => ids.has(c.kubernetescluster?.spec?.data?.clusterId || c.metadata?.name))
+  }, [sortedItems, filteredItems, searchResults])
 
   const handleExportAllCSV = () => {
     try {
-      const rows = safeClusters.map(exportableFromCluster)
+      const rows = safeItems.map(exportableFromCluster)
       const csv = toCSV(rows)
       if (!csv) return console.warn('[Export] No data to export')
       downloadBlob(csv, 'ror-clusters-all.csv')
@@ -488,7 +484,7 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
 
   const handleExportAllExcel = async () => {
     try {
-      const rows = safeClusters.map(exportableFromCluster)
+      const rows = safeItems.map(exportableFromCluster)
       if (!rows.length) return console.warn('[Export] No data to export')
       const XLSX = await import('xlsx')
       const ws = XLSX.utils.json_to_sheet(rows) as WorksheetWithCols
@@ -503,7 +499,7 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
 
   const handleExportFilteredCSV = () => {
     try {
-      const rows = getFilteredClusterList().map(exportableFromCluster)
+      const rows = displayedItems.map(exportableFromCluster)
       const csv = toCSV(rows)
       if (!csv) return console.warn('[Export] No data to export')
       downloadBlob(csv, 'ror-clusters-filtered.csv')
@@ -514,7 +510,7 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
 
   const handleExportFilteredExcel = async () => {
     try {
-      const rows = getFilteredClusterList().map(exportableFromCluster)
+      const rows = displayedItems.map(exportableFromCluster)
       if (!rows.length) return console.warn('[Export] No data to export')
       const XLSX = await import('xlsx')
       const ws = XLSX.utils.json_to_sheet(rows) as WorksheetWithCols
@@ -526,12 +522,12 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
       console.error('[Export] Filtered Excel export failed', e)
     }
   }
-  const pageCount = Math.ceil(filteredClusters.length / limit)
+  const pageCount = Math.ceil(filteredItems.length / limit)
 
   const renderControls = () => (
     <div className='flex flex-wrap items-center justify-between w-full gap-4 [@container(max-width:1000px)]:flex-col [@container(max-width:1000px)]:items-start [@container(max-width:1000px)]:gap-6 '>
       <div className='flex flex-wrap items-center gap-x-4 gap-y-6'>
-        <ClusterSearch items={clusters} onResultsChange={(res) => setSearchResults(res)} />
+        <ClusterSearch items={safeItems} onResultsChange={(res) => setSearchResults(res)} />
 
         <MultipleSelector
           className='w-52'
@@ -657,7 +653,7 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
           <ClustersTable
             key='table'
             user={user}
-            data={(params.sort ? sortedClusters : filteredClusters)
+            data={(params.sort ? sortedItems : filteredItems)
               .filter((c) =>
                 searchResults.some(
                   (sr) =>
@@ -672,7 +668,7 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
             selectedDisplayData={selectedDisplayData}
             pagination={paginationState}
             totalCount={
-              (params.sort ? sortedClusters : filteredClusters).filter((c) =>
+              (params.sort ? sortedItems : filteredItems).filter((c) =>
                 searchResults.some(
                   (sr) =>
                     sr.metadata?.name === c.metadata?.name ||
@@ -683,17 +679,10 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
             pageCount={pageCount}
           />
         ) : (
-          <div ref={scrollRef} style={{ height: '80vh', overflow: 'auto', position: 'relative' }}>
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-                gap: '16px',
-                position: 'relative',
-              }}
-            >
-              {items.map((cluster, idx) => (
-                <div key={cluster.kubernetescluster?.spec?.data?.clusterId || idx} style={{ width: '100%' }}>
+          <div>
+            <div className='flex flex-row flex-wrap gap-6'>
+              {displayedItems.map((cluster, idx) => (
+                <div key={cluster.kubernetescluster?.spec?.data?.clusterId || idx}>
                   <ClusterCard
                     user={user}
                     cluster={cluster}
@@ -705,10 +694,11 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
                   />
                 </div>
               ))}
+              <div ref={sentinelRef} className='h-px' />
             </div>
             {isLoading && <div style={{ textAlign: 'center', padding: 16 }}>Loading...</div>}
             {!hasMore && (
-              <div style={{ textAlign: 'center', padding: 16, color: '#888' }}>Alle clustere er lastet inn.</div>
+              <div style={{ textAlign: 'center', padding: 16, color: '#888' }}>All clusters are loaded.</div>
             )}
           </div>
         )}
