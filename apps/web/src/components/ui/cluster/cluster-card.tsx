@@ -11,6 +11,7 @@ import { User } from 'next-auth'
 import { CodeSnippet } from '../code-snippet'
 import { envBgColors } from './cluster-header'
 import { HealthCircle } from './health-circle'
+import Link from 'next/link'
 
 function Card({ className, ...props }: React.ComponentProps<'div'>) {
   return (
@@ -111,272 +112,285 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
   const kubectlLogin = `kubectl vsphere login --server=${serverUrl} -u ${user?.email} --insecure-skip-tls-verify --tanzu-kubernetes-cluster-namespace ${clusterSpec?.data?.workspace} --tanzu-kubernetes-cluster-name ${clusterName}`
   const serviceTags = cluster.rormeta.tags || []
 
-  const handleCardClick = () => {
-    window.open(`/clusters/${clusterId}`, '_blank')
-  }
-
   const envColor = envBgColors[env ?? 'undefined'] ?? ['bg-gray-100', 'text-gray-900']
 
   return (
-    <Card
-      className={cn(
-        'w-sm min-w-64 pt-0 hover:bg-[#ededed] dark:hover:bg-neutral-800 hover:cursor-pointer @container container',
-        className
-      )}
-      onClick={handleCardClick}
-      role='button'
-      tabIndex={0}
-      onKeyDown={(e) => e.key === 'Enter' && handleCardClick()}
+    <Link
+      href={`/clusters/${clusterId}`}
+      onClick={() => localStorage.setItem('selectedCluster', JSON.stringify(cluster))}
     >
-      <CardHeader className='m-0 mb-7 p-0 w-full'>
-        <CardTitle className={cn('text-2xl rounded-t-xl px-6 py-2 flex', envColor[0], envColor[1])}>
-          {(clusterName || 'Unnamed Cluster') as string}
-        </CardTitle>
-        <HealthCircle className='ml-auto mr-4 mt-[-24px] w-[52px] h-[52px] ' healthCondition={healthCondition} />
-      </CardHeader>
+      <Card
+        className={cn(
+          'w-sm min-w-64 pt-0 hover:bg-[#ededed] dark:hover:bg-neutral-800 hover:cursor-pointer @container container',
+          className
+        )}
+        role='button'
+        tabIndex={0}
+        onKeyDown={(e) => e.key === 'Enter' && localStorage.setItem('selectedCluster', JSON.stringify(cluster))}
+      >
+        <CardHeader className='m-0 mb-7 p-0 w-full'>
+          <CardTitle className={cn('text-2xl rounded-t-xl px-6 py-2 flex', envColor[0], envColor[1])}>
+            {(clusterName || 'Unnamed Cluster') as string}
+          </CardTitle>
+          <HealthCircle className='ml-auto mr-4 mt-[-24px] w-[52px] h-[52px] ' healthCondition={healthCondition} />
+        </CardHeader>
 
-      <CardContent className='text-sm flex flex-col gap-3'>
-        <section className='grid grid-cols-2'>
-          {displayData?.includes('argocd') &&
-            (tools.argo ? (
-              <a
-                onClick={(e) => e.stopPropagation()}
-                href={`https://${tools.argo}`}
-                target='_blank'
-                rel='noopener noreferrer'
-                className='flex gap-2 font-bold text-blue-500 w-fit'
-              >
-                <span>ArgoCD</span>
-                <ExternalLink className='w-5 h-5' />
-              </a>
-            ) : (
-              <p className='flex [@container(max-width:360px)]:flex-col'>
-                <span className='font-bold'>ArgoCD &nbsp;</span>
-                <span>missing ...</span>
-              </p>
-            ))}
-          {displayData?.includes('grafana') &&
-            (tools.grafana ? (
-              <a
-                onClick={(e) => e.stopPropagation()}
-                href={`https://${tools.grafana}`}
-                target='_blank'
-                rel='noopener noreferrer'
-                className='flex gap-2 font-bold text-blue-500 w-fit'
-              >
-                <span>Grafana</span>
-                <ExternalLink className='w-5 h-5' />
-              </a>
-            ) : (
-              <p className='flex [@container(max-width:360px)]:flex-col '>
-                <span className='font-bold'>Grafana &nbsp;</span>
-                <span>missing ...</span>
-              </p>
-            ))}
-        </section>
+        <CardContent className='text-sm flex flex-col gap-3'>
+          <section className='grid grid-cols-2'>
+            {displayData?.includes('argocd') &&
+              (tools.argo ? (
+                <a
+                  onClick={(e) => e.stopPropagation()}
+                  href={`https://${tools.argo}`}
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  className='flex gap-2 font-bold text-blue-500 w-fit'
+                >
+                  <span>ArgoCD</span>
+                  <ExternalLink className='w-5 h-5' />
+                </a>
+              ) : (
+                <p className='flex [@container(max-width:360px)]:flex-col'>
+                  <span className='font-bold'>ArgoCD &nbsp;</span>
+                  <span>missing ...</span>
+                </p>
+              ))}
+            {displayData?.includes('grafana') &&
+              (tools.grafana ? (
+                <a
+                  onClick={(e) => e.stopPropagation()}
+                  href={`https://${tools.grafana}`}
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  className='flex gap-2 font-bold text-blue-500 w-fit'
+                >
+                  <span>Grafana</span>
+                  <ExternalLink className='w-5 h-5' />
+                </a>
+              ) : (
+                <p className='flex [@container(max-width:360px)]:flex-col '>
+                  <span className='font-bold'>Grafana &nbsp;</span>
+                  <span>missing ...</span>
+                </p>
+              ))}
+          </section>
 
-        <section className='flex flex-col gap-1.5 [&>div]:gap-0.5'>
-          {displayData?.includes('rorcli') && (
-            <div>
-              <p className='font-bold'>ROR CLI</p>
-              <Layer level={2}>
-                <CodeSnippet type='single'>{rorLogin}</CodeSnippet>
-              </Layer>
-            </div>
-          )}
+          <section className='flex flex-col gap-1.5 [&>div]:gap-0.5'>
+            {displayData?.includes('rorcli') && (
+              <div>
+                <p className='font-bold'>ROR CLI</p>
+                <Layer level={2}>
+                  <CodeSnippet type='single'>{rorLogin}</CodeSnippet>
+                </Layer>
+              </div>
+            )}
 
-          {displayData?.includes('kubectl') && (
-            <div>
-              <p className='font-bold'>Kubectl</p>
-              <Layer level={2}>
-                <CodeSnippet type='single'>{kubectlLogin}</CodeSnippet>
-              </Layer>
-            </div>
-          )}
-        </section>
+            {displayData?.includes('kubectl') && (
+              <div>
+                <p className='font-bold'>Kubectl</p>
+                <Layer level={2}>
+                  <CodeSnippet type='single'>{kubectlLogin}</CodeSnippet>
+                </Layer>
+              </div>
+            )}
+          </section>
 
-        <section className='flex flex-col gap-1.5 [&>div]:grid [&>div]:grid-cols-2 [@container(max-width:360px)]:[&>div]:grid-cols-1'>
-          {displayData?.includes('cpu') && (
-            <div>
-              <p className='font-bold'>CPU</p>
-              <p>
-                {((cpu.percentage === undefined || cpu.percentage === null) &&
-                  (cpu.capacity === undefined || cpu.capacity === null)) ||
-                ((cpu.percentage === undefined || cpu.percentage === null) &&
-                  (cpu.used === undefined || cpu.used === null)) ? (
-                  'Data missing'
-                ) : (
-                  <>
-                    {cpu.percentage !== undefined && cpu.percentage !== null && `${cpu.percentage}%`}
-                    {cpu.percentage !== undefined &&
-                      cpu.percentage !== null &&
-                      cpu.used !== undefined &&
-                      cpu.capacity !== undefined &&
-                      ' '}
-                    {cpu.used !== undefined && cpu.capacity !== undefined && `(${cpu.used}m of ${cpu.capacity}m cores)`}
-                  </>
-                )}
-              </p>
-            </div>
-          )}
+          <section className='flex flex-col gap-1.5 [&>div]:grid [&>div]:grid-cols-2 [@container(max-width:360px)]:[&>div]:grid-cols-1'>
+            {displayData?.includes('cpu') && (
+              <div>
+                <p className='font-bold'>CPU</p>
+                <p>
+                  {((cpu.percentage === undefined || cpu.percentage === null) &&
+                    (cpu.capacity === undefined || cpu.capacity === null)) ||
+                  ((cpu.percentage === undefined || cpu.percentage === null) &&
+                    (cpu.used === undefined || cpu.used === null)) ? (
+                    'Data missing'
+                  ) : (
+                    <>
+                      {cpu.percentage !== undefined && cpu.percentage !== null && `${cpu.percentage}%`}
+                      {cpu.percentage !== undefined &&
+                        cpu.percentage !== null &&
+                        cpu.used !== undefined &&
+                        cpu.capacity !== undefined &&
+                        ' '}
+                      {cpu.used !== undefined &&
+                        cpu.capacity !== undefined &&
+                        `(${cpu.used}m of ${cpu.capacity}m cores)`}
+                    </>
+                  )}
+                </p>
+              </div>
+            )}
 
-          {displayData?.includes('memory') && (
-            <div>
-              <p className='font-bold'>Memory</p>
-              <p>
-                {((memory.percentage === undefined || memory.percentage === null) &&
-                  (memory.capacity === undefined || memory.capacity === null)) ||
-                ((memory.percentage === undefined || memory.percentage === null) &&
-                  (memory.used === undefined || memory.used === null)) ? (
-                  'Data missing'
-                ) : (
-                  <>
-                    {memory.percentage !== undefined && memory.percentage !== null && `${memory.percentage}%`}
-                    {memory.percentage !== undefined &&
-                      memory.percentage !== null &&
-                      memory.used !== undefined &&
-                      memory.capacity !== undefined &&
-                      ' '}
-                    {memory.used !== undefined &&
-                      memory.capacity !== undefined &&
-                      `(${memory.used} of ${memory.capacity})`}
-                  </>
-                )}
-              </p>
-            </div>
-          )}
+            {displayData?.includes('memory') && (
+              <div>
+                <p className='font-bold'>Memory</p>
+                <p>
+                  {((memory.percentage === undefined || memory.percentage === null) &&
+                    (memory.capacity === undefined || memory.capacity === null)) ||
+                  ((memory.percentage === undefined || memory.percentage === null) &&
+                    (memory.used === undefined || memory.used === null)) ? (
+                    'Data missing'
+                  ) : (
+                    <>
+                      {memory.percentage !== undefined && memory.percentage !== null && `${memory.percentage}%`}
+                      {memory.percentage !== undefined &&
+                        memory.percentage !== null &&
+                        memory.used !== undefined &&
+                        memory.capacity !== undefined &&
+                        ' '}
+                      {memory.used !== undefined &&
+                        memory.capacity !== undefined &&
+                        `(${memory.used} of ${memory.capacity})`}
+                    </>
+                  )}
+                </p>
+              </div>
+            )}
 
-          {displayData?.includes('gpu') && (
-            <div>
-              <p className='font-bold'>GPU</p>
-              <p>
-                {((gpu.percentage === undefined || gpu.percentage === null) &&
-                  (gpu.capacity === undefined || gpu.capacity === null)) ||
-                ((gpu.percentage === undefined || gpu.percentage === null) &&
-                  (gpu.used === undefined || gpu.used === null)) ? (
-                  'Data missing'
-                ) : (
-                  <>
-                    {gpu.percentage !== undefined && gpu.percentage !== null && `${gpu.percentage}%`}
-                    {gpu.percentage !== undefined &&
-                      gpu.percentage !== null &&
-                      gpu.used !== undefined &&
-                      gpu.capacity !== undefined &&
-                      ' '}
-                    {gpu.used !== undefined && gpu.capacity !== undefined && `(${gpu.used} of ${gpu.capacity})`}
-                  </>
-                )}
-              </p>
-            </div>
-          )}
+            {displayData?.includes('gpu') && (
+              <div>
+                <p className='font-bold'>GPU</p>
+                <p>
+                  {((gpu.percentage === undefined || gpu.percentage === null) &&
+                    (gpu.capacity === undefined || gpu.capacity === null)) ||
+                  ((gpu.percentage === undefined || gpu.percentage === null) &&
+                    (gpu.used === undefined || gpu.used === null)) ? (
+                    'Data missing'
+                  ) : (
+                    <>
+                      {gpu.percentage !== undefined && gpu.percentage !== null && `${gpu.percentage}%`}
+                      {gpu.percentage !== undefined &&
+                        gpu.percentage !== null &&
+                        gpu.used !== undefined &&
+                        gpu.capacity !== undefined &&
+                        ' '}
+                      {gpu.used !== undefined && gpu.capacity !== undefined && `(${gpu.used} of ${gpu.capacity})`}
+                    </>
+                  )}
+                </p>
+              </div>
+            )}
 
-          {displayData?.includes('disk') && (
-            <div>
-              <p className='font-bold'>Disk</p>
-              <p>
-                {((disk.percentage === undefined || disk.percentage === null) &&
-                  (disk.capacity === undefined || disk.capacity === null)) ||
-                ((disk.percentage === undefined || disk.percentage === null) &&
-                  (disk.used === undefined || disk.used === null)) ? (
-                  'Data missing'
-                ) : (
-                  <>
-                    {disk.percentage !== undefined && disk.percentage !== null && `${disk.percentage}%`}
-                    {disk.percentage !== undefined &&
-                      disk.percentage !== null &&
-                      disk.used !== undefined &&
-                      disk.capacity !== undefined &&
-                      ' '}
-                    {disk.used !== undefined && disk.capacity !== undefined && `(${disk.used} of ${disk.capacity})`}
-                  </>
-                )}
-              </p>
-            </div>
-          )}
+            {displayData?.includes('disk') && (
+              <div>
+                <p className='font-bold'>Disk</p>
+                <p>
+                  {((disk.percentage === undefined || disk.percentage === null) &&
+                    (disk.capacity === undefined || disk.capacity === null)) ||
+                  ((disk.percentage === undefined || disk.percentage === null) &&
+                    (disk.used === undefined || disk.used === null)) ? (
+                    'Data missing'
+                  ) : (
+                    <>
+                      {disk.percentage !== undefined && disk.percentage !== null && `${disk.percentage}%`}
+                      {disk.percentage !== undefined &&
+                        disk.percentage !== null &&
+                        disk.used !== undefined &&
+                        disk.capacity !== undefined &&
+                        ' '}
+                      {disk.used !== undefined && disk.capacity !== undefined && `(${disk.used} of ${disk.capacity})`}
+                    </>
+                  )}
+                </p>
+              </div>
+            )}
 
-          {displayData?.includes('nodes') && (
-            <div>
-              <p className='font-bold'>Nodes</p>
-              <p>
-                {nodesAmount} ({nodePoolsAmount} node pool{nodePoolsAmount > 1 ? 's' : ''})
-              </p>
-            </div>
-          )}
+            {displayData?.includes('nodes') && (
+              <div>
+                <p className='font-bold'>Nodes</p>
+                <p>
+                  {nodesAmount} ({nodePoolsAmount} node pool{nodePoolsAmount > 1 ? 's' : ''})
+                </p>
+              </div>
+            )}
 
-          {displayData?.includes('monthlyPrice') && (
-            <div>
-              <p className='font-bold'>Monthly price</p>
-              <p>{prices.monthly} kr</p>
-            </div>
-          )}
+            {displayData?.includes('monthlyPrice') && (
+              <div>
+                <p className='font-bold'>Monthly price</p>
+                <p>{prices.monthly} kr</p>
+              </div>
+            )}
 
-          {displayData?.includes('yearlyPrice') && (
-            <div>
-              <p className='font-bold'>Yearly price</p>
-              <p>{prices.yearly} kr</p>
-            </div>
-          )}
+            {displayData?.includes('yearlyPrice') && (
+              <div>
+                <p className='font-bold'>Yearly price</p>
+                <p>{prices.yearly} kr</p>
+              </div>
+            )}
 
-          {displayData?.includes('agentVersion') && (
-            <div>
-              <p className='font-bold'>ROR agent version</p>
-              <p>{versions.agent}</p>
-            </div>
-          )}
+            {displayData?.includes('agentVersion') && (
+              <div>
+                <p className='font-bold'>ROR agent version</p>
+                <p>{versions.agent}</p>
+              </div>
+            )}
 
-          {displayData?.includes('kubernetesVersion') && (
-            <div>
-              <p className='font-bold'>Kubernetes version</p>
-              <p>{versions.kubernetes}</p>
-            </div>
-          )}
+            {displayData?.includes('kubernetesVersion') && (
+              <div>
+                <p className='font-bold'>Kubernetes version</p>
+                <p>{versions.kubernetes}</p>
+              </div>
+            )}
 
-          {displayData?.includes('toolingVersion') && (
-            <div>
-              <p className='font-bold'>NHN tooling version</p>
-              <p>{versions.nhnTooling}</p>
-            </div>
-          )}
+            {displayData?.includes('toolingVersion') && (
+              <div>
+                <p className='font-bold'>NHN tooling version</p>
+                <p>{versions.nhnTooling}</p>
+              </div>
+            )}
 
-          {displayData?.includes('datacenterName') && (
-            <div>
-              <p className='font-bold'>Datacenter</p>
-              <p>{datacenter.name}</p>
-            </div>
-          )}
+            {displayData?.includes('datacenterName') && (
+              <div>
+                <p className='font-bold'>Datacenter</p>
+                <p>{datacenter.name}</p>
+              </div>
+            )}
 
-          {displayData?.includes('datacenterProvider') && (
-            <div>
-              <p className='font-bold'>Datacenter provider</p>
-              <p>{datacenter.provider}</p>
-            </div>
-          )}
+            {displayData?.includes('datacenterProvider') && (
+              <div>
+                <p className='font-bold'>Datacenter provider</p>
+                <p>{datacenter.provider}</p>
+              </div>
+            )}
 
-          {displayData?.includes('environment') && (
-            <div>
-              <p className='font-bold'>Environment</p>
-              <p>
-                <Pill variant={envColors[env ?? 'undefined']} className='px-3'>
-                  {(env ?? 'Undefined').charAt(0).toUpperCase() + (env ?? 'Undefined').slice(1)}
-                </Pill>
-              </p>
-            </div>
-          )}
-          {displayData?.includes('serviceTags') && (
-            <div>
-              <p className='font-bold'>Service tags</p>
-              <p className='flex flex-wrap gap-1'>
-                {serviceTags.map(({ key, value, properties }) => (
-                  <Pill key={key} style={{ backgroundColor: properties.color }}>
-                    {value}
+            {displayData?.includes('environment') && (
+              <div>
+                <p className='font-bold'>Environment</p>
+                <p>
+                  <Pill variant={envColors[env ?? 'undefined']} className='px-3'>
+                    {(env ?? 'Undefined').charAt(0).toUpperCase() + (env ?? 'Undefined').slice(1)}
                   </Pill>
-                ))}
-              </p>
-            </div>
-          )}
-        </section>
-      </CardContent>
-    </Card>
+                </p>
+              </div>
+            )}
+
+            {displayData?.includes('serviceTags') && (
+              <div>
+                <p className='font-bold'>Service tags</p>
+                <p className='flex flex-wrap gap-1'>
+                  {serviceTags.map(
+                    ({
+                      key,
+                      value,
+                      properties,
+                    }: {
+                      key: string
+                      value: string
+                      properties: Record<string, string>
+                    }) => (
+                      <Pill key={key} style={{ backgroundColor: properties.color }}>
+                        {value}
+                      </Pill>
+                    )
+                  )}
+                </p>
+              </div>
+            )}
+          </section>
+        </CardContent>
+      </Card>
+    </Link>
   )
 }
 

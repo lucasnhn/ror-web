@@ -22,12 +22,14 @@ export function getNodesInPool(
 ): Node[] {
   if (Array.isArray(poolNodes) && poolNodes.length) {
     const wanted = new Set(poolNodes.map((n) => (typeof n === 'string' ? n : n?.name)).filter(Boolean) as string[])
-    return allNodes.filter((n) => wanted.has(n?.metadata?.name ?? ''))
+    const matched = allNodes.filter((n) => wanted.has(n?.metadata?.name ?? ''))
+    return matched
   }
 
   if (poolName) {
     const key = `${poolName}-`
-    return allNodes.filter((n) => (n?.metadata?.name ?? '').includes(key))
+    const matched = allNodes.filter((n) => (n?.metadata?.name ?? '').includes(key))
+    return matched
   }
 
   return []

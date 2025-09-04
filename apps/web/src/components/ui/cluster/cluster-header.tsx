@@ -21,11 +21,13 @@ export const envBgColors: Record<string, string[]> = {
 export const ClusterHeader = ({ className, tabs }: ClusterHeaderProps) => {
   const { cluster } = useClusterContext()
 
-  const environment = cluster.kubernetescluster?.spec?.data?.environment ?? 'unknown'
+  const environment = cluster?.kubernetescluster?.spec?.data?.environment ?? 'unknown'
   const [lightmode, darkmode] = envBgColors[environment] || ['bg-gray-500', 'dark:bg-gray-600']
-  const healthCondition = cluster.kubernetescluster?.status?.conditions?.find((condition) => condition.type === 'ready')
-  const clusterId = cluster.kubernetescluster?.spec?.data?.clusterId
-  const clusterName: string = cluster.metadata?.name ? String(cluster.metadata.name) : (clusterId ?? 'Unknown Cluster')
+  const healthCondition = cluster?.kubernetescluster?.status?.conditions?.find(
+    (condition) => condition.type === 'ready'
+  )
+  const clusterId = cluster?.kubernetescluster?.spec?.data?.clusterId
+  const clusterName: string = cluster?.metadata?.name ? String(cluster.metadata.name) : (clusterId ?? 'Unknown Cluster')
 
   return (
     <div>
