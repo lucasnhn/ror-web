@@ -68,6 +68,7 @@ export function ClusterSearch({ items, onResultsChange }: ClusterSearchProps) {
       <Input
         value={query}
         onChange={(e) => setQuery(e.target.value)}
+        aria-label='Search clusters'
         placeholder='Find clusters...'
         icon={<Search className='w-4 h-4' />}
         iconPosition='left'
