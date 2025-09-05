@@ -24,11 +24,7 @@ export const NotReadyMessage = ({ className, children }: NotReadyMessageProps) =
       role='alert'
     >
       <div>{children}</div>
-      <button
-        onClick={() => setIsVisible(false)}
-        aria-label="Close notification"
-        type="button"
-      >
+      <button onClick={() => setIsVisible(false)} aria-label='Close notification' type='button'>
         <X />
       </button>
     </div>

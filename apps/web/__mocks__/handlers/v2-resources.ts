@@ -20,8 +20,12 @@ export const v2ResourcesHandlers = [
 
     // Return mock data based on the requested kind
     switch (kind) {
-      case 'KubernetesCluster':
-        return HttpResponse.json(clustersVersion2) // Return all cluster data
+      case 'KubernetesCluster': {
+        const limit = Number(url.searchParams.get('limit') || 50)
+        const offset = Number(url.searchParams.get('offset') || 0)
+        const allClusters = clustersVersion2.resources
+        return HttpResponse.json({ resources: allClusters.slice(offset, offset + limit) })
+      }
       case 'Node':
         return HttpResponse.json(nodes) // Return all node data
       case 'Ingress':

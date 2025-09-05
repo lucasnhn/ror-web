@@ -10,17 +10,6 @@ export const metadata: Metadata = {
   description: 'View clusters',
 }
 
-interface ClusterPageProps {
-  searchParams: Promise<{
-    view?: 'grid' | 'list'
-    page?: number
-    limit?: number
-    sort?: string
-    order?: 'asc' | 'desc'
-    filters?: string
-  }>
-}
-
 interface Pair {
   v2: KubernetesCluster
   v1?: Cluster
@@ -28,55 +17,58 @@ interface Pair {
 
 export const dynamic = 'force-dynamic'
 
-export default async function ClustersPage({ searchParams }: ClusterPageProps) {
+function isEmptyValue(value: unknown): boolean {
+  if (value === null || value === undefined || value === '') return true
+  if (Array.isArray(value)) return value.length === 0
+  if (typeof value === 'object') return Object.keys(value as Record<string, unknown>).length === 0
+  return false
+}
+
+// NOTE: Next (in dynamic routes) provides searchParams as a Promise.
+// Await it ONCE, then use the plain object everywhere.
+export default async function ClustersPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>
+}) {
   const session = await authGuard()
   const user = session.user
   const api = await getRorApi()
 
-  // Build URL parameters for the list method
-  const params = await searchParams
-  const listParams = new URLSearchParams()
+  const sp = await searchParams // <-- await exactly once
 
-  const DEFAULT_LIMIT = 10
-  const DEFAULT_PAGE = 1
-
-  // Parse pagination parameters from URL
-  const limit = Number(params.limit) || DEFAULT_LIMIT
-  const page = Number(params.page) || DEFAULT_PAGE // URL shows 1-based indexing
+  // ---- Coerce URL params (single source of truth) ----
+  const page = Number(sp.page ?? '1') || 1
+  const limit = Number(sp.limit ?? '50') || 50
+  const sort = typeof sp.sort === 'string' ? sp.sort : undefined
+  const order: 'asc' | 'desc' = sp.order === 'desc' ? 'desc' : 'asc'
+  const view: 'grid' | 'list' = sp.view === 'list' ? 'list' : 'grid'
+  const filters = sp.filters === 'open' ? 'open' : undefined
   const skip = (page - 1) * limit
 
-  // Parse sorting parameters from URL
-  const sort = params.sort ? params.sort : 'clusterName'
-  const order = params.order === 'asc' ? 1 : -1
+  // ---- v2 list() params ----
+  const listParams = new URLSearchParams()
+  listParams.set('limit', String(limit))
+  listParams.set('offset', String(skip))
+  if (sort) listParams.set('sort', sort)
 
-  const sortOptions = {
-    sortField: sort,
-    sortOrder: order,
-  }
+  const response = await api.kubernetesClusters.list(listParams)
+
+  // ---- v1 filter() params ----
+  const sortOptions = sort
+    ? {
+        sortField: sort,
+        // if the v1 API expects numeric order, map asc/desc -> 1/-1. If it expects strings, use `order` directly.
+        sortOrder: order === 'asc' ? 1 : -1,
+      }
+    : undefined
 
   const requestOptions = {
     limit,
     skip,
-    sort: params.sort ? [sortOptions] : [],
+    sort: sortOptions ? [sortOptions] : [],
   }
 
-  function isEmptyValue(value: string | number | boolean | null | undefined): boolean {
-    return (
-      value === null ||
-      value === undefined ||
-      value === '' ||
-      value === 0 ||
-      (Array.isArray(value) && value.length === 0) ||
-      (typeof value === 'object' && !Array.isArray(value) && Object.keys(value).length === 0)
-    )
-  }
-
-  // If needed, add pagination and sorting params to the list request
-  if (params.limit) listParams.set('limit', params.limit.toString())
-  if (params.page) listParams.set('page', params.page.toString())
-  if (params.sort) listParams.set('sort', params.sort)
-  if (params.order) listParams.set('order', params.order)
-  const response = await api.kubernetesClusters.list(listParams)
   const v1response = await api.kubernetesClusters.filter(requestOptions)
 
   const clusters: KubernetesCluster[] = response?.resources ?? []
@@ -101,21 +93,21 @@ export default async function ClustersPage({ searchParams }: ClusterPageProps) {
       kind: primary.kind,
       apiVersion: primary.apiVersion,
       metadata: {
-        name: isEmptyValue(primary.metadata.name) ? secondary.clusterName : primary.metadata.name,
-        namespace: isEmptyValue(primary.metadata.namespace) ? secondary.workspace.name : primary.metadata.namespace,
-        uid: primary.metadata.uid,
-        creationTimestamp: isEmptyValue(primary.metadata.creationTimestamp)
-          ? secondary.created
-          : primary.metadata.creationTimestamp,
+        name: isEmptyValue(primary.metadata?.name) ? secondary.clusterName : primary.metadata?.name,
+        namespace: isEmptyValue(primary.metadata?.namespace) ? secondary.workspace.name : primary.metadata?.namespace,
+        uid: primary.metadata?.uid,
+        creationTimestamp: isEmptyValue(primary.metadata?.creationTimestamp)
+          ? (secondary.created as unknown as string)
+          : primary.metadata?.creationTimestamp,
       },
       rormeta: {
-        version: primary.rormeta.version,
-        hash: primary.rormeta.hash,
+        version: primary.rormeta?.version,
+        hash: primary.rormeta?.hash,
         ownerref: {
-          scope: primary.rormeta.ownerref?.scope || 'empty',
-          subject: primary.rormeta.ownerref?.subject || 'empty',
+          scope: primary.rormeta?.ownerref?.scope || 'empty',
+          subject: primary.rormeta?.ownerref?.subject || 'empty',
         },
-        action: primary.rormeta.action,
+        action: primary.rormeta?.action,
       },
       kubernetescluster: {
         spec: {
@@ -218,7 +210,7 @@ export default async function ClustersPage({ searchParams }: ClusterPageProps) {
   }
 
   function mergeClusters(pairs: Pair[]) {
-    const merged = []
+    const merged: KubernetesCluster[] = []
     for (const { v1, v2 } of pairs) {
       merged.push(mergeClusterData(v2, v1))
     }
@@ -227,6 +219,9 @@ export default async function ClustersPage({ searchParams }: ClusterPageProps) {
 
   const pairs: Pair[] = pairClustersByName(clusters, v1clusters)
   const mergedClusters = mergeClusters(pairs)
+
+  // Object PageView expects (this is fine to declare at the end)
+  const params = { view, page, limit, sort, order, filters } as const
 
   return (
     <div className='w-full flex flex-col'>

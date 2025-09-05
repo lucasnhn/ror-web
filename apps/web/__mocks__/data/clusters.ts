@@ -1,3 +1,13 @@
+/**
+ * clusters.ts - Mock data for Kubernetes clusters
+ *
+ * This file dynamically generates an array of mock Kubernetes clusters for use in local development and testing.
+ * The data is used by MSW handlers to simulate paginated API responses (offset/limit).
+ *
+ * - Generates a fixed number of clusters with unique clusterId and metadata
+ * - Used for infinite scroll, pagination, and frontend API testing
+ * - No static cluster objects; all clusters are generated programmatically
+ */
 import { faker } from '@faker-js/faker'
 import { machine } from 'os'
 import { sub } from 'date-fns'
@@ -533,64 +543,59 @@ import { sub } from 'date-fns'
 //     },
 //   },
 // ]
-export const clustersVersion1 = [
-  {
-    clusterId: 'contracts-test-wpc7',
-    clusterName: 'contracts-test',
-    created: '2025-02-03T13:01:21Z',
-    environment: 'test',
-    healthStatus: {
-      health: 1,
-    },
-    firstObserved: '2025-02-03T17:38:21.817Z',
-    lastObserved: '2025-08-27T09:22:21.994Z',
-    metadata: {
-      project: {
-        name: 'Contracts',
-      },
-    },
+export const clustersVersion1 = Array.from({ length: 104 }, (_, i) => {
+  const idx = i + 1
+  return {
+    clusterId: `mock-cluster-${idx}`,
+    clusterName: `Mock Cluster ${idx}`,
+    created: `2025-01-${String((idx % 28) + 1).padStart(2, '0')}T12:00:00Z`,
+    environment: idx % 2 === 0 ? 'dev' : 'test',
+    healthStatus: { health: idx % 3 },
+    firstObserved: `2025-01-${String((idx % 28) + 1).padStart(2, '0')}T13:00:00Z`,
+    lastObserved: `2025-08-${String((idx % 28) + 1).padStart(2, '0')}T14:00:00Z`,
+    metadata: { project: { name: `Project ${idx}` } },
     metrics: {
-      priceMonth: 3597,
-      priceYear: 43164,
-      cpu: 6,
-      memory: 24661553152,
-      cpuConsumed: 631,
-      memoryConsumed: 16839331840,
-      cpuPercentage: 10,
-      memoryPercentage: 68,
+      priceMonth: 1000 + idx,
+      priceYear: 12000 + idx * 10,
+      cpu: 2 + (idx % 8),
+      memory: 8000000000 + idx * 1000000,
+      cpuConsumed: 100 + idx,
+      memoryConsumed: 2000000000 + idx * 100000,
+      cpuPercentage: (idx * 2) % 100,
+      memoryPercentage: (idx * 3) % 100,
       nodePoolCount: 1,
-      nodeCount: 3,
+      nodeCount: 1 + (idx % 5),
       clusterCount: 1,
     },
     topology: {
-      controlPlaneEndpoint: '10.204.4.58:6443',
-      egressIp: '10.204.6.55',
+      controlPlaneEndpoint: `10.0.${idx % 255}.${(idx * 2) % 255}:6443`,
+      egressIp: `10.0.${(idx * 3) % 255}.${(idx * 4) % 255}`,
       controlPlane: {
         nodes: [
           {
-            name: 'contracts-test-cldgp-n4hc8',
+            name: `mock-control-plane-${idx}`,
             role: 'control-plane',
-            created: '2025-02-03T13:01:21Z',
-            osImage: 'VMware Photon OS/Linux',
-            machineName: 'contracts-test-cldgp-n4hc8',
+            created: `2025-01-${String((idx % 28) + 1).padStart(2, '0')}T12:00:00Z`,
+            osImage: 'Ubuntu 22.04.5 LTS',
+            machineName: `mock-control-plane-${idx}`,
             metrics: {
               priceMonth: 0,
               priceYear: 0,
               cpu: 2,
-              memory: 8220516352,
-              cpuConsumed: 438,
-              memoryConsumed: 6861451264,
-              cpuPercentage: 21,
-              memoryPercentage: 83,
+              memory: 8000000000,
+              cpuConsumed: 100,
+              memoryConsumed: 2000000000,
+              cpuPercentage: 10,
+              memoryPercentage: 20,
               nodePoolCount: 0,
               nodeCount: 0,
               clusterCount: 0,
             },
             architecture: 'amd64',
-            containerRuntimeVersion: 'containerd://1.6.28',
-            kernelVersion: '6.1.83-4.ph5',
-            kubeProxyVersion: 'v1.28.7+vmware.1-fips.1',
-            kubeletVersion: 'v1.28.7+vmware.1-fips.1',
+            containerRuntimeVersion: 'containerd://1.7.25-1',
+            kernelVersion: '5.15.0-1079-azure',
+            kubeProxyVersion: 'v1.30.9',
+            kubeletVersion: 'v1.30.9',
             operatingSystem: 'linux',
             machineClass: '',
           },
@@ -601,7 +606,7 @@ export const clustersVersion1 = [
       nhnTooling: {
         version: '1.6.25',
         branch: '1.*',
-        environment: 'test',
+        environment: idx % 2 === 0 ? 'dev' : 'test',
       },
       agent: {
         version: '0.1.749',
@@ -610,99 +615,19 @@ export const clustersVersion1 = [
       kubernetes: 'v1.28.7',
     },
     workspace: {
-      name: 'osl1-contracts',
+      name: `workspace-${idx}`,
       datacenter: {
-        name: 'osl1',
+        name: `dc-${idx}`,
         provider: 'tanzu',
-        apiEndpoint: 'pos1-w02-cl01-api.sdi.nhn.no',
+        apiEndpoint: `api-${idx}.example.com`,
       },
     },
-    ingresses: [
-      {
-        uid: '2564b1a8-1a94-4b20-9b51-5a422d7f643d',
-        health: 1,
-        name: 'argocd-server',
-        namespace: 'argocd',
-        class: 'avi-ingress-class-datacenter',
-        ingressrules: [
-          {
-            hostname: 'argo.contracts-test.osl1-contracts.sky.nhn.no',
-            ipaddresses: ['10.204.28.236'],
-            rules: [
-              {
-                path: '/',
-                service: {
-                  name: 'argocd-server',
-                  type: 'NodePort',
-                  selector: 'argocd-server',
-                  ports: [
-                    {
-                      name: 'http',
-                      nodeport: '30080',
-                      protocol: 'TCP',
-                    },
-                    {
-                      name: 'https',
-                      nodeport: '30443',
-                      protocol: 'TCP',
-                    },
-                  ],
-                  endpoints: [
-                    {
-                      nodename: 'contracts-test-workers-vwpx2-b9fg2-f67r9',
-                      podnamespace: 'argocd-server-857cc59b74-db5pm',
-                    },
-                  ],
-                },
-              },
-            ],
-          },
-        ],
-      },
-      {
-        uid: '2eed47fd-6d8c-4939-a4d1-ae23a9bc1b33',
-        health: 1,
-        name: 'grafana-helsenett',
-        namespace: 'prometheus-operator',
-        class: 'avi-ingress-class-datacenter',
-        ingressrules: [
-          {
-            hostname: 'grafana.contracts-test.osl1-contracts.sky.nhn.no',
-            ipaddresses: ['10.204.28.236'],
-            rules: [
-              {
-                path: '/',
-                service: {
-                  name: 'grafana-publisering',
-                  type: 'NodePort',
-                  selector: 'grafana',
-                  ports: [
-                    {
-                      name: 'service',
-                      nodeport: '31828',
-                      protocol: 'TCP',
-                    },
-                  ],
-                  endpoints: [
-                    {
-                      nodename: 'contracts-test-workers-vwpx2-b9fg2-ldgzk',
-                      podnamespace: 'prometheus-grafana-6c666d6fd9-8qkgx',
-                    },
-                  ],
-                },
-              },
-            ],
-          },
-        ],
-      },
-    ],
-    acl: {
-      accessGroups: ['R-T1-DCN-Admin@drift.nhn.no'],
-    },
-    id: '67a0ff0de6b7a8ce3b2ffee1',
-    identifier: 'contracts-test-wpc7',
+    ingresses: [],
+    acl: { accessGroups: [`group-${idx}@example.com`] },
+    id: `mock-id-${idx}`,
+    identifier: `mock-cluster-${idx}`,
     clusterIdOld: '',
-    workspaceId: '67a0ff0de6b7a8ce3b2ffee0',
+    workspaceId: `mock-workspace-id-${idx}`,
     updated: '0001-01-01T00:00:00Z',
     createdBy: '',
     splunkIndex: '',
@@ -711,212 +636,13 @@ export const clustersVersion1 = [
       overrides: null,
       projectMetadata: {
         roles: null,
-        billing: {
-          workorder: '',
-        },
+        billing: { workorder: '' },
         serviceTags: null,
       },
     },
-    status: {
-      state: '',
-      phase: '',
-      conditions: null,
-    },
-  },
-  {
-    clusterId: 'd-amk-002-xi40',
-    clusterName: 'd-amk-002',
-    created: '2024-10-04T11:33:31Z',
-    environment: 'dev',
-    healthStatus: {
-      health: 1,
-    },
-    firstObserved: '2024-10-04T12:06:34.392Z',
-    lastObserved: '2025-08-27T09:22:26.061Z',
-    metadata: {
-      project: {
-        name: 'AMK',
-      },
-    },
-    metrics: {
-      priceMonth: -2,
-      priceYear: -24,
-      cpu: 8,
-      memory: 27823341568,
-      cpuConsumed: 382,
-      memoryConsumed: 14426042368,
-      cpuPercentage: 4,
-      memoryPercentage: 51,
-      nodePoolCount: 1,
-      nodeCount: 2,
-      clusterCount: 1,
-    },
-    topology: {
-      controlPlaneEndpoint: '10.204.4.55:6443',
-      egressIp: '10.204.6.13',
-      controlPlane: {
-        nodes: [
-          {
-            name: 'd-amk-002-control-plane-xc5nw',
-            role: 'control-plane',
-            created: '2025-07-08T12:14:57Z',
-            osImage: 'VMware Photon OS/Linux',
-            machineName: 'd-amk-002-control-plane-xc5nw',
-            metrics: {
-              priceMonth: 0,
-              priceYear: 0,
-              cpu: 2,
-              memory: 6340423680,
-              cpuConsumed: 338,
-              memoryConsumed: 5856264192,
-              cpuPercentage: 16,
-              memoryPercentage: 92,
-              nodePoolCount: 0,
-              nodeCount: 0,
-              clusterCount: 0,
-            },
-            architecture: 'amd64',
-            containerRuntimeVersion: 'containerd://1.6.31',
-            kernelVersion: '6.1.83-4.ph5',
-            kubeProxyVersion: 'v1.29.4+vmware.3-fips.1',
-            kubeletVersion: 'v1.29.4+vmware.3-fips.1',
-            operatingSystem: 'linux',
-            machineClass: '',
-          },
-        ],
-      },
-    },
-    versions: {
-      nhnTooling: {
-        version: '1.6.25',
-        branch: '1.*',
-        environment: 'dev',
-      },
-      agent: {
-        version: 'v1.0.21',
-        sha: 'f01ea5b',
-      },
-      kubernetes: 'v1.29.4',
-    },
-    workspace: {
-      name: 'osl1-amk',
-      datacenter: {
-        name: 'osl1',
-        provider: 'tanzu',
-        apiEndpoint: 'pos1-w02-cl01-api.sdi.nhn.no',
-      },
-    },
-    ingresses: [
-      {
-        uid: '9bb293a7-26c4-45e9-b11a-1766b0ead9e0',
-        health: 1,
-        name: 'argocd-server',
-        namespace: 'argocd',
-        class: 'avi-ingress-class-datacenter',
-        ingressrules: [
-          {
-            hostname: 'argo.d-amk-002.osl1-amk.sky.nhn.no',
-            ipaddresses: ['10.204.28.180'],
-            rules: [
-              {
-                path: '/',
-                service: {
-                  name: 'argocd-server',
-                  type: 'NodePort',
-                  selector: 'argocd-server',
-                  ports: [
-                    {
-                      name: 'http',
-                      nodeport: '30080',
-                      protocol: 'TCP',
-                    },
-                    {
-                      name: 'https',
-                      nodeport: '30443',
-                      protocol: 'TCP',
-                    },
-                  ],
-                  endpoints: [
-                    {
-                      nodename: 'd-amk-002-workers-ndcnp-925vz-b4nzt',
-                      podnamespace: 'argocd-server-7b798f6848-9qv78',
-                    },
-                  ],
-                },
-              },
-            ],
-          },
-        ],
-      },
-      {
-        uid: 'a734e434-4524-4604-b267-81335b4f84ee',
-        health: 1,
-        name: 'grafana-helsenett',
-        namespace: 'prometheus-operator',
-        class: 'avi-ingress-class-datacenter',
-        ingressrules: [
-          {
-            hostname: 'grafana.d-amk-002.osl1-amk.sky.nhn.no',
-            ipaddresses: ['10.204.28.180'],
-            rules: [
-              {
-                path: '/',
-                service: {
-                  name: 'grafana-publisering',
-                  type: 'NodePort',
-                  selector: 'grafana',
-                  ports: [
-                    {
-                      name: 'service',
-                      nodeport: '30541',
-                      protocol: 'TCP',
-                    },
-                  ],
-                  endpoints: [
-                    {
-                      nodename: 'd-amk-002-workers-ndcnp-925vz-mbjfc',
-                      podnamespace: 'prometheus-grafana-7b56667b75-lpmgq',
-                    },
-                  ],
-                },
-              },
-            ],
-          },
-        ],
-      },
-    ],
-    acl: {
-      accessGroups: [
-        'Cluster Operator - A-T1-SDI-NS-AMK@drift.nhn.no',
-        'Cluster Operator - R-T1-SDI-NS-AMK@drift.nhn.no',
-        'Cluster Operator - R-NHN-APT-AMK@nhn.no',
-      ],
-    },
-    id: '66ffda4a0c36232747c96d8f',
-    identifier: 'd-amk-002-xi40',
-    clusterIdOld: '',
-    workspaceId: '63612399f30529d0fa6e67d0',
-    updated: '0001-01-01T00:00:00Z',
-    createdBy: '',
-    splunkIndex: '',
-    config: {
-      versions: null,
-      overrides: null,
-      projectMetadata: {
-        roles: null,
-        billing: {
-          workorder: '',
-        },
-        serviceTags: null,
-      },
-    },
-    status: {
-      state: '',
-      phase: '',
-      conditions: null,
-    },
-  },
-]
+    status: { state: '', phase: '', conditions: null },
+  }
+})
 
 /**
  * Mock data for KubernetesClusters v2.
@@ -1259,19 +985,20 @@ export const clustersVersion1 = [
 // }
 
 export const clustersVersion2 = {
-  resources: [
-    {
+  resources: Array.from({ length: 104 }, (_, i) => {
+    const idx = i + 1
+    return {
       kind: 'KubernetesCluster',
       apiVersion: 'general.ror.internal/v1alpha1',
       metadata: {
-        name: 'contracts-test',
-        namespace: 'osl1-contracts',
-        uid: '17f6a82a-19fb-4dd1-9aca-d92311becd2c',
-        creationTimestamp: '2025-02-03T12:59:32Z',
+        name: `Mock Cluster ${idx}`,
+        namespace: `workspace-${idx}`,
+        uid: `mock-uid-${idx}`,
+        creationTimestamp: `2025-01-${String((idx % 28) + 1).padStart(2, '0')}T12:00:00Z`,
       },
       rormeta: {
         version: 'v2',
-        hash: '17131545773118181648',
+        hash: `${10000000000000000000 + idx}`,
         ownerref: {
           scope: 'UNKNOWN',
           subject: 'UNKNOWN',
@@ -1281,23 +1008,23 @@ export const clustersVersion2 = {
       kubernetescluster: {
         spec: {
           data: {
-            clusterId: '',
+            clusterId: `mock-cluster-${idx}`,
             provider: 'tanzu',
-            datacenter: 'osl1',
+            datacenter: `dc-${idx}`,
             region: 'oslo',
             zone: '',
-            project: '',
-            workspace: 'osl1-contracts',
+            project: `Project ${idx}`,
+            workspace: `workspace-${idx}`,
             workorder: '',
-            environment: '',
+            environment: idx % 2 === 0 ? 'dev' : 'test',
           },
           topology: {
-            version: '',
+            version: 'v1.28.7',
             controlplane: {
-              replicas: 0,
-              version: '',
-              provider: '',
-              machineClass: '',
+              replicas: 1,
+              version: 'v1.28.7',
+              provider: 'tanzu',
+              machineClass: 'best-effort-medium',
               metadata: {
                 labels: null,
                 annotations: null,
@@ -1309,9 +1036,9 @@ export const clustersVersion2 = {
                 {
                   machineClass: 'best-effort-medium',
                   provider: 'tanzu',
-                  version: '',
+                  version: 'v1.28.7',
                   name: 'workers',
-                  replicas: 3,
+                  replicas: 1 + (idx % 5),
                   autoscaling: {
                     enabled: false,
                     minReplicas: 0,
@@ -1330,17 +1057,17 @@ export const clustersVersion2 = {
         status: {
           state: {
             cluster: {
-              externalId: '',
+              externalId: `mock-id-${idx}`,
               resources: {},
               price: {
-                monthly: 0,
-                yearly: 0,
+                monthly: 1000 + idx,
+                yearly: 12000 + idx * 10,
               },
               controlplane: {
-                status: '',
+                status: 'Running',
                 message: '',
-                scale: 0,
-                machineClass: '',
+                scale: 1,
+                machineClass: 'best-effort-medium',
                 resources: {},
                 nodes: null,
               },
@@ -1348,115 +1075,17 @@ export const clustersVersion2 = {
             },
             versions: null,
             endpoints: null,
-            egressIP: '',
+            egressIP: `10.0.${(idx * 3) % 255}.${(idx * 4) % 255}`,
             lastUpdated: null,
             lastUpdatedBy: '',
             created: null,
           },
-          phase: '',
+          phase: 'Running',
           conditions: null,
         },
       },
-    },
-    {
-      kind: 'KubernetesCluster',
-      apiVersion: 'general.ror.internal/v1alpha1',
-      metadata: {
-        name: 'd-amk-002',
-        namespace: 'osl1-amk',
-        uid: '941d3a20-a8fe-472d-bce9-9839fa2af696',
-        creationTimestamp: '2024-10-04T11:31:26Z',
-      },
-      rormeta: {
-        version: 'v2',
-        hash: '3834487032583378257',
-        ownerref: {
-          scope: 'UNKNOWN',
-          subject: 'UNKNOWN',
-        },
-        action: 'Add',
-      },
-      kubernetescluster: {
-        spec: {
-          data: {
-            clusterId: '',
-            provider: 'tanzu',
-            datacenter: 'osl1',
-            region: 'oslo',
-            zone: '',
-            project: '',
-            workspace: 'osl1-amk',
-            workorder: '',
-            environment: '',
-          },
-          topology: {
-            version: '',
-            controlplane: {
-              replicas: 0,
-              version: '',
-              provider: '',
-              machineClass: '',
-              metadata: {
-                labels: null,
-                annotations: null,
-              },
-              storage: null,
-            },
-            workers: {
-              nodePools: [
-                {
-                  machineClass: 'best-effort-large',
-                  provider: 'tanzu',
-                  version: '',
-                  name: 'workers',
-                  replicas: 2,
-                  autoscaling: {
-                    enabled: false,
-                    minReplicas: 0,
-                    maxReplicas: 0,
-                    scalingRules: null,
-                  },
-                  metadata: {
-                    labels: null,
-                    annotations: null,
-                  },
-                },
-              ],
-            },
-          },
-        },
-        status: {
-          state: {
-            cluster: {
-              externalId: '',
-              resources: {},
-              price: {
-                monthly: 0,
-                yearly: 0,
-              },
-              controlplane: {
-                status: '',
-                message: '',
-                scale: 0,
-                machineClass: '',
-                resources: {},
-                nodes: null,
-              },
-              nodepools: null,
-            },
-            versions: null,
-            endpoints: null,
-            egressIP: '',
-            lastUpdated: null,
-            lastUpdatedBy: '',
-            created: null,
-          },
-          phase: '',
-          conditions: null,
-        },
-      },
-    },
-  ],
+    }
+  }),
 }
 
 // export const clustersVersion2 = {

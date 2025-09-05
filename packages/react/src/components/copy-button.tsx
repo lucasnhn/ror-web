@@ -48,9 +48,10 @@ export function CopyButton({ onClick, className, children, size = 'md' }: CopyBu
 
   // Clean up timeout on unmount
   useEffect(() => {
+    const timeout = timeoutRef.current
     return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current)
+      if (timeout !== null) {
+        clearTimeout(timeout)
       }
     }
   }, [])
