@@ -29,6 +29,8 @@ export type {
   NodeResponse,
   Pod,
   PodResponse,
+  Price,
+  PriceResponse,
   User,
   ReplicaSet,
   ReplicaSetResponse,

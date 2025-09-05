@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { CreateEditView } from '../create-edit-view'
+import { getRorApi } from '@/services/ror-api'
 
 export const metadata: Metadata = {
   title: 'ROR - Create node pool',
@@ -15,9 +16,25 @@ interface NewNodePoolProps {
 export default async function NewNodePoolPage({ params }: NewNodePoolProps) {
   const { id } = await params
 
+  const api = await getRorApi()
+  const res = await api.prices.list()
+
+  type Price = {
+    id: string
+    machineClass: string
+    price: number
+  }
+
+  const items: Price[] = Array.isArray(res) ? res : []
+  const simplePrices = items.map(({ id, machineClass, price }) => ({
+    id,
+    machineClass,
+    price,
+  }))
+
   return (
     <div className=''>
-      <CreateEditView id={id} title='New node pool' buttonText='Create node pool' />
+      <CreateEditView id={id} simplePrices={simplePrices} title='New node pool' buttonText='Create node pool' />
     </div>
   )
 }
