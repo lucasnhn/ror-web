@@ -1,9 +1,9 @@
 'use client'
+
 import { MotionConfig, motion } from 'motion/react'
-import { clsx } from 'clsx'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
-
+import clsx from 'clsx'
 import s from './navigation-tabs.module.scss'
 import clsxm from '@/utils/clsxm'
 
@@ -11,24 +11,22 @@ interface TabItem {
   label: string
   href: string
 }
-
 interface NavigationTabsProps {
   className?: string
   items: TabItem[]
   tabColor?: string
+  contextLabel?: string // e.g. "Cluster"
 }
 
-export function NavigationTabs({ items, className, tabColor }: NavigationTabsProps) {
+export function NavigationTabs({ items, className, tabColor, contextLabel = 'Cluster' }: NavigationTabsProps) {
   const currentPath = usePathname()
-
   const classes = clsx('r-tabs', s.navigation, className)
 
   return (
-    <nav aria-label='Tabs' className={classes}>
+    <nav aria-label={`${contextLabel} sections`} className={classes}>
       <MotionConfig transition={{ type: 'spring', bounce: 0.2, duration: 0.3 }}>
         <ul>
           {items.map((item) => {
-            const key = item.href
             const isActive =
               currentPath === item.href ||
               (currentPath.startsWith(`${item.href}/`) &&
@@ -39,14 +37,19 @@ export function NavigationTabs({ items, className, tabColor }: NavigationTabsPro
                     other.href.length > item.href.length
                 ))
 
-            const classes = clsx('r-tab__item', s.navigationItem, {
-              'r-tab__item--active': isActive,
-              [s.active]: isActive,
-            })
             return (
-              <motion.li key={key} layout className={classes}>
-                <Link href={item.href}>
-                  <span>{item.label}</span>
+              <motion.li
+                key={item.href}
+                layout
+                className={clsx('r-tab__item', s.navigationItem, {
+                  'r-tab__item--active': isActive,
+                  [s.active]: isActive,
+                })}
+              >
+                <Link href={item.href} aria-current={isActive ? 'page' : undefined}>
+                  {/* SR-only context makes the link descriptive; visible text stays the same */}
+                  <span className='sr-only'>{contextLabel} </span>
+                  <span aria-hidden='true'>{item.label}</span>
                   {isActive ? (
                     <motion.div
                       layoutId='active-indicator'

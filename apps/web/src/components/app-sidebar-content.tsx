@@ -151,12 +151,21 @@ export function AppSidebarContent() {
               <SidebarMenuItem>
                 {section.items.length === 1 ? (
                   <div className='flex flex-row items-center'>
-                    <SidebarMenuButton popoverContent={{ title: section.title, items: section.items }}>
-                      <section.icon />
+                    <SidebarMenuButton asChild popoverContent={{ title: section.title, items: section.items }}>
                       {'url' in section.items[0] ? (
-                        <Link href={section.items[0].url}>{section.items[0].title}</Link>
+                        <Link
+                          href={section.items[0].url}
+                          aria-current={section.isActive ? 'page' : undefined}
+                          className='flex items-center gap-2'
+                        >
+                          <section.icon />
+                          <span>{section.items[0].title}</span>
+                        </Link>
                       ) : (
-                        <span>{section.items[0].title}</span>
+                        <span className='flex items-center gap-2'>
+                          <section.icon />
+                          <span>{section.items[0].title}</span>
+                        </span>
                       )}
                     </SidebarMenuButton>
                   </div>
