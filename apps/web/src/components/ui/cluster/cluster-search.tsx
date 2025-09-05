@@ -90,10 +90,10 @@ export function ClusterSearch({ items, onResultsChange }: ClusterSearchProps) {
   }, [items])
 
   // Compute filtered results (pure)
-  const filtered = useMemo(() => {
-    if (!query) return items
-    return fuse.search(query).map((r) => r.item)
-  }, [query, fuse, items])
+  // const filtered = useMemo(() => {
+  //   if (!query) return items
+  //   return fuse.search(query).map((r) => r.item)
+  // }, [query, fuse, items])
 
   // Debounce query so we don't fire on every keystroke
   const [debouncedQuery, setDebouncedQuery] = useState(query)
