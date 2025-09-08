@@ -146,7 +146,7 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
   const CardHeader = ({ title }: { title: string }) => {
     return (
       <div className='mb-2'>
-        <h4>{title}</h4>
+        <h2 className='text-xl font-semibold'>{title}</h2>
         <hr />
       </div>
     )

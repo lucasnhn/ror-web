@@ -62,6 +62,7 @@ function ThemeToggleTrigger({ theme, ...rest }: ThemeToggleTriggerProps) {
   return (
     <button
       className='w-7 h-7 shrink-0 cursor-pointer hover:bg-background-hover flex items-center justify-center justify-self-end rounded-sm border border-subtle'
+      title='Open theme menu'
       {...rest}
     >
       <ThemeIcon theme={theme} />

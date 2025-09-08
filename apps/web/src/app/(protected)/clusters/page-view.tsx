@@ -1292,19 +1292,31 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
           </Link>
         )}
 
-        <Link className='[@container(max-width:1000px)]:hidden' href={toggleParams}>
-          <Toggle pressed={filtersOpen} variant='outline' aria-label='Open filters'>
-            <Funnel />
-          </Toggle>
-        </Link>
+        <Toggle
+          asChild
+          pressed={filtersOpen}
+          variant='outline'
+          className='[@container(max-width:1000px)]:hidden'
+          aria-label='Open filters'
+        >
+          <Link href={toggleParams}>
+            <Funnel aria-hidden='true' />
+          </Link>
+        </Toggle>
       </div>
 
       <div className='flex flex-row gap-4'>
-        <Link className='[@container(min-width:1001px)]:hidden' href={toggleParams}>
-          <Toggle pressed={filtersOpen} variant='outline' aria-label='Open filters'>
-            <Funnel />
-          </Toggle>
-        </Link>
+        <Toggle
+          asChild
+          pressed={filtersOpen}
+          variant='outline'
+          className='[@container(min-width:1001px)]:hidden'
+          aria-label='Open filters'
+        >
+          <Link href={toggleParams}>
+            <Funnel aria-hidden='true' />
+          </Link>
+        </Toggle>
 
         <Button
           type='button'
