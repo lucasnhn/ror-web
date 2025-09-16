@@ -867,7 +867,8 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
           offset: String(offset),
           limit: String(limit),
         })
-        const res = await fetch(`http://localhost:10000/v2/resources?${params.toString()}`)
+        //const res = await fetch(`http://localhost:10000/v2/resources?${params.toString()}`)
+        const res = await fetch(`/api/clusters?${params.toString()}`)
         if (!res.ok) {
           const text = await res.text()
           console.error('API error: ' + res.status + ' - ' + text)
