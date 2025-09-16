@@ -714,9 +714,14 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { createApiClient } from '@ror/js-api-client'
+import { env } from '@/config/env'
+import { clustersVersion2 } from '@/__mocks__/data/clusters'
 import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
-import type { KubernetesCluster } from '@ror/js-api-client'
+import type { z } from 'zod'
+import { KubernetesClusterSchema } from '@ror/js-api-client/src/schemas/kubernetes-cluster'
+type KubernetesCluster = z.infer<typeof KubernetesClusterSchema>
 import { User } from 'next-auth'
 import { CodeSnippet } from '@ror/react'
 import { ClusterCard, ClusterCardDisplayData } from '@/components/ui/cluster/cluster-card'
@@ -855,26 +860,36 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
     }
   }, [clusters])
 
+  // --- js-api-client integration ---
+  // Import at top: import { createApiClient } from '@ror/js-api-client'
+  // You need a valid accessToken and baseUrl (can be env or context)
+  const apiClient = useMemo(() => {
+    if (typeof window === 'undefined') return null
+    return createApiClient({
+      baseUrl: env.NEXT_PUBLIC_ROR_API_URL,
+      accessToken: window.localStorage.getItem('accessToken') || '',
+    })
+  }, [])
+
   const fetchMoreClusters = useCallback(
     async ({ offset, limit }: { offset: number; limit: number }) => {
       if (inFlightRef.current || isLoading || !hasMore) return
       inFlightRef.current = true
       setIsLoading(true)
       try {
-        const params = new URLSearchParams({
-          apiversion: 'general.ror.internal/v1alpha1',
-          kind: 'KubernetesCluster',
-          offset: String(offset),
-          limit: String(limit),
-        })
-        const res = await fetch(`http://localhost:10000/v2/resources?${params.toString()}`)
-        if (!res.ok) {
-          const text = await res.text()
-          console.error('API error: ' + res.status + ' - ' + text)
-          setHasMore(false)
-          return
+        let data
+        if (env.NEXT_PUBLIC_MOCKING_ENABLED === 'true') {
+          // Use mock data
+          data = { resources: clustersVersion2.resources.slice(offset, offset + limit) }
+        } else {
+          // Use real API client
+          if (!apiClient) return
+          const params = new URLSearchParams({
+            offset: String(offset),
+            limit: String(limit),
+          })
+          data = await apiClient.kubernetesClusters.list(params)
         }
-        const data = await res.json()
         setItems((prev) => {
           const existing = new Set(prev.map(idOf))
           const newOnes = (data.resources ?? []).filter((c: KubernetesCluster) => {
@@ -893,7 +908,7 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
         inFlightRef.current = false
       }
     },
-    [isLoading, hasMore]
+    [isLoading, hasMore, apiClient]
   )
 
   // observe sentinel once per items.length / flags change
@@ -1010,7 +1025,8 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
     const price = cluster.price ?? {}
 
     const versions = state.versions ?? []
-    const versionByName = (name: string) => versions.find((v) => v?.name === name)?.version ?? null
+    type Version = { name?: string | null; version?: string | null }
+    const versionByName = (name: string) => (versions as Version[]).find((v) => v?.name === name)?.version ?? null
 
     const tagsArr = (c as WithRorMeta)?.rormeta?.tags ?? []
     const serviceTags = Array.isArray(tagsArr)

@@ -47,7 +47,6 @@ export function NavigationTabs({ items, className, tabColor, contextLabel = 'Clu
                 })}
               >
                 <Link href={item.href} aria-current={isActive ? 'page' : undefined}>
-                  {/* SR-only context makes the link descriptive; visible text stays the same */}
                   <span className='sr-only'>{contextLabel} </span>
                   <span aria-hidden='true'>{item.label}</span>
                   {isActive ? (
