@@ -719,9 +719,7 @@ import { env } from '@/config/env'
 import { clustersVersion2 } from '@/__mocks__/data/clusters'
 import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
-import type { z } from 'zod'
-import { KubernetesClusterSchema } from '@ror/js-api-client/src/schemas/kubernetes-cluster'
-type KubernetesCluster = z.infer<typeof KubernetesClusterSchema>
+import type { KubernetesCluster } from '@ror/js-api-client'
 import { User } from 'next-auth'
 import { CodeSnippet } from '@ror/react'
 import { ClusterCard, ClusterCardDisplayData } from '@/components/ui/cluster/cluster-card'
@@ -880,7 +878,7 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
         let data
         if (env.NEXT_PUBLIC_MOCKING_ENABLED === 'true') {
           // Use mock data
-          data = { resources: clustersVersion2.resources.slice(offset, offset + limit) }
+          data = { resources: clustersVersion2.resources.slice(offset, offset + limit) as KubernetesCluster[] }
         } else {
           // Use real API client
           if (!apiClient) return
