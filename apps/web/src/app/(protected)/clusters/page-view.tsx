@@ -714,7 +714,7 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { createApiClient } from '@ror/js-api-client'
+// import { createApiClient } from '@ror/js-api-client'
 import { env } from '@/config/env'
 import { clustersVersion2 } from '@/__mocks__/data/clusters'
 import { useRouter, usePathname } from 'next/navigation'
