@@ -740,6 +740,7 @@ import { ArrowDownNarrowWide, ArrowDownWideNarrow, Download, Funnel, RotateCw } 
 import { cn } from '@/utils/clsxm'
 import type { WorkSheet } from 'xlsx'
 import { NotReadyMessage } from '@/components/ui/not-ready-message'
+import { loadMoreClusters } from '@/utils/cluster-actions'
 
 interface Params {
   view?: 'grid' | 'list'
@@ -861,13 +862,13 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
   // --- js-api-client integration ---
   // Import at top: import { createApiClient } from '@ror/js-api-client'
   // You need a valid accessToken and baseUrl (can be env or context)
-  const apiClient = useMemo(() => {
-    if (typeof window === 'undefined') return null
-    return createApiClient({
-      baseUrl: env.NEXT_PUBLIC_ROR_API_URL,
-      accessToken: window.localStorage.getItem('accessToken') || '',
-    })
-  }, [])
+  // const apiClient = useMemo(() => {
+  //   if (typeof window === 'undefined') return null
+  //   return createApiClient({
+  //     baseUrl: env.NEXT_PUBLIC_ROR_API_URL,
+  //     accessToken: window.localStorage.getItem('accessToken') || '',
+  //   })
+  // }, [])
 
   const fetchMoreClusters = useCallback(
     async ({ offset, limit }: { offset: number; limit: number }) => {
@@ -877,36 +878,33 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
       try {
         let data
         if (env.NEXT_PUBLIC_MOCKING_ENABLED === 'true') {
-          // Use mock data
-          data = { resources: clustersVersion2.resources.slice(offset, offset + limit) as KubernetesCluster[] }
+          data = {
+            items: clustersVersion2.resources.slice(offset, offset + limit) as KubernetesCluster[],
+            hasMore: true,
+          }
         } else {
-          // Use real API client
-          if (!apiClient) return
-          const params = new URLSearchParams({
-            offset: String(offset),
-            limit: String(limit),
-          })
-          data = await apiClient.kubernetesClusters.list(params)
+          data = await loadMoreClusters({ offset, limit, sort: params.sort })
         }
+
         setItems((prev) => {
-          const existing = new Set(prev.map(idOf))
-          const newOnes = (data.resources ?? []).filter((c: KubernetesCluster) => {
+          const seen = new Set(prev.map(idOf))
+          const newOnes = (data.items ?? []).filter((c) => {
             const id = idOf(c)
-            return id && !existing.has(id)
+            return id && !seen.has(id)
           })
           return newOnes.length ? [...prev, ...newOnes] : prev
         })
-        if (!data.resources || data.resources.length < limit) {
-          setHasMore(false)
-        }
+
+        if (!data.hasMore) setHasMore(false)
       } catch (e) {
         console.error('Error fetching more clusters:', e)
+        setHasMore(false)
       } finally {
         setIsLoading(false)
         inFlightRef.current = false
       }
     },
-    [isLoading, hasMore, apiClient]
+    [isLoading, hasMore, params.sort]
   )
 
   // observe sentinel once per items.length / flags change
