@@ -16,7 +16,7 @@ export function ClusterAccessGroupCard({ cluster, className }: ClusterAccessGrou
       <Layer level={1}>
         <Stack gap={5} className='max-w-full'>
           <ul className='list-disc list-inside '>
-            {cluster.acl.accessGroups.map((group) => (
+            {(cluster.acl.accessGroups ?? []).map((group) => (
               <li key={group} className='mb-3 last:mb-0'>
                 {group}
               </li>

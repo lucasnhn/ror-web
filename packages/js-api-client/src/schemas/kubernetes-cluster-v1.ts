@@ -76,7 +76,7 @@ const TopologyModel = z.object({
 })
 
 const AclModel = z.object({
-  accessGroups: z.array(z.string()),
+  accessGroups: z.array(z.string()).default([]),
 })
 
 const IngressRuleV1 = z
