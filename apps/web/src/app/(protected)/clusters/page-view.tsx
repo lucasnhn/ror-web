@@ -28,6 +28,8 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { env } from '@/config/env'
+import { clustersVersion2 } from '@/__mocks__/data/clusters'
 import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import type { KubernetesCluster } from '@ror/js-api-client'
@@ -160,7 +162,7 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
   const sentinelRef = useRef<HTMLDivElement>(null)
   const inFlightRef = useRef(false)
 
-  // ⭐ only adopt new server data if *contents* changed
+  // only adopt new server data if contents changed
   const lastClustersKeyRef = useRef('')
   useEffect(() => {
     const nextKey = idsKey(clusters)
