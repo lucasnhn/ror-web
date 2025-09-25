@@ -12,6 +12,7 @@ import { CodeSnippet } from '../code-snippet'
 import { envBgColors } from './cluster-header'
 import { HealthCircle } from './health-circle'
 import Link from 'next/link'
+import { envColors } from '@/utils/env-colors'
 
 function Card({ className, ...props }: React.ComponentProps<'div'>) {
   return (
@@ -60,14 +61,6 @@ interface ClusterCardProps {
   user?: User
   cluster: KubernetesCluster
   displayData?: ClusterCardDisplayData[]
-}
-
-export const envColors: Record<string, 'red' | 'yellow' | 'blue' | 'emerald' | 'gray'> = {
-  prod: 'red',
-  qa: 'yellow',
-  dev: 'blue',
-  test: 'emerald',
-  undefined: 'gray',
 }
 
 const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps) => {

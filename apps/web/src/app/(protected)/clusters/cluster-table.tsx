@@ -1,30 +1,23 @@
 'use client'
 
-import { createColumnHelper } from '@tanstack/react-table'
-import type { KubernetesCluster } from '@ror/js-api-client'
-import Link from 'next/link'
-import { DataTable } from '@/components/ui/data-table'
-import type { DataTableColumnDef, DataTablePagination } from '@/components/ui/data-table'
-import { HealthStatus } from '@/components/ui/cluster/health-status'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { useCallback } from 'react'
-import { routes } from '@/config/routes'
-import { CopyIcon, ExternalLink } from 'lucide-react'
-import copy from 'clipboard-copy'
-import { CopyButton } from '@ror/react'
-import { User } from 'next-auth'
 import { Pill } from '@/components/shadcn/pill'
 import { ClusterCardDisplayData } from '@/components/ui/cluster/cluster-card'
+import { HealthStatus } from '@/components/ui/cluster/health-status'
+import type { DataTableColumnDef, DataTablePagination } from '@/components/ui/data-table'
+import { DataTable } from '@/components/ui/data-table'
+import { routes } from '@/config/routes'
+import { envColors } from '@/utils/env-colors'
+import type { KubernetesCluster } from '@ror/js-api-client'
+import { CopyButton } from '@ror/react'
+import { createColumnHelper } from '@tanstack/react-table'
+import copy from 'clipboard-copy'
+import { CopyIcon, ExternalLink } from 'lucide-react'
+import { User } from 'next-auth'
+import Link from 'next/link'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { useCallback } from 'react'
 
 const columnHelper = createColumnHelper<KubernetesCluster>()
-
-export const envColors: Record<string, 'red' | 'yellow' | 'blue' | 'emerald' | 'gray'> = {
-  prod: 'red',
-  qa: 'yellow',
-  dev: 'blue',
-  test: 'emerald',
-  undefined: 'gray',
-}
 
 const handleRorcliCopyButton = (copyText: string) => {
   void copy(copyText)

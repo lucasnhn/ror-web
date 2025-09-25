@@ -549,7 +549,7 @@ export const clustersVersion1 = Array.from({ length: 104 }, (_, i) => {
     clusterId: `mock-cluster-${idx}`,
     clusterName: `Mock Cluster ${idx}`,
     created: `2025-01-${String((idx % 28) + 1).padStart(2, '0')}T12:00:00Z`,
-    environment: idx % 2 === 0 ? 'dev' : 'test',
+    environment: idx % 2 === 0 ? 'mgmt' : 'kurs',
     healthStatus: { health: idx % 3 },
     firstObserved: `2025-01-${String((idx % 28) + 1).padStart(2, '0')}T13:00:00Z`,
     lastObserved: `2025-08-${String((idx % 28) + 1).padStart(2, '0')}T14:00:00Z`,
@@ -1016,7 +1016,7 @@ export const clustersVersion2 = {
             project: `Project ${idx}`,
             workspace: `workspace-${idx}`,
             workorder: '',
-            environment: idx % 2 === 0 ? 'dev' : 'test',
+            environment: idx % 2 === 0 ? 'mgmt' : 'kurs',
           },
           topology: {
             version: 'v1.28.7',
