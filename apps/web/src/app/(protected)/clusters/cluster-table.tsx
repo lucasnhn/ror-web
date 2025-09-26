@@ -5,7 +5,7 @@ import type { KubernetesCluster } from '@ror/js-api-client'
 import Link from 'next/link'
 import { DataTable } from '@/components/ui/data-table'
 import type { DataTableColumnDef, DataTablePagination } from '@/components/ui/data-table'
-import { HealthStatus } from '@/components/ui/cluster/health-status'
+import { HealthStatus } from '@/features/clusters/components/health-status'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useCallback } from 'react'
 import { routes } from '@/config/routes'
@@ -14,7 +14,7 @@ import copy from 'clipboard-copy'
 import { CopyButton } from '@ror/react'
 import { User } from 'next-auth'
 import { Pill } from '@/components/shadcn/pill'
-import { ClusterCardDisplayData } from '@/components/ui/cluster/cluster-card'
+import { ClusterCardDisplayData } from '@/features/clusters/components/cluster-card'
 
 const columnHelper = createColumnHelper<KubernetesCluster>()
 
