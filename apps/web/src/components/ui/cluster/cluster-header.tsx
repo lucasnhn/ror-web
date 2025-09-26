@@ -16,6 +16,8 @@ export const envBgColors: Record<string, string[]> = {
   qa: ['bg-yellow-500', 'dark:bg-yellow-600'],
   dev: ['bg-blue-500', 'dark:bg-blue-600'],
   test: ['bg-emerald-500', 'dark:bg-emerald-600'],
+  mgmt: ['bg-red-500', 'dark:bg-red-600'],
+  kurs: ['bg-orange-400', 'dark:bg-orange-500'],
 }
 
 export const ClusterHeader = ({ className, tabs }: ClusterHeaderProps) => {
