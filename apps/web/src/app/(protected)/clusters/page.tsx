@@ -129,7 +129,9 @@ export default async function ClustersPage({
               : primary.kubernetescluster?.spec?.data?.workspace,
             workorder: primary.kubernetescluster?.spec?.data?.workorder,
             environment: isEmptyValue(primary.kubernetescluster?.spec?.data?.environment)
-              ? secondary.environment
+              ? isEmptyValue(secondary.environment)
+                ? 'Not set'
+                : secondary.environment
               : primary.kubernetescluster?.spec?.data?.environment,
           },
           topology: {
