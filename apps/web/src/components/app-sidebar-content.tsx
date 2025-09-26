@@ -1,5 +1,5 @@
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@radix-ui/react-collapsible'
-import { Boxes, ChevronRight, CircleHelp, CornerUpLeft } from 'lucide-react'
+import { Boxes, ChevronRight, CircleHelp, CornerUpLeft, Monitor } from 'lucide-react'
 import Link from 'next/link'
 import {
   SidebarContent,
@@ -53,6 +53,17 @@ const sections: Section[] = [
       {
         title: 'Clusters',
         url: '/clusters',
+      },
+    ],
+  },
+  {
+    title: 'Virtual Machines',
+    icon: Monitor,
+    isActive: true,
+    items: [
+      {
+        title: 'Virtual Machines',
+        url: '/vms',
       },
     ],
   },

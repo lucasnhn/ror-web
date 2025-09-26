@@ -2,14 +2,28 @@
 
 import { Tabs, TabsList, TabsTrigger } from '@/components/shadcn/tabs'
 import { LayoutGrid, List } from 'lucide-react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
-const LOCAL_STORAGE_KEY = 'clusters:view-mode'
+interface TabsViewSwitcherProps {
+  storageKey?: string
+}
 
-export function TabsViewSwitcher() {
+export function TabsViewSwitcher({ storageKey }: TabsViewSwitcherProps = {}) {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const pathname = usePathname()
+
+  // Generate storage key based on pathname if not provided
+  const getStorageKey = () => {
+    if (storageKey) return storageKey
+
+    // Extract the main route from pathname (e.g., "/clusters" or "/vms")
+    const route = pathname.split('/').pop() || 'default'
+    return `${route}:view-mode`
+  }
+
+  const LOCAL_STORAGE_KEY = getStorageKey()
 
   const [mounted, setMounted] = useState(false)
   const [selected, setSelected] = useState('grid')
@@ -30,12 +44,11 @@ export function TabsViewSwitcher() {
       params.set('view', view)
     }
 
-    const url = '/clusters'
-    router.replace(params.size === 0 ? url : `${url}?${params.toString()}`)
-  }, [searchParams, router])
+    // Use current pathname instead of hardcoded route
+    router.replace(params.size === 0 ? pathname : `${pathname}?${params.toString()}`)
+  }, [searchParams, router, pathname, LOCAL_STORAGE_KEY])
 
   const handleChange = (value: string) => {
-    const url = '/clusters'
     const params = new URLSearchParams(searchParams)
     params.delete('page')
     params.delete('limit')
@@ -47,7 +60,8 @@ export function TabsViewSwitcher() {
     }
 
     localStorage.setItem(LOCAL_STORAGE_KEY, value)
-    router.push(params.size === 0 ? url : `${url}?${params.toString()}`)
+    // Use current pathname instead of hardcoded route
+    router.push(params.size === 0 ? pathname : `${pathname}?${params.toString()}`)
     setSelected(value)
   }
 

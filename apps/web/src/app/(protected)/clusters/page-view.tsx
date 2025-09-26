@@ -648,7 +648,7 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <TabsViewSwitcher />
+        <TabsViewSwitcher storageKey='clusters:view-mode' />
       </div>
     </div>
   )
