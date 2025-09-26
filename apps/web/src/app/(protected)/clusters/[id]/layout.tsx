@@ -3,7 +3,7 @@
 // import { getRorApi } from '@/services/ror-api'
 import { Fragment, ReactNode, useEffect, useState } from 'react'
 import { routes } from '@/config/routes'
-import { ClusterHeader } from '@/components/ui/cluster/cluster-header'
+import { ClusterHeader } from '@/features/cluster/components/cluster-header'
 import { ClusterProvider } from '@/context/cluster-context'
 import { NotReadyMessage } from '@/components/ui/not-ready-message'
 // import { RenderApiError } from '@/utils/renderApiError'
