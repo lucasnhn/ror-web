@@ -31,6 +31,7 @@ import {
 import { envColors, getHighDifferenceEnvironmentColors } from '../utils/env-colors'
 import { formatResource } from '../utils/formats'
 import { HealthCircle } from './health-circle'
+import { Environment } from '../types/environment'
 
 function Card({ className, ...props }: React.ComponentProps<'div'>) {
   return (
@@ -80,7 +81,7 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
   const rorLogin = getRorLogin(cluster)
   const kubectlLogin = getKubectlLogin(cluster, user?.email || '<user-email missing>')
   const serviceTags = getRormetaTags(cluster)
-  const envColor = getHighDifferenceEnvironmentColors(env)
+  const envColor = getHighDifferenceEnvironmentColors(env as Environment)
   const provider = getProvider(cluster)
 
   const Argo = () => {
@@ -209,7 +210,7 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
       <div>
         <p className='font-bold'>Environment</p>
         <p>
-          <Pill variant={envColors[env ?? 'undefined']} className='px-3'>
+          <Pill variant={envColors[(env ?? 'undefined') as Environment]} className='px-3'>
             {(env ?? 'Undefined').charAt(0).toUpperCase() + (env ?? 'Undefined').slice(1)}
           </Pill>
         </p>

@@ -68,7 +68,7 @@ const getDataTableColumns = (
       cell: (info) => {
         const env = info.getValue()
         return (
-          <Pill variant={envColors[env ?? 'undefined']} className='px-3'>
+          <Pill variant={envColors[(env as keyof typeof envColors) ?? 'undefined']} className='px-3'>
             {(env ?? 'Undefined').charAt(0).toUpperCase() + (env ?? 'Undefined').slice(1)}
           </Pill>
         )

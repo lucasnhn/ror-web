@@ -2,6 +2,7 @@ import type { KubernetesCluster } from '@ror/js-api-client'
 import type { HealthStatus } from '../types/health-status'
 import { normalizeHealthStatus } from './health'
 import { ResourceType } from '../types/resource'
+import { Environment } from '../types/environment'
 
 export const getClusterId = (cluster: KubernetesCluster): string =>
   cluster?.kubernetescluster?.spec?.data?.clusterId || 'Unknown Cluster'
@@ -87,8 +88,8 @@ export const getLastObserved = (cluster: KubernetesCluster): Date | null | undef
 export const getCreated = (cluster: KubernetesCluster): Date | null | undefined =>
   cluster?.kubernetescluster?.status?.state?.created
 
-export const getEnvironment = (cluster: KubernetesCluster): string =>
-  cluster?.kubernetescluster?.spec?.data?.environment ?? 'unknown'
+export const getEnvironment = (cluster: KubernetesCluster): Environment =>
+  (cluster?.kubernetescluster?.spec?.data?.environment as Environment) ?? 'unknown'
 
 export const getServerUrl = (cluster: KubernetesCluster): string =>
   cluster?.kubernetescluster?.status?.state?.endpoints?.find((endpoint) => endpoint.name === 'datacenter')?.address ||
