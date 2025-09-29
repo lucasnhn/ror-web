@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { ClusterDetails } from '@/components/ui/cluster/cluster-details'
+import { ClusterDetails } from '@/features/cluster/components/cluster-details'
 
 export const metadata: Metadata = {
   title: 'ROR - Cluster',

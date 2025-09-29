@@ -1,12 +1,12 @@
 'use client'
 
 import { Pill } from '@/components/shadcn/pill'
-import { ClusterCardDisplayData } from '@/components/ui/cluster/cluster-card'
-import { HealthStatus } from '@/components/ui/cluster/health-status'
 import type { DataTableColumnDef, DataTablePagination } from '@/components/ui/data-table'
 import { DataTable } from '@/components/ui/data-table'
 import { routes } from '@/config/routes'
-import { envColors } from '@/utils/env-colors'
+import { HealthStatus } from '@/features/cluster/components/health-status'
+import { ClusterCardDisplayData } from '@/features/cluster/types/display-data'
+import { envColors } from '@/features/cluster/utils/env-colors'
 import type { KubernetesCluster } from '@ror/js-api-client'
 import { CopyButton } from '@ror/react'
 import { createColumnHelper } from '@tanstack/react-table'
@@ -68,7 +68,7 @@ const getDataTableColumns = (
       cell: (info) => {
         const env = info.getValue()
         return (
-          <Pill variant={envColors[env ?? 'undefined']} className='px-3'>
+          <Pill variant={envColors[(env as keyof typeof envColors) ?? 'undefined']} className='px-3'>
             {(env ?? 'Undefined').charAt(0).toUpperCase() + (env ?? 'Undefined').slice(1)}
           </Pill>
         )

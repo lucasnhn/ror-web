@@ -3,33 +3,45 @@
 import { cn } from '@/utils/clsxm'
 import { HealthCircle } from './health-circle'
 import { navigationItemObject } from '@/app/(protected)/clusters/[id]/layout'
-import { NavigationTabs } from '../navigation-tabs'
+import { NavigationTabs } from '../../../components/ui/navigation-tabs'
 import { useClusterContext } from '@/context/cluster-context'
+import { getEnvironmentColors } from '../utils/env-colors'
+import { getClusterName, getEnvironment, getHealthCondition } from '../utils/cluster'
 
 interface ClusterHeaderProps {
   className?: string
   tabs: navigationItemObject[]
 }
 
-export const envBgColors: Record<string, string[]> = {
-  prod: ['bg-red-500', 'dark:bg-red-600'],
-  qa: ['bg-yellow-500', 'dark:bg-yellow-600'],
-  dev: ['bg-blue-500', 'dark:bg-blue-600'],
-  test: ['bg-emerald-500', 'dark:bg-emerald-600'],
-  mgmt: ['bg-red-500', 'dark:bg-red-600'],
-  kurs: ['bg-orange-400', 'dark:bg-orange-500'],
+interface ClusterStatusInfoProps {
+  environment: string
+  healthStatus?: string
+}
+
+export const ClusterStatusInfo = ({ environment, healthStatus }: ClusterStatusInfoProps) => {
+  return (
+    <div className='flex flex-col font-bold xl:font-normal'>
+      <p className='text-lg flex'>
+        <span className='hidden xl:block'>Environment:&nbsp;</span>
+        <span className='hidden md:block'>{environment?.toUpperCase() ?? 'UNKNOWN'}</span>
+      </p>
+      <p className='text-lg flex'>
+        <span className='hidden xl:block'>Status:&nbsp;</span>
+        <span className='hidden md:block'>
+          {healthStatus ? healthStatus.charAt(0).toUpperCase() + healthStatus.slice(1) : 'Unknown'}
+        </span>
+      </p>
+    </div>
+  )
 }
 
 export const ClusterHeader = ({ className, tabs }: ClusterHeaderProps) => {
   const { cluster } = useClusterContext()
 
-  const environment = cluster?.kubernetescluster?.spec?.data?.environment ?? 'unknown'
-  const [lightmode, darkmode] = envBgColors[environment] || ['bg-gray-500', 'dark:bg-gray-600']
-  const healthCondition = cluster?.kubernetescluster?.status?.conditions?.find(
-    (condition) => condition.type === 'ready'
-  )
-  const clusterId = cluster?.kubernetescluster?.spec?.data?.clusterId
-  const clusterName: string = cluster?.metadata?.name ? String(cluster.metadata.name) : (clusterId ?? 'Unknown Cluster')
+  const environment = getEnvironment(cluster)
+  const [lightmode, darkmode] = getEnvironmentColors(environment)
+  const healthCondition = getHealthCondition(cluster)
+  const clusterName = getClusterName(cluster)
 
   return (
     <div>
@@ -54,20 +66,7 @@ export const ClusterHeader = ({ className, tabs }: ClusterHeaderProps) => {
         >
           <div className='flex items-center gap-4'>
             <HealthCircle className='w-20 h-20 hidden lg:block' healthCondition={healthCondition} />
-            <div className='flex flex-col font-bold xl:font-normal'>
-              <p className='text-lg flex'>
-                <span className='hidden xl:block'>Environment:&nbsp;</span>
-                <span className='hidden md:block'>{environment?.toUpperCase() ?? 'UNKNOWN'}</span>
-              </p>
-              <p className='text-lg flex'>
-                <span className='hidden xl:block'>Status:&nbsp;</span>
-                <span className='hidden md:block'>
-                  {healthCondition?.status
-                    ? healthCondition.status.charAt(0).toUpperCase() + healthCondition.status.slice(1)
-                    : 'Unknown'}
-                </span>
-              </p>
-            </div>
+            <ClusterStatusInfo environment={environment} healthStatus={healthCondition?.status} />
           </div>
         </div>
       </div>
