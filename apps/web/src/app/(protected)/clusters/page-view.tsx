@@ -27,32 +27,32 @@
 
 'use client'
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useRouter, usePathname } from 'next/navigation'
-import Link from 'next/link'
-import type { KubernetesCluster } from '@ror/js-api-client'
-import { User } from 'next-auth'
-import { CodeSnippet } from '@ror/react'
-import { ClusterCard } from '@/features/cluster/components/cluster-card'
-import { ClustersTable } from './cluster-table'
-import { ClusterSearch } from '@/features/cluster/components/cluster-search'
-import { SortSelect } from '@/components/ui/sort-select'
-import { TabsViewSwitcher } from '@/components/ui/tabs-view-switcher'
-import { Toggle } from '@/components/shadcn/toggle'
 import { Button } from '@/components/shadcn/button'
-import MultipleSelector, { Option } from '@/components/shadcn/multiselect'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/shadcn/dropdown-menu'
-import { ArrowDownNarrowWide, ArrowDownWideNarrow, Download, Funnel, RotateCw } from 'lucide-react'
-import { cn } from '@/utils/clsxm'
-import type { WorkSheet } from 'xlsx'
+import MultipleSelector, { Option } from '@/components/shadcn/multiselect'
+import { Toggle } from '@/components/shadcn/toggle'
 import { NotReadyMessage } from '@/components/ui/not-ready-message'
-import { loadMoreClusters } from '@/utils/cluster-actions'
+import { SortSelect } from '@/components/ui/sort-select'
+import { TabsViewSwitcher } from '@/components/ui/tabs-view-switcher'
+import { ClusterCard } from '@/features/cluster/components/cluster-card'
+import { ClusterSearch } from '@/features/cluster/components/cluster-search'
+import { ClustersTable } from '@/features/cluster/components/cluster-table'
 import { ClusterCardDisplayData } from '@/features/cluster/types/display-data'
+import { cn } from '@/utils/clsxm'
+import { loadMoreClusters } from '@/utils/cluster-actions'
+import type { KubernetesCluster } from '@ror/js-api-client'
+import { CodeSnippet } from '@ror/react'
+import { ArrowDownNarrowWide, ArrowDownWideNarrow, Download, Funnel, RotateCw } from 'lucide-react'
+import { User } from 'next-auth'
+import Link from 'next/link'
+import { usePathname, useRouter } from 'next/navigation'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import type { WorkSheet } from 'xlsx'
 
 interface Params {
   view?: 'grid' | 'list'
