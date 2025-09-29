@@ -308,3 +308,11 @@ export const getRormetaTags = (cluster: KubernetesCluster): ServiceTag[] => clus
  */
 export const getNodePools = (cluster: KubernetesCluster) =>
   cluster?.kubernetescluster?.spec?.topology?.workers?.nodePools || []
+
+/**
+ * Generates a unique key string for an array of Kubernetes clusters by concatenating their IDs.
+ *
+ * @param clusters - An array of `KubernetesCluster` objects.
+ * @returns A string representing the concatenated cluster IDs, separated by a pipe (`|`).
+ */
+export const getClustersKey = (clusters: KubernetesCluster[]) => clusters.map(getClusterId).join('|')
