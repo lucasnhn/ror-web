@@ -3,9 +3,8 @@ import * as React from 'react'
 import { cn } from '@/utils/clsxm'
 import { User } from 'next-auth'
 import type { VirtualMachine } from '@/app/(protected)/vms/interfaces'
-import { envBgColors } from '../cluster/cluster-header'
-import { HealthCircle } from '../cluster/health-circle'
-import { env } from 'process'
+import Link from 'next/link'
+import { hostname } from 'os'
 
 function Card({ className, ...props }: React.ComponentProps<'div'>) {
   return (
@@ -72,6 +71,7 @@ const VMCard = ({ className, user, vm, vmDisplayData }: VMCardProps) => {
   const vmNetworks = vm.virtualmachine?.status?.networks
 
   const vmName = vmOs?.name
+  const vmHostname = vmOs?.hostname
   const vmId = vmOs?.id
   const operatingSystemId = vmOs?.id
   const powerstate = vmOs?.powerstate
@@ -83,75 +83,83 @@ const VMCard = ({ className, user, vm, vmDisplayData }: VMCardProps) => {
   const envColor = vmEnvBgColors[powerstate ?? 'undefined'] ?? vmEnvBgColors['undefined']
 
   return (
-    <Card
-      className={cn(
-        'group w-sm min-w-64 pt-0 hover:bg-[#ededed] dark:hover:bg-neutral-800 hover:cursor-pointer @vm vm',
-        className
-      )}
-      role='button'
-      tabIndex={0}
-      onKeyDown={(e) => e.key === 'Enter' && localStorage.setItem('selectedVm', JSON.stringify(vm))}
-    >
-      <CardHeader className='m-0 mb-7 p-0 w-full relative'>
-        <CardTitle className={cn('text-2xl rounded-t-xl px-6 py-2 flex', envColor[0], envColor[1])}>
-          {(vmName || 'Unnamed VM') as string}
-          <span
-            className={cn(
-              'ml-auto flex items-center gap-1 text-xs font-normal normal-case px-2 py-1 rounded-full',
-              powerStatusBg[powerstate ?? 'undefined'][0]
+    <Link href={`/vms/${vmHostname}`} onClick={() => localStorage.setItem('selectedVm', JSON.stringify(vm))}>
+      <Card
+        className={cn(
+          'group w-sm min-w-64 pt-0 hover:bg-[#ededed] dark:hover:bg-neutral-800 hover:cursor-pointer @vm vm',
+          className
+        )}
+        role='button'
+        tabIndex={0}
+        onKeyDown={(e) => e.key === 'Enter' && localStorage.setItem('selectedVm', JSON.stringify(vm))}
+      >
+        <CardHeader className='m-0 mb-7 p-0 w-full relative'>
+          <CardTitle className={cn('text-2xl rounded-t-xl px-6 py-2 flex', envColor[0], envColor[1])}>
+            {(vmName || 'Unnamed VM') as string}
+            <span
+              className={cn(
+                'ml-auto flex items-center gap-1 text-xs font-normal normal-case px-2 py-1 rounded-full',
+                powerStatusBg[powerstate ?? 'undefined'][0]
+              )}
+            >
+              <span className='font-mono font-bold text-card-foreground'>{powerstate || 'N/A'}</span>
+            </span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className='text-sm flex flex-col gap-3'>
+          <section className='grid grid-cols-2 gap-4'>
+            {vmDisplayData.includes('os_hostName') && (
+              <div>
+                <p className='font-bold'>Host Name</p>
+                <p>{vmHostname || 'N/A'}</p>
+              </div>
             )}
-          >
-            <span className='font-mono font-bold text-card-foreground'>{powerstate || 'N/A'}</span>
-          </span>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className='text-sm flex flex-col gap-3'>
-        <section className='grid grid-cols-2 gap-4'>
-          {vmDisplayData.includes('os_id') && (
-            <div>
-              <p className='font-bold'>ID</p>
-              <p>{vmId || 'N/A'}</p>
-            </div>
-          )}
-          {vmDisplayData.includes('operatingSystemId') && (
-            <div>
-              <p className='font-bold'>Operating System ID</p>
-              <p>{operatingSystemId || 'N/A'}</p>
-            </div>
-          )}
-          {vmDisplayData.includes('powerState') && (
-            <div>
-              <p className='font-bold'>Power State</p>
-              <p>{powerstate || 'N/A'}</p>
-            </div>
-          )}
-          {vmDisplayData.includes('os_architecture') && (
-            <div>
-              <p className='font-bold'>Architecture</p>
-              <p>{osArchitecture || 'N/A'}</p>
-            </div>
-          )}
-          {vmDisplayData.includes('os_family') && (
-            <div>
-              <p className='font-bold'>OS Family</p>
-              <p>{osFamily || 'N/A'}</p>
-            </div>
-          )}
-          {vmDisplayData.includes('os_version') && (
-            <div>
-              <p className='font-bold'>OS Version</p>
-              <p>{osVersion || 'N/A'}</p>
-            </div>
-          )}
-          {vmDisplayData.includes('os_toolVersion') && (
-            <div>
-              <p className='font-bold'>Tools Version</p>
-              <p>{osToolVersion || 'N/A'}</p>
-            </div>
-          )}
-        </section>
-      </CardContent>
-    </Card>
+            {vmDisplayData.includes('os_id') && (
+              <div>
+                <p className='font-bold'>ID</p>
+                <p>{vmId || 'N/A'}</p>
+              </div>
+            )}
+            {vmDisplayData.includes('operatingSystemId') && (
+              <div>
+                <p className='font-bold'>Operating System ID</p>
+                <p>{operatingSystemId || 'N/A'}</p>
+              </div>
+            )}
+            {vmDisplayData.includes('powerState') && (
+              <div>
+                <p className='font-bold'>Power State</p>
+                <p>{powerstate || 'N/A'}</p>
+              </div>
+            )}
+            {vmDisplayData.includes('os_architecture') && (
+              <div>
+                <p className='font-bold'>Architecture</p>
+                <p>{osArchitecture || 'N/A'}</p>
+              </div>
+            )}
+            {vmDisplayData.includes('os_family') && (
+              <div>
+                <p className='font-bold'>OS Family</p>
+                <p>{osFamily || 'N/A'}</p>
+              </div>
+            )}
+            {vmDisplayData.includes('os_version') && (
+              <div>
+                <p className='font-bold'>OS Version</p>
+                <p>{osVersion || 'N/A'}</p>
+              </div>
+            )}
+            {vmDisplayData.includes('os_toolVersion') && (
+              <div>
+                <p className='font-bold'>Tools Version</p>
+                <p>{osToolVersion || 'N/A'}</p>
+              </div>
+            )}
+          </section>
+        </CardContent>
+      </Card>
+    </Link>
   )
 }
 

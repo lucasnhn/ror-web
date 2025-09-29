@@ -21,7 +21,7 @@ export default async function VMPage({
   const filters = sp.filters === 'open' ? 'open' : undefined
   const skip = (page - 1) * limit
 
-  const vms = mockVms.resources || []
+  const vms = mockVms.resources || [] //mocked data
   const params = { page, limit, sort, order, view, filters, skip }
 
   return (

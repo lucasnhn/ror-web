@@ -24,11 +24,11 @@ const getVMTableColumns = (user?: User, selectedDisplayData?: VMCardData[]): Dat
       enableSorting: true,
       sortingFn: 'text',
       cell: (info) => {
-        const hostname = String(info.getValue() ?? '') // Now gets the actual hostname
+        const hostname = String(info.getValue() ?? '')
         const vmID = info.row.original.virtualmachine?.status?.operatingsystem?.hostname ?? ''
         return (
-          <Link href={routes.app.cluster.getHref(vmID)} className='pr-2 text-blue-600 dark:text-blue-500 underline'>
-            {hostname} {/* Now displays the actual hostname */}
+          <Link href={`/vms/${hostname}`} className='pr-2 text-blue-600 dark:text-blue-500 underline'>
+            {vmID}
           </Link>
         )
       },
