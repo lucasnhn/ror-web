@@ -37,7 +37,7 @@ export function useInfiniteLoader<T>({
   sort,
   pageSize = 50,
   getItemId,
-  getItemsKey = () => '',
+  getItemsKey = (items: T[]) => JSON.stringify(items.map(getItemId)),
 }: UseInfiniteLoaderProps<T>) {
   const [items, setItems] = useState<T[]>(initial)
   const [isLoading, setIsLoading] = useState(false)
