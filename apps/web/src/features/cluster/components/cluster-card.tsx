@@ -62,6 +62,16 @@ interface ClusterCardProps {
   displayData?: ClusterCardDisplayData[]
 }
 
+/**
+ * Renders a card displaying detailed information about a Kubernetes cluster.
+ *
+ * @param className - Optional CSS class for custom styling.
+ * @param user - The current user object, used for login code snippets.
+ * @param cluster - The cluster object containing all relevant data.
+ * @param displayData - Array of keys specifying which data fields to display on the card.
+ *
+ * @returns A clickable card component linking to the cluster details page.
+ */
 const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps) => {
   const clusterId = getClusterId(cluster)
   const clusterName = getClusterName(cluster)

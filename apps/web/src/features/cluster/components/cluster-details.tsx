@@ -31,49 +31,27 @@ import {
   getVersions,
   getWorkspace,
 } from '../utils/cluster'
+import { standardLayouts } from '../config/cluster-details-layouts'
 
 const ResponsiveGridLayout = WidthProvider(Responsive)
 
-const standardLayouts: Layouts = {
-  lg: [
-    { i: 'memory', x: 0, y: 0, w: 6, h: 8, minW: 5, minH: 8 },
-    { i: 'tools', x: 6, y: 0, w: 6, h: 8, minW: 4, minH: 6 },
-    { i: 'info', x: 12, y: 0, w: 12, h: 8, minW: 9, minH: 8 },
-    { i: 'versions', x: 24, y: 0, w: 6, h: 8, minW: 5, minH: 7 },
-    { i: 'observed', x: 30, y: 0, w: 6, h: 8, minW: 5, minH: 5 },
-    { i: 'prices', x: 36, y: 0, w: 6, h: 8, minW: 5, minH: 4 },
-  ],
-  md: [
-    { i: 'memory', x: 0, y: 0, w: 6, h: 8, minW: 5, minH: 8 },
-    { i: 'tools', x: 6, y: 0, w: 6, h: 8, minW: 4, minH: 6 },
-    { i: 'info', x: 12, y: 0, w: 12, h: 8, minW: 9, minH: 8 },
-    { i: 'versions', x: 0, y: 8, w: 6, h: 8, minW: 4, minH: 7 },
-    { i: 'observed', x: 6, y: 8, w: 6, h: 8, minW: 5, minH: 5 },
-    { i: 'prices', x: 12, y: 8, w: 6, h: 8, minW: 4, minH: 4 },
-  ],
-  sm: [
-    { i: 'memory', x: 0, y: 0, w: 6, h: 8, minW: 5, minH: 8 },
-    { i: 'tools', x: 6, y: 0, w: 6, h: 8, minW: 4, minH: 6 },
-    { i: 'info', x: 0, y: 8, w: 12, h: 8, minW: 9, minH: 8 },
-    { i: 'versions', x: 0, y: 16, w: 6, h: 8, minW: 4, minH: 7 },
-    { i: 'observed', x: 6, y: 16, w: 6, h: 8, minW: 4, minH: 5 },
-    { i: 'prices', x: 0, y: 24, w: 6, h: 8, minW: 4, minH: 4 },
-  ],
-  xs: [
-    { i: 'memory', x: 0, y: 0, w: 6, h: 8, minW: 4, minH: 8 },
-    { i: 'tools', x: 0, y: 8, w: 6, h: 8, minW: 4, minH: 6 },
-    { i: 'info', x: 0, y: 16, w: 12, h: 8, minW: 9, minH: 8 },
-    { i: 'versions', x: 0, y: 24, w: 6, h: 8, minW: 4, minH: 7 },
-    { i: 'observed', x: 0, y: 32, w: 6, h: 8, minW: 4, minH: 5 },
-    { i: 'prices', x: 0, y: 40, w: 6, h: 8, minW: 4, minH: 4 },
-  ],
-}
-
+/**
+ * Props for the ClusterDetails component.
+ *
+ * @property {User} [user] - The user associated with the cluster, if available.
+ * @property {string} [className] - Optional CSS class name for custom styling.
+ */
 interface ClusterDetailsProps {
   user?: User
   className?: string
 }
 
+/**
+ * Displays detailed information about a cluster, including resources, metadata, tools, versions, and pricing.
+ *
+ * @param user - The current user object, used for personalized cluster access commands.
+ * @param className - Optional CSS class for custom styling.
+ */
 export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
   const { cluster } = useClusterContext()
   const [layoutKey, setLayoutKey] = useState(0)

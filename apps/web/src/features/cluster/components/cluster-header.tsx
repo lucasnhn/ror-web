@@ -8,16 +8,34 @@ import { useClusterContext } from '@/context/cluster-context'
 import { getEnvironmentColors } from '../utils/env-colors'
 import { getClusterName, getEnvironment, getHealthCondition } from '../utils/cluster'
 
+/**
+ * Props for the ClusterHeader component.
+ *
+ * @property {string} [className] - Optional CSS class name to apply to the header.
+ * @property {navigationItemObject[]} tabs - Array of navigation items to display as tabs in the header.
+ */
 interface ClusterHeaderProps {
   className?: string
   tabs: navigationItemObject[]
 }
 
+/**
+ * Props for the ClusterStatusInfo component.
+ *
+ * @property environment - The name of the environment for the cluster.
+ * @property healthStatus - Optional health status of the cluster.
+ */
 interface ClusterStatusInfoProps {
   environment: string
   healthStatus?: string
 }
 
+/**
+ * Displays environment and health status information for a cluster.
+ *
+ * @param environment - The name of the environment.
+ * @param healthStatus - The current health status of the cluster.
+ */
 export const ClusterStatusInfo = ({ environment, healthStatus }: ClusterStatusInfoProps) => {
   return (
     <div className='flex flex-col font-bold xl:font-normal'>
@@ -35,6 +53,15 @@ export const ClusterStatusInfo = ({ environment, healthStatus }: ClusterStatusIn
   )
 }
 
+/**
+ * Renders the header section for a cluster, displaying its name, environment status, health condition,
+ * and navigation tabs. The header adapts its background and styles based on the cluster's environment.
+ *
+ * @param className - Optional additional CSS classes for the header container.
+ * @param tabs - Array of navigation tab items to be rendered below the cluster name.
+ *
+ * @returns The cluster header component with styled background, cluster information, and navigation tabs.
+ */
 export const ClusterHeader = ({ className, tabs }: ClusterHeaderProps) => {
   const { cluster } = useClusterContext()
 
