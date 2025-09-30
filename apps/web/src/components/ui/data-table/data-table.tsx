@@ -127,13 +127,11 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
                 {row.getIsExpanded() && props.renderExpandedRow?.(row)}
               </Fragment>
             ))}
-            {props.hasMore && (
-              <TableRow>
-                <TableCell colSpan={numberOfColumns}>
-                  <div ref={props.sentinelRef} className='h-4' />
-                </TableCell>
-              </TableRow>
-            )}
+            <TableRow style={{ display: props.hasMore ? undefined : 'none' }}>
+              <TableCell colSpan={numberOfColumns}>
+                <div ref={props.sentinelRef} className='h-4' />
+              </TableCell>
+            </TableRow>
 
             {props.isLoading && (
               <TableRow>
