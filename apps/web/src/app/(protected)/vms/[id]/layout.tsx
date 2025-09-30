@@ -4,6 +4,7 @@ import { Fragment, ReactNode, useEffect, useState } from 'react'
 import { routes } from '@/config/routes'
 import { NotReadyMessage } from '@/components/ui/not-ready-message'
 import { VMProvider } from '@/context/vm-context'
+import { VMHeader } from '@/components/ui/vm/vm-header'
 
 interface VmPageLayoutProps {
   params: Promise<{
@@ -12,12 +13,12 @@ interface VmPageLayoutProps {
   children: ReactNode
 }
 
-export interface NavigationItemObject {
+export interface navigationItemObject {
   label: string
   href: string
 }
 
-const createTabNavigationItems = (vmId: string): NavigationItemObject[] => {
+const createTabNavigationItems = (vmId: string): navigationItemObject[] => {
   return [
     {
       label: 'Details',
@@ -33,7 +34,7 @@ const createTabNavigationItems = (vmId: string): NavigationItemObject[] => {
     },
     {
       label: 'Raw Data',
-      href: `/vms/${vmId}/raw`,
+      href: `/vms/${vmId}/raw_data`,
     },
   ]
 }
@@ -55,14 +56,13 @@ export default function VmPageLayout({ params, children }: VmPageLayoutProps) {
   }
 
   const tabs = createTabNavigationItems(id)
-  const VMContextProvider = { vm }
+  const VMContextValue = { vm }
 
   return (
-    <VMProvider value={vm}>
+    <VMProvider value={VMContextValue}>
       <Fragment>
         <div className='border-b'>
-          Kommer header her etterhvert
-          {/* Lag en VMHeader under ui/vm/vm-header */}
+          <VMHeader tabs={tabs} />
         </div>
         <NotReadyMessage className='mx-6 mt-8'>
           The VM page is still under development.. Data and functionality is missing, but they are coming soon.
