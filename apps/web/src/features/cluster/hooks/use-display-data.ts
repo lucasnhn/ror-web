@@ -14,7 +14,7 @@ export function useDisplayData() {
 
   useEffect(() => {
     try {
-      const stored = localStorage.getItem('selectedClusterDisplayData')
+      const stored = localStorage.getItem('selectedDisplayData')
       if (stored) {
         const parsed = JSON.parse(stored) as ClusterCardDisplayData[]
         setSelectedDisplayData((prev) => {
@@ -23,7 +23,7 @@ export function useDisplayData() {
         })
       }
     } catch (error) {
-      console.error('Error parsing selectedClusterDisplayData from localStorage:', error)
+      console.error('Error parsing selectedDisplayData from localStorage:', error)
     }
   }, [])
 
@@ -34,7 +34,7 @@ export function useDisplayData() {
         localStorage.setItem('selectedDisplayData', serialized)
       }
     } catch (error) {
-      console.error('Error saving selectedClusterDisplayData to localStorage:', error)
+      console.error('Error saving selectedDisplayData to localStorage:', error)
     }
   }, [selectedDisplayData])
 
