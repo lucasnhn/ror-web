@@ -316,3 +316,19 @@ export const getNodePools = (cluster: KubernetesCluster) =>
  * @returns A string representing the concatenated cluster IDs, separated by a pipe (`|`).
  */
 export const getClustersKey = (clusters: KubernetesCluster[]) => clusters.map(getClusterId).join('|')
+
+/**
+ * Retrieves the namespace from the metadata of a given Kubernetes cluster.
+ *
+ * @param cluster - The Kubernetes cluster object containing metadata.
+ * @returns The namespace string associated with the cluster.
+ */
+export const getClusterNamespace = (cluster: KubernetesCluster): string | undefined => cluster.metadata.namespace
+
+/**
+ * Retrieves the creation timestamp from the metadata of a Kubernetes cluster.
+ *
+ * @param cluster - The Kubernetes cluster object containing metadata.
+ * @returns The creation timestamp of the cluster.
+ */
+export const getCreationTimestamp = (cluster: KubernetesCluster) => cluster.metadata.creationTimestamp
