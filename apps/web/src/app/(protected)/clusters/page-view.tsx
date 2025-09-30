@@ -19,31 +19,32 @@
  *   • <ClustersTable /> / <ClusterCard /> — list and grid cluster displays
  *
  * Developer Notes:
- * - Pagination and limit settings are temporary (#350) and will be replaced by lazy loading
  * - URL helpers (`buildToggledParams`, `buildSortParams`) standardize query parameter management
  * - All cluster-related UI logic is centralized in this component for maintainability
  */
 
 'use client'
 import { Option } from '@/components/shadcn/multiselect'
+import { DataTable } from '@/components/ui/data-table'
 import { NotReadyMessage } from '@/components/ui/not-ready-message'
 import { ClusterCard } from '@/features/cluster/components/cluster-card'
 import { ClusterControls } from '@/features/cluster/components/cluster-controls'
 import { ClusterFilterSection } from '@/features/cluster/components/cluster-filter-section'
-import { ClustersTable } from '@/features/cluster/components/clusters-table'
 import { displayDataOptions } from '@/features/cluster/config/page-view-options'
 import { useClusterFilters } from '@/features/cluster/hooks/use-cluster-filters'
 import { useClusterSorting } from '@/features/cluster/hooks/use-cluster-sorting'
 import { useDisplayData } from '@/features/cluster/hooks/use-display-data'
-import { useInfiniteClusters } from '@/features/cluster/hooks/use-infinite-clusters'
 import { ClusterCardDisplayData } from '@/features/cluster/types/display-data'
 import { getClusterId, getClustersKey } from '@/features/cluster/utils/cluster'
+import { useInfiniteLoader } from '@/hooks/use-infinite-loader'
 import { cn } from '@/utils/clsxm'
+import { loadMoreClusters } from '@/utils/cluster-actions'
 import { buildSortParams, buildToggledParams } from '@/utils/url-helpers'
 import type { KubernetesCluster } from '@ror/js-api-client'
 import { User } from 'next-auth'
 import { usePathname, useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { getClustersTableColumns } from '@/features/cluster/components/clusters-columns'
 
 /**
  * Represents the query parameters for the clusters page view.
@@ -94,13 +95,6 @@ interface PageViewProps {
  * @returns The rendered cluster page view, including controls, filters, and either a grid or table of clusters.
  */
 export const PageView = ({ className, user, clusters, params }: PageViewProps) => {
-  // ---------- Should be removed (switched for lazy loading), issue #350 ----------
-  const DEFAULT_LIMIT = 3
-  const DEFAULT_PAGE = 1
-  const limit = Number(params.limit) || DEFAULT_LIMIT
-  const page = Number(params.page) || DEFAULT_PAGE
-  // ---------------------------------------------------------------------------
-
   // Router and pathname
   const router = useRouter()
   const pathname = usePathname()
@@ -109,9 +103,16 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
   const filtersOpen = params.filters === 'open'
 
   // Infinite loading of clusters
-  const { items, sentinelRef, isLoading, hasMore } = useInfiniteClusters({
+  const { items, sentinelRef, isLoading, hasMore } = useInfiniteLoader<KubernetesCluster>({
     initial: clusters,
     sort: params.sort,
+    pageSize: 50,
+    getItemId: getClusterId,
+    getItemsKey: getClustersKey,
+    loadMore: async (offset, limit) => {
+      const res = await loadMoreClusters({ offset, limit, sort: params.sort })
+      return { items: res.items ?? [], hasMore: res.hasMore }
+    },
   })
 
   // Clusters valid after filtering and searching
@@ -141,13 +142,6 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
       })
     }
   }, [safeItems])
-
-  // ---------- Should be removed (switched for lazy loading), issue #350 ----------
-  const paginationState = {
-    pageIndex: page - 1,
-    pageSize: limit,
-  }
-  // ---------------------------------------------------------------------------
 
   // Handle refresh (reset filters + display data + url)
   const clearUrl = useCallback(() => {
@@ -186,8 +180,6 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
     return sortedItems.filter((c) => ids.has(getClusterId(c)))
   }, [sortedItems, searchResults])
 
-  const pageCount = Math.ceil(filteredItems.length / limit)
-
   // Grid and table view
   const GridView = () => {
     return (
@@ -216,35 +208,12 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
 
   const TableView = () => {
     return (
-      <ClustersTable
-        key='table'
-        user={user}
-        data={(params.sort ? sortedItems : filteredItems)
-          .filter((c) =>
-            searchResults.some(
-              (sr) =>
-                sr.metadata?.name === c.metadata?.name ||
-                sr.kubernetescluster?.spec?.data?.clusterId === c.kubernetescluster?.spec?.data?.clusterId
-            )
-          )
-          // ---------- Should be removed (switched for lazy loading), issue #350 ----------
-          .slice(
-            paginationState.pageIndex * paginationState.pageSize,
-            (paginationState.pageIndex + 1) * paginationState.pageSize
-          )}
-        pagination={paginationState}
-        totalCount={
-          (params.sort ? sortedItems : filteredItems).filter((c) =>
-            searchResults.some(
-              (sr) =>
-                sr.metadata?.name === c.metadata?.name ||
-                sr.kubernetescluster?.spec?.data?.clusterId === c.kubernetescluster?.spec?.data?.clusterId
-            )
-          ).length
-        }
-        pageCount={pageCount}
-        // ---------------------------------------------------------------------------
-        selectedDisplayData={selectedDisplayData}
+      <DataTable
+        data={displayedItems}
+        columns={getClustersTableColumns(user, selectedDisplayData)}
+        hasMore={hasMore}
+        isLoading={isLoading}
+        sentinelRef={sentinelRef}
       />
     )
   }
