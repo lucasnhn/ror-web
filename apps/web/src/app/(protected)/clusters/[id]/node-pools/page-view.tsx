@@ -266,7 +266,6 @@ export function PageView({ id, initialNodes }: PageViewProps) {
         <DataTable
           columns={columns}
           data={data}
-          totalCount={data.length}
           expandable
           renderExpandedRow={(row) => (
             <TableRow className='contents'>
