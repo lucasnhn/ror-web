@@ -1,12 +1,27 @@
 import { KubernetesCluster } from '@ror/js-api-client'
 import { useMemo } from 'react'
 
+/**
+ * Props for the `useClusterSorting` hook.
+ *
+ * @property clusters - An array of KubernetesCluster objects to be sorted.
+ * @property sort - Optional. The field name to sort the clusters by.
+ * @property order - Optional. The sort order, either 'asc' for ascending or 'desc' for descending.
+ */
 interface UseClusterSortingProps {
   clusters: KubernetesCluster[]
   sort?: string
   order?: 'asc' | 'desc'
 }
 
+/**
+ * Hook for sorting a list of cluster objects based on a specified field and order.
+ *
+ * @param clusters - The array of cluster objects to be sorted.
+ * @param sort - The field name to sort by (e.g., 'clusterName', 'cpu', 'memory', etc.).
+ * @param order - The sort order, either 'asc' for ascending or 'desc' for descending.
+ * @returns A memoized array of clusters sorted according to the provided field and order.
+ */
 export function useClusterSorting({ clusters, sort, order }: UseClusterSortingProps) {
   return useMemo(() => {
     if (!sort) return clusters

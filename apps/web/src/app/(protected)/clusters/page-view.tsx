@@ -45,6 +45,16 @@ import { buildSortParams, buildToggledParams } from '@/utils/url-helpers'
 import { ClusterFilterSection } from '@/features/cluster/components/cluster-filter-section'
 import { ClusterControls } from '@/features/cluster/components/cluster-controls'
 
+/**
+ * Represents the query parameters for the clusters page view.
+ *
+ * @property view - The display mode of the clusters, either 'grid' or 'list'.
+ * @property page - The current page number for pagination.
+ * @property limit - The maximum number of items per page.
+ * @property sort - The field by which to sort the clusters.
+ * @property order - The sort direction, either 'asc' (ascending) or 'desc' (descending).
+ * @property filters - A string representing applied filters.
+ */
 interface Params {
   view?: 'grid' | 'list'
   page?: number
@@ -54,6 +64,14 @@ interface Params {
   filters?: string
 }
 
+/**
+ * Props for the PageView component.
+ *
+ * @property {string} [className] - Optional CSS class name for styling the component.
+ * @property {User} user - The current user viewing the page.
+ * @property {KubernetesCluster[]} clusters - List of Kubernetes clusters to display.
+ * @property {Params} params - Route or query parameters relevant to the page view.
+ */
 interface PageViewProps {
   className?: string
   user: User
@@ -83,41 +101,35 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
   const page = Number(params.page) || DEFAULT_PAGE
   // ---------------------------------------------------------------------------
 
-  const filtersOpen = params.filters === 'open'
+  // Router and pathname
   const router = useRouter()
   const pathname = usePathname()
 
+  // Filter state
+  const filtersOpen = params.filters === 'open'
+
+  // Infinite loading of clusters
   const { items, sentinelRef, isLoading, hasMore } = useInfiniteClusters({
     initial: clusters,
     sort: params.sort,
   })
 
+  // Clusters valid after filtering and searching
   const safeItems = useMemo(
     () => items.filter((c) => c.kubernetescluster?.spec?.data && typeof c.kubernetescluster.spec.data === 'object'),
     [items]
   )
 
+  // Cluster filters, display data and search result
   const { selectedFilters, setSelectedFilters, filteredItems, resetFilters } = useClusterFilters(safeItems)
-
   const { selectedDisplayData, setSelectedDisplayData } = useDisplayData()
-  const [searchResults, setSearchResults] = useState<KubernetesCluster[]>(safeItems)
+  const [searchResults, setSearchResults] = useState(safeItems)
 
-  // —— stable, equality-guarded handlers (avoid parent setState loops)
-  const onSearchResultsChange = useCallback((res: KubernetesCluster[]) => {
-    setSearchResults((prev) => {
-      if (prev.length === res.length) {
-        const a = getClustersKey(prev)
-        const b = getClustersKey(res)
-        if (a === b) return prev
-      }
-      return res
-    })
-  }, [])
-
+  // Handler for display data changes
   const onDisplayChange = (selected: Option[]) =>
     setSelectedDisplayData(selected.map((i) => i.value as ClusterCardDisplayData))
 
-  // sync safeItems → searchResults only if content differs
+  // Sync safeItems -> searchResults only if content differs
   const lastSafeKeyRef = useRef('')
   useEffect(() => {
     const nextKey = getClustersKey(safeItems)
@@ -137,6 +149,7 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
   }
   // ---------------------------------------------------------------------------
 
+  // Handle refresh (reset filters + display data + url)
   const clearUrl = useCallback(() => {
     router.replace(pathname, { scroll: false })
   }, [router, pathname])
@@ -147,7 +160,7 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
     clearUrl()
   }, [resetFilters, setSelectedDisplayData, clearUrl])
 
-  // ---------- Toggle/Sort params ----------
+  // Toggle/Sort params
   const toggleParams = useMemo(
     () =>
       buildToggledParams(
@@ -164,7 +177,7 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
     [params]
   )
 
-  // ----------  Sorting ----------
+  // Sorting
   const sortedItems = useClusterSorting({ clusters: filteredItems, sort: params.sort, order: params.order })
 
   const displayedItems = useMemo(() => {
@@ -175,6 +188,7 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
 
   const pageCount = Math.ceil(filteredItems.length / limit)
 
+  // Grid and table view
   const GridView = () => {
     return (
       <div>
@@ -243,7 +257,7 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
             safeItems={safeItems}
             selectedDisplayData={selectedDisplayData}
             onDisplayChange={onDisplayChange}
-            onSearchResultsChange={onSearchResultsChange}
+            onSearchResultsChange={setSearchResults}
             handleRefreshFilters={handleRefreshFilters}
             toggleParams={toggleParams}
             toggleSortParams={toggleSortParams}

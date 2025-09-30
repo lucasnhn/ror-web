@@ -93,6 +93,12 @@ const autosizeCols = (rows: Array<Record<string, unknown>>) => {
   })
 }
 
+/**
+ * Exports an array of Kubernetes clusters as a .csv file and triggers a download.
+ *
+ * @param clusters - The array of `KubernetesCluster` objects to export.
+ * @param filename - The desired filename for the exported CSV file.
+ */
 export const exportClustersAsCSV = (clusters: KubernetesCluster[], filename: string) => {
   try {
     const rows = clusters.map(exportableFromCluster)
@@ -104,6 +110,14 @@ export const exportClustersAsCSV = (clusters: KubernetesCluster[], filename: str
   }
 }
 
+/**
+ * Exports an array of Kubernetes clusters as an .xlsx file and triggers a download.
+ *
+ * @param clusters - An array of `KubernetesCluster` objects to export.
+ * @param filename - The desired filename for the exported Excel file.
+ *
+ * @returns A promise that resolves when the export is complete.
+ */
 export const exportClustersAsExcel = async (clusters: KubernetesCluster[], filename: string) => {
   try {
     const rows = clusters.map(exportableFromCluster)

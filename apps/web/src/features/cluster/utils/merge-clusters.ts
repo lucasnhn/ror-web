@@ -11,6 +11,19 @@ import {
   getWorkspace,
 } from './cluster'
 
+/**
+ * Determines whether a given value is considered "empty".
+ *
+ * A value is considered empty if it is:
+ * - `null`
+ * - `undefined`
+ * - An empty string (`''`)
+ * - An empty array (`[]`)
+ * - An empty object (`{}`)
+ *
+ * @param value - The value to check for emptiness.
+ * @returns `true` if the value is empty, otherwise `false`.
+ */
 function isEmptyValue(value: unknown): boolean {
   if (value === null || value === undefined || value === '') return true
   if (Array.isArray(value)) return value.length === 0
@@ -18,6 +31,15 @@ function isEmptyValue(value: unknown): boolean {
   return false
 }
 
+/**
+ * Merges two arrays of cluster objects (`KubernetesCluster[]` and `Cluster[]`) by matching their names.
+ * For each cluster in `v2`, finds a corresponding cluster in `v1` with the same name (case-insensitive, trimmed),
+ * and merges their data using `mergeClusterData`.
+ *
+ * @param v2 - Array of `KubernetesCluster` objects to be merged.
+ * @param v1 - Array of `Cluster` objects to merge with.
+ * @returns An array of `KubernetesCluster` objects with merged data.
+ */
 export function mergeClustersByName(v2: KubernetesCluster[], v1: Cluster[]): KubernetesCluster[] {
   const v2Name = (c: KubernetesCluster) => c?.metadata?.name?.toLowerCase().trim() ?? ''
   const v1Name = (c: Cluster) => c?.clusterName?.toLowerCase().trim() ?? ''
@@ -28,6 +50,15 @@ export function mergeClustersByName(v2: KubernetesCluster[], v1: Cluster[]): Kub
   })
 }
 
+/**
+ * Merges data from a primary `KubernetesCluster` object with an optional secondary `Cluster` object.
+ * For each field, if the value in the primary object is considered empty (using `isEmptyValue`),
+ * the corresponding value from the secondary object is used. Otherwise, the value from the primary object is retained.
+ *
+ * @param primary - The main `KubernetesCluster` object whose data will be prioritized.
+ * @param secondary - An optional `Cluster` object providing fallback values for empty fields in the primary object.
+ * @returns A new `KubernetesCluster` object with merged data from both sources.
+ */
 function mergeClusterData(primary: KubernetesCluster, secondary?: Cluster): KubernetesCluster {
   if (!secondary) return primary
 

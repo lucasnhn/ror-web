@@ -3,12 +3,26 @@
 import MultipleSelector from '@/components/shadcn/multiselect'
 import { filterOptions } from '@/features/cluster/config/page-view-options'
 
+/**
+ * Props for the ClusterFilterSection component.
+ *
+ * @property {boolean} filtersOpen - Indicates whether the filter section is open.
+ * @property {Record<string, string[]>} selectedFilters - An object mapping filter names to arrays of selected values.
+ * @property {React.Dispatch<React.SetStateAction<Record<string, string[]>>>} setSelectedFilters - Function to update the selected filters state.
+ */
 interface ClusterFilterSectionProps {
   filtersOpen: boolean
   selectedFilters: Record<string, string[]>
   setSelectedFilters: React.Dispatch<React.SetStateAction<Record<string, string[]>>>
 }
 
+/**
+ * Renders a section for filtering clusters using multiple selectors.
+ *
+ * @param filtersOpen - Determines whether the filter section is visible.
+ * @param selectedFilters - An object mapping filter labels to their selected values.
+ * @param setSelectedFilters - Callback to update the selected filters.
+ */
 export const ClusterFilterSection = ({
   filtersOpen,
   selectedFilters,

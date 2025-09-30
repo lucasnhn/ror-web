@@ -19,6 +19,19 @@ import type { KubernetesCluster } from '@ror/js-api-client'
 import { ArrowDownNarrowWide, ArrowDownWideNarrow, Download, Funnel, RotateCw } from 'lucide-react'
 import Link from 'next/link'
 
+/**
+ * Props for the ClusterControls component.
+ *
+ * @property safeItems - Array of KubernetesCluster objects considered safe for display.
+ * @property selectedDisplayData - Array of ClusterCardDisplayData representing currently selected clusters.
+ * @property onDisplayChange - Callback invoked when the display selection changes, receiving the selected options.
+ * @property onSearchResultsChange - Callback invoked when search results change, receiving the resulting clusters.
+ * @property handleRefreshFilters - Function to refresh the applied filters.
+ * @property toggleParams - String representing parameters for toggling cluster display.
+ * @property toggleSortParams - Object containing sorting URL and direction, or null if not set.
+ * @property filtersOpen - Boolean indicating whether the filters panel is open.
+ * @property params - Object containing optional sorting parameter.
+ */
 interface ClusterControlsProps {
   safeItems: KubernetesCluster[]
   selectedDisplayData: ClusterCardDisplayData[]
@@ -33,6 +46,19 @@ interface ClusterControlsProps {
   }
 }
 
+/**
+ * Renders a set of controls for managing cluster data display, sorting, filtering, searching, and exporting.
+ *
+ * @param safeItems - The list of cluster items that are safe to display and export.
+ * @param selectedDisplayData - The currently selected display data options for cluster cards.
+ * @param onDisplayChange - Callback invoked when the display data selection changes.
+ * @param onSearchResultsChange - Callback invoked when the search results change.
+ * @param handleRefreshFilters - Callback to reset all filters to their default state.
+ * @param toggleParams - URL or parameters used to toggle the filter panel.
+ * @param toggleSortParams - Object containing URL and sorting direction for toggling sort order.
+ * @param filtersOpen - Boolean indicating whether the filter panel is open.
+ * @param params - Current parameters for sorting and filtering clusters.
+ */
 export const ClusterControls = ({
   safeItems,
   selectedDisplayData,
