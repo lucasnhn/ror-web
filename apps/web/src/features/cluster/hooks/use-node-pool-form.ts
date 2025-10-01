@@ -1,7 +1,7 @@
 'use client'
 
 import { nodePoolFormSchema, type NodePoolFormData } from '../utils/node-pool-form-schema'
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import type { KubernetesClusterNodePoolStatusType } from '@ror/js-api-client'
 import { createOrUpdateNodePoolAction } from '@/utils/node-pool-actions'
 import { toast } from 'sonner'
@@ -55,55 +55,61 @@ export function useNodePoolForm(
   })
 
   // --- Validation function ---
-  const validate = (isEditMode: boolean, id: string) => {
-    const data: NodePoolFormData = {
-      id,
-      name,
-      provider: isEditMode ? provider || undefined : provider,
-      version: isEditMode ? version || undefined : version,
-      machineClass: selectedPriceId,
-      replicas: nodeCount,
-      labels,
-      taints,
-    }
-
-    const result = nodePoolFormSchema.safeParse(data)
-
-    if (!result.success) {
-      const newErrors = {
-        name: !!result.error.formErrors.fieldErrors.name,
-        provider: !!result.error.formErrors.fieldErrors.provider,
-        version: !!result.error.formErrors.fieldErrors.version,
-        class: !!result.error.formErrors.fieldErrors.machineClass,
+  const validate = useCallback(
+    (isEditMode: boolean, id: string) => {
+      const data: NodePoolFormData = {
+        id,
+        name,
+        provider: isEditMode ? provider || undefined : provider,
+        version: isEditMode ? version || undefined : version,
+        machineClass: selectedPriceId,
+        replicas: nodeCount,
+        labels,
+        taints,
       }
-      setErrors(newErrors)
-      return { valid: false, data: null }
-    }
 
-    setErrors({ name: false, provider: false, version: false, class: false })
-    return { valid: true, data: result.data }
-  }
+      const result = nodePoolFormSchema.safeParse(data)
+
+      if (!result.success) {
+        const newErrors = {
+          name: !!result.error.formErrors.fieldErrors.name,
+          provider: !!result.error.formErrors.fieldErrors.provider,
+          version: !!result.error.formErrors.fieldErrors.version,
+          class: !!result.error.formErrors.fieldErrors.machineClass,
+        }
+        setErrors(newErrors)
+        return { valid: false, data: null }
+      }
+
+      setErrors({ name: false, provider: false, version: false, class: false })
+      return { valid: true, data: result.data }
+    },
+    [name, provider, version, selectedPriceId, nodeCount, labels, taints] // dependencies used inside validate
+  )
 
   // --- Submit handler ---
-  const handleSubmit = async (e: React.FormEvent, id: string, nodePool?: KubernetesClusterNodePoolStatusType) => {
-    e.preventDefault()
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent, id: string, nodePool?: KubernetesClusterNodePoolStatusType) => {
+      e.preventDefault()
 
-    const { valid, data } = validate(!!nodePool, id)
-    if (!valid || !data) return
+      const { valid, data } = validate(!!nodePool, id)
+      if (!valid || !data) return
 
-    const formData = new FormData()
-    formData.append('id', id)
-    for (const [key, value] of Object.entries(data)) {
-      formData.append(key, typeof value === 'object' ? JSON.stringify(value) : String(value))
-    }
+      const formData = new FormData()
+      formData.append('id', id)
+      for (const [key, value] of Object.entries(data)) {
+        formData.append(key, typeof value === 'object' ? JSON.stringify(value) : String(value))
+      }
 
-    try {
-      await createOrUpdateNodePoolAction(formData)
-      toast.success(`Node pool "${name}" saved successfully`)
-    } catch {
-      toast.error('Failed to save node pool')
-    }
-  }
+      try {
+        await createOrUpdateNodePoolAction(formData)
+        toast.success(`Node pool "${name}" saved successfully`)
+      } catch {
+        toast.error('Failed to save node pool')
+      }
+    },
+    [validate, name] // include only what’s used inside
+  )
 
   // --- Return stable object ---
   return useMemo(
