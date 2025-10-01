@@ -10,9 +10,8 @@ export default async function VMPage({
 }) {
   const session = await authGuard()
   const user = session.user
-  const sp = await searchParams // <-- await exactly once
+  const sp = await searchParams
 
-  // ---- Coerce URL params (single source of truth) ----
   const page = Number(sp.page ?? '1') || 1
   const limit = Number(sp.limit ?? '10') || 10
   const sort = typeof sp.sort === 'string' ? sp.sort : undefined
@@ -21,7 +20,22 @@ export default async function VMPage({
   const filters = sp.filters === 'open' ? 'open' : undefined
   const skip = (page - 1) * limit
 
-  const vms = mockVms.resources || [] //mocked data
+  const vms = (mockVms.resources || []).map((vm: any) => ({
+    ...vm,
+    metadata: {
+      ...vm.metadata,
+      creationtimestamp: {
+        ...vm.metadata.creationtimestamp,
+        time: vm.metadata.creationtimestamp?.time
+          ? {
+              date: {
+                numberLong: vm.metadata.creationtimestamp.time.$date?.$numberLong,
+              },
+            }
+          : undefined,
+      },
+    },
+  }))
   const params = { page, limit, sort, order, view, filters, skip }
 
   return (

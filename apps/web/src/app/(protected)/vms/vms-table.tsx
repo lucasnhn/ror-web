@@ -5,7 +5,6 @@ import { VirtualMachine } from './interfaces'
 import { VMCardData } from '@/components/ui/vm/vm-card'
 import Link from 'next/link'
 import { Pill } from '@/components/shadcn/pill'
-import { routes } from '@/config/routes'
 import { envColors } from '@/components/ui/vm/vm-card'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useCallback } from 'react'
@@ -25,10 +24,15 @@ const getVMTableColumns = (user?: User, selectedDisplayData?: VMCardData[]): Dat
       sortingFn: 'text',
       cell: (info) => {
         const hostname = String(info.getValue() ?? '')
+        const vm = info.row.original
         const vmID = info.row.original.virtualmachine?.status?.operatingsystem?.hostname ?? ''
         return (
-          <Link href={`/vms/${hostname}`} className='pr-2 text-blue-600 dark:text-blue-500 underline'>
-            {vmID}
+          <Link
+            href={`/vms/${vmID}`}
+            className='pr-2 text-blue-600 dark:text-blue-500 underline'
+            onClick={() => localStorage.setItem('selectedVm', JSON.stringify(vm))}
+          >
+            {hostname}
           </Link>
         )
       },
