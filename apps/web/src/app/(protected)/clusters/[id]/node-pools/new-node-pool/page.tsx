@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { CreateEditView } from '../create-edit-view'
+import { CreateEditView } from '@/features/cluster/components/create-edit-view'
 import { getRorApi } from '@/services/ror-api'
 
 export const metadata: Metadata = {

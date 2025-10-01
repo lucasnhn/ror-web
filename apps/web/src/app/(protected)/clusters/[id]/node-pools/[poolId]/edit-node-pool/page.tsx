@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { authGuard } from '@/features/auth/utils/auth-guard'
 import { rorApiClient } from '@/services/ror-api'
 import { findPoolByName } from '@/utils/get-nodes-in-pool'
-import { CreateEditView } from '../../create-edit-view'
+import { CreateEditView } from '@/features/cluster/components/create-edit-view'
 
 export const metadata: Metadata = {
   title: 'ROR - Edit node pool',
