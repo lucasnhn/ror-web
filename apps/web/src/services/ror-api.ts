@@ -1,6 +1,8 @@
 import { env } from '@/config/env'
 import { auth } from '@/config/next-auth'
+import { routes } from '@/config/routes'
 import { createApiClient } from '@ror/js-api-client'
+import { redirect } from 'next/navigation'
 
 /**
  * Lightweight HTTP error class so callers can distinguish
@@ -31,19 +33,22 @@ export const rorApiClient = (accessToken: string) => {
 }
 
 /**
- * Convenience helper for server-side use:
- * - Reads the current NextAuth session.
- * - Ensures an access token is present.
- * - Returns a ready-to-use ROR API client.
+ * Creates a ready-to-use ROR API client for server components.
  *
- * Throws:
- * - HttpError(401) if the user is unauthenticated or token missing.
+ * By default, it enforces authentication (redirects to sign-in if missing).
+ * Set `redirectOnFail` to false if you prefer to handle auth errors manually.
  */
-export async function getRorApi() {
+export async function getRorApi({ redirectOnFail = true } = {}) {
   const session = await auth()
+
   if (!session?.accessToken) {
-    throw new HttpError(401, 'Missing access token')
+    if (redirectOnFail) {
+      redirect(routes.auth.signIn.getHref())
+    } else {
+      throw new Error('Missing access token')
+    }
   }
+
   return rorApiClient(session.accessToken)
 }
 
