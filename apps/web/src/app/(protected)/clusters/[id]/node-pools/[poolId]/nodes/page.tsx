@@ -1,7 +1,8 @@
 import { findPoolByName, getNodesInPool } from '@/utils/get-nodes-in-pool'
-import { NodesDataView } from './nodes-data-view'
 import type { Metadata } from 'next'
 import { getRorApi } from '@/services/ror-api'
+import { DataTable } from '@/components/ui/data-table/data-table'
+import { nodeColumns } from '@/features/cluster/components/nodes-columns'
 
 export const metadata: Metadata = {
   title: 'ROR - Nodes',
@@ -33,8 +34,9 @@ export default async function NodesPage({ params }: NodesPageProps) {
   const nodesInPool = getNodesInPool(pool?.nodes ?? null, nodes, pool?.name ?? decodeURIComponent(poolId))
 
   return (
-    <div className=''>
-      <NodesDataView data={nodesInPool} />
-    </div>
+    <>
+      <h1 className='text-2xl font-bold mb-4'>Nodes</h1>
+      <DataTable columns={nodeColumns} data={nodesInPool} />
+    </>
   )
 }
