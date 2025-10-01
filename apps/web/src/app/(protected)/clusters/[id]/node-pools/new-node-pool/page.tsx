@@ -1,3 +1,12 @@
+/*
+ * FILE OVERVIEW:
+ *
+ * Server component that prepares data and renders the CreateEditView
+ * for creating a new node pool within a cluster.
+ *
+ * Fetches machine class pricing via ROR API and passes it as props.
+ */
+
 import type { Metadata } from 'next'
 import { CreateEditView } from '@/features/cluster/components/create-edit-view'
 import { getRorApi } from '@/services/ror-api'
@@ -8,13 +17,19 @@ export const metadata: Metadata = {
 }
 
 interface NewNodePoolProps {
-  params: Promise<{
+  params: {
     id: string
-  }>
+  }
 }
 
+/**
+ * Renders the page for creating a new node pool within a specific cluster.
+ *
+ * @param params - The route parameters containing the cluster `id`.
+ * @returns A React element displaying the new node pool creation view.
+ */
 export default async function NewNodePoolPage({ params }: NewNodePoolProps) {
-  const { id } = await params
+  const { id } = params
 
   const api = await getRorApi()
   const res = await api.prices.list()
@@ -32,9 +47,5 @@ export default async function NewNodePoolPage({ params }: NewNodePoolProps) {
     price,
   }))
 
-  return (
-    <div className=''>
-      <CreateEditView id={id} simplePrices={simplePrices} title='New node pool' buttonText='Create node pool' />
-    </div>
-  )
+  return <CreateEditView id={id} simplePrices={simplePrices} title='New node pool' buttonText='Create node pool' />
 }
