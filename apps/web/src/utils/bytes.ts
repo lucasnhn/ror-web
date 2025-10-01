@@ -2,6 +2,8 @@
  * Original source: https://gist.github.com/gynekolog/c78a918f93c16522157539dc31b53dbb
  */
 
+import { parseQuantity } from './parse-quantity'
+
 type Plurals = Record<Intl.LDMLPluralRule, string>
 
 const DEFAULT_PLURALS: Plurals = {
@@ -66,4 +68,18 @@ export function convertBytes(
   const unit = exponent === 0 ? pluralizedUnit : units[exponent]
 
   return includeUnit ? `${value} ${unit}` : value
+}
+
+export function convertMemory(memory: string): string {
+  const memoryBytes = parseQuantity(memory)
+  const memoryGiB = memoryBytes / 1024 ** 3
+  const decimals = memoryGiB.toFixed(2).split('.')[1]
+  const roundingPrecision = decimals === '00' ? 0 : 2
+
+  return convertBytes(memoryBytes, {
+    useBinaryUnits: true,
+    roundingPrecision,
+    includeUnit: true,
+    localizeOptions: { language: 'en', plurals: { one: 'Byte', other: 'Bytes' } },
+  })
 }
