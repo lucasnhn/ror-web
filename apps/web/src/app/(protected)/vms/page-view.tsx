@@ -7,21 +7,15 @@ import { cn } from '@/utils/clsxm'
 import { usePathname, useRouter } from 'next/navigation'
 import { useRef, useState, useMemo, useEffect, useCallback } from 'react'
 import { VMCard, VMCardData } from '@/components/ui/vm/vm-card'
-import { Info } from 'lucide-react'
 import { VMTable } from './vms-table'
-import { Toggle } from '@radix-ui/react-toggle'
+import { Toggle } from '@/components/shadcn/toggle'
 import Link from 'next/link'
 import { Button } from '@/components/shadcn/button'
 import { TabsViewSwitcher } from '@/components/ui/tabs-view-switcher'
-
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/shadcn/dropdown-menu'
-import { ArrowDownNarrowWide, ArrowDownWideNarrow, Download, Funnel, RotateCw } from 'lucide-react'
-import { cleanUrl } from 'msw'
+import { ArrowDownNarrowWide, ArrowDownWideNarrow, Funnel, RotateCw } from 'lucide-react'
+import { SortSelect } from '@/components/ui/sort-select'
+import { se } from 'date-fns/locale'
+import { VmSearch } from '@/components/ui/vm/vm-search'
 
 const displayDataOptions: Option[] = [
   { label: 'Hostname', value: 'os_hostName' },
@@ -34,6 +28,28 @@ const displayDataOptions: Option[] = [
   { label: 'Tool Version', value: 'os_toolVersion' },
 ]
 
+const sortingOptions = [
+  { value: 'hostname', label: 'Hostname' },
+  { value: 'name', label: 'Name' },
+  { value: 'id', label: 'ID' },
+  { value: 'powerstate', label: 'Power State' },
+  { value: 'architecture', label: 'Architecture' },
+  { value: 'family', label: 'Family' },
+  { value: 'version', label: 'Version' },
+  { value: 'toolVersion', label: 'Tool Version' },
+]
+
+const powerStateOptions: Option[] = [
+  { value: 'poweredOn', label: 'Powered On' },
+  { value: 'poweredOff', label: 'Powered Off' },
+  { value: 'undefined', label: 'Undefined' },
+]
+
+const filterOptions = [
+  { label: 'Power States', placeholder: 'Choose Power State', data: powerStateOptions },
+  { label: 'More filters', placeholder: 'Mote filters here', data: [] },
+]
+
 export const PageView = ({ className, user, vms, params }: PageViewProps) => {
   const DEFAULT_LIMIT = 3
   const DEFAULT_PAGE = 1
@@ -43,13 +59,7 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
   const filtersOpen = params.filters === 'open'
   const pathname = usePathname()
 
-  // pagination + infinite scroll
-  const pageSize = 50
-  const [isLoading, setIsLoading] = useState(false)
-  const [hasMore, setHasMore] = useState(true)
-  const [items, setItems] = useState<VirtualMachine[]>([])
   const sentinelRef = useRef<HTMLDivElement>(null)
-  const inFlightRef = useRef(false)
   const router = useRouter()
 
   const idOf = (c: VirtualMachine) => c.virtualmachine?.status?.operatingsystem?.id || ''
@@ -58,17 +68,16 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
 
   const safeItems = useMemo(
     () =>
-      items.filter(
+      vms.filter(
         (c) =>
           c.virtualmachine?.status?.operatingsystem && typeof c.virtualmachine?.status?.operatingsystem === 'object'
       ),
-    [items]
+    [vms]
   )
   const [selectedDisplayData, setSelectedDisplayData] = useState<VMCardData[]>([])
   const [selectedFilters, setSelectedFilters] = useState<Record<string, string[]>>({})
   const [searchResults, setSearchResults] = useState<VirtualMachine[]>(safeItems)
 
-  // —— stable, equality-guarded handlers (avoid parent setState loops)
   const onSearchResultsChange = useCallback((res: VirtualMachine[]) => {
     setSearchResults((prev) => {
       if (prev.length === res.length) {
@@ -122,10 +131,6 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
     const nextKey = idsKey(safeItems)
     if (nextKey !== lastSafeKeyRef.current) {
       lastSafeKeyRef.current = nextKey
-      setSearchResults((prev) => {
-        const prevKey = idsKey(prev)
-        return prevKey === nextKey ? prev : safeItems
-      })
     }
   }, [safeItems])
 
@@ -146,11 +151,117 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
     setSelectedDisplayData([])
     clearUrl()
   }
+  // ---------- Toggle/Sort params ----------
+  const toggleParams = useMemo(() => {
+    const entries: [string, string][] = (Object.entries(params) as Array<[string, unknown]>)
+      .filter(([, v]) => v !== undefined && v !== null)
+      .map(([k, v]) => [k, String(v)])
+
+    const newParams = new URLSearchParams(entries)
+    if (filtersOpen) newParams.delete('filters')
+    else newParams.set('filters', 'open')
+
+    return `/vms?${newParams.toString()}`
+  }, [params, filtersOpen])
+
+  const toggleSortParams = useMemo(() => {
+    if (!params.sort) return null
+    const entries: [string, string][] = (Object.entries(params) as Array<[string, unknown]>)
+      .filter(([, v]) => v !== undefined && v !== null)
+      .map(([k, v]) => [k, String(v)])
+
+    const newParams = new URLSearchParams(entries)
+    const currentOrder = newParams.get('order') === 'desc' ? 'desc' : 'asc'
+    newParams.set('order', currentOrder === 'desc' ? 'asc' : 'desc')
+    return { url: `/vms?${newParams.toString()}`, isDesc: currentOrder === 'desc' }
+  }, [params])
+
+  // ---------- Filtering / Sorting ----------
+  const filteredItems = useMemo(() => {
+    return safeItems.filter((vm) => {
+      const powerstate = vm.virtualmachine?.status?.operatingsystem?.powerstate
+      const powerStateFilter = selectedFilters['Power States']
+      return !powerStateFilter?.length || (powerstate && powerStateFilter.includes(powerstate))
+    })
+  }, [safeItems, selectedFilters])
+
+  const sortedItems = useMemo(() => {
+    if (!params.sort) return filteredItems
+    const sortOrder = params.order === 'desc' ? -1 : 1
+
+    return [...filteredItems].sort((a, b) => {
+      let valueA: string, valueB: string
+      switch (params.sort) {
+        case 'hostname':
+          valueA = a.virtualmachine?.status?.operatingsystem?.hostname || ''
+          valueB = b.virtualmachine?.status?.operatingsystem?.hostname || ''
+          break
+        case 'name':
+          valueA = a.virtualmachine?.status?.operatingsystem?.name || ''
+          valueB = b.virtualmachine?.status?.operatingsystem?.name || ''
+          break
+        case 'id':
+          valueA = a.virtualmachine?.status?.operatingsystem?.id || ''
+          valueB = b.virtualmachine?.status?.operatingsystem?.id || ''
+          break
+        case 'powerstate':
+          const powerStateA = a.virtualmachine?.status?.operatingsystem?.powerstate || 'undefined'
+          const powerStateB = b.virtualmachine?.status?.operatingsystem?.powerstate || 'undefined'
+
+          const getPowerStatePriority = (state: string) => {
+            switch (state) {
+              case 'poweredOn':
+                return 1
+              case 'poweredOff':
+                return 2
+              case 'undefined':
+                return 3
+              default:
+                return 4
+            }
+          }
+
+          const priorityA = getPowerStatePriority(powerStateA)
+          const priorityB = getPowerStatePriority(powerStateB)
+          return (priorityA - priorityB) * sortOrder
+        case 'architecture':
+          valueA = a.virtualmachine?.status?.operatingsystem?.architecture || ''
+          valueB = b.virtualmachine?.status?.operatingsystem?.architecture || ''
+          break
+        case 'family':
+          valueA = a.virtualmachine?.status?.operatingsystem?.family || ''
+          valueB = b.virtualmachine?.status?.operatingsystem?.family || ''
+          break
+        case 'version':
+          valueA = a.virtualmachine?.status?.operatingsystem?.version || ''
+          valueB = b.virtualmachine?.status?.operatingsystem?.version || ''
+          break
+        case 'toolversion':
+          valueA = a.virtualmachine?.status?.operatingsystem?.toolversion || ''
+          valueB = b.virtualmachine?.status?.operatingsystem?.toolversion || ''
+          break
+        default:
+          valueA = a.virtualmachine?.status?.operatingsystem?.hostname || ''
+          valueB = b.virtualmachine?.status?.operatingsystem?.hostname || ''
+      }
+      if (typeof valueA === 'string' && typeof valueB === 'string') {
+        return valueA.localeCompare(valueB) * sortOrder
+      }
+      return String(valueA).localeCompare(String(valueB)) * sortOrder
+    })
+  }, [filteredItems, params.sort, params.order])
+
+  const displayedItems = useMemo(() => {
+    const base = params.sort ? sortedItems : filteredItems
+    if (!searchResults?.length) return base
+    const ids = new Set(searchResults.map(idOf))
+    return base.filter((c) => ids.has(idOf(c)))
+  }, [sortedItems, filteredItems, searchResults, params.sort])
 
   const renderControls = () => (
     <div className='flex flex-wrap items-center justify-between w-full gap-4 [@container(max-width:1000px)]:flex-col [@container(max-width:1000px)]:items-start [@container(max-width:1000px)]:gap-6'>
       <div className='flex flex-wrap items-center gap-x-4 gap-y-6'>
-        {/* <ClusterSearch items={safeItems} onResultsChange={onSearchResultsChange} /> */}
+        <VmSearch items={safeItems} onResultsChange={onSearchResultsChange} />
 
         <MultipleSelector
           className='w-52'
@@ -163,6 +274,38 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
           hidePlaceholderWhenSelected
           emptyIndicator={<p className='text-center text-sm'>No results found</p>}
         />
+
+        <SortSelect options={sortingOptions} currentSort={params.sort} />
+
+        {toggleSortParams && (
+          <Link href={toggleSortParams.url}>
+            <Button variant='outline' className='border-[var(--input)]'>
+              {toggleSortParams.isDesc ? (
+                <span className='flex gap-1 items-center'>
+                  <ArrowDownWideNarrow className='w-4 h-4' />
+                  DESC
+                </span>
+              ) : (
+                <span className='flex gap-1 items-center'>
+                  <ArrowDownNarrowWide className='w-4 h-4' />
+                  ASC
+                </span>
+              )}
+            </Button>
+          </Link>
+        )}
+
+        <Toggle
+          asChild
+          pressed={filtersOpen}
+          variant='outline'
+          className='[@container(max-width:1000px)]:hidden'
+          aria-label='Open filters'
+        >
+          <Link href={toggleParams}>
+            <Funnel aria-hidden='true' />
+          </Link>
+        </Toggle>
       </div>
 
       <div className='flex flex-row gap-4'>
@@ -184,6 +327,16 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
           <Funnel className='h-4 w-4' />
           Filters
         </Toggle>
+        <Button
+          type='button'
+          onClick={handleRefreshFilters}
+          aria-label='Reset filters'
+          title='Reset filters'
+          className='gap-2'
+        >
+          <RotateCw className='h-4 w-4' />
+          Refresh
+        </Button>
 
         {/* View switcher for grid/list toggle */}
         <div className='flex gap-1 border rounded-md p-1'>
@@ -196,23 +349,23 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
   const renderFilterSection = () =>
     filtersOpen && (
       <div className='flex flex-wrap items-center gap-x-4 gap-y-6 min-h-28 mx-12 mt-6'>
-        {safeItems.map((option) => (
+        {filterOptions.map((option) => (
           <MultipleSelector
-            key={option.uid}
+            key={option.label}
             className='w-52'
-            commandProps={{ label: option.uid }}
-            value={(selectedFilters[option.uid] || []).map((v) => ({ value: v, label: v }))}
+            commandProps={{ label: option.label }}
+            value={(selectedFilters[option.label] || []).map((v) => ({ value: v, label: v }))}
             onChange={(selectedOptions) => {
               const next = selectedOptions.map((opt) => opt.value)
               setSelectedFilters((prev) => {
-                const curr = prev[option.uid] || []
+                const curr = prev[option.label] || []
                 const same = curr.length === next.length && curr.every((v, i) => v === next[i])
                 if (same) return prev
-                return { ...prev, [option.uid]: next }
+                return { ...prev, [option.label]: next }
               })
             }}
-            defaultOptions={option.metadata?.name ? [{ label: option.metadata.name, value: option.metadata.name }] : []}
-            placeholder={option.metadata?.name ? `Filter ${option.metadata.name}` : 'No filter available'}
+            defaultOptions={option.data}
+            placeholder={option.placeholder}
             hideClearAllButton
             hidePlaceholderWhenSelected
             emptyIndicator={<p className='text-center text-sm'>No results found</p>}
@@ -227,7 +380,7 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
         <div className={cn('mx-12 flex items-center min-h-28 py-6 ', filtersOpen && 'w-[calc(100%-6rem)] border-b')}>
           {renderControls()}
         </div>
-        {/* {renderFilterSection()} */}
+        {renderFilterSection()}
       </div>
 
       <NotReadyMessage className='mx-12 my-6'>
@@ -241,22 +394,29 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
           <VMTable
             key='table'
             user={user}
-            vms={vms.slice(
-              paginationState.pageIndex * paginationState.pageSize,
-              (paginationState.pageIndex + 1) * paginationState.pageSize
-            )}
-            selectedDisplayData={
-              selectedDisplayData.length > 0
-                ? selectedDisplayData
-                : displayDataOptions.map((opt) => opt.value as VMCardData)
-            }
+            vms={(params.sort ? sortedItems : filteredItems)
+              .filter((c) =>
+                searchResults.some(
+                  (sr) =>
+                    sr.virtualmachine?.status?.operatingsystem?.id === c.virtualmachine?.status?.operatingsystem?.id ||
+                    sr.virtualmachine?.status?.operatingsystem?.name ===
+                      c.virtualmachine?.status?.operatingsystem?.name ||
+                    sr.virtualmachine?.status?.operatingsystem?.hostname ===
+                      c.virtualmachine?.status?.operatingsystem?.hostname
+                )
+              )
+              .slice(
+                paginationState.pageIndex * paginationState.pageSize,
+                (paginationState.pageIndex + 1) * paginationState.pageSize
+              )}
+            selectedDisplayData={selectedDisplayData}
             pagination={paginationState}
-            totalCount={vms.length}
-            pageCount={Math.ceil(vms.length / limit)}
+            totalCount={filteredItems.length}
+            pageCount={pageCount}
           />
         ) : (
           <div className='flex flex-row flex-wrap gap-6'>
-            {vms.map((vm, idx) => (
+            {displayedItems.map((vm, idx) => (
               <div key={idOf(vm) || idx}>
                 <VMCard
                   user={user}
