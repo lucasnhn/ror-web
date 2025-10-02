@@ -18,10 +18,10 @@ export const metadata: Metadata = {
 }
 
 interface EditNodePoolProps {
-  params: {
+  params: Promise<{
     id: string
     poolId: string
-  }
+  }>
 }
 
 /**
@@ -31,7 +31,7 @@ interface EditNodePoolProps {
  * @returns A React component that displays the edit node pool form.
  */
 export default async function EditNodePoolPage({ params }: EditNodePoolProps) {
-  const { id, poolId } = params
+  const { id, poolId } = await params
   const api = await getRorApi()
 
   const clusterResponse = await api.kubernetesClusters.id(id)

@@ -1,5 +1,15 @@
 import { Node } from '@ror/js-api-client'
 
+interface ManagedFields {
+  manager?: string | undefined
+  operation?: string | undefined
+  apiVersion?: string | undefined
+  time?: string | undefined
+  fieldsType?: string | undefined
+  fieldsV1?: Record<string, string | number | boolean | null> | undefined
+  subresource?: string | undefined
+}
+
 /**
  * Returns the kind of the given node.
  *
@@ -71,7 +81,7 @@ export const getNodeAnnotations = (node: Node): Record<string, string> => node.m
  * @param node - The Node object from which to extract managed fields.
  * @returns An array of managed fields if present; otherwise, an empty array.
  */
-export const getNodeManagedFields = (node: Node): any[] => node.metadata.managedFields ?? []
+export const getNodeManagedFields = (node: Node): ManagedFields[] => node.metadata.managedFields ?? []
 
 /**
  * Retrieves the version string from a given Node object's `rormeta` property.

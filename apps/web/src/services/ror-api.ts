@@ -8,14 +8,14 @@ import { redirect } from 'next/navigation'
  * Lightweight HTTP error class so callers can distinguish
  * auth/permission problems (e.g., 401/403) from other errors.
  */
-class HttpError extends Error {
-  status: number
-  constructor(status: number, message?: string) {
-    super(message)
-    this.name = 'HttpError'
-    this.status = status
-  }
-}
+// class HttpError extends Error {
+//   status: number
+//   constructor(status: number, message?: string) {
+//     super(message)
+//     this.name = 'HttpError'
+//     this.status = status
+//   }
+// }
 
 /**
  * Creates an instance of the ROR API client. Use this to interact with the ROR API.

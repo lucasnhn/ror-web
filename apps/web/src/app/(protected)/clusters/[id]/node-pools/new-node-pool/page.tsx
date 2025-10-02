@@ -17,9 +17,9 @@ export const metadata: Metadata = {
 }
 
 interface NewNodePoolProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 /**
@@ -29,7 +29,7 @@ interface NewNodePoolProps {
  * @returns A React element displaying the new node pool creation view.
  */
 export default async function NewNodePoolPage({ params }: NewNodePoolProps) {
-  const { id } = params
+  const { id } = await params
 
   const api = await getRorApi()
   const res = await api.prices.list()
