@@ -53,15 +53,15 @@ export const envColors: Record<string, 'red' | 'emerald' | 'gray'> = {
 }
 
 const vmEnvBgColors: Record<string, [string, string]> = {
-  poweredOff: ['bg-red-200', 'text-red-900'],
-  poweredOn: ['bg-emerald-200', 'text-emerald-900'],
-  undefined: ['bg-gray-200', 'text-gray-900'],
+  poweredOff: ['bg-red-300', 'text-red-900'],
+  poweredOn: ['bg-emerald-300', 'text-emerald-900'],
+  undefined: ['bg-gray-300', 'text-gray-900'],
 }
 
-const powerStatusBg: Record<string, [string, string]> = {
-  poweredOff: ['bg-red-900', 'text-red-300'],
-  poweredOn: ['bg-emerald-900', 'text-emerald-300'],
-  undefined: ['bg-gray-900', 'text-gray-300'],
+const powerStatusColors: Record<string, [string, string]> = {
+  poweredOff: ['bg-red-600', 'text-red-300'],
+  poweredOn: ['bg-emerald-500', 'text-emerald-300'],
+  undefined: ['bg-gray-500', 'text-gray-300'],
 }
 
 const VMCard = ({ className, user, vm, vmDisplayData }: VMCardProps) => {
@@ -99,7 +99,7 @@ const VMCard = ({ className, user, vm, vmDisplayData }: VMCardProps) => {
             <span
               className={cn(
                 'ml-auto flex items-center gap-1 text-xs font-normal normal-case px-2 py-1 rounded-full',
-                powerStatusBg[powerstate ?? 'undefined'][0]
+                powerStatusColors[powerstate ?? 'undefined'][0]
               )}
             >
               <span className='font-mono font-bold text-card-foreground'>{powerstate || 'N/A'}</span>
