@@ -70,6 +70,16 @@ export function convertBytes(
   return includeUnit ? `${value} ${unit}` : value
 }
 
+/**
+ * Converts a memory quantity string into a human-readable string with appropriate binary units.
+ *
+ * The function parses the input memory string, determines the number of bytes, and then formats
+ * it using binary units. The output is localized to English and uses singular or plural forms
+ * for "Byte" as appropriate.
+ *
+ * @param memory - The memory quantity string to convert (e.g., "2Gi", "512Mi").
+ * @returns A human-readable string representing the memory size with binary units.
+ */
 export function convertMemory(memory: string): string {
   const memoryBytes = parseQuantity(memory)
   const memoryGiB = memoryBytes / 1024 ** 3

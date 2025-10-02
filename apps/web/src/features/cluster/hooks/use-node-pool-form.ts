@@ -1,3 +1,10 @@
+/*
+ * FILE OVERVIEW
+ *
+ * Custom React hook for managing the state and logic of a Kubernetes node pool form.
+ * This includes form fields, validation, pricing logic, and submit handling.
+ */
+
 'use client'
 
 import { nodePoolFormSchema, type NodePoolFormData } from '../utils/node-pool-form-schema'
@@ -84,7 +91,7 @@ export function useNodePoolForm(
       setErrors({ name: false, provider: false, version: false, class: false })
       return { valid: true, data: result.data }
     },
-    [name, provider, version, selectedPriceId, nodeCount, labels, taints] // dependencies used inside validate
+    [name, provider, version, selectedPriceId, nodeCount, labels, taints]
   )
 
   // --- Submit handler ---
@@ -108,7 +115,7 @@ export function useNodePoolForm(
         toast.error('Failed to save node pool')
       }
     },
-    [validate, name] // include only what’s used inside
+    [validate, name]
   )
 
   // --- Return stable object ---

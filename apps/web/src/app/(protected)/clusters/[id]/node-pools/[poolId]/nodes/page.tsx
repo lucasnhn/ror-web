@@ -1,3 +1,9 @@
+/*
+ * FILE OVERVIEW
+ *
+ * Server component that fetches and displays the list of nodes in a specific node pool within a Kubernetes cluster.
+ */
+
 import { findPoolByName, getNodesInPool } from '@/utils/get-nodes-in-pool'
 import type { Metadata } from 'next'
 import { getRorApi } from '@/services/ror-api'
@@ -16,6 +22,15 @@ interface NodesPageProps {
   }>
 }
 
+/**
+ * Renders the Nodes page for a specific node pool within a Kubernetes cluster.
+ *
+ * This async server component fetches the list of nodes for a given cluster and node pool,
+ * retrieves cluster details, and displays the nodes in a data table.
+ *
+ * @param params - The route parameters containing the cluster ID (`id`) and node pool ID (`poolId`).
+ * @returns A React fragment containing the page title and a data table of nodes in the selected pool.
+ */
 export default async function NodesPage({ params }: NodesPageProps) {
   const { id, poolId } = await params
   const api = await getRorApi()

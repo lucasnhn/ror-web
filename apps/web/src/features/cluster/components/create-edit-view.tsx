@@ -249,6 +249,18 @@ function NodeTaintsSection({ form, onAdd }: { form: FormApi; onAdd: () => void }
   )
 }
 
+/**
+ * Renders a view for creating or editing a node pool within a cluster.
+ *
+ * @param className - Optional CSS class for the root element.
+ * @param id - The cluster ID to which the node pool belongs.
+ * @param title - The title to display at the top of the view.
+ * @param buttonText - The text to display on the form's submit button.
+ * @param nodePool - The existing node pool data, if editing; otherwise undefined for creation.
+ * @param simplePrices - Pricing information used for calculating and displaying price estimates.
+ *
+ * @returns A React component rendering the create/edit node pool view.
+ */
 export const CreateEditView = ({ className, id, title, buttonText, nodePool, simplePrices }: CreateEditViewProps) => {
   const form = useNodePoolForm(nodePool, simplePrices)
 

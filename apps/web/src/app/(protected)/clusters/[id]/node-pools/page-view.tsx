@@ -1,3 +1,9 @@
+/*
+ * FILE OVERVIEW
+ *
+ * Server component that renders the node pools page view for a specific cluster.
+ */
+
 'use client'
 
 import React, { useMemo } from 'react'
@@ -72,6 +78,18 @@ const NodeCard = ({ node }: { node: Node }) => (
   </div>
 )
 
+/**
+ * Renders the node pools page view for a specific cluster.
+ *
+ * Displays a list of node pools with their details, and allows users to create new node pools or edit existing ones.
+ * Each node pool row can be expanded to show the nodes within the pool.
+ *
+ * @param {PageViewProps} props - The props for the PageView component.
+ * @param {string} props.id - The cluster ID.
+ * @param {Node[]} props.initialNodes - The initial list of nodes in the cluster.
+ *
+ * @returns {JSX.Element} The rendered node pools page view.
+ */
 export function PageView({ id, initialNodes }: PageViewProps) {
   const { cluster } = useClusterContext()
 

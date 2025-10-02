@@ -1,3 +1,9 @@
+/*
+ * FILE OVERVIEW
+ *
+ * A client-side numeric picker component that allows users to increment or decrement a numeric value.
+ */
+
 import { Minus, Plus } from 'lucide-react'
 import { Button } from '@/components/shadcn/button'
 
