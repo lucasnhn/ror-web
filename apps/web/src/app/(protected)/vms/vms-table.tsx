@@ -18,7 +18,7 @@ const getVMTableColumns = (user?: User, selectedDisplayData?: VMCardData[]): Dat
 
   return [
     columnHelper.accessor((row) => row.metadata?.name ?? 'Unnamed VM', {
-      id: 'vmName',
+      id: 'os_hostName',
       header: 'Host name',
       enableSorting: true,
       sortingFn: 'text',
@@ -37,6 +37,23 @@ const getVMTableColumns = (user?: User, selectedDisplayData?: VMCardData[]): Dat
         )
       },
     }),
+    isVisible('os_id') &&
+      columnHelper.accessor(
+        (row) => {
+          const osID = row.virtualmachine?.status?.operatingsystem?.id
+          return osID
+        },
+        {
+          id: 'os_id',
+          header: 'ID',
+          enableSorting: true,
+          sortingFn: 'text',
+          cell: (info) => {
+            const osID = info.getValue()
+            return <span>{osID}</span>
+          },
+        }
+      ),
     isVisible('os_name') &&
       columnHelper.accessor(
         (row) => {
@@ -62,7 +79,7 @@ const getVMTableColumns = (user?: User, selectedDisplayData?: VMCardData[]): Dat
         },
         {
           id: 'os_family',
-          header: 'OS Family',
+          header: 'Family',
           enableSorting: false,
           cell: (info) => {
             const osFamily = info.getValue()
@@ -92,7 +109,7 @@ const getVMTableColumns = (user?: User, selectedDisplayData?: VMCardData[]): Dat
       }),
     isVisible('os_toolVersion') &&
       columnHelper.accessor((row) => row.virtualmachine?.status?.operatingsystem?.toolversion, {
-        id: 'toolversion',
+        id: 'os_toolversion',
         header: 'Tool Version',
         enableSorting: false,
         cell: (info) => {
@@ -101,6 +118,7 @@ const getVMTableColumns = (user?: User, selectedDisplayData?: VMCardData[]): Dat
         },
       }),
     columnHelper.accessor((row) => row.virtualmachine?.status?.operatingsystem?.powerstate ?? '', {
+      id: 'powerState',
       header: 'Power state',
       enableSorting: false,
       cell: (info) => {

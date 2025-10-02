@@ -24,15 +24,14 @@ import { ArrowDownNarrowWide, ArrowDownWideNarrow, Download, Funnel, RotateCw } 
 import { cleanUrl } from 'msw'
 
 const displayDataOptions: Option[] = [
-  { label: 'OS Hostname', value: 'os_hostName' },
-  { label: 'OS Name', value: 'os_name' },
-  { label: 'OS ID', value: 'os_id' },
-  { label: 'Operating System ID', value: 'operatingSystemId' },
+  { label: 'Hostname', value: 'os_hostName' },
+  { label: 'Name', value: 'os_name' },
+  { label: 'ID', value: 'os_id' },
   { label: 'Power State', value: 'powerState' },
-  { label: 'OS Architecture', value: 'os_architecture' },
-  { label: 'OS Family', value: 'os_family' },
-  { label: 'OS Version', value: 'os_version' },
-  { label: 'OS Tool Version', value: 'os_toolVersion' },
+  { label: 'Architecture', value: 'os_architecture' },
+  { label: 'Family', value: 'os_family' },
+  { label: 'Version', value: 'os_version' },
+  { label: 'Tool Version', value: 'os_toolVersion' },
 ]
 
 export const PageView = ({ className, user, vms, params }: PageViewProps) => {
