@@ -1,12 +1,12 @@
 'use client'
 
 import MultipleSelector, { Option } from '@/components/shadcn/multiselect'
-import { PageViewProps, VirtualMachine } from './interfaces'
+import { PageViewProps, VirtualMachine } from '@/features/vms/utils/vms'
 import { NotReadyMessage } from '@/components/ui/not-ready-message'
 import { cn } from '@/utils/clsxm'
 import { usePathname, useRouter } from 'next/navigation'
 import { useRef, useState, useMemo, useEffect, useCallback } from 'react'
-import { VMCard, VMCardData } from '@/components/ui/vm/vm-card'
+import { VMCard, VMCardData } from '@/features/vms/components/vm-card'
 import { VMTable } from './vms-table'
 import { Toggle } from '@/components/shadcn/toggle'
 import Link from 'next/link'
@@ -14,41 +14,8 @@ import { Button } from '@/components/shadcn/button'
 import { TabsViewSwitcher } from '@/components/ui/tabs-view-switcher'
 import { ArrowDownNarrowWide, ArrowDownWideNarrow, Funnel, RotateCw } from 'lucide-react'
 import { SortSelect } from '@/components/ui/sort-select'
-import { se } from 'date-fns/locale'
-import { VmSearch } from '@/components/ui/vm/vm-search'
-
-const displayDataOptions: Option[] = [
-  { label: 'Hostname', value: 'os_hostName' },
-  { label: 'Name', value: 'os_name' },
-  { label: 'ID', value: 'os_id' },
-  { label: 'Power State', value: 'powerState' },
-  { label: 'Architecture', value: 'os_architecture' },
-  { label: 'Family', value: 'os_family' },
-  { label: 'Version', value: 'os_version' },
-  { label: 'Tool Version', value: 'os_toolVersion' },
-]
-
-const sortingOptions = [
-  { value: 'hostname', label: 'Hostname' },
-  { value: 'name', label: 'Name' },
-  { value: 'id', label: 'ID' },
-  { value: 'powerstate', label: 'Power State' },
-  { value: 'architecture', label: 'Architecture' },
-  { value: 'family', label: 'Family' },
-  { value: 'version', label: 'Version' },
-  { value: 'toolVersion', label: 'Tool Version' },
-]
-
-const powerStateOptions: Option[] = [
-  { value: 'poweredOn', label: 'Powered On' },
-  { value: 'poweredOff', label: 'Powered Off' },
-  { value: 'undefined', label: 'Undefined' },
-]
-
-const filterOptions = [
-  { label: 'Power States', placeholder: 'Choose Power State', data: powerStateOptions },
-  { label: 'More filters', placeholder: 'Mote filters here', data: [] },
-]
+import { VmSearch } from '@/features/vms/components/vm-search'
+import { displayDataOptions, sortingOptions, filterOptions } from '@/features/config/page-view-options'
 
 export const PageView = ({ className, user, vms, params }: PageViewProps) => {
   const DEFAULT_LIMIT = 3

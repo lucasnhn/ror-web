@@ -1,11 +1,11 @@
 import { User } from 'next-auth'
 import { createColumnHelper } from '@tanstack/react-table'
 import type { DataTableColumnDef, DataTablePagination } from '@/components/ui/data-table'
-import { VirtualMachine } from './interfaces'
-import { VMCardData } from '@/components/ui/vm/vm-card'
+import { VirtualMachine } from '@/features/vms/utils/vms'
+import { VMCardData } from '@/features/vms/components/vm-card'
 import Link from 'next/link'
 import { Pill } from '@/components/shadcn/pill'
-import { envColors } from '@/components/ui/vm/vm-card'
+import { vmCardColors } from '@/features/vms/utils/env-colors'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useCallback } from 'react'
 import { DataTable } from '@/components/ui/data-table'
@@ -124,7 +124,7 @@ const getVMTableColumns = (user?: User, selectedDisplayData?: VMCardData[]): Dat
       cell: (info) => {
         const osID = info.getValue()
         return (
-          <Pill variant={envColors[osID ?? 'undefined']} className='px-3'>
+          <Pill variant={vmCardColors[osID ?? 'undefined']} className='px-3'>
             {(osID ?? 'Undefined').charAt(0).toUpperCase() + (osID ?? 'Undefined').slice(1)}
           </Pill>
         )

@@ -3,31 +3,20 @@
 import { cn } from '@/utils/clsxm'
 import { navigationItemObject } from '@/app/(protected)/clusters/[id]/layout'
 import { useVMContext } from '@/context/vm-context'
-import { NavigationTabs } from '../navigation-tabs'
+import { NavigationTabs } from '@/components/ui/navigation-tabs'
 import { Power, PowerOff, TriangleAlert } from 'lucide-react'
+import { vmHeaderColors } from '../utils/env-colors'
 
 interface VMHeaderProps {
   className?: string
   tabs: navigationItemObject[]
 }
 
-const vmEnvBgColors: Record<string, [string, string]> = {
-  poweredOff: ['bg-red-200', 'text-red-900'],
-  poweredOn: ['bg-emerald-200', 'text-emerald-900'],
-  undefined: ['bg-gray-200', 'text-gray-900'],
-}
-
-const powerStatusBg: Record<string, [string, string]> = {
-  poweredOff: ['bg-red-900', 'text-red-300'],
-  poweredOn: ['bg-emerald-900', 'text-emerald-300'],
-  undefined: ['bg-gray-900', 'text-gray-300'],
-}
-
 export const VMHeader = ({ className, tabs }: VMHeaderProps) => {
   const { vm } = useVMContext()
   const hostname = vm?.virtualmachine?.status?.operatingsystem?.hostname || 'Unknown VM'
   const powerstate = vm?.virtualmachine?.status?.operatingsystem?.powerstate || 'undefined'
-  const [lightmode, darkmode] = vmEnvBgColors[powerstate] || ['bg-gray-200', 'dark:bg-gray-600']
+  const [lightmode, darkmode] = vmHeaderColors[powerstate] || ['bg-gray-200', 'dark:bg-gray-600']
 
   return (
     <div>

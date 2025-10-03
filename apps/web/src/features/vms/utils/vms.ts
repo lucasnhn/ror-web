@@ -1,4 +1,5 @@
 import { User } from 'next-auth'
+import { VMCardData } from '../components/vm-card'
 
 export interface VirtualMachine {
   id?: {
@@ -127,6 +128,13 @@ export interface VmResponse {
   resources: VirtualMachine[]
 }
 
+export interface VMCardProps {
+  className?: string
+  user?: User
+  vm: VirtualMachine
+  vmDisplayData: VMCardData[]
+}
+
 export interface VMTableProps {
   metadata_name?: string
   os_id?: string | null
@@ -147,4 +155,23 @@ export interface PageViewProps {
   user: User
   vms: VirtualMachine[]
   params: Params
+}
+
+export interface Network {
+  id: string
+  ipv4?: string
+  ipv6?: string
+  mac?: string
+  dns?: string
+}
+
+export interface VMDetailsProps {
+  user?: User
+  className?: string
+}
+
+export interface VmSearchProps {
+  items: VirtualMachine[]
+  onSelect?: (item: VirtualMachine) => void
+  onResultsChange?: (results: VirtualMachine[]) => void
 }

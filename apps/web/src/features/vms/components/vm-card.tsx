@@ -1,10 +1,9 @@
 import * as React from 'react'
 
 import { cn } from '@/utils/clsxm'
-import { User } from 'next-auth'
-import type { VirtualMachine } from '@/app/(protected)/vms/interfaces'
 import Link from 'next/link'
-import { hostname } from 'os'
+import { vmCardPowerStatus, pillPowerStatusColors } from '@/features/vms/utils/env-colors'
+import { VMCardProps } from '@/features/vms/utils/vms'
 
 function Card({ className, ...props }: React.ComponentProps<'div'>) {
   return (
@@ -39,36 +38,8 @@ export type VMCardData =
   | 'os_version'
   | 'os_toolVersion'
 
-export interface VMCardProps {
-  className?: string
-  user?: User
-  vm: VirtualMachine
-  vmDisplayData: VMCardData[]
-}
-
-export const envColors: Record<string, 'red' | 'emerald' | 'gray'> = {
-  poweredOff: 'red',
-  poweredOn: 'emerald',
-  undefined: 'gray',
-}
-
-const vmEnvBgColors: Record<string, [string, string]> = {
-  poweredOff: ['bg-red-300', 'text-red-900'],
-  poweredOn: ['bg-emerald-300', 'text-emerald-900'],
-  undefined: ['bg-gray-300', 'text-gray-900'],
-}
-
-const powerStatusColors: Record<string, [string, string]> = {
-  poweredOff: ['bg-red-600', 'text-red-300'],
-  poweredOn: ['bg-emerald-500', 'text-emerald-300'],
-  undefined: ['bg-gray-500', 'text-gray-300'],
-}
-
 const VMCard = ({ className, user, vm, vmDisplayData }: VMCardProps) => {
   const vmOs = vm.virtualmachine?.status?.operatingsystem
-  const vmSpec = vm.virtualmachine?.spec
-  const vmDdisks = vm.virtualmachine?.status?.disks
-  const vmNetworks = vm.virtualmachine?.status?.networks
 
   const vmName = vmOs?.name
   const vmHostname = vmOs?.hostname
@@ -80,7 +51,7 @@ const VMCard = ({ className, user, vm, vmDisplayData }: VMCardProps) => {
   const osVersion = vmOs?.version
   const osToolVersion = vmOs?.toolversion
 
-  const envColor = vmEnvBgColors[powerstate ?? 'undefined'] ?? vmEnvBgColors['undefined']
+  const envColor = vmCardPowerStatus[powerstate ?? 'undefined'] ?? vmCardPowerStatus['undefined']
 
   return (
     <Link href={`/vms/${vmHostname}`} onClick={() => localStorage.setItem('selectedVm', JSON.stringify(vm))}>
@@ -99,7 +70,7 @@ const VMCard = ({ className, user, vm, vmDisplayData }: VMCardProps) => {
             <span
               className={cn(
                 'ml-auto flex items-center gap-1 text-xs font-normal normal-case px-2 py-1 rounded-full',
-                powerStatusColors[powerstate ?? 'undefined'][0]
+                pillPowerStatusColors[powerstate ?? 'undefined'][0]
               )}
             >
               <span className='font-mono font-bold text-card-foreground'>{powerstate || 'N/A'}</span>

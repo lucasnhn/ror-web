@@ -1,16 +1,10 @@
 'use client'
 
-import { VirtualMachine } from '@/app/(protected)/vms/interfaces'
+import { VmSearchProps } from '../utils/vms'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import Fuse from 'fuse.js'
 import { Search } from 'lucide-react'
 import { Input } from '@/components/shadcn/input'
-
-export interface VmSearchProps {
-  items: VirtualMachine[]
-  onSelect?: (item: VirtualMachine) => void
-  onResultsChange?: (results: VirtualMachine[]) => void
-}
 
 export function VmSearch({ items, onResultsChange }: VmSearchProps) {
   const [query, setQuery] = useState('')

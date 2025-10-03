@@ -1,10 +1,9 @@
 'use client'
 
 import { Fragment, ReactNode, useEffect, useState } from 'react'
-import { routes } from '@/config/routes'
 import { NotReadyMessage } from '@/components/ui/not-ready-message'
 import { VMProvider } from '@/context/vm-context'
-import { VMHeader } from '@/components/ui/vm/vm-header'
+import { VMHeader } from '@/features/vms/components/vm-header'
 
 interface VmPageLayoutProps {
   params: Promise<{

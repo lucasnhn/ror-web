@@ -1,4 +1,4 @@
-import { VMDetails } from '@/components/ui/vm/vm-details'
+import { VMDetails } from '@/features/vms/components/vm-details'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {

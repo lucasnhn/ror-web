@@ -10,57 +10,11 @@ import 'react-resizable/css/styles.css'
 import { useState } from 'react'
 import { ArrowRight } from 'lucide-react'
 import { Pill } from '@/components/shadcn/pill'
+import { vmActionsColors } from '../utils/env-colors'
+import { standardLayouts } from '@/features/config/vm-details-layout'
+import { Network, VMDetailsProps } from '../utils/vms'
 
 const ResponsiveGridLayout = WidthProvider(Responsive)
-
-const standardLayouts: Layouts = {
-  lg: [
-    { i: 'cpu', x: 0, y: 0, w: 6, h: 4, minW: 4, minH: 4 },
-    { i: 'memory', x: 6, y: 0, w: 6, h: 4, minW: 4, minH: 4 },
-    { i: 'price', x: 12, y: 0, w: 6, h: 4, minW: 4, minH: 4 },
-    { i: 'info', x: 0, y: 4, w: 12, h: 8, minW: 9, minH: 8 },
-    { i: 'networks', x: 12, y: 4, w: 12, h: 16, minW: 9, minH: 16 },
-    { i: 'controlPanel', x: 24, y: 0, w: 6, h: 16, minW: 6, minH: 10 },
-  ],
-  md: [
-    { i: 'cpu', x: 0, y: 0, w: 6, h: 4, minW: 4, minH: 4 },
-    { i: 'memory', x: 6, y: 0, w: 6, h: 4, minW: 4, minH: 4 },
-    { i: 'price', x: 12, y: 0, w: 6, h: 4, minW: 4, minH: 4 },
-    { i: 'info', x: 0, y: 4, w: 8, h: 8, minW: 6, minH: 8 },
-    { i: 'networks', x: 8, y: 4, w: 12, h: 16, minW: 9, minH: 16 },
-    { i: 'controlPanel', x: 20, y: 0, w: 6, h: 16, minW: 6, minH: 10 },
-  ],
-  sm: [
-    { i: 'cpu', x: 0, y: 0, w: 4, h: 4, minW: 4, minH: 4 },
-    { i: 'memory', x: 4, y: 0, w: 4, h: 4, minW: 4, minH: 4 },
-    { i: 'price', x: 8, y: 0, w: 4, h: 4, minW: 4, minH: 4 },
-    { i: 'info', x: 0, y: 4, w: 12, h: 8, minW: 9, minH: 8 },
-    { i: 'networks', x: 0, y: 12, w: 12, h: 16, minW: 9, minH: 16 },
-    { i: 'controlPanel', x: 0, y: 28, w: 6, h: 16, minW: 6, minH: 10 },
-  ],
-  xs: [
-    { i: 'cpu', x: 0, y: 0, w: 2, h: 4, minW: 2, minH: 4 },
-    { i: 'memory', x: 2, y: 0, w: 2, h: 4, minW: 2, minH: 4 },
-    { i: 'price', x: 4, y: 0, w: 2, h: 4, minW: 2, minH: 4 },
-    { i: 'info', x: 0, y: 4, w: 6, h: 8, minW: 4, minH: 8 },
-    { i: 'networks', x: 0, y: 12, w: 6, h: 16, minW: 4, minH: 16 },
-    { i: 'controlPanel', x: 0, y: 28, w: 6, h: 16, minW: 6, minH: 10 },
-  ],
-}
-
-const envColors: Record<string, 'red' | 'emerald' | 'gray' | 'orange' | 'blue'> = {
-  powerOff: 'red',
-  powerOn: 'emerald',
-  undefined: 'gray',
-  restart: 'orange',
-  suspend: 'blue',
-  delete: 'red',
-}
-
-interface VMDetailsProps {
-  user?: User
-  className?: string
-}
 
 const CardHeader = ({ title }: { title: string }) => {
   return (
@@ -80,11 +34,7 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
 
   const cpu = vm?.virtualmachine?.status?.cpu
   const cpuUsage = cpu?.usage
-  const cpuSockets = cpu?.resourcevirtualmachinecpuspec?.sockets
-  const cpuCoresPerSocket = cpu?.resourcevirtualmachinecpuspec?.corespersocket
-
   const memory = vm?.virtualmachine?.status?.memory?.resourcevirtualmachinememoryspec?.sizebytes
-
   const location = vm?.virtualmachine?.status?.location || 'Unknown location'
 
   const os = vm?.virtualmachine?.status?.operatingsystem
@@ -99,7 +49,7 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
 
   const networks = vm?.virtualmachine?.status?.networks || []
   const networksLength = networks.length
-  const listNetworks = networks.map((network, index) => {
+  const listNetworks = networks.map((network: Network, index: number) => {
     network.id = network.id || `Network ${index + 1}`
     return network
   })
@@ -213,7 +163,7 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
             <CardHeader title={`Networks (${networksLength})`} />
             <div className='flex gap-2'>
               <div className='flex flex-1 flex-col gap-2'>
-                {visibleNetworks.map((network) => (
+                {visibleNetworks.map((network: Network) => (
                   <div key={network.id} className='mb-2 p-2 border rounded-lg'>
                     <div className='flex flex-col'>
                       <b>ID: </b>
@@ -259,7 +209,7 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
                   {os_powerstate === 'poweredOn' ? null : (
                     <Pill
                       asChild
-                      variant={envColors['powerOn']}
+                      variant={vmActionsColors['powerOn']}
                       className='mt-2 px-3 cursor-pointer'
                       onClick={() => {
                         // TODO: Implement turn on functionality
@@ -271,7 +221,7 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
                   {os_powerstate === 'poweredOff' ? null : (
                     <Pill
                       asChild
-                      variant={envColors['powerOff']}
+                      variant={vmActionsColors['powerOff']}
                       className='mt-2 px-3 cursor-pointer'
                       onClick={() => {
                         // TODO: Implement turn off functionality
@@ -282,7 +232,7 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
                   )}
                   <Pill
                     asChild
-                    variant={envColors['restart']}
+                    variant={vmActionsColors['restart']}
                     className='mt-2 px-3 cursor-pointer'
                     onClick={() => {
                       // TODO: Implement restart functionality
@@ -292,7 +242,7 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
                   </Pill>
                   <Pill
                     asChild
-                    variant={envColors['suspend']}
+                    variant={vmActionsColors['suspend']}
                     className='mt-2 px-3 cursor-pointer'
                     onClick={() => {
                       // TODO: Implement suspend functionality
@@ -302,7 +252,7 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
                   </Pill>
                   <Pill
                     asChild
-                    variant={envColors['delete']}
+                    variant={vmActionsColors['delete']}
                     className='mt-2 px-3 cursor-pointer'
                     onClick={() => {
                       // TODO: Implement delete functionality

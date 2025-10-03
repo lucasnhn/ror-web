@@ -1,7 +1,7 @@
 import { authGuard } from '@/features/auth/utils/auth-guard'
-import { mockVms } from '@/__mocks__/data/vms'
 import PageView from './page-view'
 import { Header } from '@/components/layout/app-shell/header'
+import { mergedVMs } from '@/features/vms/utils/merge-vms'
 
 export default async function VMPage({
   searchParams,
@@ -20,28 +20,12 @@ export default async function VMPage({
   const filters = sp.filters === 'open' ? 'open' : undefined
   const skip = (page - 1) * limit
 
-  const vms = (mockVms.resources || []).map((vm: any) => ({
-    ...vm,
-    metadata: {
-      ...vm.metadata,
-      creationtimestamp: {
-        ...vm.metadata.creationtimestamp,
-        time: vm.metadata.creationtimestamp?.time
-          ? {
-              date: {
-                numberLong: vm.metadata.creationtimestamp.time.$date?.$numberLong,
-              },
-            }
-          : undefined,
-      },
-    },
-  }))
   const params = { page, limit, sort, order, view, filters, skip }
 
   return (
     <div className='w-full flex flex-col'>
       <Header title='Virtual Machines' />
-      <PageView className='f' user={user} vms={vms} params={params} />
+      <PageView className='f' user={user} vms={mergedVMs} params={params} />
     </div>
   )
 }
