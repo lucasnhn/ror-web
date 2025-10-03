@@ -1,3 +1,9 @@
+/*
+ * FILE OVERVIEW:
+ *
+ * Server component that renders the node pools page view for a specific cluster.
+ */
+
 'use client' // TODO: Remove when we are back to using repo
 
 // import { getRorApi } from '@/services/ror-api'

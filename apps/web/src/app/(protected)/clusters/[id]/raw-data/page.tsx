@@ -1,3 +1,9 @@
+/*
+ * FILE OVERVIEW:
+ *
+ * Server component that renders the raw data view for a specific Kubernetes cluster.
+ */
+
 'use client'
 
 import { useClusterContext } from '@/context/cluster-context'
