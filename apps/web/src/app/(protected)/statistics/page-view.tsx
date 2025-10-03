@@ -1,7 +1,8 @@
 /**
- *
  * FILE OVERVIEW
  * ----------------------
+ * This file defines the main React component (`PageView`) responsible for displaying statistics
+ * about Kubernetes clusters in the ROR web application.
  */
 
 'use client'
@@ -9,8 +10,6 @@ import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '
 import { NotReadyMessage } from '@/components/ui/not-ready-message'
 import { cn } from '@/utils/clsxm'
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
-
-/**
 
 /**
  * Props for the PageView component.
@@ -109,6 +108,14 @@ const Chart = ({ title, data }: ChartProps) => {
   )
 }
 
+/**
+ * Renders the statistics page view, displaying a welcome message and charts for various version data.
+ *
+ * @param className - Optional additional CSS class names to apply to the root container.
+ * @param kubernetesVersions - An object containing data about Kubernetes versions.
+ * @param agentVersions - An object containing data about agent versions.
+ * @param nhnToolingVersion - An object containing data about NHN Tooling versions.
+ */
 export const PageView = ({ className, kubernetesVersions, agentVersions, nhnToolingVersion }: PageViewProps) => {
   // TODO: Remove logs when kubernetesVersions, agentVersions and nhnToolingVersion are used
   console.log('kubernetesVersions', kubernetesVersions)
