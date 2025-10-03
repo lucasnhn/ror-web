@@ -16,7 +16,9 @@ import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
  * Props for the PageView component.
  *
  * @property {string} [className] - Optional CSS class name for styling the component.
- * @property {User} user - The current user viewing the page.
+ * @property {Record<string, number>} kubernetesVersions - Mapping of Kubernetes version strings to their counts.
+ * @property {Record<string, number>} agentVersions - Mapping of agent version strings to their counts.
+ * @property {Record<string, number>} nhnToolingVersion - Mapping of NHN tooling version strings to their counts.
  */
 interface PageViewProps {
   className?: string
