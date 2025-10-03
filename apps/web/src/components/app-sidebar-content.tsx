@@ -1,5 +1,5 @@
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@radix-ui/react-collapsible'
-import { Boxes, ChevronRight, CircleHelp, CornerUpLeft } from 'lucide-react'
+import { Boxes, ChartColumn, ChevronRight, CircleHelp, CornerUpLeft } from 'lucide-react'
 import Link from 'next/link'
 import {
   SidebarContent,
@@ -10,6 +10,7 @@ import {
   SidebarMenuSub,
   SidebarMenuSubItem,
 } from './shadcn/sidebar'
+import { routes } from '@/config/routes'
 
 export type SidebarItem = { title: string } | { title: string; url: string }
 
@@ -52,21 +53,21 @@ const sections: Section[] = [
     items: [
       {
         title: 'Clusters',
-        url: '/clusters',
+        url: routes.app.clusters.getHref(),
       },
     ],
   },
-  // {
-  //   title: "Statistics",
-  //   icon: ChartColumn,
-  //   isActive: true,
-  //   items: [
-  //     {
-  //       title: "Metrics",
-  //       url: "#",
-  //     }
-  //   ]
-  // },
+  {
+    title: 'Statistics',
+    icon: ChartColumn,
+    isActive: true,
+    items: [
+      {
+        title: 'Statistics',
+        url: routes.app.statistics.getHref(),
+      },
+    ],
+  },
   // {
   //   title: "Economy",
   //   icon: CircleDollarSign,
