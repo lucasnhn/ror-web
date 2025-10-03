@@ -1,7 +1,7 @@
 /*
  * FILE OVERVIEW:
  *
- * Server component that renders the node pools page view for a specific cluster.
+ * Layout component that provides shared UI structure and context for all cluster-related pages under the [id] route.
  */
 
 'use client' // TODO: Remove when we are back to using repo
