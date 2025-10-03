@@ -10,14 +10,12 @@ const StatisticsPage = async () => {
   const res = await api.kubernetesClusters.list(listParams)
   const items: KubernetesCluster[] = res?.resources ?? []
 
+  const { kubernetesCount, agentCount, nhnToolingCount } = findVersions(items)
+
   return (
     <div className='w-full flex flex-col'>
       <Header title='Statistics' />
-      <PageView
-        kubernetesVersions={findVersions(items).kubernetesCount}
-        agentVersions={findVersions(items).agentCount}
-        nhnToolingVersion={findVersions(items).nhnToolingCount}
-      />
+      <PageView kubernetesVersions={kubernetesCount} agentVersions={agentCount} nhnToolingVersion={nhnToolingCount} />
     </div>
   )
 }
