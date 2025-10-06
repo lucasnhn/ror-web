@@ -62,9 +62,9 @@ export const routes = {
       label: 'Raw data',
       getHref: (id: string) => `/clusters/${id}/raw-data`,
     },
-    metrics: {
-      label: 'Metrics',
-      getHref: () => '/statistics/metrics',
+    statistics: {
+      label: 'Statistics',
+      getHref: () => '/statistics',
     },
     priceList: {
       label: 'Price list',
