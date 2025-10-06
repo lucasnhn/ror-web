@@ -12,6 +12,7 @@ import { createVulnerabilityReportService } from '../services/vulnerability-repo
 import { createDaemonSetService } from '../services/deamon-sets'
 import { createReplicaSetService } from '../services/replica-sets'
 import { createPriceService } from '../services/prices'
+import { createDatacentersService } from '../services/datacenters'
 
 function setDefaultHeaders(config: ApiClientConfig): Record<string, string> {
   return {
@@ -40,18 +41,19 @@ export function createApiClient(config: ApiClientConfig) {
    * Create our different services
    */
   const services = {
+    configuration: createConfigurationService(request),
+    daemonSet: createDaemonSetService(request),
+    datacenter: createDatacentersService(request),
+    deployment: createDeploymentService(request),
+    ingresses: createIngressesService(request),
     kubernetesClusters: createKubernetesClusterService(request),
     nodes: createNodesService(request),
-    users: createUsersService(request),
-    ingresses: createIngressesService(request),
-    configuration: createConfigurationService(request),
-    deployment: createDeploymentService(request),
-    service: createServiceService(request),
-    daemonSet: createDaemonSetService(request),
-    replicaSet: createReplicaSetService(request),
-    vulnerabilityReport: createVulnerabilityReportService(request),
     pods: createPodsService(request),
     prices: createPriceService(request),
+    replicaSet: createReplicaSetService(request),
+    service: createServiceService(request),
+    users: createUsersService(request),
+    vulnerabilityReport: createVulnerabilityReportService(request),
   }
 
   return services

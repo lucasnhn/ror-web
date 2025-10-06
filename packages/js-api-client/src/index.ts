@@ -18,6 +18,8 @@ export type {
   ConfigurationResponse,
   DaemonSet,
   DaemonSetResponse,
+  DataCenter,
+  DataCenterResponse,
   Deployment,
   DeploymentResponse,
   KubernetesCluster,
