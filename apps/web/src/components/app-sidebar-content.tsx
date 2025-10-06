@@ -1,5 +1,5 @@
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@radix-ui/react-collapsible'
-import { Boxes, ChartColumn, ChevronRight, CircleHelp, CornerUpLeft } from 'lucide-react'
+import { Boxes, ChartColumn, ChevronRight, CircleDollarSign, CircleHelp, CornerUpLeft } from 'lucide-react'
 import Link from 'next/link'
 import {
   SidebarContent,
@@ -68,17 +68,17 @@ const sections: Section[] = [
       },
     ],
   },
-  // {
-  //   title: "Economy",
-  //   icon: CircleDollarSign,
-  //   isActive: true,
-  //   items: [
-  //     {
-  //       title: "Price list",
-  //       url: "#",
-  //     }
-  //   ]
-  // },
+  {
+    title: 'Economy',
+    icon: CircleDollarSign,
+    isActive: true,
+    items: [
+      {
+        title: 'Price list',
+        url: routes.app.priceList.getHref(),
+      },
+    ],
+  },
   // {
   //     title: 'Administration',
   //     icon: Settings2,

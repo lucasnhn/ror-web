@@ -22,6 +22,7 @@ import { useNodePoolForm } from '../hooks/use-node-pool-form'
 import { generateRandomName } from '../utils/generate-random-name'
 import { NumPicker } from '@/components/ui/num-picker'
 import { EffectType, effectValues } from '../types/node-pool-form'
+import { SimplePrice } from '@/types/prices'
 
 type FormApi = ReturnType<typeof useNodePoolForm>
 
@@ -31,7 +32,7 @@ interface CreateEditViewProps {
   title: string
   buttonText: string
   nodePool?: KubernetesClusterNodePoolStatusType
-  simplePrices?: Array<{ id: string; machineClass: string; price: number }>
+  simplePrices?: SimplePrice[]
 }
 
 function NameSection({ form }: { form: FormApi }) {
