@@ -1,3 +1,11 @@
+/*
+ * FILE OVERVIEW:
+ *
+ * Server component that fetches and displays the list of Kubernetes clusters
+ * for the authenticated user. Supports pagination, sorting, and filtering.
+ * Renders the PageView component with fetched data.
+ */
+
 import { authGuard } from '@/features/auth/utils/auth-guard'
 import { getRorApi } from '@/services/ror-api'
 import type { Metadata } from 'next'

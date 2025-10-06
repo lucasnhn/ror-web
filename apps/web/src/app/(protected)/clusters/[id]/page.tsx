@@ -1,3 +1,10 @@
+/*
+ * FILE OVERVIEW:
+ *
+ * Server component that fetches and displays details for a specific Kubernetes cluster
+ * identified by its ID from the URL. Renders the ClusterDetails component.
+ */
+
 import type { Metadata } from 'next'
 import { ClusterDetails } from '@/features/cluster/components/cluster-details'
 

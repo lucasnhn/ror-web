@@ -1,3 +1,11 @@
+/*
+ * FILE OVERVIEW:
+ *
+ * Server component that fetches and displays the list of node pools for a specific Kubernetes cluster.
+ * Renders the PageView component with fetched data.
+ * Supports viewing and managing node pools within the cluster.
+ */
+
 import type { Metadata } from 'next'
 import { PageView } from './page-view'
 import { getRorApi } from '@/services/ror-api'

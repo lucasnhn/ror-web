@@ -1,3 +1,9 @@
+/*
+ * FILE OVERVIEW:
+ *
+ * Layout component that provides shared UI structure and context for all cluster-related pages under the [id] route.
+ */
+
 'use client' // TODO: Remove when we are back to using repo
 
 // import { getRorApi } from '@/services/ror-api'
