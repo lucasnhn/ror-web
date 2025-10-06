@@ -1,7 +1,8 @@
 /*
  * FILE OVERVIEW
  *
- * Server component that fetches and displays the list of nodes in a specific node pool within a Kubernetes cluster.
+ * Server component that fetches and displays the list of nodes in a
+ * specific node pool within a Kubernetes cluster.
  */
 
 import { findPoolByName, getNodesInPool } from '@/utils/get-nodes-in-pool'

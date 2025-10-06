@@ -1,7 +1,8 @@
 import { Header } from '@/components/layout/app-shell/header'
 import { getRorApi } from '@/services/ror-api'
 import { Price } from '@/types/prices'
-import { PageView } from './page-view'
+import { pricesColumns } from '@/features/economy/components/prices-columns'
+import { DataTable } from '@/components/ui/data-table/data-table'
 
 const PriceListPage = async () => {
   const api = await getRorApi()
@@ -14,7 +15,9 @@ const PriceListPage = async () => {
   return (
     <div className='w-full flex flex-col'>
       <Header title='Price list' />
-      <PageView simplePrices={items} />
+      <div className='mx-6 my-8'>
+        <DataTable columns={pricesColumns} data={items} />
+      </div>
     </div>
   )
 }
