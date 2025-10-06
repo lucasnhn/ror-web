@@ -12,12 +12,7 @@ import { useState, useMemo, useCallback } from 'react'
 import type { KubernetesClusterNodePoolStatusType } from '@ror/js-api-client'
 import { createOrUpdateNodePoolAction } from '@/utils/node-pool-actions'
 import { toast } from 'sonner'
-
-export interface SimplePrice {
-  id: string
-  machineClass: string
-  price: number
-}
+import { SimplePrice } from '@/types/prices'
 
 /**
  * Custom React hook for managing the state and logic of a Kubernetes node pool form.
