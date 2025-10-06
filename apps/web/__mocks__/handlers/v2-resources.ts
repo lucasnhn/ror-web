@@ -2,6 +2,7 @@ import { http, HttpResponse } from 'msw'
 import nodes from '../data/nodes'
 import { ingressesResponse } from '../data/ingresses'
 import { clustersVersion2 } from '../data/clusters'
+import datacenters from '../data/datacenters'
 
 type Resource = (typeof clustersVersion2.resources)[number]
 type NotFound = { message: string }
@@ -30,6 +31,8 @@ export const v2ResourcesHandlers = [
         return HttpResponse.json(nodes) // Return all node data
       case 'Ingress':
         return HttpResponse.json(ingressesResponse) // Return all ingress data
+      case 'Datacenter':
+        return HttpResponse.json(datacenters) // Return all datacenter data
       default:
         return HttpResponse.json(null) // If unknown kind, return null
     }
