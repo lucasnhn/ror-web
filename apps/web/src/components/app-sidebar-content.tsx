@@ -1,5 +1,5 @@
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@radix-ui/react-collapsible'
-import { Boxes, ChartColumn, ChevronRight, CircleDollarSign, CircleHelp, CornerUpLeft } from 'lucide-react'
+import { Boxes, ChartColumn, ChevronRight, CircleDollarSign, CircleHelp, CornerUpLeft, Settings2 } from 'lucide-react'
 import Link from 'next/link'
 import {
   SidebarContent,
@@ -79,37 +79,37 @@ const sections: Section[] = [
       },
     ],
   },
-  // {
-  //     title: 'Administration',
-  //     icon: Settings2,
-  //     isActive: true,
-  //     items: [
-  //         {
-  //             title: 'Data centers',
-  //             url: '/datacenters',
-  //         },
-  //         {
-  //             title: 'Policy reports',
-  //             url: '#',
-  //         },
-  //         {
-  //             title: 'Admin price list',
-  //             url: '#',
-  //         },
-  //         {
-  //             title: 'Projects',
-  //             url: '#',
-  //         },
-  //         {
-  //             title: 'Vulnerability reports',
-  //             url: '#',
-  //         },
-  //         {
-  //             title: 'Workspaces',
-  //             url: '#',
-  //         },
-  //     ],
-  // },
+  {
+    title: 'Administration',
+    icon: Settings2,
+    isActive: true,
+    items: [
+      {
+        title: 'Data centers',
+        url: routes.app.dataCenters.getHref(),
+      },
+      //         {
+      //             title: 'Policy reports',
+      //             url: '#',
+      //         },
+      //         {
+      //             title: 'Admin price list',
+      //             url: '#',
+      //         },
+      //         {
+      //             title: 'Projects',
+      //             url: '#',
+      //         },
+      //         {
+      //             title: 'Vulnerability reports',
+      //             url: '#',
+      //         },
+      //         {
+      //             title: 'Workspaces',
+      //             url: '#',
+      //         },
+    ],
+  },
   {
     title: 'Help',
     icon: CircleHelp,
