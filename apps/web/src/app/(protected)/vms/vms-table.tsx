@@ -148,34 +148,36 @@ interface VMTableProps {
   user?: User
   vms: VirtualMachine[]
   selectedDisplayData?: VMCardData[]
-  totalCount: number
-  pageCount: number
-  pagination: DataTablePagination
+  // totalCount: number
+  // pageCount: number
+  // pagination: DataTablePagination
 }
 
-export function VMTable({ user, vms, selectedDisplayData, totalCount, pageCount, pagination }: VMTableProps) {
-  const router = useRouter()
-  const pathname = usePathname()
-  const currentSearchParams = useSearchParams()
+export function VMTable({ user, vms, selectedDisplayData }: VMTableProps) {
+  // const router = useRouter()
+  // const pathname = usePathname()
+  // const currentSearchParams = useSearchParams()
 
-  const handleOnPaginationChange = useCallback(
-    (state: DataTablePagination) => {
-      const searchParams = new URLSearchParams(currentSearchParams)
-      searchParams.set('page', (state.pageIndex + 1).toString())
-      searchParams.set('limit', state.pageSize.toString())
-      router.push(`${pathname}?${searchParams.toString()}`)
-    },
-    [currentSearchParams, router, pathname]
-  )
+  // const handleOnPaginationChange = useCallback(
+  //   (state: DataTablePagination) => {
+  //     const searchParams = new URLSearchParams(currentSearchParams)
+  //     searchParams.set('page', (state.pageIndex + 1).toString())
+  //     searchParams.set('limit', state.pageSize.toString())
+  //     router.push(`${pathname}?${searchParams.toString()}`)
+  //   },
+  //   [currentSearchParams, router, pathname]
+  // )
 
   return (
-    <DataTable
-      data={vms}
-      totalCount={totalCount}
-      pageCount={pageCount}
-      columns={getVMTableColumns(user, selectedDisplayData)}
-      pagination={pagination}
-      onPaginationChange={handleOnPaginationChange}
-    />
+    // Data table with pagination - maybe re-enable in the future
+    // <DataTable
+    //   data={vms}
+    //   totalCount={totalCount}
+    //   pageCount={pageCount}
+    //   columns={getVMTableColumns(user, selectedDisplayData)}
+    //   pagination={pagination}
+    //   onPaginationChange={handleOnPaginationChange}
+    // />
+    <DataTable columns={getVMTableColumns(user, selectedDisplayData)} data={vms} expandable={false} />
   )
 }
