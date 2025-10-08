@@ -18,6 +18,7 @@ import { ConfigurationSchema, configurationResponseSchema } from '../schemas/con
 import { VulnerabilityReportResponseSchema, VulnerabilityReportSchema } from '../schemas/vulnerability-report'
 import { RorMetaDataResponseSchema, RorMetaDataSchema } from '../schemas/common'
 import type { PriceResponseSchema, PriceSchema } from '../schemas/price'
+import type { DatacenterResponseSchema, DatacenterSchema } from '../schemas/datacenter'
 
 // "Cluster" matches the v1 resource
 export type Cluster = z.infer<typeof ClusterSchema>
@@ -27,6 +28,8 @@ export type Configuration = z.infer<typeof ConfigurationSchema>
 export type ConfigurationResponse = z.infer<typeof configurationResponseSchema>
 export type DaemonSet = z.infer<typeof DaemonSetSchema>
 export type DaemonSetResponse = z.infer<typeof DaemonSetResponseSchema>
+export type DataCenter = z.infer<typeof DatacenterSchema>
+export type DataCenterResponse = z.infer<typeof DatacenterResponseSchema>
 export type Deployment = z.infer<typeof DeploymentSchema>
 export type DeploymentResponse = z.infer<typeof DeploymentResponseSchema>
 export type Ingress = z.infer<typeof IngressSchema>

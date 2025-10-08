@@ -2,6 +2,8 @@
  * Original source: https://gist.github.com/gynekolog/c78a918f93c16522157539dc31b53dbb
  */
 
+import { parseQuantity } from './parse-quantity'
+
 type Plurals = Record<Intl.LDMLPluralRule, string>
 
 const DEFAULT_PLURALS: Plurals = {
@@ -66,4 +68,28 @@ export function convertBytes(
   const unit = exponent === 0 ? pluralizedUnit : units[exponent]
 
   return includeUnit ? `${value} ${unit}` : value
+}
+
+/**
+ * Converts a memory quantity string into a human-readable string with appropriate binary units.
+ *
+ * The function parses the input memory string, determines the number of bytes, and then formats
+ * it using binary units. The output is localized to English and uses singular or plural forms
+ * for "Byte" as appropriate.
+ *
+ * @param memory - The memory quantity string to convert (e.g., "2Gi", "512Mi").
+ * @returns A human-readable string representing the memory size with binary units.
+ */
+export function convertMemory(memory: string): string {
+  const memoryBytes = parseQuantity(memory)
+  const memoryGiB = memoryBytes / 1024 ** 3
+  const decimals = memoryGiB.toFixed(2).split('.')[1]
+  const roundingPrecision = decimals === '00' ? 0 : 2
+
+  return convertBytes(memoryBytes, {
+    useBinaryUnits: true,
+    roundingPrecision,
+    includeUnit: true,
+    localizeOptions: { language: 'en', plurals: { one: 'Byte', other: 'Bytes' } },
+  })
 }

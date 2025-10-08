@@ -1,9 +1,15 @@
+/*
+ * FILE OVERVIEW:
+ *
+ * Layout component that provides shared UI structure and context for all cluster-related pages under the [id] route.
+ */
+
 'use client' // TODO: Remove when we are back to using repo
 
 // import { getRorApi } from '@/services/ror-api'
 import { Fragment, ReactNode, useEffect, useState } from 'react'
 import { routes } from '@/config/routes'
-import { ClusterHeader } from '@/components/ui/cluster/cluster-header'
+import { ClusterHeader } from '@/features/cluster/components/cluster-header'
 import { ClusterProvider } from '@/context/cluster-context'
 import { NotReadyMessage } from '@/components/ui/not-ready-message'
 // import { RenderApiError } from '@/utils/renderApiError'

@@ -62,9 +62,9 @@ export const routes = {
       label: 'Raw data',
       getHref: (id: string) => `/clusters/${id}/raw-data`,
     },
-    metrics: {
-      label: 'Metrics',
-      getHref: () => '/statistics/metrics',
+    statistics: {
+      label: 'Statistics',
+      getHref: () => '/statistics',
     },
     priceList: {
       label: 'Price list',
@@ -72,19 +72,19 @@ export const routes = {
     },
     dataCenters: {
       label: 'Data centers',
-      getHref: () => '/admin/data-centers',
+      getHref: () => '/datacenters',
     },
     policyReports: {
       label: 'Policy reports',
-      getHref: () => '/admin/policy-reports',
+      getHref: () => '/policy-reports',
     },
     adminPriceList: {
       label: 'Price list',
-      getHref: () => '/admin/price-list',
+      getHref: () => '/price-list',
     },
     projects: {
       label: 'Projects',
-      getHref: () => '/admin/projects',
+      getHref: () => '/projects',
     },
     vulnerabilityReports: {
       label: 'Vulnerability reports',
@@ -92,7 +92,7 @@ export const routes = {
     },
     workspaces: {
       label: 'Workspaces',
-      getHref: () => '/admin/workspaces',
+      getHref: () => '/workspaces',
     },
     documentation: {
       label: 'Documentation',

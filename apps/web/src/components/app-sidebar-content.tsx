@@ -1,5 +1,14 @@
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@radix-ui/react-collapsible'
-import { Boxes, ChevronRight, CircleHelp, CornerUpLeft, Monitor } from 'lucide-react'
+import {
+  Boxes,
+  ChartColumn,
+  ChevronRight,
+  CircleDollarSign,
+  CircleHelp,
+  CornerUpLeft,
+  Settings2,
+  Monitor,
+} from 'lucide-react'
 import Link from 'next/link'
 import {
   SidebarContent,
@@ -10,6 +19,7 @@ import {
   SidebarMenuSub,
   SidebarMenuSubItem,
 } from './shadcn/sidebar'
+import { routes } from '@/config/routes'
 
 export type SidebarItem = { title: string } | { title: string; url: string }
 
@@ -52,7 +62,7 @@ const sections: Section[] = [
     items: [
       {
         title: 'Clusters',
-        url: '/clusters',
+        url: routes.app.clusters.getHref(),
       },
     ],
   },
@@ -67,59 +77,59 @@ const sections: Section[] = [
       },
     ],
   },
-  // {
-  //   title: "Statistics",
-  //   icon: ChartColumn,
-  //   isActive: true,
-  //   items: [
-  //     {
-  //       title: "Metrics",
-  //       url: "#",
-  //     }
-  //   ]
-  // },
-  // {
-  //   title: "Economy",
-  //   icon: CircleDollarSign,
-  //   isActive: true,
-  //   items: [
-  //     {
-  //       title: "Price list",
-  //       url: "#",
-  //     }
-  //   ]
-  // },
-  // {
-  //     title: 'Administration',
-  //     icon: Settings2,
-  //     isActive: true,
-  //     items: [
-  //         {
-  //             title: 'Data centers',
-  //             url: '/datacenters',
-  //         },
-  //         {
-  //             title: 'Policy reports',
-  //             url: '#',
-  //         },
-  //         {
-  //             title: 'Admin price list',
-  //             url: '#',
-  //         },
-  //         {
-  //             title: 'Projects',
-  //             url: '#',
-  //         },
-  //         {
-  //             title: 'Vulnerability reports',
-  //             url: '#',
-  //         },
-  //         {
-  //             title: 'Workspaces',
-  //             url: '#',
-  //         },
-  //     ],
-  // },
+  {
+    title: 'Statistics',
+    icon: ChartColumn,
+    isActive: true,
+    items: [
+      {
+        title: 'Statistics',
+        url: routes.app.statistics.getHref(),
+      },
+    ],
+  },
+  {
+    title: 'Economy',
+    icon: CircleDollarSign,
+    isActive: true,
+    items: [
+      {
+        title: 'Price list',
+        url: routes.app.priceList.getHref(),
+      },
+    ],
+  },
+  {
+    title: 'Administration',
+    icon: Settings2,
+    isActive: true,
+    items: [
+      {
+        title: 'Data centers',
+        url: routes.app.dataCenters.getHref(),
+      },
+      //         {
+      //             title: 'Policy reports',
+      //             url: '#',
+      //         },
+      //         {
+      //             title: 'Admin price list',
+      //             url: '#',
+      //         },
+      //         {
+      //             title: 'Projects',
+      //             url: '#',
+      //         },
+      //         {
+      //             title: 'Vulnerability reports',
+      //             url: '#',
+      //         },
+      //         {
+      //             title: 'Workspaces',
+      //             url: '#',
+      //         },
+    ],
+  },
   {
     title: 'Help',
     icon: CircleHelp,
