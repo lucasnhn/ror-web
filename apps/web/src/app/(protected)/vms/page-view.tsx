@@ -63,6 +63,14 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
   const [selectedFilters, setSelectedFilters] = useState<Record<string, string[]>>({})
   const [searchResults, setSearchResults] = useState<VirtualMachine[]>(safeItems)
 
+  const onDisplayChange = useCallback((selected: Option[]) => {
+    const next = selected.map((i) => i.value as VMCardData)
+    setSelectedDisplayData((prev) => {
+      if (prev.length === next.length && prev.every((v, i) => v === next[i])) return prev
+      return next
+    })
+  }, [])
+
   const onSearchResultsChange = useCallback((res: VirtualMachine[]) => {
     setSearchResults((prev) => {
       if (prev.length === res.length) {
@@ -71,14 +79,6 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
         if (a === b) return prev
       }
       return res
-    })
-  }, [])
-
-  const onDisplayChange = useCallback((selected: Option[]) => {
-    const next = selected.map((i) => i.value as VMCardData)
-    setSelectedDisplayData((prev) => {
-      if (prev.length === next.length && prev.every((v, i) => v === next[i])) return prev
-      return next
     })
   }, [])
 
@@ -123,8 +123,6 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
     pageIndex: page - 1,
     pageSize: limit,
   }
-
-  const pageCount = Math.ceil(safeItems.length / limit)
 
   const clearUrl = () => {
     router.replace(pathname, { scroll: false })
@@ -299,7 +297,6 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
           className='[@container(min-width:1001px)]:hidden'
           aria-label='Open filters'
           onPressedChange={(pressed) => {
-            // Handle filter toggle without navigation
             const newUrl = new URL(window.location.href)
             if (pressed) {
               newUrl.searchParams.set('filters', 'open')
@@ -379,25 +376,17 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
           <VMTable
             key='table'
             user={user}
-            vms={(params.sort ? sortedItems : filteredItems)
-              .filter((c) =>
-                searchResults.some(
-                  (sr) =>
-                    sr.virtualmachine?.status?.operatingsystem?.id === c.virtualmachine?.status?.operatingsystem?.id ||
-                    sr.virtualmachine?.status?.operatingsystem?.name ===
-                      c.virtualmachine?.status?.operatingsystem?.name ||
-                    sr.virtualmachine?.status?.operatingsystem?.hostname ===
-                      c.virtualmachine?.status?.operatingsystem?.hostname
-                )
+            vms={(params.sort ? sortedItems : filteredItems).filter((c) =>
+              searchResults.some(
+                (sr) =>
+                  sr.virtualmachine?.status?.operatingsystem?.id === c.virtualmachine?.status?.operatingsystem?.id ||
+                  sr.virtualmachine?.status?.operatingsystem?.name ===
+                    c.virtualmachine?.status?.operatingsystem?.name ||
+                  sr.virtualmachine?.status?.operatingsystem?.hostname ===
+                    c.virtualmachine?.status?.operatingsystem?.hostname
               )
-              .slice(
-                paginationState.pageIndex * paginationState.pageSize,
-                (paginationState.pageIndex + 1) * paginationState.pageSize
-              )}
+            )}
             selectedDisplayData={selectedDisplayData}
-            pagination={paginationState}
-            totalCount={filteredItems.length}
-            pageCount={pageCount}
           />
         ) : (
           <div className='flex flex-row flex-wrap gap-6'>
