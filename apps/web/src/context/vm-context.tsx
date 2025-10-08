@@ -1,6 +1,6 @@
 'use client'
 
-import { VirtualMachine } from '@/app/(protected)/vms/interfaces'
+import { VirtualMachine } from '@ror/web/src/features/vms/utils/vms'
 import { createContext, useContext } from 'react'
 
 export interface VMContextData {

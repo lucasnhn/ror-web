@@ -65,6 +65,7 @@ const VMCard = ({ className, user, vm, vmDisplayData }: VMCardProps) => {
 
   const envColor = vmCardPowerStatus[powerstate ?? 'undefined'] ?? vmCardPowerStatus['undefined']
 
+  console.log(user)
   return (
     <Link href={`/vms/${vmHostname}`} onClick={() => localStorage.setItem('selectedVm', JSON.stringify(vm))}>
       <Card

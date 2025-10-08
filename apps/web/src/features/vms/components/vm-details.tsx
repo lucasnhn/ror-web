@@ -10,7 +10,6 @@
  */
 'use client'
 
-import { User } from 'next-auth'
 import { useVMContext } from '@/context/vm-context'
 import { Responsive, WidthProvider } from 'react-grid-layout'
 import { cn } from '@/utils/clsxm'
@@ -37,11 +36,13 @@ const CardHeader = ({ title }: { title: string }) => {
 
 export const VMDetails = ({ user, className }: VMDetailsProps) => {
   const { vm } = useVMContext()
-  const [layoutKey, setLayoutKey] = useState(0)
+  const [layoutKey] = useState(0)
   const [layout, setLayout] = useState<Layout[]>(standardLayouts.lg)
-  const [savedLayouts, setSavedLayouts] = useState<Layouts>(standardLayouts)
+  const [savedLayouts] = useState<Layouts>(standardLayouts)
   const [currentBreakpoint, setCurrentBreakpoint] = useState('lg')
 
+  console.log(currentBreakpoint) // For future use if needed
+  console.log(layout) // For future use if needed
   const cpu = vm?.virtualmachine?.status?.cpu
   const cpuUsage = cpu?.usage
   const memory = vm?.virtualmachine?.status?.memory?.resourcevirtualmachinememoryspec?.sizebytes
@@ -59,11 +60,15 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
 
   const networks = vm?.virtualmachine?.status?.networks || []
   const networksLength = networks.length
-  const listNetworks = networks.map((network: Network, index: number) => {
-    network.id = network.id || `Network ${index + 1}`
-    return network
+  const listNetworks = networks.map((network, index) => {
+    return {
+      ...network,
+      id: network.id ?? `Network ${index + 1}`,
+    } as Network
   })
   const visibleNetworks = listNetworks.slice(0, 2)
+
+  console.log(user)
 
   return (
     <div>

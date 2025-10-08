@@ -1,7 +1,7 @@
 'use client'
 
 import type { VirtualMachine } from '../utils/vms'
-import type { DataTableColumnDef, DataTablePagination } from '@/components/ui/data-table'
+import type { DataTableColumnDef } from '@/components/ui/data-table'
 import Link from 'next/link'
 import { Pill } from '@/components/shadcn/pill'
 import { vmCardColors } from '@/features/vms/utils/env-colors'

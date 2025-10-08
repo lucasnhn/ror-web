@@ -15,6 +15,7 @@ export interface VirtualMachine {
     resourceversion?: string
     creationtimestamp?: {
       time?: {
+        $date: string
         date?: {
           numberLong?: string
         }
@@ -71,7 +72,7 @@ export interface VirtualMachine {
           corespersocket?: number
         }
       }
-      tags?: {} | null
+      tags?: string | null
       state?: {
         state?: string | null
         reason?: string

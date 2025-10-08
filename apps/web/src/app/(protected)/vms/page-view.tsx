@@ -36,11 +36,6 @@ import { VmSearch } from '@/features/vms/components/vm-search'
 import { displayDataOptions, sortingOptions, filterOptions } from '@/features/config/page-view-options'
 
 export const PageView = ({ className, user, vms, params }: PageViewProps) => {
-  const DEFAULT_LIMIT = 3
-  const DEFAULT_PAGE = 1
-
-  const limit = Number(params.limit) || DEFAULT_LIMIT
-  const page = Number(params.page) || DEFAULT_PAGE
   const filtersOpen = params.filters === 'open'
   const pathname = usePathname()
 
@@ -71,16 +66,19 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
     })
   }, [])
 
-  const onSearchResultsChange = useCallback((res: VirtualMachine[]) => {
-    setSearchResults((prev) => {
-      if (prev.length === res.length) {
-        const a = idsKey(prev)
-        const b = idsKey(res)
-        if (a === b) return prev
-      }
-      return res
-    })
-  }, [])
+  const onSearchResultsChange = useCallback(
+    (res: VirtualMachine[]) => {
+      setSearchResults((prev) => {
+        if (prev.length === res.length) {
+          const a = idsKey(prev)
+          const b = idsKey(res)
+          if (a === b) return prev
+        }
+        return res
+      })
+    },
+    [idsKey]
+  )
 
   // load display selections once
   useEffect(() => {
@@ -118,11 +116,6 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
       lastSafeKeyRef.current = nextKey
     }
   }, [safeItems])
-
-  const paginationState = {
-    pageIndex: page - 1,
-    pageSize: limit,
-  }
 
   const clearUrl = () => {
     router.replace(pathname, { scroll: false })
