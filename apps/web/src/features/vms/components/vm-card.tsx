@@ -1,3 +1,15 @@
+/**
+ * VM Card Component
+ *
+ * FILE OVERVIEW:
+ * ------------------------
+ * This file defines a React component that displays a card view of a Virtual Machine (VM).
+ * It includes various details about the VM, such as its name, hostname, ID, power state, and operating system information.
+ * The card is styled based on the VM's power state and provides a link to the VM's detailed page.
+ *
+ */
+'use client'
+
 import * as React from 'react'
 
 import { cn } from '@/utils/clsxm'

@@ -1,3 +1,13 @@
+/**
+ * VM Details Component
+ *
+ * FILE OVERVIEW:
+ * ------------------------
+ * This file defines a React component that displays detailed information about a Virtual Machine (VM).
+ * It uses a responsive grid layout to organize various attributes and actions related to the VM.
+ * The component is designed to be interactive, allowing users to resize and rearrange the layout.
+ *
+ */
 'use client'
 
 import { User } from 'next-auth'

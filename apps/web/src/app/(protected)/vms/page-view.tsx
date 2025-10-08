@@ -1,3 +1,21 @@
+/**
+ * VMs Page View Component
+ * FILE OVERVIEW:
+ * ------------------------
+ * Renders the main content of the Virtual Machines (VMs) page, including controls for searching, filtering, sorting, and toggling between grid and list views.
+ * It also manages the state for selected display data, filters, and search results.
+ *
+ * Key Features:
+ * - Search functionality to filter VMs based on user input.
+ * - Multi-select dropdowns for choosing which VM attributes to display and for filtering VMs by specific criteria.
+ * - Sorting options to order VMs by various attributes in ascending or descending order.
+ * - Toggle switch to open/close the filter section.
+ * - View switcher to toggle between grid and list views of VMs.
+ * - Pagination support for navigating through large sets of VMs in list view.
+ *
+ * The component uses React hooks for state management and side effects, and it leverages Next.js navigation features for URL management.
+ */
+
 'use client'
 
 import MultipleSelector, { Option } from '@/components/shadcn/multiselect'

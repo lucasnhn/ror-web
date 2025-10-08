@@ -1,3 +1,12 @@
+/**
+ * VM Header Component
+ *
+ * FILE OVERVIEW:
+ * ------------------------
+ * This file defines a React component that displays the header section for a Virtual Machine (VM) page.
+ * It includes the VM's hostname, power state, and navigation tabs for different sections related to the VM.
+ * The header is styled based on the VM's power state
+ */
 'use client'
 
 import { cn } from '@/utils/clsxm'

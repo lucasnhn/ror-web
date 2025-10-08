@@ -1,3 +1,14 @@
+/**
+ * VMs Table Component
+ * 
+ * FILE OVERVIEW:
+ * ------------------------
+ * This file defines a React component that displays a table of Virtual Machines (VMs).
+ * It renders a table of Virtual Machines with various attributes.
+
+ * 
+ */
+
 import { User } from 'next-auth'
 import { createColumnHelper } from '@tanstack/react-table'
 import type { DataTableColumnDef, DataTablePagination } from '@/components/ui/data-table'

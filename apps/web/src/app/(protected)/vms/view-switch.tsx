@@ -1,3 +1,11 @@
+/**
+ * VMs View Switch Component
+ * FILE OVERVIEW:
+ * ------------------------
+ * This file defines a React component that provides a switch to toggle between different views (grid and list) for displaying Virtual Machines (VMs).
+ * It uses URL search parameters to manage the current view state and updates the URL accordingly when the view is changed.
+ */
+
 'use client'
 import { ContentSwitch, Switch } from '@ror/react/components/content-switch'
 import { useRouter, useSearchParams } from 'next/navigation'

@@ -1,3 +1,13 @@
+/**
+ * VM Search Component
+ *
+ * FILE OVERVIEW:
+ * ------------------------
+ * This file defines a React component that provides a search functionality for Virtual Machines (VMs).
+ * It uses the Fuse.js library for fuzzy searching and allows users to filter VMs based on various attributes.
+ * The component includes a debounced input field to optimize performance and prevent excessive re-renders during typing.
+ *
+ */
 'use client'
 
 import { VmSearchProps } from '../utils/vms'

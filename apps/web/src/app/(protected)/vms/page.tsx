@@ -1,3 +1,11 @@
+/**
+ * VMs Page Component
+ * FILE OVERVIEW:
+ * ------------------------
+ * This file defines a React component that serves as the main entry point for the Virtual Machines (VMs) page.
+ * It handles authentication, data fetching, and rendering of the page layout.
+ */
+
 import { authGuard } from '@/features/auth/utils/auth-guard'
 import PageView from './page-view'
 import { Header } from '@/components/layout/app-shell/header'

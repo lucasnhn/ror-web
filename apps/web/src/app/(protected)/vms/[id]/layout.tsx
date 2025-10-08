@@ -1,3 +1,13 @@
+/**
+ * VMs Page Layout Component
+ *
+ * FILE OVERVIEW:
+ * ------------------------
+ * This file defines a React component that serves as the layout for the Virtual Machines (VMs) page.
+ * It includes a header with navigation tabs and a message indicating that the page is under development.
+ * The layout also provides context for the selected VM to its child components.
+ *
+ */
 'use client'
 
 import { Fragment, ReactNode, useEffect, useState } from 'react'
