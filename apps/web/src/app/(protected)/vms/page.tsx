@@ -9,7 +9,7 @@
 import { authGuard } from '@/features/auth/utils/auth-guard'
 import PageView from './page-view'
 import { Header } from '@/components/layout/app-shell/header'
-import { mergedVMs } from '@/features/vms/utils/merge-vms'
+import { mergedVms } from '@/features/vms/utils/merge-vms'
 
 export default async function VMPage({
   searchParams,
@@ -33,7 +33,7 @@ export default async function VMPage({
   return (
     <div className='w-full flex flex-col'>
       <Header title='Virtual Machines' />
-      <PageView className='f' user={user} vms={mergedVMs} params={params} />
+      <PageView className='f' user={user} vms={mergedVms} params={params} />
     </div>
   )
 }

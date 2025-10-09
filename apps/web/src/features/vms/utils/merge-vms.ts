@@ -1,26 +1,9 @@
 import { mockVms } from '@/__mocks__/data/vms'
+import { VirtualMachine } from './vms'
 
-export const mergedVMs = (mockVms.resources || []).map((vm) => {
-  const metadata = vm.metadata
-  const creationtimestamp = metadata?.creationtimestamp
-  return {
-    ...vm,
-    metadata: metadata
-      ? {
-          ...metadata,
-          creationtimestamp: creationtimestamp
-            ? {
-                ...creationtimestamp,
-                time: creationtimestamp.time
-                  ? {
-                      date: {
-                        numberLong: creationtimestamp.time.$date?.$numberLong,
-                      },
-                    }
-                  : undefined,
-              }
-            : undefined,
-        }
-      : undefined,
-  }
+export const mergedVms: VirtualMachine[] = mockVms.resources.map((vm) => {
+  const matchingVm = mockVms.resources.find((v) => v.metadata?.name === vm.metadata?.name)
+
+  const merged = { ...vm, ...matchingVm }
+  return merged as VirtualMachine
 })

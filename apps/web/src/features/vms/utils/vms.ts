@@ -14,10 +14,9 @@ export interface VirtualMachine {
     uid?: string
     resourceversion?: string
     creationtimestamp?: {
-      time?: {
-        $date: string
-        date?: {
-          numberLong?: string
+      time: {
+        $date: {
+          $numberLong?: string
         }
       }
     }
@@ -28,7 +27,7 @@ export interface VirtualMachine {
     finalizers?: string[] | null
     managedfields?: string | null
   }
-  rormeta: {
+  rormeta?: {
     version?: string
     lastreported?: string
     internal?: boolean
@@ -60,7 +59,7 @@ export interface VirtualMachine {
     status?: {
       lastupdated?: {
         time?: {
-          date?: string
+          date?: { date: string }
         }
       }
       location?: string | null
@@ -72,24 +71,22 @@ export interface VirtualMachine {
           corespersocket?: number
         }
       }
-      tags?: string | null
+      tags?: Record<string, string> | null
       state?: {
         state?: string | null
         reason?: string
         time?: string | undefined
       }
-      disks?: [
-        {
-          usagebytes?: number
-          ismounted?: boolean
-          resourcevirtualmachinediskspec?: {
-            id?: string
-            name?: string
-            type?: string
-            sizebytes?: number
-          }
-        },
-      ]
+      disks?: {
+        usagebytes?: number
+        ismounted?: boolean
+        resourcevirtualmachinediskspec?: {
+          id?: string
+          name?: string
+          type?: string
+          sizebytes?: number
+        }
+      }[]
       memory?: {
         unit?: string
         usage?: number
@@ -97,19 +94,15 @@ export interface VirtualMachine {
           sizebytes?: number
         }
       }
-      networks?:
-        | [
-            {
-              id?: string
-              dns?: string
-              ipv4?: string
-              ipv6?: string
-              mask?: string
-              gateway?: string
-              mac?: string
-            },
-          ]
-        | null
+      networks?: {
+        id?: string
+        dns?: string
+        ipv4?: string
+        ipv6?: string
+        mask?: string
+        gateway?: string
+        mac?: string
+      }[]
       operatingsystem?: {
         id?: string | null
         name?: string | null
