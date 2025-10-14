@@ -1,4 +1,4 @@
-import { VulnerabilitiesTable } from '@/features/vulnerabilities/components/vulnerabilites-table'
+import { VulnerabilitiesTable } from '@/features/vulnerabilities/components/vulnerabilities-table'
 import { getRorApi } from '@/services/ror-api'
 import type { VulnerabilityReport } from '@ror/js-api-client'
 
