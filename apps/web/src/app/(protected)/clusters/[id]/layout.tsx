@@ -27,7 +27,7 @@ const {
   // clusterIngresses,
   clusterNodePools,
   // clusterPolicies,
-  // clusterVulnerabilities,
+  clusterVulnerabilities,
   // clusterCompliance,
   // clusterAbout,
   clusterRawData,
@@ -56,10 +56,10 @@ const createTabNavigationItems = (clusterId: string) => {
     //   label: clusterPolicies.label,
     //   href: clusterPolicies.getHref(clusterId),
     // },
-    // {
-    //   label: clusterVulnerabilities.label,
-    //   href: clusterVulnerabilities.getHref(clusterId),
-    // },
+    {
+      label: clusterVulnerabilities.label,
+      href: clusterVulnerabilities.getHref(clusterId),
+    },
     // {
     //   label: clusterCompliance.label,
     //   href: clusterCompliance.getHref(clusterId),

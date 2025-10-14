@@ -75,13 +75,13 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
   })
 
   const numberOfColumns = table.getAllColumns().length
-  const gridTemplateColumns = `repeat(${numberOfColumns.toString()}, minmax(max-content, 1fr))`
+  const gridTemplateColumns = `repeat(${numberOfColumns}, minmax(120px, auto))`
   const gridTemplateColumnsExpandable =
     numberOfColumns <= 1
       ? numberOfColumns === 1
         ? '32px'
         : ''
-      : `32px repeat(${numberOfColumns - 1}, minmax(max-content, 1fr))`
+      : `32px repeat(${numberOfColumns - 1}, minmax(120px, auto))`
 
   const hasTitleOrSubtitle = title || subtitle
 
