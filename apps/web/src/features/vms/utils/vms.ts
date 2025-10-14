@@ -23,7 +23,7 @@ export interface VirtualMachine {
     deletiontimestamp?: string | null
     labels?: string | null
     annotations?: string | null
-    owerreferences?: string | null
+    ownerreferences?: string | null
     finalizers?: string[] | null
     managedfields?: string | null
   }
@@ -32,7 +32,7 @@ export interface VirtualMachine {
     lastreported?: string
     internal?: boolean
     hash?: string
-    owerref?: {
+    ownerref?: {
       scope?: string
       subject?: string
     }
