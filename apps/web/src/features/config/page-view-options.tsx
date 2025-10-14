@@ -30,5 +30,5 @@ export const powerStateOptions: Option[] = [
 
 export const filterOptions = [
   { label: 'Power States', placeholder: 'Choose Power State', data: powerStateOptions },
-  { label: 'More filters', placeholder: 'Mote filters here', data: [] },
+  { label: 'More filters', placeholder: 'More filters here', data: [] },
 ]
