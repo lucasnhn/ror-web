@@ -3,6 +3,7 @@ import nodes from '../data/nodes'
 import { ingressesResponse } from '../data/ingresses'
 import { clustersVersion2 } from '../data/clusters'
 import datacenters from '../data/datacenters'
+import { vulnerabilityReports } from '../data/vulnerability-reports'
 
 type Resource = (typeof clustersVersion2.resources)[number]
 type NotFound = { message: string }
@@ -33,6 +34,8 @@ export const v2ResourcesHandlers = [
         return HttpResponse.json(ingressesResponse) // Return all ingress data
       case 'Datacenter':
         return HttpResponse.json(datacenters) // Return all datacenter data
+      case 'VulnerabilityReport':
+        return HttpResponse.json(vulnerabilityReports) // Return all vulnerability report data
       default:
         return HttpResponse.json(null) // If unknown kind, return null
     }
