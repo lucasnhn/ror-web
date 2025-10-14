@@ -32,7 +32,7 @@ export interface VirtualMachine {
     lastreported?: string
     internal?: boolean
     hash?: string
-    owerref?: {
+    ownerref?: {
       scope?: string
       subject?: string
     }
