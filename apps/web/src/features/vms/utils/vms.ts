@@ -23,7 +23,7 @@ export interface VirtualMachine {
     deletiontimestamp?: string | null
     labels?: string | null
     annotations?: string | null
-    owerreferences?: string | null
+    ownerreferences?: string | null
     finalizers?: string[] | null
     managedfields?: string | null
   }
