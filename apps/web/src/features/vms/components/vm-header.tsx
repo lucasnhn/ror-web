@@ -10,11 +10,11 @@
 'use client'
 
 import { cn } from '@/utils/clsxm'
-import { navigationItemObject } from '@/app/(protected)/clusters/[id]/layout'
+import { navigationItemObject } from '@/app/(protected)/vms/[id]/layout'
 import { useVMContext } from '@/context/vm-context'
 import { NavigationTabs } from '@/components/ui/navigation-tabs'
 import { Power, PowerOff, TriangleAlert } from 'lucide-react'
-import { vmHeaderColors } from '../utils/env-colors'
+import { vmCardPowerStatus } from '../utils/env-colors'
 
 interface VMHeaderProps {
   className?: string
@@ -25,7 +25,7 @@ export const VMHeader = ({ className, tabs }: VMHeaderProps) => {
   const { vm } = useVMContext()
   const hostname = vm?.virtualmachine?.status?.operatingsystem?.hostname || 'Unknown VM'
   const powerstate = vm?.virtualmachine?.status?.operatingsystem?.powerstate || 'undefined'
-  const [lightmode, darkmode] = vmHeaderColors[powerstate] || ['bg-gray-200', 'dark:bg-gray-600']
+  const [lightmode, darkmode] = vmCardPowerStatus[powerstate] || ['bg-gray-200', 'dark:bg-gray-600']
 
   return (
     <div>

@@ -67,12 +67,12 @@ const sections: Section[] = [
     ],
   },
   {
-    title: 'Virtual Machines',
+    title: 'Virtual machines',
     icon: Monitor,
     isActive: true,
     items: [
       {
-        title: 'Virtual Machines',
+        title: 'Virtual machines',
         url: '/vms',
       },
     ],

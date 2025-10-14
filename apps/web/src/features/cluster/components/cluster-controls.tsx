@@ -167,7 +167,7 @@ export const ClusterControls = ({
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <TabsViewSwitcher />
+        <TabsViewSwitcher storageKey='clusters:view-mode' />
       </div>
     </div>
   )

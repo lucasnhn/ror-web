@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { Pill } from '@/components/shadcn/pill'
 import { vmCardColors } from '@/features/vms/utils/env-colors'
 import { User } from 'next-auth'
-import { VMCardData } from './vm-card'
+import { VMCardData } from '@/features/vms/types/vm-card-type'
 import { createColumnHelper } from '@tanstack/react-table'
 
 const columnHelper = createColumnHelper<VirtualMachine>()

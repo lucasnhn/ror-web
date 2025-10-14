@@ -11,28 +11,18 @@
 'use client'
 
 import { VmSearchProps } from '../utils/vms'
-import { useEffect, useMemo, useRef, useState } from 'react'
-import Fuse from 'fuse.js'
+import { useEffect, useRef, useState } from 'react'
 import { Search } from 'lucide-react'
 import { Input } from '@/components/shadcn/input'
+import { useVmSearch } from '../hooks/use-vm-search'
 
 export function VmSearch({ items, onResultsChange }: VmSearchProps) {
   const [query, setQuery] = useState('')
 
-  const fuse = useMemo(() => {
-    const flat = items.map((vm) => ({
-      ...vm,
-      label: vm.metadata?.name ?? vm.virtualmachine?.spec?.name,
-      hostname: vm.virtualmachine?.status?.operatingsystem?.hostname,
-      powerState: vm.virtualmachine?.status?.operatingsystem?.powerstate,
-      family: vm.virtualmachine?.status?.operatingsystem?.family,
-    }))
-
-    return new Fuse(flat, {
-      keys: ['label', 'hostname', 'powerState', 'family'],
-      threshold: 0.3,
-    })
-  }, [items])
+  const { search } = useVmSearch(items, {
+    threshold: 0.3,
+    keys: ['label', 'hostname', 'powerState', 'family'],
+  })
 
   const [debouncedQuery, setDebouncedQuery] = useState(query)
   useEffect(() => {
@@ -48,7 +38,7 @@ export function VmSearch({ items, onResultsChange }: VmSearchProps) {
     const becameEmpty = !q && !!prevQueryRef.current
 
     if (q || becameEmpty) {
-      const out = q ? fuse.search(q).map((r) => r.item) : items
+      const out = search(q) // Use the search function from the hook
       const nextKey = out.map((vm) => vm.metadata?.uid || '').join('|')
       if (nextKey !== lastSentKeyRef.current) {
         onResultsChange?.(out)
@@ -57,7 +47,7 @@ export function VmSearch({ items, onResultsChange }: VmSearchProps) {
     }
 
     prevQueryRef.current = q
-  }, [debouncedQuery, fuse, items, onResultsChange])
+  }, [debouncedQuery, search, onResultsChange])
 
   return (
     <div className='relative'>

@@ -39,17 +39,6 @@ function CardContent({ className, ...props }: React.ComponentProps<'div'>) {
   return <div data-slot='card-content' className={cn('px-6', className)} {...props} />
 }
 
-export type VMCardData =
-  | 'os_hostName'
-  | 'os_name'
-  | 'os_id'
-  | 'operatingSystemId'
-  | 'powerState'
-  | 'os_architecture'
-  | 'os_family'
-  | 'os_version'
-  | 'os_toolVersion'
-
 const VMCard = ({ className, user, vm, vmDisplayData }: VMCardProps) => {
   const vmOs = vm.virtualmachine?.status?.operatingsystem
 

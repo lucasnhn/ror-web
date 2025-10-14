@@ -10,10 +10,11 @@
  */
 'use client'
 
-import { Fragment, ReactNode, useEffect, useState } from 'react'
+import { Fragment, ReactNode } from 'react'
 import { NotReadyMessage } from '@/components/ui/not-ready-message'
 import { VMProvider } from '@/context/vm-context'
 import { VMHeader } from '@/features/vms/components/vm-header'
+import { useVmLayout } from '@/features/vms/utils/vm-layout'
 
 interface VmPageLayoutProps {
   params: Promise<{
@@ -49,21 +50,19 @@ const createTabNavigationItems = (vmId: string): navigationItemObject[] => {
 }
 
 export default function VmPageLayout({ params, children }: VmPageLayoutProps) {
-  const [id, setId] = useState('')
-  const [vm, setVm] = useState(null)
+  const { id, vm, isLoading, error } = useVmLayout({ params })
 
-  useEffect(() => {
-    params.then(({ id }) => {
-      setId(id)
-      const stored = localStorage.getItem('selectedVm')
-      setVm(stored ? JSON.parse(stored) : null)
-    })
-  }, [params])
-
-  if (!vm) {
+  if (isLoading) {
     return <div>Loading VM data...</div>
   }
-
+  if (error || !vm) {
+    return (
+      <div className='p-6'>
+        <h1 className='text-2xl font-bold text-red-600'>VM Not Found</h1>
+        <p>{error || 'Could not load VM data. Please go back and select a VM.'}</p>
+      </div>
+    )
+  }
   const tabs = createTabNavigationItems(id)
   const VMContextValue = { vm }
 

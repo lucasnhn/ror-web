@@ -10,7 +10,7 @@
 
 import { User } from 'next-auth'
 import { VirtualMachine } from '@/features/vms/utils/vms'
-import { VMCardData } from '@/features/vms/components/vm-card'
+import { VMCardData } from '@/features/vms/types/vm-card-type'
 import { DataTable } from '@/components/ui/data-table'
 import { getVMTableColumns } from '@/features/vms/components/vm-columns'
 

@@ -24,9 +24,3 @@ export const pillPowerStatusColors: Record<string, [string, string]> = {
   poweredOn: ['bg-emerald-500', 'text-emerald-300'],
   undefined: ['bg-gray-500', 'text-gray-300'],
 }
-
-export const vmHeaderColors: Record<string, [string, string]> = {
-  poweredOff: ['bg-red-200', 'text-red-900'],
-  poweredOn: ['bg-emerald-200', 'text-emerald-900'],
-  undefined: ['bg-gray-200', 'text-gray-900'],
-}

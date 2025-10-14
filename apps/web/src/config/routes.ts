@@ -114,5 +114,13 @@ export const routes = {
       label: 'Error page',
       getHref: () => '/error',
     },
+    vms: {
+      label: 'Virtual machines',
+      getHref: () => '/vms',
+    },
+    vm: {
+      label: 'Virtual machine',
+      getHref: (id: string) => `/vms/${id}`,
+    },
   },
 } as const

@@ -1,5 +1,5 @@
 import { User } from 'next-auth'
-import { VMCardData } from '../components/vm-card'
+import { VMCardData } from '@/features/vms/types/vm-card-type'
 
 export interface VirtualMachine {
   id?: {
@@ -168,4 +168,15 @@ export interface VmSearchProps {
   items: VirtualMachine[]
   onSelect?: (item: VirtualMachine) => void
   onResultsChange?: (results: VirtualMachine[]) => void
+}
+
+export interface UseVmLayoutParams {
+  params: Promise<{ id: string }>
+}
+
+export interface UseVmLayoutReturn {
+  id: string
+  vm: VirtualMachine | null
+  isLoading: boolean
+  error: string | null
 }

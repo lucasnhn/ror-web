@@ -1,0 +1,10 @@
+export type VMCardData =
+  | 'os_hostName'
+  | 'os_name'
+  | 'os_id'
+  | 'operatingSystemId'
+  | 'powerState'
+  | 'os_architecture'
+  | 'os_family'
+  | 'os_version'
+  | 'os_toolVersion'
