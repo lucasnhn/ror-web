@@ -125,6 +125,16 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
   const { selectedFilters, setSelectedFilters, filteredItems, resetFilters } = useClusterFilters(safeItems)
   const { selectedDisplayData, setSelectedDisplayData } = useDisplayData()
   const [searchResults, setSearchResults] = useState(safeItems)
+  const lastSearchKeyRef = useRef('')
+
+  // ✅ prevent infinite loop when same search results arrive again
+  const handleSearchResultsChange = useCallback((results: KubernetesCluster[]) => {
+    const nextKey = getClustersKey(results)
+    if (nextKey !== lastSearchKeyRef.current) {
+      lastSearchKeyRef.current = nextKey
+      setSearchResults(results)
+    }
+  }, [])
 
   // Handler for display data changes
   const onDisplayChange = (selected: Option[]) =>
@@ -226,7 +236,7 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
             safeItems={safeItems}
             selectedDisplayData={selectedDisplayData}
             onDisplayChange={onDisplayChange}
-            onSearchResultsChange={setSearchResults}
+            onSearchResultsChange={handleSearchResultsChange}
             handleRefreshFilters={handleRefreshFilters}
             toggleParams={toggleParams}
             toggleSortParams={toggleSortParams}
