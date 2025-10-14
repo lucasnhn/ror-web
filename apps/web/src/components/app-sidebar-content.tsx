@@ -73,7 +73,7 @@ const sections: Section[] = [
     items: [
       {
         title: 'Virtual machines',
-        url: '/vms',
+        url: routes.app.vms.getHref(),
       },
     ],
   },

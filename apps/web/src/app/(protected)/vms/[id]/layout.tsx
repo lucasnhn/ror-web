@@ -14,7 +14,7 @@ import { Fragment, ReactNode } from 'react'
 import { NotReadyMessage } from '@/components/ui/not-ready-message'
 import { VMProvider } from '@/context/vm-context'
 import { VMHeader } from '@/features/vms/components/vm-header'
-import { useVmLayout } from '@/features/vms/utils/vm-layout'
+import { useVmLayout } from '@/features/vms/hooks/vm-layout'
 
 interface VmPageLayoutProps {
   params: Promise<{
