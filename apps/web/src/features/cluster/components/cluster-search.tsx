@@ -6,6 +6,7 @@ import { Search } from 'lucide-react'
 import { useState, useEffect, useRef } from 'react'
 import { useClusterSearch } from '../hooks/use-cluster-search'
 import type { KubernetesCluster } from '@ror/js-api-client'
+import { getClustersKey } from '../utils/cluster'
 
 /**
  * Props for the ClusterSearch component.
@@ -33,7 +34,7 @@ export function ClusterSearch({ items, onResultsChange }: ClusterSearchProps) {
   const lastSentKeyRef = useRef('')
 
   useEffect(() => {
-    const nextKey = results.map((c) => c.metadata?.uid || '').join('|')
+    const nextKey = getClustersKey(results)
     if (nextKey !== lastSentKeyRef.current) {
       onResultsChange?.(results)
       lastSentKeyRef.current = nextKey
