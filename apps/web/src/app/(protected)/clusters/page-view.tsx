@@ -138,7 +138,8 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
       lastSafeKeyRef.current = nextKey
       setSearchResults((prev) => {
         const prevKey = getClustersKey(prev)
-        return prevKey === nextKey ? prev : safeItems
+        const isSearching = prev.length !== safeItems.length
+        return isSearching || prevKey === nextKey ? prev : safeItems
       })
     }
   }, [safeItems])
