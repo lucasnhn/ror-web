@@ -45,8 +45,10 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
   console.log(layout) // For future use if needed
   const cpu = vm?.virtualmachine?.status?.cpu
   const cpuUsage = cpu?.usage
+  const cpuSockets = cpu?.resourcevirtualmachinecpuspec?.sockets
+  const cpuCoresPerSocket = cpu?.resourcevirtualmachinecpuspec?.corespersocket
   const memory = vm?.virtualmachine?.status?.memory?.resourcevirtualmachinememoryspec?.sizebytes
-  const location = vm?.virtualmachine?.status?.location || 'Unknown location'
+  const memoryInGB = ((memory ?? 0) / 1024 ** 3).toFixed(2)
 
   const os = vm?.virtualmachine?.status?.operatingsystem
   const os_id = os?.id || 'Unknown ID'
@@ -104,6 +106,32 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
             setCurrentBreakpoint(breakpoint)
           }}
         >
+          <div key='memory' className='drag-handle '>
+            <CardHeader title='Memory' />
+            <div className='flex gap-2'>
+              <div className='flex flex-1 flex-col gap-2'>
+                <div className='flex flex-col'>
+                  <b>Memory: </b>
+                  <span>{memoryInGB} GB</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div key={'configuration'} className='drag-handle '>
+            <CardHeader title='Configuration' />
+            <div className='flex gap-2'>
+              <div className='flex flex-1 flex-col gap-2'>
+                <div className='flex flex-col'>
+                  <b>CPU Sockets: </b>
+                  <span>{cpuSockets}</span>
+                </div>
+                <div className='flex flex-col'>
+                  <b>CPU Cores per Socket: </b>
+                  <span>{cpuCoresPerSocket}</span>
+                </div>
+              </div>
+            </div>
+          </div>
           <div key='cpu' className='drag-handle '>
             <CardHeader title='CPU' />
             <div className='flex gap-2'>
@@ -115,28 +143,7 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
               </div>
             </div>
           </div>
-          <div key='memory' className='drag-handle '>
-            <CardHeader title='Memory' />
-            <div className='flex gap-2'>
-              <div className='flex flex-1 flex-col gap-2'>
-                <div className='flex flex-col'>
-                  <b>Memory: </b>
-                  <span>{memory} bytes</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div key={'price'} className='drag-handle '>
-            <CardHeader title='Price' />
-            <div className='flex gap-2'>
-              <div className='flex flex-1 flex-col gap-2'>
-                <div className='flex flex-col'>
-                  <b>Location: </b>
-                  <span>{location}</span>
-                </div>
-              </div>
-            </div>
-          </div>
+
           <div key='info' className='drag-handle '>
             <CardHeader title='Operating System' />
             <div className='flex gap-2'>
