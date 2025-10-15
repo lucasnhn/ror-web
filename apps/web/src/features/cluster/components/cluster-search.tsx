@@ -28,8 +28,8 @@ export interface ClusterSearchProps {
  */
 export function ClusterSearch({ items, onResultsChange }: ClusterSearchProps) {
   const [query, setQuery] = useState('')
-  const debouncedQueryOld = useDebouncedValue(query, 120)
-  const results = useClusterSearch(items, debouncedQueryOld)
+  const debouncedQuery = useDebouncedValue(query, 120)
+  const results = useClusterSearch(items, debouncedQuery)
 
   const lastSentKeyRef = useRef('')
 
