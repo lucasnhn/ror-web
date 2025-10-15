@@ -18,7 +18,6 @@ import { exportClustersAsCSV, exportClustersAsExcel } from '@/features/cluster/u
 import type { KubernetesCluster } from '@ror/js-api-client'
 import { ArrowDownNarrowWide, ArrowDownWideNarrow, Download, Funnel, RotateCw } from 'lucide-react'
 import Link from 'next/link'
-import { VmSearch } from '@/features/vms/components/vm-search'
 
 /**
  * Props for the ClusterControls component.
@@ -75,7 +74,6 @@ export const ClusterControls = ({
     <div className='flex flex-wrap items-center justify-between w-full gap-4 [@container(max-width:1000px)]:flex-col [@container(max-width:1000px)]:items-start [@container(max-width:1000px)]:gap-6'>
       <div className='flex flex-wrap items-center gap-x-4 gap-y-6'>
         <ClusterSearch items={safeItems} onResultsChange={onSearchResultsChange} />
-        {/* <VmSearch items={safeItems} onResultsChange={onSearchResultsChange} /> */}
 
         <MultipleSelector
           className='w-52'
