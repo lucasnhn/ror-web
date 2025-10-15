@@ -315,7 +315,8 @@ export const getNodePools = (cluster: KubernetesCluster) =>
  * @param clusters - An array of `KubernetesCluster` objects.
  * @returns A string representing the concatenated cluster IDs, separated by a pipe (`|`).
  */
-export const getClustersKey = (clusters: KubernetesCluster[]) => clusters.map(getClusterId).join('|')
+export const getClustersKey = (clusters: KubernetesCluster[] = []) =>
+  Array.isArray(clusters) ? clusters.map(getClusterId).join('|') : ''
 
 /**
  * Retrieves the namespace from the metadata of a given Kubernetes cluster.

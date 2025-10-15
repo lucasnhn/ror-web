@@ -1,6 +1,7 @@
 import Fuse from 'fuse.js'
 import { useMemo } from 'react'
 import type { KubernetesCluster } from '@ror/js-api-client'
+import { getClusterName, getDatacenter, getEnvironment, getProvider } from '../utils/cluster'
 
 /**
  * Custom hook to perform fuzzy search on a list of Kubernetes clusters.
@@ -13,10 +14,10 @@ export function useClusterSearch(items: KubernetesCluster[], query: string) {
   const fuse = useMemo(() => {
     const flat = items.map((cluster) => ({
       ...cluster,
-      label: cluster.metadata?.name ?? cluster.kubernetescluster?.spec?.data?.clusterId,
-      datacenterName: cluster.kubernetescluster?.spec?.data?.datacenter,
-      datacenterProvider: cluster.kubernetescluster?.spec?.data?.provider,
-      environment: cluster.kubernetescluster?.spec?.data?.environment,
+      label: getClusterName(cluster),
+      datacenterName: getDatacenter(cluster),
+      datacenterProvider: getProvider(cluster),
+      environment: getEnvironment(cluster),
     }))
 
     return new Fuse(flat, {

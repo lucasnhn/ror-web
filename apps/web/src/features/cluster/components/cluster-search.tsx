@@ -1,9 +1,12 @@
+'use client'
+
 import { useDebouncedValue } from '@/hooks/use-debounced-value'
 import { Input } from '@/components/shadcn/input'
 import { Search } from 'lucide-react'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useClusterSearch } from '../hooks/use-cluster-search'
 import type { KubernetesCluster } from '@ror/js-api-client'
+import { getClustersKey } from '../utils/cluster'
 
 /**
  * Props for the ClusterSearch component.
@@ -28,8 +31,14 @@ export function ClusterSearch({ items, onResultsChange }: ClusterSearchProps) {
   const debouncedQuery = useDebouncedValue(query, 120)
   const results = useClusterSearch(items, debouncedQuery)
 
+  const lastSentKeyRef = useRef('')
+
   useEffect(() => {
-    onResultsChange?.(results)
+    const nextKey = getClustersKey(results)
+    if (nextKey !== lastSentKeyRef.current) {
+      onResultsChange?.(results)
+      lastSentKeyRef.current = nextKey
+    }
   }, [results, onResultsChange])
 
   return (

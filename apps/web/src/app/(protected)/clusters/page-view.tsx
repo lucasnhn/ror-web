@@ -124,7 +124,7 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
   // Cluster filters, display data and search result
   const { selectedFilters, setSelectedFilters, filteredItems, resetFilters } = useClusterFilters(safeItems)
   const { selectedDisplayData, setSelectedDisplayData } = useDisplayData()
-  const [searchResults, setSearchResults] = useState(safeItems)
+  const [searchResults, setSearchResults] = useState<KubernetesCluster[]>(safeItems)
 
   // Handler for display data changes
   const onDisplayChange = (selected: Option[]) =>
@@ -138,7 +138,8 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
       lastSafeKeyRef.current = nextKey
       setSearchResults((prev) => {
         const prevKey = getClustersKey(prev)
-        return prevKey === nextKey ? prev : safeItems
+        const isSearching = prev.length !== safeItems.length
+        return isSearching || prevKey === nextKey ? prev : safeItems
       })
     }
   }, [safeItems])
