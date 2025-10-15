@@ -95,8 +95,6 @@ interface PageViewProps {
  * @returns The rendered cluster page view, including controls, filters, and either a grid or table of clusters.
  */
 export const PageView = ({ className, user, clusters, params }: PageViewProps) => {
-  console.log('[PageView] clusters:', clusters)
-
   // Router and pathname
   const router = useRouter()
   const pathname = usePathname()
@@ -116,75 +114,32 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
       return { items: res.items ?? [], hasMore: res.hasMore }
     },
   })
-  const idOf = (c: KubernetesCluster) => getClusterId(c) || ''
-  const idsKey = (arr: KubernetesCluster[]) => arr.map(idOf).join('|')
 
   // Clusters valid after filtering and searching
-  // const safeItems = useMemo(
-  //   () => items.filter((c) => c.kubernetescluster?.spec?.data && typeof c.kubernetescluster.spec.data === 'object'),
-  //   [items]
-  // )
   const safeItems = useMemo(
     () => items.filter((c) => c.kubernetescluster?.spec?.data && typeof c.kubernetescluster.spec.data === 'object'),
     [items]
   )
 
-  console.log('[PageView] safeItems:', safeItems)
-
   // Cluster filters, display data and search result
   const { selectedFilters, setSelectedFilters, filteredItems, resetFilters } = useClusterFilters(safeItems)
   const { selectedDisplayData, setSelectedDisplayData } = useDisplayData()
   const [searchResults, setSearchResults] = useState<KubernetesCluster[]>(safeItems)
-  // const lastSearchKeyRef = useRef('')
-
-  // ✅ prevent infinite loop when same search results arrive again
-  // const handleSearchResultsChange = useCallback((results: KubernetesCluster[]) => {
-  //   const nextKey = getClustersKey(results)
-  //   if (nextKey !== lastSearchKeyRef.current) {
-  //     lastSearchKeyRef.current = nextKey
-  //     setSearchResults(results)
-  //   }
-  // }, [])
 
   // Handler for display data changes
-  // const onDisplayChange = (selected: Option[]) =>
-  //   setSelectedDisplayData(selected.map((i) => i.value as ClusterCardDisplayData))
-
-  const onDisplayChange = useCallback((selected: Option[]) => {
-    const next = selected.map((i) => i.value as ClusterCardDisplayData)
-    setSelectedDisplayData((prev) => {
-      if (prev.length === next.length && prev.every((v, i) => v === next[i])) return prev
-      return next
-    })
-  }, [])
-
-  const onSearchResultsChange = useCallback(
-    (res: KubernetesCluster[]) => {
-      setSearchResults((prev) => {
-        if (prev.length === res.length) {
-          const a = idsKey(prev)
-          const b = idsKey(res)
-          if (a === b) return prev
-        }
-        return res
-      })
-    },
-    [idsKey]
-  )
+  const onDisplayChange = (selected: Option[]) =>
+    setSelectedDisplayData(selected.map((i) => i.value as ClusterCardDisplayData))
 
   // Sync safeItems -> searchResults only if content differs
   const lastSafeKeyRef = useRef('')
   useEffect(() => {
-    // const nextKey = getClustersKey(safeItems)
-    // if (nextKey !== lastSafeKeyRef.current) {
-    //   lastSafeKeyRef.current = nextKey
-    //   setSearchResults((prev) => {
-    //     const prevKey = getClustersKey(prev)
-    //     return prevKey === nextKey ? prev : safeItems
-    //   })
-    const nextKey = idsKey(safeItems)
+    const nextKey = getClustersKey(safeItems)
     if (nextKey !== lastSafeKeyRef.current) {
       lastSafeKeyRef.current = nextKey
+      setSearchResults((prev) => {
+        const prevKey = getClustersKey(prev)
+        return prevKey === nextKey ? prev : safeItems
+      })
     }
   }, [safeItems])
 
@@ -271,8 +226,7 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
             safeItems={safeItems}
             selectedDisplayData={selectedDisplayData}
             onDisplayChange={onDisplayChange}
-            // onSearchResultsChange={handleSearchResultsChange}
-            onSearchResultsChange={onSearchResultsChange}
+            onSearchResultsChange={setSearchResults}
             handleRefreshFilters={handleRefreshFilters}
             toggleParams={toggleParams}
             toggleSortParams={toggleSortParams}
