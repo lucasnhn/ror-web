@@ -315,9 +315,7 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
         </Button>
 
         {/* View switcher for grid/list toggle */}
-        <div className='flex gap-1 border rounded-md p-1'>
-          <TabsViewSwitcher storageKey='vms:view-mode' />
-        </div>
+        <TabsViewSwitcher storageKey='vms:view-mode' />
       </div>
     </div>
   )

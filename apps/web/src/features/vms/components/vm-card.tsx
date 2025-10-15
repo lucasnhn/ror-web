@@ -80,13 +80,12 @@ const VMCard = ({ className, user, vm, vmDisplayData }: VMCardProps) => {
           </CardTitle>
         </CardHeader>
         <CardContent className='text-sm flex flex-col gap-3'>
+          <div>
+            <p className='text-sm font-semibold text-gray-400 '>Hostname</p>
+            <p className='text-md'>{vmHostname || 'N/A'}</p>
+            <div className='border-b border-gray-700 mt-1 mb-2'></div>
+          </div>
           <section className='grid grid-cols-2 gap-4'>
-            {vmDisplayData.includes('os_hostName') && (
-              <div>
-                <p className='font-bold'>Host Name</p>
-                <p>{vmHostname || 'N/A'}</p>
-              </div>
-            )}
             {vmDisplayData.includes('os_id') && (
               <div>
                 <p className='font-bold'>ID</p>
