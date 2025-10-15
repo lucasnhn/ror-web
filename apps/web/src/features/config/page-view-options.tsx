@@ -1,7 +1,6 @@
 import { Option } from '@/components/shadcn/multiselect'
 
 export const displayDataOptions: Option[] = [
-  { label: 'Hostname', value: 'os_hostName' },
   { label: 'Name', value: 'os_name' },
   { label: 'ID', value: 'os_id' },
   { label: 'Power State', value: 'powerState' },
