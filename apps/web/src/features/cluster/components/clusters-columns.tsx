@@ -24,6 +24,7 @@ import {
   getVersions,
   getDatacenter,
   getProvider,
+  getClusterById,
 } from '../utils/cluster'
 
 const columnHelper = createColumnHelper<KubernetesCluster>()
@@ -38,6 +39,7 @@ const columnHelper = createColumnHelper<KubernetesCluster>()
  * @returns An array of column definitions for the data table, filtered according to the selection.
  */
 export function getClustersTableColumns(
+  clusters: KubernetesCluster[],
   user?: User,
   selectedDisplayData?: ClusterCardDisplayData[]
 ): DataTableColumnDef<KubernetesCluster>[] {
@@ -54,6 +56,12 @@ export function getClustersTableColumns(
         <Link
           href={routes.app.cluster.getHref(getClusterId(info.row.original))}
           className='text-blue-600 dark:text-blue-500 underline'
+          onClick={() =>
+            localStorage.setItem(
+              'selectedCluster',
+              JSON.stringify(getClusterById(getClusterId(info.row.original), clusters))
+            )
+          }
         >
           {info.getValue()}
         </Link>

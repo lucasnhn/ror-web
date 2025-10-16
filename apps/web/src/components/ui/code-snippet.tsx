@@ -20,6 +20,8 @@ export function CodeSnippet({ type, hideCopyButton = false, className = '', styl
 
   const handleOnCopyClick = (e?: React.MouseEvent) => {
     e?.stopPropagation()
+    e?.nativeEvent.stopImmediatePropagation()
+    e?.preventDefault()
     if (!codeElementRef.current) return
     void copy(codeElementRef.current.innerText)
   }

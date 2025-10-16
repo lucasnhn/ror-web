@@ -211,7 +211,7 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
     return (
       <DataTable
         data={displayedItems}
-        columns={getClustersTableColumns(user, selectedDisplayData)}
+        columns={getClustersTableColumns(clusters, user, selectedDisplayData)}
         hasMore={hasMore}
         isLoading={isLoading}
         sentinelRef={sentinelRef}

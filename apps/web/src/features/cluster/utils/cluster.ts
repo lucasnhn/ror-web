@@ -333,3 +333,7 @@ export const getClusterNamespace = (cluster: KubernetesCluster): string | undefi
  * @returns The creation timestamp of the cluster.
  */
 export const getCreationTimestamp = (cluster: KubernetesCluster) => cluster.metadata.creationTimestamp
+
+export const getClusterById = (id: string, clusters: KubernetesCluster[]): KubernetesCluster | null => {
+  return clusters.find((cluster) => getClusterId(cluster) === id) || null
+}
