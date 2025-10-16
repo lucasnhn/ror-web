@@ -55,19 +55,19 @@ export function CopyButton({ onClick, className, children, size = 'md' }: CopyBu
       }
     }
   }, [])
-  const handleOnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  function handleOnClick(e: React.MouseEvent<HTMLButtonElement>) {
     toast.info('Copied to clipboard')
     e.stopPropagation()
+    e.nativeEvent.stopImmediatePropagation()
+    e.preventDefault()
     onClick?.(e)
   }
 
   const classes = clsx('r-copy-btn', 'no-drag', className)
 
   return (
-    <>
-      <Button icon={<Copy />} iconOnly onClick={handleOnClick} className={classes} size={size}>
-        {children}
-      </Button>
-    </>
+    <Button icon={<Copy />} data-copy-button iconOnly onClick={handleOnClick} className={classes} size={size}>
+      {children}
+    </Button>
   )
 }
