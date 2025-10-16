@@ -56,18 +56,11 @@ export function CopyButton({ onClick, className, children, size = 'md' }: CopyBu
     }
   }, [])
   function handleOnClick(e: React.MouseEvent<HTMLButtonElement>) {
-    // console.log('copied to clipboard 1')
-    // console.log('copy button click 1')
     toast.info('Copied to clipboard')
-    // console.log('copied to clipboard 2')
-    // console.log('copy button click 2')
     e.stopPropagation()
     e.nativeEvent.stopImmediatePropagation()
     e.preventDefault()
-
-    // console.log('copy button click 3')
     onClick?.(e)
-    // console.log('copy button click 4')
   }
 
   const classes = clsx('r-copy-btn', 'no-drag', className)
