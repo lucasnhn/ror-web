@@ -30,6 +30,8 @@ interface Section {
   items: SidebarItem[]
 }
 
+const vmsEnabled = process.env.NEXT_PUBLIC_VMS_ENABLED === 'true'
+
 /*
  * TODO: Add sections as they are created
  */
@@ -66,7 +68,7 @@ const sections: Section[] = [
       },
     ],
   },
-  {
+  vmsEnabled && {
     title: 'Virtual machines',
     icon: Monitor,
     isActive: true,
@@ -160,7 +162,7 @@ const sections: Section[] = [
       },
     ],
   },
-]
+].filter(Boolean) as Section[]
 
 export function AppSidebarContent() {
   return (
