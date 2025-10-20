@@ -84,7 +84,7 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
   // load display selections once
   useEffect(() => {
     try {
-      const stored = localStorage.getItem('selectedDisplayData')
+      const stored = localStorage.getItem('selectedDisplayData:vms')
       if (stored) {
         const parsed = JSON.parse(stored) as VMCardData[]
         setSelectedDisplayData((prev) => {
@@ -101,8 +101,8 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
   useEffect(() => {
     try {
       const serialized = JSON.stringify(selectedDisplayData)
-      if (localStorage.getItem('selectedDisplayData') !== serialized) {
-        localStorage.setItem('selectedDisplayData', serialized)
+      if (localStorage.getItem('selectedDisplayData:vms') !== serialized) {
+        localStorage.setItem('selectedDisplayData:vms', serialized)
       }
     } catch {
       // ignore
