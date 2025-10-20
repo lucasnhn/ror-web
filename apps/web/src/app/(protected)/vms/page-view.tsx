@@ -35,6 +35,7 @@ import { ArrowDownNarrowWide, ArrowDownWideNarrow, Funnel, RotateCw } from 'luci
 import { SortSelect } from '@/components/ui/sort-select'
 import { VmSearch } from '@/features/vms/components/vm-search'
 import { displayDataOptions, sortingOptions, filterOptions } from '@/features/config/page-view-options'
+import { useDisplayData } from '@/hooks/use-display-data'
 
 export const PageView = ({ className, user, vms, params }: PageViewProps) => {
   const filtersOpen = params.filters === 'open'
@@ -55,7 +56,7 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
       ),
     [vms]
   )
-  const [selectedDisplayData, setSelectedDisplayData] = useState<VMCardData[]>([])
+  const { selectedDisplayData, setSelectedDisplayData } = useDisplayData<VMCardData>('vms')
   const [selectedFilters, setSelectedFilters] = useState<Record<string, string[]>>({})
   const [searchResults, setSearchResults] = useState<VirtualMachine[]>(safeItems)
 
@@ -80,34 +81,6 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
     },
     [idsKey]
   )
-
-  // load display selections once
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem('selectedDisplayData:vms')
-      if (stored) {
-        const parsed = JSON.parse(stored) as VMCardData[]
-        setSelectedDisplayData((prev) => {
-          if (prev.length === parsed.length && prev.every((v, i) => v === parsed[i])) return prev
-          return parsed
-        })
-      }
-    } catch {
-      // ignore
-    }
-  }, [])
-
-  // persist display selections (no-op if unchanged)
-  useEffect(() => {
-    try {
-      const serialized = JSON.stringify(selectedDisplayData)
-      if (localStorage.getItem('selectedDisplayData:vms') !== serialized) {
-        localStorage.setItem('selectedDisplayData:vms', serialized)
-      }
-    } catch {
-      // ignore
-    }
-  }, [selectedDisplayData])
 
   // sync safeItems → searchResults only if content differs
   const lastSafeKeyRef = useRef('')
