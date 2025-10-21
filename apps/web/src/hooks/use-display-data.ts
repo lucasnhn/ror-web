@@ -12,6 +12,7 @@ import { useEffect, useState } from 'react'
  */
 export function useDisplayData<T>(domain: string) {
   const [selectedDisplayData, setSelectedDisplayData] = useState<T[]>(() => {
+    if (typeof window === 'undefined') return [] // SSR-safe
     try {
       const stored = localStorage.getItem(`selectedDisplayData:${domain}`)
       return stored ? (JSON.parse(stored) as T[]) : []
@@ -20,11 +21,14 @@ export function useDisplayData<T>(domain: string) {
     }
   })
 
+  // Keep localStorage updated only on the client
   useEffect(() => {
+    if (typeof window === 'undefined') return
     try {
       const serialized = JSON.stringify(selectedDisplayData)
-      if (localStorage.getItem(`selectedDisplayData:${domain}`) !== serialized) {
-        localStorage.setItem(`selectedDisplayData:${domain}`, serialized)
+      const key = `selectedDisplayData:${domain}`
+      if (localStorage.getItem(key) !== serialized) {
+        localStorage.setItem(key, serialized)
       }
     } catch (error) {
       console.error(`Error saving selectedDisplayData for ${domain}:`, error)
