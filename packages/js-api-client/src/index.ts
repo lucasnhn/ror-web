@@ -42,4 +42,5 @@ export type {
   ServiceResponse,
   VulnerabilityReport,
   VulnerabilityReportResponse,
+  VirtualMachine,
 } from './types/entities'

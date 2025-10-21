@@ -17,6 +17,7 @@ import { DaemonSetResponseSchema, DaemonSetSchema } from '../schemas/daemon-set'
 import { ConfigurationSchema, configurationResponseSchema } from '../schemas/configuration'
 import { VulnerabilityReportResponseSchema, VulnerabilityReportSchema } from '../schemas/vulnerability-report'
 import { RorMetaDataResponseSchema, RorMetaDataSchema } from '../schemas/common'
+import { VMSchema } from '../schemas/vm'
 import type { PriceResponseSchema, PriceSchema } from '../schemas/price'
 import type { DatacenterResponseSchema, DatacenterSchema } from '../schemas/datacenter'
 
@@ -58,3 +59,5 @@ export type ServiceResponse = z.infer<typeof ServiceResponseSchema>
 export type User = z.infer<typeof UserSelfSchema>
 export type VulnerabilityReport = z.infer<typeof VulnerabilityReportSchema>
 export type VulnerabilityReportResponse = z.infer<typeof VulnerabilityReportResponseSchema>
+//"VM" matches the v2 resource
+export type VirtualMachine = z.infer<typeof VMSchema>
