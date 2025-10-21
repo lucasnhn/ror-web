@@ -66,13 +66,14 @@
   },
   "overrides": {
     "@swc/helpers": "0.5.17",
-    "next": {
-      "@swc/helpers": "0.5.17"
-    },
     "@next/env": {
       "@swc/helpers": "0.5.17"
     },
     "@ror/web": {
+      "@swc/helpers": "0.5.17"
+    },
+    "eslint": "8.57.0",
+    "next": {
       "@swc/helpers": "0.5.17"
     },
     "react": "18.2.0",
