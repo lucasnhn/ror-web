@@ -8,7 +8,7 @@
     "build": "next build",
     "build:github": "env-cmd -f .env.github-workflow next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint src",
     "clean": "rm -rf .next && rm -rf .turbo && rm -rf node_modules",
     "format": "prettier . --check --cache --cache-location='node_modules/.cache/.prettiercache'",
     "format:fix": "prettier . --write --cache --cache-location='node_modules/.cache/.prettiercache' --log-level=warn"
@@ -69,7 +69,7 @@
     "@types/react": "18.2.61",
     "@types/react-dom": "18.2.19",
     "env-cmd": "11.0.0",
-    "eslint": "9.37.0",
+    "eslint": "8.57.0",
     "eslint-config-next": "15.3.1",
     "eslint-config-prettier": "10.1.2",
     "eslint-plugin-react-compiler": "19.1.0-rc.2",
