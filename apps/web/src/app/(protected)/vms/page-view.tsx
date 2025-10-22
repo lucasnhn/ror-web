@@ -27,15 +27,10 @@ import { useRef, useState, useMemo, useEffect, useCallback } from 'react'
 import { VMCard } from '@/features/vms/components/vm-card'
 import { VMCardData } from '@/features/vms/types/vm-card-type'
 import { VMTable } from './vms-table'
-import { Toggle } from '@/components/shadcn/toggle'
-import Link from 'next/link'
-import { Button } from '@/components/shadcn/button'
-import { TabsViewSwitcher } from '@/components/ui/tabs-view-switcher'
-import { ArrowDownNarrowWide, ArrowDownWideNarrow, Funnel, RotateCw } from 'lucide-react'
-import { SortSelect } from '@/components/ui/sort-select'
-import { VmSearch } from '@/features/vms/components/vm-search'
-import { displayDataOptions, sortingOptions, filterOptions } from '@/features/config/page-view-options'
+import { displayDataOptions, sortingOptions, filterOptions } from '@/features/vms/config/page-view-options'
 import { useDisplayData } from '@/hooks/use-display-data'
+import { ResourceControls } from '@/components/ui/resource-controls'
+import { exportVmsAsCSV, exportVmsAsExcel } from '@/features/vms/utils/export-helpers'
 
 export const PageView = ({ className, user, vms, params }: PageViewProps) => {
   const filtersOpen = params.filters === 'open'
@@ -67,20 +62,6 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
       return next
     })
   }, [])
-
-  const onSearchResultsChange = useCallback(
-    (res: VirtualMachine[]) => {
-      setSearchResults((prev) => {
-        if (prev.length === res.length) {
-          const a = idsKey(prev)
-          const b = idsKey(res)
-          if (a === b) return prev
-        }
-        return res
-      })
-    },
-    [idsKey]
-  )
 
   // sync safeItems → searchResults only if content differs
   const lastSafeKeyRef = useRef('')
@@ -210,86 +191,32 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
 
   const renderControls = () => (
     <div className='flex flex-wrap items-center justify-between w-full gap-4 [@container(max-width:1000px)]:flex-col [@container(max-width:1000px)]:items-start [@container(max-width:1000px)]:gap-6'>
-      <div className='flex flex-wrap items-center gap-x-4 gap-y-6'>
-        <VmSearch items={safeItems} onResultsChange={onSearchResultsChange} />
-
-        <MultipleSelector
-          className='w-52'
-          commandProps={{ label: 'Display data' }}
-          value={displayDataOptions.filter((opt) => selectedDisplayData?.includes(opt.value as VMCardData))}
-          onChange={onDisplayChange}
-          defaultOptions={displayDataOptions}
-          placeholder='Set display data'
-          hideClearAllButton
-          hidePlaceholderWhenSelected
-          emptyIndicator={<p className='text-center text-sm'>No results found</p>}
-        />
-
-        <SortSelect options={sortingOptions} currentSort={params.sort} />
-
-        {toggleSortParams && (
-          <Link href={toggleSortParams.url}>
-            <Button variant='outline' className='border-[var(--input)]'>
-              {toggleSortParams.isDesc ? (
-                <span className='flex gap-1 items-center'>
-                  <ArrowDownWideNarrow className='w-4 h-4' />
-                  DESC
-                </span>
-              ) : (
-                <span className='flex gap-1 items-center'>
-                  <ArrowDownNarrowWide className='w-4 h-4' />
-                  ASC
-                </span>
-              )}
-            </Button>
-          </Link>
-        )}
-
-        <Toggle
-          asChild
-          pressed={filtersOpen}
-          variant='outline'
-          className='[@container(max-width:1000px)]:hidden'
-          aria-label='Open filters'
-        >
-          <Link href={toggleParams}>
-            <Funnel aria-hidden='true' />
-          </Link>
-        </Toggle>
-      </div>
-
-      <div className='flex flex-row gap-4'>
-        <Toggle
-          pressed={filtersOpen}
-          className='[@container(min-width:1001px)]:hidden'
-          aria-label='Open filters'
-          onPressedChange={(pressed) => {
-            const newUrl = new URL(window.location.href)
-            if (pressed) {
-              newUrl.searchParams.set('filters', 'open')
-            } else {
-              newUrl.searchParams.delete('filters')
-            }
-            window.history.replaceState({}, '', newUrl.toString())
-          }}
-        >
-          <Funnel className='h-4 w-4' />
-          Filters
-        </Toggle>
-        <Button
-          type='button'
-          onClick={handleRefreshFilters}
-          aria-label='Reset filters'
-          title='Reset filters'
-          className='gap-2'
-        >
-          <RotateCw className='h-4 w-4' />
-          Refresh
-        </Button>
-
-        {/* View switcher for grid/list toggle */}
-        <TabsViewSwitcher storageKey='vms:view-mode' />
-      </div>
+      <ResourceControls
+        safeItems={safeItems}
+        searchText='Find VMs...'
+        selectedDisplayData={selectedDisplayData}
+        onDisplayChange={onDisplayChange}
+        onSearchResultsChange={setSearchResults}
+        displayDataOptions={displayDataOptions}
+        params={params}
+        toggleSortParams={toggleSortParams}
+        filtersOpen={filtersOpen}
+        toggleParams={toggleParams}
+        handleRefreshFilters={handleRefreshFilters}
+        domain='vms'
+        sortingOptions={sortingOptions}
+        searchKeys={['label', 'hostname', 'powerState', 'family']}
+        mapItem={(vm) => ({
+          ...vm,
+          label: vm.metadata?.name ?? vm.virtualmachine?.spec?.name,
+          hostname: vm.virtualmachine?.status?.operatingsystem?.hostname,
+          powerState: vm.virtualmachine?.status?.operatingsystem?.powerstate,
+          family: vm.virtualmachine?.status?.operatingsystem?.family,
+        })}
+        getItemsKey={idsKey}
+        exportAsCSV={exportVmsAsCSV}
+        exportAsExcel={exportVmsAsExcel}
+      />
     </div>
   )
 

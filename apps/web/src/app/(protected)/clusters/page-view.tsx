@@ -30,12 +30,19 @@ import { NotReadyMessage } from '@/components/ui/not-ready-message'
 import { ClusterCard } from '@/features/cluster/components/cluster-card'
 import { ClusterControls } from '@/features/cluster/components/cluster-controls'
 import { ClusterFilterSection } from '@/features/cluster/components/cluster-filter-section'
-import { displayDataOptions } from '@/features/cluster/config/page-view-options'
+import { displayDataOptions, sortingOptions } from '@/features/cluster/config/page-view-options'
 import { useClusterFilters } from '@/features/cluster/hooks/use-cluster-filters'
 import { useClusterSorting } from '@/features/cluster/hooks/use-cluster-sorting'
 import { useDisplayData } from '@/hooks/use-display-data'
 import { ClusterCardDisplayData } from '@/features/cluster/types/display-data'
-import { getClusterId, getClustersKey } from '@/features/cluster/utils/cluster'
+import {
+  getClusterId,
+  getClusterName,
+  getClustersKey,
+  getDatacenter,
+  getEnvironment,
+  getProvider,
+} from '@/features/cluster/utils/cluster'
 import { useInfiniteLoader } from '@/hooks/use-infinite-loader'
 import { cn } from '@/utils/clsxm'
 import { loadMoreClusters } from '@/utils/cluster-actions'
@@ -45,6 +52,8 @@ import { User } from 'next-auth'
 import { usePathname, useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { getClustersTableColumns } from '@/features/cluster/components/clusters-columns'
+import { ResourceControl, ResourceControls } from '@/components/ui/resource-controls'
+import { exportClustersAsCSV, exportClustersAsExcel } from '@/features/cluster/utils/export-helpers'
 
 /**
  * Represents the query parameters for the clusters page view.
@@ -223,16 +232,31 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
     <div className={cn(className, '@container')}>
       <div className={cn('border-b', filtersOpen && 'pb-2')}>
         <div className={cn('mx-12 flex items-center min-h-28 py-6 ', filtersOpen && 'w-[calc(100%-6rem)] border-b')}>
-          <ClusterControls
+          <ResourceControls
             safeItems={safeItems}
+            searchText='Find clusters...'
             selectedDisplayData={selectedDisplayData}
             onDisplayChange={onDisplayChange}
             onSearchResultsChange={setSearchResults}
-            handleRefreshFilters={handleRefreshFilters}
-            toggleParams={toggleParams}
+            displayDataOptions={displayDataOptions}
+            params={params}
             toggleSortParams={toggleSortParams}
             filtersOpen={filtersOpen}
-            params={params}
+            toggleParams={toggleParams}
+            handleRefreshFilters={handleRefreshFilters}
+            domain='clusters'
+            sortingOptions={sortingOptions}
+            searchKeys={['label', 'datacenterName', 'datacenterProvider', 'environment']}
+            mapItem={(cluster) => ({
+              ...cluster,
+              label: getClusterName(cluster),
+              datacenterName: getDatacenter(cluster),
+              datacenterProvider: getProvider(cluster),
+              environment: getEnvironment(cluster),
+            })}
+            getItemsKey={getClustersKey}
+            exportAsCSV={exportClustersAsCSV}
+            exportAsExcel={exportClustersAsExcel}
           />
         </div>
 
