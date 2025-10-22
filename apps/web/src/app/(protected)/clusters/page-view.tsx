@@ -33,7 +33,7 @@ import { ClusterFilterSection } from '@/features/cluster/components/cluster-filt
 import { displayDataOptions } from '@/features/cluster/config/page-view-options'
 import { useClusterFilters } from '@/features/cluster/hooks/use-cluster-filters'
 import { useClusterSorting } from '@/features/cluster/hooks/use-cluster-sorting'
-import { useDisplayData } from '@/features/cluster/hooks/use-display-data'
+import { useDisplayData } from '@/hooks/use-display-data'
 import { ClusterCardDisplayData } from '@/features/cluster/types/display-data'
 import { getClusterId, getClustersKey } from '@/features/cluster/utils/cluster'
 import { useInfiniteLoader } from '@/hooks/use-infinite-loader'
@@ -123,7 +123,7 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
 
   // Cluster filters, display data and search result
   const { selectedFilters, setSelectedFilters, filteredItems, resetFilters } = useClusterFilters(safeItems)
-  const { selectedDisplayData, setSelectedDisplayData } = useDisplayData()
+  const { selectedDisplayData, setSelectedDisplayData } = useDisplayData<ClusterCardDisplayData>('clusters')
   const [searchResults, setSearchResults] = useState<KubernetesCluster[]>(safeItems)
 
   // Handler for display data changes
