@@ -38,7 +38,7 @@ import { Toggle } from '../shadcn/toggle'
  * @property {string} domain - The domain or context for the resource controls.
  * @property {Option[]} sortingOptions - Available sorting options.
  * @property {string[]} searchKeys - Keys to use for searching within items.
- * @property {(item: T) => Record<string, any>} mapItem - Function to map an item to a displayable record.
+ * @property {(item: T) => Record<string, unknown>} mapItem - Function to map an item to a displayable record.
  * @property {(items: T[]) => string} getItemsKey - Function to generate a unique key for a set of items.
  * @property {(items: T[], filename: string) => void} exportAsCSV - Function to export items as a CSV file.
  * @property {(items: T[], filename: string) => void} exportAsExcel - Function to export items as an Excel file.
@@ -58,7 +58,7 @@ interface ResourceControlsProps<T> {
   domain: string
   sortingOptions: Option[]
   searchKeys: string[]
-  mapItem: (item: T) => Record<string, any>
+  mapItem: (item: T) => Record<string, unknown>
   getItemsKey: (items: T[]) => string
   exportAsCSV: (items: T[], filename: string) => void
   exportAsExcel: (items: T[], filename: string) => void
