@@ -205,10 +205,10 @@ export function ResourceControls<T>({
             <DropdownMenuItem onClick={() => exportAsExcel(safeItems, `ror-${domain}-filtered.xlsx`)}>
               Export Filtered (Excel)
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => exportAsCSV(safeItems, `ror-${domain}-all.csv`)}>
+            <DropdownMenuItem onClick={() => exportAsCSV(items, `ror-${domain}-all.csv`)}>
               Export All (CSV)
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => exportAsExcel(safeItems, `ror-${domain}-all.xlsx`)}>
+            <DropdownMenuItem onClick={() => exportAsExcel(items, `ror-${domain}-all.xlsx`)}>
               Export All (Excel)
             </DropdownMenuItem>
           </DropdownMenuContent>
