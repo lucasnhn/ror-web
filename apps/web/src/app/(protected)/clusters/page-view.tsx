@@ -28,20 +28,22 @@ import { Option } from '@/components/shadcn/multiselect'
 import { DataTable } from '@/components/ui/data-table'
 import { NotReadyMessage } from '@/components/ui/not-ready-message'
 import { ClusterCard } from '@/features/cluster/components/cluster-card'
-import { ClusterControls } from '@/features/cluster/components/cluster-controls'
 import { ClusterFilterSection } from '@/features/cluster/components/cluster-filter-section'
 import { displayDataOptions, sortingOptions } from '@/features/cluster/config/page-view-options'
-import { useClusterFilters } from '@/features/cluster/hooks/use-cluster-filters'
 import { useClusterSorting } from '@/features/cluster/hooks/use-cluster-sorting'
 import { useDisplayData } from '@/hooks/use-display-data'
 import { ClusterCardDisplayData } from '@/features/cluster/types/display-data'
 import {
   getClusterId,
   getClusterName,
+  getClusterResource,
   getClustersKey,
   getDatacenter,
   getEnvironment,
+  getNodePools,
+  getPrices,
   getProvider,
+  getWorkspace,
 } from '@/features/cluster/utils/cluster'
 import { useInfiniteLoader } from '@/hooks/use-infinite-loader'
 import { cn } from '@/utils/clsxm'
@@ -52,27 +54,11 @@ import { User } from 'next-auth'
 import { usePathname, useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { getClustersTableColumns } from '@/features/cluster/components/clusters-columns'
-import { ResourceControl, ResourceControls } from '@/components/ui/resource-controls'
+import { ResourceControls } from '@/components/ui/resource-controls'
 import { exportClustersAsCSV, exportClustersAsExcel } from '@/features/cluster/utils/export-helpers'
-
-/**
- * Represents the query parameters for the clusters page view.
- *
- * @property view - The display mode of the clusters, either 'grid' or 'list'.
- * @property page - The current page number for pagination.
- * @property limit - The maximum number of items per page.
- * @property sort - The field by which to sort the clusters.
- * @property order - The sort direction, either 'asc' (ascending) or 'desc' (descending).
- * @property filters - A string representing applied filters.
- */
-interface Params {
-  view?: 'grid' | 'list'
-  page?: number
-  limit?: number
-  sort?: string
-  order?: 'asc' | 'desc'
-  filters?: string
-}
+import { Params } from '@/types/resources-page'
+import { useFilters } from '@/hooks/use-filters'
+import { SortDefinition, useSorting } from '@/hooks/use-sorting'
 
 /**
  * Props for the PageView component.
@@ -104,10 +90,6 @@ interface PageViewProps {
  * @returns The rendered cluster page view, including controls, filters, and either a grid or table of clusters.
  */
 export const PageView = ({ className, user, clusters, params }: PageViewProps) => {
-  // Router and pathname
-  const router = useRouter()
-  const pathname = usePathname()
-
   // Filter state
   const filtersOpen = params.filters === 'open'
 
@@ -131,9 +113,34 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
   )
 
   // Cluster filters, display data and search result
-  const { selectedFilters, setSelectedFilters, filteredItems, resetFilters } = useClusterFilters(safeItems)
+  const filterDefinitions = [
+    { key: 'Environments', extractor: getEnvironment },
+    { key: 'Datacenters', extractor: getDatacenter },
+    { key: 'Workspaces', extractor: getWorkspace },
+  ]
+
+  const definitions: SortDefinition<KubernetesCluster>[] = [
+    { key: 'clusterName', extractor: (c) => getClusterName(c) },
+    { key: 'cpu', extractor: (c) => getClusterResource(c, 'cpu').percentage },
+    { key: 'memory', extractor: (c) => getClusterResource(c, 'memory').percentage },
+    {
+      key: 'nodes',
+      extractor: (c) => getNodePools(c).reduce((total, nodePool) => total + (nodePool.replicas || 0), 0) || 0,
+    },
+    { key: 'monthlyPrice', extractor: (c) => getPrices(c).monthly },
+    { key: 'yearlyPrice', extractor: (c) => getPrices(c).yearly },
+    { key: 'datacenterName', extractor: (c) => getDatacenter(c) },
+    { key: 'datacenterProvider', extractor: (c) => getProvider(c) },
+    { key: 'environment', extractor: (c) => getEnvironment(c) },
+  ]
+
+  const { selectedFilters, setSelectedFilters, filteredItems, resetFilters } = useFilters<KubernetesCluster>(
+    safeItems,
+    filterDefinitions
+  )
   const { selectedDisplayData, setSelectedDisplayData } = useDisplayData<ClusterCardDisplayData>('clusters')
   const [searchResults, setSearchResults] = useState<KubernetesCluster[]>(safeItems)
+  const sortedItems = useSorting({ items: filteredItems, sortKey: params.sort, sortOrder: params.order, definitions })
 
   // Handler for display data changes
   const onDisplayChange = (selected: Option[]) =>
@@ -153,36 +160,19 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
     }
   }, [safeItems])
 
-  // Handle refresh (reset filters + display data + url)
-  const clearUrl = useCallback(() => {
-    router.replace(pathname, { scroll: false })
-  }, [router, pathname])
+  const pathname = usePathname()
+  const router = useRouter()
+  const clearUrl = () => router.replace(pathname, { scroll: false })
 
   const handleRefreshFilters = useCallback(() => {
     resetFilters()
     setSelectedDisplayData([])
     clearUrl()
-  }, [resetFilters, setSelectedDisplayData, clearUrl])
+  }, [resetFilters, setSelectedDisplayData])
 
   // Toggle/Sort params
-  const toggleParams = useMemo(
-    () =>
-      buildToggledParams(
-        params as Record<string, string | number | boolean | null | undefined>,
-        'filters',
-        'open',
-        'clusters'
-      ).url,
-    [params]
-  )
-
-  const toggleSortParams = useMemo(
-    () => buildSortParams(params as Record<string, string | number | boolean | null | undefined>, 'clusters'),
-    [params]
-  )
-
-  // Sorting
-  const sortedItems = useClusterSorting({ clusters: filteredItems, sort: params.sort, order: params.order })
+  const toggleParams = useMemo(() => buildToggledParams(params, 'filters', 'open', 'clusters').url, [params])
+  const toggleSortParams = useMemo(() => buildSortParams(params, 'clusters'), [params])
 
   const displayedItems = useMemo(() => {
     if (!searchResults?.length) return sortedItems
