@@ -36,7 +36,7 @@ export function useDisplayData<T>(domain: string) {
     } catch {
       // ignore
     }
-  }, [domain, selectedDisplayData])
+  }, [domain])
 
   // Keep localStorage updated only on the client
   useEffect(() => {
