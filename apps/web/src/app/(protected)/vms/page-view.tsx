@@ -68,6 +68,7 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
   const idOf = useCallback((c: VirtualMachine) => c.virtualmachine?.status?.operatingsystem?.id || '', [])
 
   const idsKey = useCallback((arr: VirtualMachine[]) => arr.map(idOf).join('|'), [idOf])
+
   const lastSafeKeyRef = useRef('')
   useEffect(() => {
     const nextKey = idsKey(safeItems)
