@@ -27,8 +27,8 @@ const exportableFromCluster = (c: KubernetesCluster) => {
 
   const versionByName = (name: string) =>
     (versions as { name?: string | null; version?: string | null }[]).find((v) => v?.name === name)?.version ?? null
+  const tagsArr = (c as unknown as { rormeta?: { tags?: { key?: string; value?: string }[] } }).rormeta?.tags ?? []
 
-  const tagsArr = (c as any)?.rormeta?.tags ?? []
   const serviceTags = Array.isArray(tagsArr)
     ? tagsArr
         .map((t) => t?.value ?? t?.key ?? '')

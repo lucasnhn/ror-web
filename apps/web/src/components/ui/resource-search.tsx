@@ -14,7 +14,7 @@ import { useSearch } from '@/hooks/use-search'
  * @property {(results: T[]) => void} [onResultsChange] - Optional callback invoked when the search results change.
  * @property {string} [searchText] - Optional initial search text.
  * @property {string[]} keys - The keys of the item objects to use for searching.
- * @property {(item: T) => Record<string, any>} [mapItem] - Optional function to map an item to a searchable object.
+ * @property {(item: T) => Record<string, unknown>} [mapItem] - Optional function to map an item to a searchable object.
  * @property {number} [threshold] - Optional threshold for search sensitivity (e.g., for fuzzy search).
  * @property {(items: T[]) => string} [getItemsKey] - Optional function to generate a unique key for the items array.
  */
@@ -23,7 +23,7 @@ export interface ResourceSearchProps<T> {
   onResultsChange?: (results: T[]) => void
   searchText?: string
   keys: string[]
-  mapItem?: (item: T) => Record<string, any>
+  mapItem?: (item: T) => Record<string, unknown>
   threshold?: number
   getItemsKey?: (items: T[]) => string
 }
@@ -63,7 +63,7 @@ export function ResourceSearch<T>({
       onResultsChange?.(results)
       lastSentKeyRef.current = nextKey
     }
-  }, [results, onResultsChange])
+  }, [results, onResultsChange, getItemsKey])
 
   return (
     <Input
