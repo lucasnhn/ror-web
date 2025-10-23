@@ -22,7 +22,7 @@ import MultipleSelector, { Option } from '@/components/shadcn/multiselect'
 import { PageViewProps, VirtualMachine } from '@/features/vms/utils/vms'
 import { NotReadyMessage } from '@/components/ui/not-ready-message'
 import { cn } from '@/utils/clsxm'
-import { useRef, useState, useMemo, useEffect } from 'react'
+import { useRef, useState, useMemo, useEffect, useCallback } from 'react'
 import { VMCard } from '@/features/vms/components/vm-card'
 import { VMCardData } from '@/features/vms/types/vm-card-type'
 import { displayDataOptions, sortingOptions, filterOptions } from '@/features/vms/config/page-view-options'
@@ -65,8 +65,9 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
   const onDisplayChange = (selected: Option[]) => setSelectedDisplayData(selected.map((i) => i.value as VMCardData))
 
   // sync safeItems → searchResults only if content differs
-  const idOf = (c: VirtualMachine) => c.virtualmachine?.status?.operatingsystem?.id || ''
-  const idsKey = (arr: VirtualMachine[]) => arr.map(idOf).join('|')
+  const idOf = useCallback((c: VirtualMachine) => c.virtualmachine?.status?.operatingsystem?.id || '', [])
+
+  const idsKey = useCallback((arr: VirtualMachine[]) => arr.map(idOf).join('|'), [idOf])
   const lastSafeKeyRef = useRef('')
   useEffect(() => {
     const nextKey = idsKey(safeItems)
