@@ -63,9 +63,9 @@ import { SortDefinition, useSorting } from '@/hooks/use-sorting'
 /**
  * Props for the PageView component.
  *
- * @property {string} [className] - Optional CSS class name for styling the component.
- * @property {User} user - The current user viewing the page.
- * @property {KubernetesCluster[]} clusters - List of Kubernetes clusters to display.
+ * @property {string} [className] - Optional CSS class name for custom styling.
+ * @property {User} user - The current user object.
+ * @property {KubernetesCluster[]} clusters - Array of Kubernetes clusters to display.
  * @property {Params} params - Route or query parameters relevant to the page view.
  */
 interface PageViewProps {
@@ -76,18 +76,24 @@ interface PageViewProps {
 }
 
 /**
- * Renders the main page view for displaying clusters in either grid or table format.
+ * Renders the main page view for displaying Kubernetes clusters, including filtering, sorting, searching,
+ * infinite loading, and display options (grid or table view).
  *
- * Handles cluster data loading, filtering, sorting, searching, and display options.
- * Supports lazy loading of clusters, filter controls, and display customization.
- * Pagination logic is present but marked for removal in favor of lazy loading (see issue #350).
+ * @param className - Optional CSS class name for the root container.
+ * @param user - The current user object, used for permissions and display.
+ * @param clusters - Initial list of Kubernetes clusters to display.
+ * @param params - URL/query parameters controlling filters, sorting, and view mode.
  *
- * @param className - Optional CSS class for the root container.
- * @param user - The current user object, used for permission and display logic.
- * @param clusters - Initial list of clusters to display.
- * @param params - URL/query parameters controlling view, sorting, filtering, pagination, etc.
+ * Features:
+ * - Infinite loading of clusters with pagination.
+ * - Filtering by environment, datacenter, and workspace.
+ * - Sorting by various cluster properties (name, CPU, memory, nodes, price, etc.).
+ * - Search functionality across clusters.
+ * - Toggle between grid and table views.
+ * - Export clusters as CSV or Excel.
+ * - Displays a development notice message.
  *
- * @returns The rendered cluster page view, including controls, filters, and either a grid or table of clusters.
+ * @returns The rendered page view component.
  */
 export const PageView = ({ className, user, clusters, params }: PageViewProps) => {
   // Filter state
