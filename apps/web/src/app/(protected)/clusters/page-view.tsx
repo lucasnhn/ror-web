@@ -167,7 +167,9 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
 
   const pathname = usePathname()
   const router = useRouter()
-  const clearUrl = () => router.replace(pathname, { scroll: false })
+  const clearUrl = useCallback(() => {
+    router.replace(pathname, { scroll: false })
+  }, [router, pathname])
 
   const handleRefreshFilters = useCallback(() => {
     resetFilters()
