@@ -254,6 +254,8 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
             getItemsKey={getClustersKey}
             exportAsCSV={exportClustersAsCSV}
             exportAsExcel={exportClustersAsExcel}
+            allItems={items}
+            filteredItems={filteredItems}
           />
         </div>
 
