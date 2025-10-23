@@ -140,7 +140,7 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
     if (!searchResults?.length) return base
     const ids = new Set(searchResults.map(idOf))
     return base.filter((c) => ids.has(idOf(c)))
-  }, [sortedItems, filteredItems, searchResults, params.sort])
+  }, [sortedItems, filteredItems, searchResults, params.sort, idOf])
 
   const renderControls = () => (
     <div className='flex flex-wrap items-center justify-between w-full gap-4 [@container(max-width:1000px)]:flex-col [@container(max-width:1000px)]:items-start [@container(max-width:1000px)]:gap-6'>
