@@ -1,11 +1,36 @@
+/*
+ * FILE OVERVIEW:
+ *
+ * Custom hook for sorting items based on provided definitions, sort key, and order.
+ */
+
 import { SortOrder } from '@/types/resources-page'
 import { useMemo } from 'react'
 
+/**
+ * Defines the sorting configuration for a specific type.
+ *
+ * @template T - The type of items to be sorted.
+ * @property key - The unique identifier for the sort definition.
+ * @property extractor - A function that extracts the value to sort by from an item.
+ *   The extracted value can be a string, number, null, or undefined.
+ */
 export interface SortDefinition<T> {
   key: string
   extractor: (item: T) => string | number | null | undefined
 }
 
+/**
+ * Custom React hook for sorting an array of items based on a specified key and order.
+ *
+ * @template T - The type of items in the array.
+ * @param params - The parameters for sorting.
+ * @param params.items - The array of items to sort.
+ * @param params.sortKey - The key to sort by, corresponding to a definition.
+ * @param params.sortOrder - The order to sort in ('asc' or 'desc'). Defaults to 'asc'.
+ * @param params.definitions - An array of sort definitions, each containing a key and an extractor function.
+ * @returns The sorted array of items. If no sort key or definition is provided, returns the original array.
+ */
 export function useSorting<T>({
   items,
   sortKey,

@@ -1,14 +1,22 @@
+/*
+ * FILE OVERVIEW:
+ *
+ * React hook for managing and persisting display data selection per domain using localStorage.
+ */
+
 import { useEffect, useState } from 'react'
 
 /**
- * Custom React hook for managing and persisting display data selection per domain using localStorage.
+ * React hook for managing and persisting display data selection per domain using localStorage.
+ *
+ * On mount, it loads the selected display data from localStorage (if available) for the given domain.
+ * Updates to the selection are automatically saved to localStorage, ensuring persistence across sessions.
  *
  * @template T - The type of the display data items.
- * @param {string} domain - A unique domain identifier used as a key for localStorage.
- * @returns {{
- *   selectedDisplayData: T[];
- *   setSelectedDisplayData: React.Dispatch<React.SetStateAction<T[]>>;
- * }} An object containing the currently selected display data and a setter function.
+ * @param domain - A unique string identifier for the domain/context of the display data.
+ * @returns An object containing:
+ *   - `selectedDisplayData`: The current array of selected display data items.
+ *   - `setSelectedDisplayData`: A setter function to update the selection.
  */
 export function useDisplayData<T>(domain: string) {
   const [selectedDisplayData, setSelectedDisplayData] = useState<T[]>([])
@@ -28,7 +36,6 @@ export function useDisplayData<T>(domain: string) {
     } catch {
       // ignore
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [domain])
 
   // Keep localStorage updated only on the client
