@@ -34,6 +34,8 @@ import { buildSortParams, buildToggledParams } from '@/utils/url-helpers'
 import { usePathname, useRouter } from 'next/navigation'
 import { useFilters } from '@/hooks/use-filters'
 import { SortDefinition, useSorting } from '@/hooks/use-sorting'
+import { DataTable } from '@/components/ui/data-table'
+import { getVMTableColumns } from '@/features/vms/components/vm-columns'
 
 export const PageView = ({ className, user, vms, params }: PageViewProps) => {
   const filtersOpen = params.filters === 'open'
@@ -215,10 +217,9 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
 
       <section className='px-12 my-8'>
         {params.view === 'list' ? (
-          <VMTable
+          <DataTable
             key='table'
-            user={user}
-            vms={(params.sort ? sortedItems : filteredItems).filter((c) =>
+            data={(params.sort ? sortedItems : filteredItems).filter((c) =>
               searchResults.some(
                 (sr) =>
                   sr.virtualmachine?.status?.operatingsystem?.id === c.virtualmachine?.status?.operatingsystem?.id ||
@@ -228,7 +229,7 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
                     c.virtualmachine?.status?.operatingsystem?.hostname
               )
             )}
-            selectedDisplayData={selectedDisplayData}
+            columns={getVMTableColumns(user, selectedDisplayData)}
           />
         ) : (
           <div className='flex flex-row flex-wrap gap-6'>
