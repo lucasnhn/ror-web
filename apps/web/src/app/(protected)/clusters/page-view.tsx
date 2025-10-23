@@ -30,7 +30,6 @@ import { NotReadyMessage } from '@/components/ui/not-ready-message'
 import { ClusterCard } from '@/features/cluster/components/cluster-card'
 import { ClusterFilterSection } from '@/features/cluster/components/cluster-filter-section'
 import { displayDataOptions, sortingOptions } from '@/features/cluster/config/page-view-options'
-import { useClusterSorting } from '@/features/cluster/hooks/use-cluster-sorting'
 import { useDisplayData } from '@/hooks/use-display-data'
 import { ClusterCardDisplayData } from '@/features/cluster/types/display-data'
 import {
@@ -174,7 +173,7 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
     resetFilters()
     setSelectedDisplayData([])
     clearUrl()
-  }, [resetFilters, setSelectedDisplayData])
+  }, [resetFilters, setSelectedDisplayData, clearUrl])
 
   // Toggle/Sort params
   const toggleParams = useMemo(() => buildToggledParams(params, 'filters', 'open', 'clusters').url, [params])

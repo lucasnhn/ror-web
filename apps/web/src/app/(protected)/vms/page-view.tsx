@@ -73,7 +73,7 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
     if (nextKey !== lastSafeKeyRef.current) {
       lastSafeKeyRef.current = nextKey
     }
-  }, [safeItems])
+  }, [safeItems, idsKey])
 
   const pathname = usePathname()
   const router = useRouter()
