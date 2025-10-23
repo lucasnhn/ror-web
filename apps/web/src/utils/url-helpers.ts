@@ -1,7 +1,13 @@
+/*
+ * FILE OVERVIEW:
+ *
+ * Utility functions for building and manipulating URLs with query parameters.
+ */
+
 /**
  * Builds a URL with toggled query parameters based on the provided key and value.
  * If the specified key in the params matches the given value, it removes the key from the query string.
- * Otherwise, the key is set to the given value.
+ * Otherwise, it sets the key to the given value in the query string.
  *
  * @template T - The type of the parameters object, which must have string, number, boolean, undefined, or null values.
  * @param params - The current query parameters as an object.

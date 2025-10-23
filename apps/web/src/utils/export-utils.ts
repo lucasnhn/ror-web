@@ -1,3 +1,9 @@
+/*
+ * FILE OVERVIEW:
+ *
+ * Utility functions for exporting data as CSV or Excel files
+ */
+
 import type { WorkSheet } from 'xlsx'
 
 type WorksheetWithCols = WorkSheet & { ['!cols']?: { wch: number }[] }

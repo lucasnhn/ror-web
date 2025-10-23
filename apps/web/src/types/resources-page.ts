@@ -1,3 +1,9 @@
+/*
+ * FILE OVERVIEW:
+ *
+ * Types related to the resources page view
+ */
+
 /**
  * Represents the query parameters for the clusters page view.
  *
