@@ -20,7 +20,7 @@ import { useState } from 'react'
 import { ArrowRight } from 'lucide-react'
 import { Pill } from '@/components/shadcn/pill'
 import { vmActionsColors } from '../utils/env-colors'
-import { standardLayouts } from '@/features/config/vm-details-layout'
+import { standardLayouts } from '@/features/vms/config/vm-details-layout'
 import { Network, VMDetailsProps } from '../utils/vms'
 
 const ResponsiveGridLayout = WidthProvider(Responsive)

@@ -1,5 +1,6 @@
 import { User } from 'next-auth'
 import { VMCardData } from '@/features/vms/types/vm-card-type'
+import { Params } from '@/types/resources-page'
 
 export interface VirtualMachine {
   id?: {
@@ -133,15 +134,6 @@ export interface VMTableProps {
   metadata_name?: string
   os_id?: string | null
   powerstate?: string | null
-}
-
-export interface Params {
-  view?: 'grid' | 'list'
-  page?: number
-  limit?: number
-  sort?: string
-  order?: 'asc' | 'desc'
-  filters?: string
 }
 
 export interface PageViewProps {
