@@ -62,6 +62,8 @@ interface ResourceControlsProps<T> {
   getItemsKey: (items: T[]) => string
   exportAsCSV: (items: T[], filename: string) => void
   exportAsExcel: (items: T[], filename: string) => void
+  filteredItems: T[]
+  allItems: T[]
 }
 
 /**
@@ -109,6 +111,8 @@ export function ResourceControls<T>({
   getItemsKey,
   exportAsCSV,
   exportAsExcel,
+  filteredItems,
+  allItems,
 }: ResourceControlsProps<T>) {
   return (
     <div className='flex flex-wrap items-center justify-between w-full gap-4 [@container(max-width:1000px)]:flex-col [@container(max-width:1000px)]:items-start [@container(max-width:1000px)]:gap-6'>
@@ -199,16 +203,16 @@ export function ResourceControls<T>({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem onClick={() => exportAsCSV(safeItems, `ror-${domain}-filtered.csv`)}>
+            <DropdownMenuItem onClick={() => exportAsCSV(filteredItems, `ror-${domain}-filtered.csv`)}>
               Export Filtered (CSV)
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => exportAsExcel(safeItems, `ror-${domain}-filtered.xlsx`)}>
+            <DropdownMenuItem onClick={() => exportAsExcel(filteredItems, `ror-${domain}-filtered.xlsx`)}>
               Export Filtered (Excel)
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => exportAsCSV(safeItems, `ror-${domain}-all.csv`)}>
+            <DropdownMenuItem onClick={() => exportAsCSV(allItems, `ror-${domain}-all.csv`)}>
               Export All (CSV)
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => exportAsExcel(safeItems, `ror-${domain}-all.xlsx`)}>
+            <DropdownMenuItem onClick={() => exportAsExcel(allItems, `ror-${domain}-all.xlsx`)}>
               Export All (Excel)
             </DropdownMenuItem>
           </DropdownMenuContent>

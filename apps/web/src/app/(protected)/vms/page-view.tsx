@@ -169,6 +169,8 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
         getItemsKey={idsKey}
         exportAsCSV={exportVmsAsCSV}
         exportAsExcel={exportVmsAsExcel}
+        filteredItems={displayedItems}
+        allItems={vms}
       />
     </div>
   )
