@@ -36,6 +36,7 @@
     "@ror/js-api-client": "*",
     "@ror/react": "*",
     "@ror/styles": "*",
+    "@swc/helpers": "0.5.17",
     "@t3-oss/env-nextjs": "0.13.0",
     "@tanstack/react-table": "8.21.3",
     "@types/react-grid-layout": "1.3.5",
