@@ -1,6 +1,6 @@
 'use client'
 
-import { VirtualMachine } from '@ror/web/src/features/vms/utils/vms'
+import type { VirtualMachine } from '@ror/js-api-client'
 import { createContext, useContext } from 'react'
 
 export interface VMContextData {
