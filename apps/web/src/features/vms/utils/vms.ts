@@ -127,3 +127,7 @@ export const getNetworks = (vm: VirtualMachine): Network[] => {
 export const getVmOperatingSystem = (vm: VirtualMachine) => {
   return vm?.virtualmachine?.status?.operatingSystem
 }
+
+export const getVmSpec = (vm: VirtualMachine) => {
+  return vm?.virtualmachine?.spec
+}
