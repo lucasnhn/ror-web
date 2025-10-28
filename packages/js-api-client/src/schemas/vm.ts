@@ -105,13 +105,6 @@ export const VirtualMachineStatus = z.object({
 // Top-level schema
 // -------------------------
 
-// export const VirtualMachineTyp = z.object({
-//   externalId: z.string().nullable().optional(),
-//   provider: z.string().nullable().optional(),
-//   spec: VirtualMachineSpec.nullable().optional(),
-//   status: VirtualMachineStatus.nullable().optional(),
-// });
-
 export const VirtualMachineType = V2ResourceSchema.extend({
   virtualmachine: z
     .object({
