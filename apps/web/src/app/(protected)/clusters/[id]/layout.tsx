@@ -102,9 +102,7 @@ export default function ClusterPageLayout({ params, children }: ClusterPageLayou
   return (
     <ClusterProvider value={clusterContextValue}>
       <Fragment>
-        <div className='border-b'>
-          <ClusterHeader tabs={tabs} />
-        </div>
+        <ClusterHeader tabs={tabs} />
         <NotReadyMessage className='mx-6 mt-8'>
           The page is still under development, so some data and functionality is missing.
         </NotReadyMessage>

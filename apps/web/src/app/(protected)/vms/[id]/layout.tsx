@@ -69,11 +69,9 @@ export default function VmPageLayout({ params, children }: VmPageLayoutProps) {
   return (
     <VMProvider value={VMContextValue}>
       <Fragment>
-        <div className='border-b'>
-          <VMHeader tabs={tabs} />
-        </div>
+        <VMHeader tabs={tabs} />
         <NotReadyMessage className='mx-6 mt-8'>
-          The VM page is still under development.. Data and functionality is missing, but they are coming soon.
+          The VM page is still under development. Data and functionality is missing, but they are coming soon.
         </NotReadyMessage>
         <div className='pt-2 px-6 md:px-6 md:pt-8'>{children}</div>
       </Fragment>
