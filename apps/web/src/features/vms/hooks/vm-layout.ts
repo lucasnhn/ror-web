@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { UseVmLayoutParams, UseVmLayoutReturn, VirtualMachine } from '../utils/vms'
+import { UseVmLayoutParams, UseVmLayoutReturn } from '../utils/vms'
+import type { VirtualMachine } from '@ror/js-api-client'
 
 export const useVmLayout = ({ params }: UseVmLayoutParams): UseVmLayoutReturn => {
   const [id, setId] = useState('')

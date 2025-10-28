@@ -10,15 +10,13 @@ export async function fetchVms(
   const skip = (params.page - 1) * params.limit
 
   const listParams = new URLSearchParams()
-  listParams.set('limit', String(params.limit))
-  listParams.set('offset', String(skip))
-  if (params.sort) listParams.set('sort', params.sort)
+  listParams.set('limit', '1000') // Force high limit
+  listParams.set('offset', '0') // Start from beginning
+  //if (params.sort) listParams.set('sort', params.sort)
 
-  const virtualmachines = api.virtualMachine.list(listParams)
-
-  const response = await Promise.all([virtualmachines])
+  const virtualmachines = await api.virtualMachine.list(listParams)
 
   return {
-    vms: response[0]?.resources ?? [],
+    vms: virtualmachines?.resources ?? [],
   }
 }

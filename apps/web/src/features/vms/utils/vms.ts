@@ -1,122 +1,6 @@
 import { User } from 'next-auth'
 import { VMCardData } from '@/features/vms/types/vm-card-type'
-
-export interface VirtualMachine {
-  id?: {
-    $olid?: string
-  }
-  uid: string
-  metadata?: {
-    name?: string
-    generatename?: string
-    namespace?: string
-    selflink?: string
-    uid?: string
-    resourceversion?: string
-    creationtimestamp?: {
-      time: {
-        $date: {
-          $numberLong?: string
-        }
-      }
-    }
-    deletiontimestamp?: string | null
-    labels?: string | null
-    annotations?: string | null
-    ownerreferences?: string | null
-    finalizers?: string[] | null
-    managedfields?: string | null
-  }
-  rormeta?: {
-    version?: string
-    lastreported?: string
-    internal?: boolean
-    hash?: string
-    ownerref?: {
-      scope?: string
-      subject?: string
-    }
-    action?: string
-    tags?: string[] | null
-  }
-  typemeta?: {
-    kind?: string
-    apiversion?: string
-  }
-  virtualmachine?: {
-    externalid?: string | null
-    spec?: {
-      cpu?: {
-        sockets?: number
-        corespersocket?: number
-      }
-      name?: string
-      disks?: string | null
-      memory?: {
-        sizebytes?: number
-      }
-    }
-    status?: {
-      lastupdated?: {
-        time?: {
-          date?: { date: string }
-        }
-      }
-      location?: string | null
-      cpu?: {
-        units?: number | null
-        usage?: number
-        resourcevirtualmachinecpuspec?: {
-          sockets?: number
-          corespersocket?: number
-        }
-      }
-      tags?: Record<string, string> | null
-      state?: {
-        state?: string | null
-        reason?: string
-        time?: string | undefined
-      }
-      disks?: {
-        usagebytes?: number
-        ismounted?: boolean
-        resourcevirtualmachinediskspec?: {
-          id?: string
-          name?: string
-          type?: string
-          sizebytes?: number
-        }
-      }[]
-      memory?: {
-        unit?: string
-        usage?: number
-        resourcevirtualmachinememoryspec?: {
-          sizebytes?: number
-        }
-      }
-      networks?: {
-        id?: string
-        dns?: string
-        ipv4?: string
-        ipv6?: string
-        mask?: string
-        gateway?: string
-        mac?: string
-      }[]
-      operatingsystem?: {
-        id?: string | null
-        name?: string | null
-        family?: string | null
-        version?: string | null
-        hostname?: string | null
-        powerstate?: string | null
-        toolversion?: string | null
-        architecture?: string | null
-      }
-    }
-    provider?: string | null
-  }
-}
+import type { VirtualMachine } from '@ror/js-api-client'
 
 export interface VmResponse {
   resources: VirtualMachine[]
@@ -152,11 +36,13 @@ export interface PageViewProps {
 }
 
 export interface Network {
+  dns?: string
+  gateway?: string
   id: string
   ipv4?: string
   ipv6?: string
   mac?: string
-  dns?: string
+  mask?: string
 }
 
 export interface VMDetailsProps {
@@ -179,4 +65,59 @@ export interface UseVmLayoutReturn {
   vm: VirtualMachine | null
   isLoading: boolean
   error: string | null
+}
+
+export const getVmId = (vm: VirtualMachine): string => vm?.virtualmachine?.status?.operatingSystem?.id ?? 'Missing id'
+
+export const getVmName = (vm: VirtualMachine): string =>
+  vm?.virtualmachine?.status?.operatingSystem?.name ?? 'Missing name'
+
+export const getVmHostName = (vm: VirtualMachine): string =>
+  vm?.virtualmachine?.status?.operatingSystem?.hostName ?? 'Missing Hostname'
+
+export const getVmPowerState = (vm: VirtualMachine): string =>
+  vm?.virtualmachine?.status?.operatingSystem?.powerState ?? 'undefined'
+
+export const getVmArchitecture = (vm: VirtualMachine): string =>
+  vm?.virtualmachine?.status?.operatingSystem?.architecture ?? 'Missing Architecture'
+
+export const getVmFamily = (vm: VirtualMachine): string =>
+  vm?.virtualmachine?.status?.operatingSystem?.family ?? 'Missing Family'
+
+export const getVmVersion = (vm: VirtualMachine): string =>
+  vm?.virtualmachine?.status?.operatingSystem?.version ?? 'Missing Version'
+
+export const getVmToolVersion = (vm: VirtualMachine): string =>
+  vm?.virtualmachine?.status?.operatingSystem?.toolVersion ?? 'Missing Tool Version'
+
+export const getSpecSockets = (vm: VirtualMachine): number | undefined => {
+  return vm?.virtualmachine?.spec?.cpu?.sockets ?? undefined
+}
+
+export const getSpecCoresPerSocket = (vm: VirtualMachine): number | undefined => {
+  return vm?.virtualmachine?.spec?.cpu?.coresPerSocket ?? undefined
+}
+
+export const getStatusCpuUsage = (vm: VirtualMachine): number | undefined => {
+  return vm?.virtualmachine?.status?.cpu?.usage ?? undefined
+}
+
+export const getSpecMemory = (vm: VirtualMachine): number | undefined => {
+  return vm?.virtualmachine?.spec?.memory?.sizeBytes ?? undefined
+}
+export const getNetworks = (vm: VirtualMachine): Network[] => {
+  const networks = vm?.virtualmachine?.status?.networks ?? []
+  return networks.map((networkitems) => ({
+    dns: networkitems?.dns ?? undefined,
+    gateway: networkitems?.gateway ?? undefined,
+    id: networkitems?.id ?? 'Missing ID',
+    ipv4: networkitems?.ipv4 ?? undefined,
+    ipv6: networkitems?.ipv6 ?? undefined,
+    mac: networkitems?.mac ?? undefined,
+    mask: networkitems?.mask ?? undefined,
+  }))
+}
+
+export const getVmOperatingSystem = (vm: VirtualMachine) => {
+  return vm?.virtualmachine?.status?.operatingSystem
 }

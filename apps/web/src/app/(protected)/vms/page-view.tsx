@@ -19,7 +19,18 @@
 'use client'
 
 import MultipleSelector, { Option } from '@/components/shadcn/multiselect'
-import { PageViewProps, VirtualMachine } from '@/features/vms/utils/vms'
+import {
+  getVmId,
+  getVmName,
+  getVmVersion,
+  getVmOperatingSystem,
+  getVmPowerState,
+  getVmHostName,
+  PageViewProps,
+  getVmFamily,
+  getVmArchitecture,
+  getVmToolVersion,
+} from '@/features/vms/utils/vms'
 import { NotReadyMessage } from '@/components/ui/not-ready-message'
 import { cn } from '@/utils/clsxm'
 import { usePathname, useRouter } from 'next/navigation'
@@ -35,6 +46,7 @@ import { ArrowDownNarrowWide, ArrowDownWideNarrow, Funnel, RotateCw } from 'luci
 import { SortSelect } from '@/components/ui/sort-select'
 import { VmSearch } from '@/features/vms/components/vm-search'
 import { displayDataOptions, sortingOptions, filterOptions } from '@/features/config/page-view-options'
+import type { VirtualMachine } from '@ror/js-api-client'
 
 export const PageView = ({ className, user, vms, params }: PageViewProps) => {
   const filtersOpen = params.filters === 'open'
@@ -43,16 +55,12 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
   const sentinelRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
 
-  const idOf = (c: VirtualMachine) => c.virtualmachine?.status?.operatingsystem?.id || ''
+  const idOf = (c: VirtualMachine) => getVmId(c) || ''
 
   const idsKey = (arr: VirtualMachine[]) => arr.map(idOf).join('|')
 
   const safeItems = useMemo(
-    () =>
-      vms.filter(
-        (c) =>
-          c.virtualmachine?.status?.operatingsystem && typeof c.virtualmachine?.status?.operatingsystem === 'object'
-      ),
+    () => vms.filter((c) => getVmOperatingSystem(c) && typeof getVmOperatingSystem(c) === 'object'),
     [vms]
   )
   const [selectedDisplayData, setSelectedDisplayData] = useState<VMCardData[]>([])
@@ -156,7 +164,7 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
   // ---------- Filtering / Sorting ----------
   const filteredItems = useMemo(() => {
     return safeItems.filter((vm) => {
-      const powerstate = vm.virtualmachine?.status?.operatingsystem?.powerstate
+      const powerstate = getVmPowerState(vm)
       const powerStateFilter = selectedFilters['Power States']
       return !powerStateFilter?.length || (powerstate && powerStateFilter.includes(powerstate))
     })
@@ -170,20 +178,20 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
       let valueA: string, valueB: string
       switch (params.sort) {
         case 'hostname':
-          valueA = a.virtualmachine?.status?.operatingsystem?.hostname || ''
-          valueB = b.virtualmachine?.status?.operatingsystem?.hostname || ''
+          valueA = getVmHostName(a) || ''
+          valueB = getVmHostName(b) || ''
           break
         case 'name':
-          valueA = a.virtualmachine?.status?.operatingsystem?.name || ''
-          valueB = b.virtualmachine?.status?.operatingsystem?.name || ''
+          valueA = getVmName(a) || ''
+          valueB = getVmName(b) || ''
           break
         case 'id':
-          valueA = a.virtualmachine?.status?.operatingsystem?.id || ''
-          valueB = b.virtualmachine?.status?.operatingsystem?.id || ''
+          valueA = getVmId(a) || ''
+          valueB = getVmId(b) || ''
           break
         case 'powerstate':
-          const powerStateA = a.virtualmachine?.status?.operatingsystem?.powerstate || 'undefined'
-          const powerStateB = b.virtualmachine?.status?.operatingsystem?.powerstate || 'undefined'
+          const powerStateA = getVmPowerState(a) || 'undefined'
+          const powerStateB = getVmPowerState(b) || 'undefined'
 
           const getPowerStatePriority = (state: string) => {
             switch (state) {
@@ -202,24 +210,24 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
           const priorityB = getPowerStatePriority(powerStateB)
           return (priorityA - priorityB) * sortOrder
         case 'architecture':
-          valueA = a.virtualmachine?.status?.operatingsystem?.architecture || ''
-          valueB = b.virtualmachine?.status?.operatingsystem?.architecture || ''
+          valueA = getVmArchitecture(a) || ''
+          valueB = getVmArchitecture(b) || ''
           break
         case 'family':
-          valueA = a.virtualmachine?.status?.operatingsystem?.family || ''
-          valueB = b.virtualmachine?.status?.operatingsystem?.family || ''
+          valueA = getVmFamily(a) || ''
+          valueB = getVmFamily(b) || ''
           break
         case 'version':
-          valueA = a.virtualmachine?.status?.operatingsystem?.version || ''
-          valueB = b.virtualmachine?.status?.operatingsystem?.version || ''
+          valueA = getVmVersion(a) || ''
+          valueB = getVmVersion(b) || ''
           break
         case 'toolversion':
-          valueA = a.virtualmachine?.status?.operatingsystem?.toolversion || ''
-          valueB = b.virtualmachine?.status?.operatingsystem?.toolversion || ''
+          valueA = getVmToolVersion(a) || ''
+          valueB = getVmToolVersion(b) || ''
           break
         default:
-          valueA = a.virtualmachine?.status?.operatingsystem?.hostname || ''
-          valueB = b.virtualmachine?.status?.operatingsystem?.hostname || ''
+          valueA = getVmHostName(a) || ''
+          valueB = getVmHostName(b) || ''
       }
       if (typeof valueA === 'string' && typeof valueB === 'string') {
         return valueA.localeCompare(valueB) * sortOrder
@@ -371,11 +379,7 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
             vms={(params.sort ? sortedItems : filteredItems).filter((c) =>
               searchResults.some(
                 (sr) =>
-                  sr.virtualmachine?.status?.operatingsystem?.id === c.virtualmachine?.status?.operatingsystem?.id ||
-                  sr.virtualmachine?.status?.operatingsystem?.name ===
-                    c.virtualmachine?.status?.operatingsystem?.name ||
-                  sr.virtualmachine?.status?.operatingsystem?.hostname ===
-                    c.virtualmachine?.status?.operatingsystem?.hostname
+                  getVmId(sr) === getVmId(c) || getVmName(sr) === getVmName(c) || getVmHostName(sr) === getVmHostName(c)
               )
             )}
             selectedDisplayData={selectedDisplayData}

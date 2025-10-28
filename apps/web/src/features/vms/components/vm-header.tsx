@@ -15,6 +15,7 @@ import { useVMContext } from '@/context/vm-context'
 import { NavigationTabs } from '@/components/ui/navigation-tabs'
 import { Power, PowerOff, TriangleAlert } from 'lucide-react'
 import { vmCardPowerStatus } from '../utils/env-colors'
+import { getVmHostName, getVmPowerState } from '../utils/vms'
 
 interface VMHeaderProps {
   className?: string
@@ -23,8 +24,8 @@ interface VMHeaderProps {
 
 export const VMHeader = ({ className, tabs }: VMHeaderProps) => {
   const { vm } = useVMContext()
-  const hostname = vm?.virtualmachine?.status?.operatingsystem?.hostname || 'Unknown VM'
-  const powerstate = vm?.virtualmachine?.status?.operatingsystem?.powerstate || 'undefined'
+  const hostname = getVmHostName(vm) || 'Unknown VM'
+  const powerstate = getVmPowerState(vm) || 'undefined'
   const [lightmode, darkmode] = vmCardPowerStatus[powerstate] || ['bg-gray-200', 'dark:bg-gray-600']
 
   return (

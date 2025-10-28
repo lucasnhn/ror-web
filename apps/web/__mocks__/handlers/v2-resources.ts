@@ -8,6 +8,7 @@ import { mockVms } from '../data/vms'
 
 type Resource = (typeof clustersVersion2.resources)[number]
 type NotFound = { message: string }
+type ResourceVm = (typeof mockVms.resources)[number]
 
 /**
  * Define mock handlers for v2 resource-related endpoints

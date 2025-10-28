@@ -17,11 +17,24 @@ import type { Layout, Layouts } from 'react-grid-layout'
 import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
 import { useState } from 'react'
-import { ArrowRight } from 'lucide-react'
 import { Pill } from '@/components/shadcn/pill'
 import { vmActionsColors } from '../utils/env-colors'
 import { standardLayouts } from '@/features/config/vm-details-layout'
-import { Network, VMDetailsProps } from '../utils/vms'
+import { getSpecMemory, Network, VMDetailsProps } from '../utils/vms'
+import {
+  getVmArchitecture,
+  getVmFamily,
+  getVmHostName,
+  getVmId,
+  getVmName,
+  getVmPowerState,
+  getVmVersion,
+  getSpecSockets,
+  getSpecCoresPerSocket,
+  getStatusCpuUsage,
+  getNetworks,
+  getVmToolVersion,
+} from '../utils/vms'
 
 const ResponsiveGridLayout = WidthProvider(Responsive)
 
@@ -43,24 +56,22 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
 
   console.log(currentBreakpoint) // For future use if needed
   console.log(layout) // For future use if needed
-  const cpu = vm?.virtualmachine?.status?.cpu
-  const cpuUsage = cpu?.usage
-  const cpuSockets = cpu?.resourcevirtualmachinecpuspec?.sockets
-  const cpuCoresPerSocket = cpu?.resourcevirtualmachinecpuspec?.corespersocket
-  const memory = vm?.virtualmachine?.status?.memory?.resourcevirtualmachinememoryspec?.sizebytes
+  const cpuUsage = getStatusCpuUsage(vm)
+  const cpuSockets = getSpecSockets(vm)
+  const cpuCoresPerSocket = getSpecCoresPerSocket(vm)
+  const memory = getSpecMemory(vm)
   const memoryInGB = ((memory ?? 0) / 1024 ** 3).toFixed(2)
 
-  const os = vm?.virtualmachine?.status?.operatingsystem
-  const os_id = os?.id || 'Unknown ID'
-  const os_name = os?.name || 'Unknown OS'
-  const os_family = os?.family || 'Unknown family'
-  const os_version = os?.version || 'Unknown version'
-  const os_hostname = os?.hostname || 'Unknown hostname'
-  const os_powerstate = os?.powerstate || 'Unknown powerstate'
-  const os_toolversion = os?.toolversion || 'Unknown toolversion'
-  const os_architecture = os?.architecture || 'Unknown architecture'
+  const id = getVmId(vm)
+  const name = getVmName(vm)
+  const version = getVmVersion(vm)
+  const hostName = getVmHostName(vm)
+  const architecture = getVmArchitecture(vm)
+  const family = getVmFamily(vm)
+  const powerState = getVmPowerState(vm)
+  const toolVersion = getVmToolVersion(vm)
 
-  const networks = vm?.virtualmachine?.status?.networks || []
+  const networks = getNetworks(vm) || []
   const networksLength = networks.length
   const listNetworks = networks.map((network, index) => {
     return {
@@ -150,33 +161,33 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
               <div className='flex flex-1 flex-col gap-2'>
                 <div className='flex flex-col'>
                   <b>Id: </b>
-                  <span>{os_id}</span>
+                  <span>{id}</span>
                 </div>
                 <div className='flex flex-col'>
                   <b>Name: </b>
-                  <span>{os_name}</span>
+                  <span>{name}</span>
                 </div>
                 <div className='flex flex-col'>
                   <b>Version: </b>
-                  <span>{os_version}</span>
+                  <span>{version}</span>
                 </div>
                 <div className='flex flex-col'>
                   <b>Hostname: </b>
-                  <span>{os_hostname}</span>
+                  <span>{hostName}</span>
                 </div>
               </div>
               <div className='flex flex-1 flex-col gap-2'>
                 <div className='flex flex-col'>
                   <b>Tool version: </b>
-                  <span>{os_toolversion}</span>
+                  <span>{toolVersion}</span>
                 </div>
                 <div className='flex flex-col'>
                   <b>Architecture: </b>
-                  <span>{os_architecture}</span>
+                  <span>{architecture}</span>
                 </div>
                 <div className='flex flex-col'>
                   <b>Family: </b>
-                  <span>{os_family}</span>
+                  <span>{family}</span>
                 </div>
               </div>
             </div>
@@ -209,12 +220,6 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
                     </div>
                   </div>
                 ))}
-                {networksLength > 2 && (
-                  <span className='inline-flex items-center gap-1 font-bold'>
-                    Show {networksLength - 2} more <ArrowRight />
-                    {/* This should link to the networks tab where all networks can be shown */}
-                  </span>
-                )}
               </div>
             </div>
           </div>
@@ -224,11 +229,9 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
               <div className='flex flex-1 flex-col gap-2'>
                 <div className='flex flex-col'>
                   <b>Power state: </b>
-                  <span>
-                    {os_powerstate === 'poweredOn' ? 'On' : os_powerstate === 'poweredOff' ? 'Off' : 'Unknown'}
-                  </span>
+                  <span>{powerState === 'poweredOn' ? 'On' : powerState === 'poweredOff' ? 'Off' : 'Unknown'}</span>
                   <b>Actions:</b>
-                  {os_powerstate === 'poweredOn' ? null : (
+                  {powerState === 'poweredOn' ? null : (
                     <Pill
                       asChild
                       variant={vmActionsColors['powerOn']}
@@ -240,7 +243,7 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
                       <button type='button'>Turn on</button>
                     </Pill>
                   )}
-                  {os_powerstate === 'poweredOff' ? null : (
+                  {powerState === 'poweredOff' ? null : (
                     <Pill
                       asChild
                       variant={vmActionsColors['powerOff']}

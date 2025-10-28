@@ -1,6 +1,6 @@
 'use client'
 
-import type { VirtualMachine } from '../utils/vms'
+import type { VirtualMachine } from '@ror/js-api-client'
 import type { DataTableColumnDef } from '@/components/ui/data-table'
 import Link from 'next/link'
 import { Pill } from '@/components/shadcn/pill'
@@ -8,6 +8,15 @@ import { vmCardColors } from '@/features/vms/utils/env-colors'
 import { User } from 'next-auth'
 import { VMCardData } from '@/features/vms/types/vm-card-type'
 import { createColumnHelper } from '@tanstack/react-table'
+import {
+  getVmArchitecture,
+  getVmFamily,
+  getVmHostName,
+  getVmId,
+  getVmName,
+  getVmPowerState,
+  getVmVersion,
+} from '../utils/vms'
 
 const columnHelper = createColumnHelper<VirtualMachine>()
 
@@ -20,17 +29,17 @@ export const getVMTableColumns = (
 
   return [
     columnHelper.accessor((row) => row.metadata?.name ?? 'Unnamed VM', {
-      id: 'os_hostName',
-      header: 'Host name',
+      id: 'hostName',
+      header: 'Hostname',
       enableSorting: true,
       sortingFn: 'text',
       cell: (info) => {
         const hostname = String(info.getValue() ?? '')
         const vm = info.row.original
-        const vmID = info.row.original.virtualmachine?.status?.operatingsystem?.hostname ?? ''
+        const vmHostName = getVmHostName(vm) || ''
         return (
           <Link
-            href={`/vms/${vmID}`}
+            href={`/vms/${vmHostName}`}
             className='pr-2 text-blue-600 dark:text-blue-500 underline'
             onClick={() => localStorage.setItem('selectedVm', JSON.stringify(vm))}
           >
@@ -39,14 +48,14 @@ export const getVMTableColumns = (
         )
       },
     }),
-    isVisible('os_id') &&
+    isVisible('id') &&
       columnHelper.accessor(
         (row) => {
-          const osID = row.virtualmachine?.status?.operatingsystem?.id
+          const osID = getVmId(row)
           return osID
         },
         {
-          id: 'os_id',
+          id: 'id',
           header: 'ID',
           enableSorting: true,
           sortingFn: 'text',
@@ -56,31 +65,31 @@ export const getVMTableColumns = (
           },
         }
       ),
-    isVisible('os_name') &&
+    isVisible('name') &&
       columnHelper.accessor(
         (row) => {
-          const osName = row.virtualmachine?.status?.operatingsystem?.name
+          const osName = getVmName(row)
           return osName
         },
         {
-          id: 'os_name',
+          id: 'name',
           header: 'Name',
           enableSorting: true,
           sortingFn: 'text',
           cell: (info) => {
-            const name = info.row.original.virtualmachine?.status?.operatingsystem?.name
+            const name = info.getValue()
             return <span>{name}</span>
           },
         }
       ),
-    isVisible('os_family') &&
+    isVisible('family') &&
       columnHelper.accessor(
         (row) => {
-          const osFamily = row.virtualmachine?.status?.operatingsystem?.family
+          const osFamily = getVmFamily(row)
           return osFamily
         },
         {
-          id: 'os_family',
+          id: 'family',
           header: 'Family',
           enableSorting: false,
           cell: (info) => {
@@ -89,9 +98,9 @@ export const getVMTableColumns = (
           },
         }
       ),
-    isVisible('os_version') &&
-      columnHelper.accessor((row) => row.virtualmachine?.status?.operatingsystem?.version, {
-        id: 'os_version',
+    isVisible('version') &&
+      columnHelper.accessor((row) => getVmVersion(row), {
+        id: 'version',
         header: 'Version',
         enableSorting: false,
         cell: (info) => {
@@ -99,9 +108,9 @@ export const getVMTableColumns = (
           return <span>{version}</span>
         },
       }),
-    isVisible('os_architecture') &&
-      columnHelper.accessor((row) => row.virtualmachine?.status?.operatingsystem?.architecture, {
-        id: 'os_architecture',
+    isVisible('architecture') &&
+      columnHelper.accessor((row) => getVmArchitecture(row), {
+        id: 'architecture',
         header: 'Architecture',
         enableSorting: false,
         cell: (info) => {
@@ -109,9 +118,9 @@ export const getVMTableColumns = (
           return <span>{architecture}</span>
         },
       }),
-    isVisible('os_toolVersion') &&
-      columnHelper.accessor((row) => row.virtualmachine?.status?.operatingsystem?.toolversion, {
-        id: 'os_toolversion',
+    isVisible('toolVersion') &&
+      columnHelper.accessor((row) => getVmVersion(row), {
+        id: 'toolVersion',
         header: 'Tool Version',
         enableSorting: false,
         cell: (info) => {
@@ -119,7 +128,7 @@ export const getVMTableColumns = (
           return <span>{toolVersion}</span>
         },
       }),
-    columnHelper.accessor((row) => row.virtualmachine?.status?.operatingsystem?.powerstate ?? '', {
+    columnHelper.accessor((row) => getVmPowerState(row) ?? '', {
       id: 'powerState',
       header: 'Power state',
       enableSorting: false,
