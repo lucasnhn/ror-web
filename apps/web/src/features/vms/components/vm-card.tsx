@@ -49,7 +49,7 @@ function CardContent({ className, ...props }: React.ComponentProps<'div'>) {
   return <div data-slot='card-content' className={cn('px-6', className)} {...props} />
 }
 
-const VMCard = ({ className, user, vm, vmDisplayData }: VMCardProps) => {
+const VMCard = ({ className, vm, vmDisplayData }: VMCardProps) => {
   const name = getVmName(vm)
   const id = getVmId(vm)
   const family = getVmFamily(vm)

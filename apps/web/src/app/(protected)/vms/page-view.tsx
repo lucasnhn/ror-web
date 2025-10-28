@@ -242,7 +242,6 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
               return (
                 <div key={idOf(vm) || idx}>
                   <VMCard
-                    user={user}
                     vm={vm}
                     vmDisplayData={
                       selectedDisplayData.length > 0
