@@ -44,17 +44,16 @@ export interface CopyButtonProps {
   children?: ReactNode
 }
 export function CopyButton({ onClick, className, children, size = 'md' }: CopyButtonProps) {
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // Clean up timeout on unmount
   useEffect(() => {
+    const timeout = timeoutRef.current
     return () => {
-      if (timeoutRef.current) {
-        const timeout = timeoutRef.current
-        clearTimeout(timeout)
-      }
+      if (timeout) clearTimeout(timeout)
     }
   }, [])
+
   function handleOnClick(e: React.MouseEvent<HTMLButtonElement>) {
     toast.info('Copied to clipboard')
     e.stopPropagation()

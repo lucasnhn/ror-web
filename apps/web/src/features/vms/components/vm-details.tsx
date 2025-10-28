@@ -19,7 +19,6 @@ import 'react-resizable/css/styles.css'
 import { useState } from 'react'
 import { Pill } from '@/components/shadcn/pill'
 import { vmActionsColors } from '../utils/env-colors'
-import { standardLayouts } from '@/features/config/vm-details-layout'
 import { getSpecMemory, Network, VMDetailsProps } from '../utils/vms'
 import {
   getVmArchitecture,
@@ -35,6 +34,7 @@ import {
   getNetworks,
   getVmToolVersion,
 } from '../utils/vms'
+import { standardLayouts } from '@/features/vms/config/vm-details-layout'
 
 const ResponsiveGridLayout = WidthProvider(Responsive)
 

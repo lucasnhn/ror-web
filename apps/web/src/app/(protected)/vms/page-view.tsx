@@ -33,88 +33,47 @@ import {
 } from '@/features/vms/utils/vms'
 import { NotReadyMessage } from '@/components/ui/not-ready-message'
 import { cn } from '@/utils/clsxm'
-import { usePathname, useRouter } from 'next/navigation'
 import { useRef, useState, useMemo, useEffect, useCallback } from 'react'
 import { VMCard } from '@/features/vms/components/vm-card'
 import { VMCardData } from '@/features/vms/types/vm-card-type'
-import { VMTable } from './vms-table'
-import { Toggle } from '@/components/shadcn/toggle'
-import Link from 'next/link'
-import { Button } from '@/components/shadcn/button'
-import { TabsViewSwitcher } from '@/components/ui/tabs-view-switcher'
-import { ArrowDownNarrowWide, ArrowDownWideNarrow, Funnel, RotateCw } from 'lucide-react'
-import { SortSelect } from '@/components/ui/sort-select'
-import { VmSearch } from '@/features/vms/components/vm-search'
-import { displayDataOptions, sortingOptions, filterOptions } from '@/features/config/page-view-options'
+import { displayDataOptions, sortingOptions, filterOptions } from '@/features/vms/config/page-view-options'
+import { useDisplayData } from '@/hooks/use-display-data'
+import { ResourceControls } from '@/components/ui/resource-controls'
+import { exportVmsAsCSV, exportVmsAsExcel } from '@/features/vms/utils/export-helpers'
+import { buildSortParams, buildToggledParams } from '@/utils/url-helpers'
+import { usePathname, useRouter } from 'next/navigation'
+import { useFilters } from '@/hooks/use-filters'
+import { SortDefinition, useSorting } from '@/hooks/use-sorting'
+import { DataTable } from '@/components/ui/data-table'
+import { getVMTableColumns } from '@/features/vms/components/vm-columns'
 import type { VirtualMachine } from '@ror/js-api-client'
 
 export const PageView = ({ className, user, vms, params }: PageViewProps) => {
   const filtersOpen = params.filters === 'open'
-  const pathname = usePathname()
 
   const sentinelRef = useRef<HTMLDivElement>(null)
-  const router = useRouter()
-
-  const idOf = (c: VirtualMachine) => getVmId(c) || ''
-
-  const idsKey = (arr: VirtualMachine[]) => arr.map(idOf).join('|')
 
   const safeItems = useMemo(
     () => vms.filter((c) => getVmOperatingSystem(c) && typeof getVmOperatingSystem(c) === 'object'),
     [vms]
   )
-  const [selectedDisplayData, setSelectedDisplayData] = useState<VMCardData[]>([])
-  const [selectedFilters, setSelectedFilters] = useState<Record<string, string[]>>({})
+
+  const filterDefinitions = [{ key: 'Power States', extractor: (vm: VirtualMachine) => getVmPowerState(vm) }]
+
+  const { selectedFilters, setSelectedFilters, filteredItems, resetFilters } = useFilters<VirtualMachine>(
+    safeItems,
+    filterDefinitions
+  )
+  const { selectedDisplayData, setSelectedDisplayData } = useDisplayData<VMCardData>('vms')
   const [searchResults, setSearchResults] = useState<VirtualMachine[]>(safeItems)
 
-  const onDisplayChange = useCallback((selected: Option[]) => {
-    const next = selected.map((i) => i.value as VMCardData)
-    setSelectedDisplayData((prev) => {
-      if (prev.length === next.length && prev.every((v, i) => v === next[i])) return prev
-      return next
-    })
-  }, [])
+  // Handler for display data changes
+  const onDisplayChange = (selected: Option[]) => setSelectedDisplayData(selected.map((i) => i.value as VMCardData))
 
-  const onSearchResultsChange = useCallback(
-    (res: VirtualMachine[]) => {
-      setSearchResults((prev) => {
-        if (prev.length === res.length) {
-          const a = idsKey(prev)
-          const b = idsKey(res)
-          if (a === b) return prev
-        }
-        return res
-      })
-    },
-    [idsKey]
-  )
+  // sync safeItems → searchResults only if content differs
+  const idOf = useCallback((c: VirtualMachine) => getVmId(c) || '', [])
 
-  // load display selections once
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem('selectedDisplayData')
-      if (stored) {
-        const parsed = JSON.parse(stored) as VMCardData[]
-        setSelectedDisplayData((prev) => {
-          if (prev.length === parsed.length && prev.every((v, i) => v === parsed[i])) return prev
-          return parsed
-        })
-      }
-    } catch {
-      // ignore
-    }
-  }, [])
-
-  useEffect(() => {
-    try {
-      const serialized = JSON.stringify(selectedDisplayData)
-      if (localStorage.getItem('selectedDisplayData') !== serialized) {
-        localStorage.setItem('selectedDisplayData', serialized)
-      }
-    } catch {
-      // ignore
-    }
-  }, [selectedDisplayData])
+  const idsKey = useCallback((arr: VirtualMachine[]) => arr.map(idOf).join('|'), [idOf])
 
   const lastSafeKeyRef = useRef('')
   useEffect(() => {
@@ -122,210 +81,103 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
     if (nextKey !== lastSafeKeyRef.current) {
       lastSafeKeyRef.current = nextKey
     }
-  }, [safeItems])
+  }, [safeItems, idsKey])
 
-  const clearUrl = () => {
-    router.replace(pathname, { scroll: false })
-    console.log(pathname)
-  }
+  const pathname = usePathname()
+  const router = useRouter()
+  const clearUrl = () => router.replace(pathname, { scroll: false })
 
   const handleRefreshFilters = () => {
-    setSelectedFilters({})
+    resetFilters()
     setSelectedDisplayData([])
     clearUrl()
   }
+
   // ---------- Toggle/Sort params ----------
-  const toggleParams = useMemo(() => {
-    const entries: [string, string][] = (Object.entries(params) as Array<[string, unknown]>)
-      .filter(([, v]) => v !== undefined && v !== null)
-      .map(([k, v]) => [k, String(v)])
+  const { url: toggleParams } = buildToggledParams(params, 'filters', 'open', 'vms')
+  const toggleSortParams = buildSortParams(params, 'vms')
 
-    const newParams = new URLSearchParams(entries)
-    if (filtersOpen) newParams.delete('filters')
-    else newParams.set('filters', 'open')
+  // ---------- Sorting ----------
 
-    return `/vms?${newParams.toString()}`
-  }, [params, filtersOpen])
+  const sortDefinitions: SortDefinition<VirtualMachine>[] = [
+    {
+      key: 'hostName',
+      extractor: (vm) => getVmHostName(vm),
+    },
+    {
+      key: 'name',
+      extractor: (vm) => getVmName(vm),
+    },
+    {
+      key: 'id',
+      extractor: (vm) => getVmId(vm),
+    },
+    {
+      key: 'family',
+      extractor: (vm) => getVmFamily(vm),
+    },
+    {
+      key: 'architecture',
+      extractor: (vm) => getVmArchitecture(vm),
+    },
+    {
+      key: 'version',
+      extractor: (vm) => getVmVersion(vm),
+    },
+    {
+      key: 'toolVersion',
+      extractor: (vm) => getVmToolVersion(vm),
+    },
+    {
+      key: 'powerState',
+      extractor: (vm) => getVmPowerState(vm),
+    },
+  ]
 
-  const toggleSortParams = useMemo(() => {
-    if (!params.sort) return null
-    const entries: [string, string][] = (Object.entries(params) as Array<[string, unknown]>)
-      .filter(([, v]) => v !== undefined && v !== null)
-      .map(([k, v]) => [k, String(v)])
-
-    const newParams = new URLSearchParams(entries)
-    const currentOrder = newParams.get('order') === 'desc' ? 'desc' : 'asc'
-    newParams.set('order', currentOrder === 'desc' ? 'asc' : 'desc')
-    return { url: `/vms?${newParams.toString()}`, isDesc: currentOrder === 'desc' }
-  }, [params])
-
-  // ---------- Filtering / Sorting ----------
-  const filteredItems = useMemo(() => {
-    return safeItems.filter((vm) => {
-      const powerstate = getVmPowerState(vm)
-      const powerStateFilter = selectedFilters['Power States']
-      return !powerStateFilter?.length || (powerstate && powerStateFilter.includes(powerstate))
-    })
-  }, [safeItems, selectedFilters])
-
-  const sortedItems = useMemo(() => {
-    if (!params.sort) return filteredItems
-    const sortOrder = params.order === 'desc' ? -1 : 1
-
-    return [...filteredItems].sort((a, b) => {
-      let valueA: string, valueB: string
-      switch (params.sort) {
-        case 'hostname':
-          valueA = getVmHostName(a) || ''
-          valueB = getVmHostName(b) || ''
-          break
-        case 'name':
-          valueA = getVmName(a) || ''
-          valueB = getVmName(b) || ''
-          break
-        case 'id':
-          valueA = getVmId(a) || ''
-          valueB = getVmId(b) || ''
-          break
-        case 'powerstate':
-          const powerStateA = getVmPowerState(a) || 'undefined'
-          const powerStateB = getVmPowerState(b) || 'undefined'
-
-          const getPowerStatePriority = (state: string) => {
-            switch (state) {
-              case 'poweredOn':
-                return 1
-              case 'poweredOff':
-                return 2
-              case 'undefined':
-                return 3
-              default:
-                return 4
-            }
-          }
-
-          const priorityA = getPowerStatePriority(powerStateA)
-          const priorityB = getPowerStatePriority(powerStateB)
-          return (priorityA - priorityB) * sortOrder
-        case 'architecture':
-          valueA = getVmArchitecture(a) || ''
-          valueB = getVmArchitecture(b) || ''
-          break
-        case 'family':
-          valueA = getVmFamily(a) || ''
-          valueB = getVmFamily(b) || ''
-          break
-        case 'version':
-          valueA = getVmVersion(a) || ''
-          valueB = getVmVersion(b) || ''
-          break
-        case 'toolversion':
-          valueA = getVmToolVersion(a) || ''
-          valueB = getVmToolVersion(b) || ''
-          break
-        default:
-          valueA = getVmHostName(a) || ''
-          valueB = getVmHostName(b) || ''
-      }
-      if (typeof valueA === 'string' && typeof valueB === 'string') {
-        return valueA.localeCompare(valueB) * sortOrder
-      }
-      return String(valueA).localeCompare(String(valueB)) * sortOrder
-    })
-  }, [filteredItems, params.sort, params.order])
+  const sortedItems = useSorting({
+    items: filteredItems,
+    sortKey: params.sort,
+    sortOrder: params.order,
+    definitions: sortDefinitions,
+  })
 
   const displayedItems = useMemo(() => {
-    let items = params.sort ? sortedItems : filteredItems
-    if (searchResults && searchResults.length > 0 && searchResults.length !== safeItems.length) {
-      const searchIds = new Set(searchResults.map((vm) => getVmId(vm)))
-      items = items.filter((vm) => searchIds.has(getVmId(vm)))
-    }
-
-    return items
-  }, [sortedItems, filteredItems, searchResults, safeItems, params.sort])
+    const base = params.sort ? sortedItems : filteredItems
+    if (!searchResults?.length) return base
+    const ids = new Set(searchResults.map(idOf))
+    return base.filter((c) => ids.has(idOf(c)))
+  }, [sortedItems, filteredItems, searchResults, params.sort, idOf])
 
   const renderControls = () => (
     <div className='flex flex-wrap items-center justify-between w-full gap-4 [@container(max-width:1000px)]:flex-col [@container(max-width:1000px)]:items-start [@container(max-width:1000px)]:gap-6'>
-      <div className='flex flex-wrap items-center gap-x-4 gap-y-6'>
-        <VmSearch items={safeItems} onResultsChange={onSearchResultsChange} />
-
-        <MultipleSelector
-          className='w-52'
-          commandProps={{ label: 'Display data' }}
-          value={displayDataOptions.filter((opt) => selectedDisplayData?.includes(opt.value as VMCardData))}
-          onChange={onDisplayChange}
-          defaultOptions={displayDataOptions}
-          placeholder='Set display data'
-          hideClearAllButton
-          hidePlaceholderWhenSelected
-          emptyIndicator={<p className='text-center text-sm'>No results found</p>}
-        />
-
-        <SortSelect options={sortingOptions} currentSort={params.sort} />
-
-        {toggleSortParams && (
-          <Link href={toggleSortParams.url}>
-            <Button variant='outline' className='border-[var(--input)]'>
-              {toggleSortParams.isDesc ? (
-                <span className='flex gap-1 items-center'>
-                  <ArrowDownWideNarrow className='w-4 h-4' />
-                  DESC
-                </span>
-              ) : (
-                <span className='flex gap-1 items-center'>
-                  <ArrowDownNarrowWide className='w-4 h-4' />
-                  ASC
-                </span>
-              )}
-            </Button>
-          </Link>
-        )}
-
-        <Toggle
-          asChild
-          pressed={filtersOpen}
-          variant='outline'
-          className='[@container(max-width:1000px)]:hidden'
-          aria-label='Open filters'
-        >
-          <Link href={toggleParams}>
-            <Funnel aria-hidden='true' />
-          </Link>
-        </Toggle>
-      </div>
-
-      <div className='flex flex-row gap-4'>
-        <Toggle
-          pressed={filtersOpen}
-          className='[@container(min-width:1001px)]:hidden'
-          aria-label='Open filters'
-          onPressedChange={(pressed) => {
-            const newUrl = new URL(window.location.href)
-            if (pressed) {
-              newUrl.searchParams.set('filters', 'open')
-            } else {
-              newUrl.searchParams.delete('filters')
-            }
-            window.history.replaceState({}, '', newUrl.toString())
-          }}
-        >
-          <Funnel className='h-4 w-4' />
-          Filters
-        </Toggle>
-        <Button
-          type='button'
-          onClick={handleRefreshFilters}
-          aria-label='Reset filters'
-          title='Reset filters'
-          className='gap-2'
-        >
-          <RotateCw className='h-4 w-4' />
-          Refresh
-        </Button>
-
-        {/* View switcher for grid/list toggle */}
-        <TabsViewSwitcher storageKey='vms:view-mode' />
-      </div>
+      <ResourceControls
+        safeItems={safeItems}
+        searchText='Find VMs...'
+        selectedDisplayData={selectedDisplayData}
+        onDisplayChange={onDisplayChange}
+        onSearchResultsChange={setSearchResults}
+        displayDataOptions={displayDataOptions}
+        params={params}
+        toggleSortParams={toggleSortParams}
+        filtersOpen={filtersOpen}
+        toggleParams={toggleParams}
+        handleRefreshFilters={handleRefreshFilters}
+        domain='vms'
+        sortingOptions={sortingOptions}
+        searchKeys={['label', 'hostname', 'powerState', 'family']}
+        mapItem={(vm) => ({
+          ...vm,
+          label: vm.metadata?.name ?? vm.virtualmachine?.spec?.name,
+          hostName: getVmHostName(vm),
+          powerState: getVmPowerState(vm),
+          family: getVmFamily(vm),
+        })}
+        getItemsKey={idsKey}
+        exportAsCSV={exportVmsAsCSV}
+        exportAsExcel={exportVmsAsExcel}
+        filteredItems={displayedItems}
+        allItems={vms}
+      />
     </div>
   )
 
@@ -374,7 +226,16 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
 
       <section className='px-12 my-8'>
         {params.view === 'list' ? (
-          <VMTable key='table' user={user} vms={displayedItems} selectedDisplayData={selectedDisplayData} />
+          <DataTable
+            key='table'
+            data={(params.sort ? sortedItems : filteredItems).filter((c) =>
+              searchResults.some(
+                (sr) =>
+                  getVmId(sr) === getVmId(c) || getVmName(sr) === getVmName(c) || getVmHostName(sr) === getVmHostName(c)
+              )
+            )}
+            columns={getVMTableColumns(user, selectedDisplayData)}
+          />
         ) : (
           <div className='flex flex-row flex-wrap gap-6'>
             {displayedItems.map((vm, idx) => {

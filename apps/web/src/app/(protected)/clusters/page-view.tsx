@@ -28,14 +28,22 @@ import { Option } from '@/components/shadcn/multiselect'
 import { DataTable } from '@/components/ui/data-table'
 import { NotReadyMessage } from '@/components/ui/not-ready-message'
 import { ClusterCard } from '@/features/cluster/components/cluster-card'
-import { ClusterControls } from '@/features/cluster/components/cluster-controls'
 import { ClusterFilterSection } from '@/features/cluster/components/cluster-filter-section'
-import { displayDataOptions } from '@/features/cluster/config/page-view-options'
-import { useClusterFilters } from '@/features/cluster/hooks/use-cluster-filters'
-import { useClusterSorting } from '@/features/cluster/hooks/use-cluster-sorting'
-import { useDisplayData } from '@/features/cluster/hooks/use-display-data'
+import { displayDataOptions, sortingOptions } from '@/features/cluster/config/page-view-options'
+import { useDisplayData } from '@/hooks/use-display-data'
 import { ClusterCardDisplayData } from '@/features/cluster/types/display-data'
-import { getClusterId, getClustersKey } from '@/features/cluster/utils/cluster'
+import {
+  getClusterId,
+  getClusterName,
+  getClusterResource,
+  getClustersKey,
+  getDatacenter,
+  getEnvironment,
+  getNodePools,
+  getPrices,
+  getProvider,
+  getWorkspace,
+} from '@/features/cluster/utils/cluster'
 import { useInfiniteLoader } from '@/hooks/use-infinite-loader'
 import { cn } from '@/utils/clsxm'
 import { loadMoreClusters } from '@/utils/cluster-actions'
@@ -45,32 +53,18 @@ import { User } from 'next-auth'
 import { usePathname, useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { getClustersTableColumns } from '@/features/cluster/components/clusters-columns'
-
-/**
- * Represents the query parameters for the clusters page view.
- *
- * @property view - The display mode of the clusters, either 'grid' or 'list'.
- * @property page - The current page number for pagination.
- * @property limit - The maximum number of items per page.
- * @property sort - The field by which to sort the clusters.
- * @property order - The sort direction, either 'asc' (ascending) or 'desc' (descending).
- * @property filters - A string representing applied filters.
- */
-interface Params {
-  view?: 'grid' | 'list'
-  page?: number
-  limit?: number
-  sort?: string
-  order?: 'asc' | 'desc'
-  filters?: string
-}
+import { ResourceControls } from '@/components/ui/resource-controls'
+import { exportClustersAsCSV, exportClustersAsExcel } from '@/features/cluster/utils/export-helpers'
+import { Params } from '@/types/resources-page'
+import { useFilters } from '@/hooks/use-filters'
+import { SortDefinition, useSorting } from '@/hooks/use-sorting'
 
 /**
  * Props for the PageView component.
  *
- * @property {string} [className] - Optional CSS class name for styling the component.
- * @property {User} user - The current user viewing the page.
- * @property {KubernetesCluster[]} clusters - List of Kubernetes clusters to display.
+ * @property {string} [className] - Optional CSS class name for custom styling.
+ * @property {User} user - The current user object.
+ * @property {KubernetesCluster[]} clusters - Array of Kubernetes clusters to display.
  * @property {Params} params - Route or query parameters relevant to the page view.
  */
 interface PageViewProps {
@@ -81,24 +75,26 @@ interface PageViewProps {
 }
 
 /**
- * Renders the main page view for displaying clusters in either grid or table format.
+ * Renders the main page view for displaying Kubernetes clusters, including filtering, sorting, searching,
+ * infinite loading, and display options (grid or table view).
  *
- * Handles cluster data loading, filtering, sorting, searching, and display options.
- * Supports lazy loading of clusters, filter controls, and display customization.
- * Pagination logic is present but marked for removal in favor of lazy loading (see issue #350).
+ * @param className - Optional CSS class name for the root container.
+ * @param user - The current user object, used for permissions and display.
+ * @param clusters - Initial list of Kubernetes clusters to display.
+ * @param params - URL/query parameters controlling filters, sorting, and view mode.
  *
- * @param className - Optional CSS class for the root container.
- * @param user - The current user object, used for permission and display logic.
- * @param clusters - Initial list of clusters to display.
- * @param params - URL/query parameters controlling view, sorting, filtering, pagination, etc.
+ * Features:
+ * - Infinite loading of clusters with pagination.
+ * - Filtering by environment, datacenter, and workspace.
+ * - Sorting by various cluster properties (name, CPU, memory, nodes, price, etc.).
+ * - Search functionality across clusters.
+ * - Toggle between grid and table views.
+ * - Export clusters as CSV or Excel.
+ * - Displays a development notice message.
  *
- * @returns The rendered cluster page view, including controls, filters, and either a grid or table of clusters.
+ * @returns The rendered page view component.
  */
 export const PageView = ({ className, user, clusters, params }: PageViewProps) => {
-  // Router and pathname
-  const router = useRouter()
-  const pathname = usePathname()
-
   // Filter state
   const filtersOpen = params.filters === 'open'
 
@@ -122,9 +118,34 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
   )
 
   // Cluster filters, display data and search result
-  const { selectedFilters, setSelectedFilters, filteredItems, resetFilters } = useClusterFilters(safeItems)
-  const { selectedDisplayData, setSelectedDisplayData } = useDisplayData()
+  const filterDefinitions = [
+    { key: 'Environments', extractor: getEnvironment },
+    { key: 'Datacenters', extractor: getDatacenter },
+    { key: 'Workspaces', extractor: getWorkspace },
+  ]
+
+  const definitions: SortDefinition<KubernetesCluster>[] = [
+    { key: 'clusterName', extractor: (c) => getClusterName(c) },
+    { key: 'cpu', extractor: (c) => getClusterResource(c, 'cpu').percentage },
+    { key: 'memory', extractor: (c) => getClusterResource(c, 'memory').percentage },
+    {
+      key: 'nodes',
+      extractor: (c) => getNodePools(c).reduce((total, nodePool) => total + (nodePool.replicas || 0), 0) || 0,
+    },
+    { key: 'monthlyPrice', extractor: (c) => getPrices(c).monthly },
+    { key: 'yearlyPrice', extractor: (c) => getPrices(c).yearly },
+    { key: 'datacenterName', extractor: (c) => getDatacenter(c) },
+    { key: 'datacenterProvider', extractor: (c) => getProvider(c) },
+    { key: 'environment', extractor: (c) => getEnvironment(c) },
+  ]
+
+  const { selectedFilters, setSelectedFilters, filteredItems, resetFilters } = useFilters<KubernetesCluster>(
+    safeItems,
+    filterDefinitions
+  )
+  const { selectedDisplayData, setSelectedDisplayData } = useDisplayData<ClusterCardDisplayData>('clusters')
   const [searchResults, setSearchResults] = useState<KubernetesCluster[]>(safeItems)
+  const sortedItems = useSorting({ items: filteredItems, sortKey: params.sort, sortOrder: params.order, definitions })
 
   // Handler for display data changes
   const onDisplayChange = (selected: Option[]) =>
@@ -144,7 +165,8 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
     }
   }, [safeItems])
 
-  // Handle refresh (reset filters + display data + url)
+  const pathname = usePathname()
+  const router = useRouter()
   const clearUrl = useCallback(() => {
     router.replace(pathname, { scroll: false })
   }, [router, pathname])
@@ -156,24 +178,8 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
   }, [resetFilters, setSelectedDisplayData, clearUrl])
 
   // Toggle/Sort params
-  const toggleParams = useMemo(
-    () =>
-      buildToggledParams(
-        params as Record<string, string | number | boolean | null | undefined>,
-        'filters',
-        'open',
-        'clusters'
-      ).url,
-    [params]
-  )
-
-  const toggleSortParams = useMemo(
-    () => buildSortParams(params as Record<string, string | number | boolean | null | undefined>, 'clusters'),
-    [params]
-  )
-
-  // Sorting
-  const sortedItems = useClusterSorting({ clusters: filteredItems, sort: params.sort, order: params.order })
+  const toggleParams = useMemo(() => buildToggledParams(params, 'filters', 'open', 'clusters').url, [params])
+  const toggleSortParams = useMemo(() => buildSortParams(params, 'clusters'), [params])
 
   const displayedItems = useMemo(() => {
     if (!searchResults?.length) return sortedItems
@@ -223,16 +229,33 @@ export const PageView = ({ className, user, clusters, params }: PageViewProps) =
     <div className={cn(className, '@container')}>
       <div className={cn('border-b', filtersOpen && 'pb-2')}>
         <div className={cn('mx-12 flex items-center min-h-28 py-6 ', filtersOpen && 'w-[calc(100%-6rem)] border-b')}>
-          <ClusterControls
+          <ResourceControls
             safeItems={safeItems}
+            searchText='Find clusters...'
             selectedDisplayData={selectedDisplayData}
             onDisplayChange={onDisplayChange}
             onSearchResultsChange={setSearchResults}
-            handleRefreshFilters={handleRefreshFilters}
-            toggleParams={toggleParams}
+            displayDataOptions={displayDataOptions}
+            params={params}
             toggleSortParams={toggleSortParams}
             filtersOpen={filtersOpen}
-            params={params}
+            toggleParams={toggleParams}
+            handleRefreshFilters={handleRefreshFilters}
+            domain='clusters'
+            sortingOptions={sortingOptions}
+            searchKeys={['label', 'datacenterName', 'datacenterProvider', 'environment']}
+            mapItem={(cluster) => ({
+              ...cluster,
+              label: getClusterName(cluster),
+              datacenterName: getDatacenter(cluster),
+              datacenterProvider: getProvider(cluster),
+              environment: getEnvironment(cluster),
+            })}
+            getItemsKey={getClustersKey}
+            exportAsCSV={exportClustersAsCSV}
+            exportAsExcel={exportClustersAsExcel}
+            allItems={items}
+            filteredItems={filteredItems}
           />
         </div>
 
