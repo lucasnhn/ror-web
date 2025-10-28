@@ -67,28 +67,42 @@ export interface UseVmLayoutReturn {
   error: string | null
 }
 
-export const getVmId = (vm: VirtualMachine): string => vm?.virtualmachine?.status?.operatingSystem?.id ?? 'Missing id'
+export const getVmId = (vm: VirtualMachine): string => {
+  return vm.virtualmachine?.status?.operatingSystem?.id || vm.metadata?.name || vm.metadata?.uid || 'unknown-id'
+}
 
-export const getVmName = (vm: VirtualMachine): string =>
-  vm?.virtualmachine?.status?.operatingSystem?.name ?? 'Missing name'
+export const getVmHostName = (vm: VirtualMachine): string => {
+  return vm.virtualmachine?.status?.operatingSystem?.hostName || vm.metadata?.name || 'unnamed-vm'
+}
 
-export const getVmHostName = (vm: VirtualMachine): string =>
-  vm?.virtualmachine?.status?.operatingSystem?.hostName ?? 'Missing Hostname'
+export const getVmPowerState = (vm: VirtualMachine): string => {
+  return vm.virtualmachine?.status?.operatingSystem?.powerState || 'undefined'
+}
 
-export const getVmPowerState = (vm: VirtualMachine): string =>
-  vm?.virtualmachine?.status?.operatingSystem?.powerState ?? 'undefined'
+export const getVmName = (vm: VirtualMachine): string => {
+  return (
+    vm.virtualmachine?.status?.operatingSystem?.name ||
+    vm.virtualmachine?.spec?.name ||
+    vm.metadata?.name ||
+    'unnamed-vm'
+  )
+}
 
-export const getVmArchitecture = (vm: VirtualMachine): string =>
-  vm?.virtualmachine?.status?.operatingSystem?.architecture ?? 'Missing Architecture'
+export const getVmFamily = (vm: VirtualMachine): string => {
+  return vm.virtualmachine?.status?.operatingSystem?.family || 'Unknown'
+}
 
-export const getVmFamily = (vm: VirtualMachine): string =>
-  vm?.virtualmachine?.status?.operatingSystem?.family ?? 'Missing Family'
+export const getVmArchitecture = (vm: VirtualMachine): string => {
+  return vm.virtualmachine?.status?.operatingSystem?.architecture || 'Unknown'
+}
 
-export const getVmVersion = (vm: VirtualMachine): string =>
-  vm?.virtualmachine?.status?.operatingSystem?.version ?? 'Missing Version'
+export const getVmVersion = (vm: VirtualMachine): string => {
+  return vm.virtualmachine?.status?.operatingSystem?.version || 'Unknown'
+}
 
-export const getVmToolVersion = (vm: VirtualMachine): string =>
-  vm?.virtualmachine?.status?.operatingSystem?.toolVersion ?? 'Missing Tool Version'
+export const getVmToolVersion = (vm: VirtualMachine): string => {
+  return vm.virtualmachine?.status?.operatingSystem?.toolVersion || 'Unknown'
+}
 
 export const getSpecSockets = (vm: VirtualMachine): number | undefined => {
   return vm?.virtualmachine?.spec?.cpu?.sockets ?? undefined

@@ -51,7 +51,6 @@ function CardContent({ className, ...props }: React.ComponentProps<'div'>) {
 
 const VMCard = ({ className, user, vm, vmDisplayData }: VMCardProps) => {
   const name = getVmName(vm)
-  console.log(name)
   const id = getVmId(vm)
   const family = getVmFamily(vm)
   const hostName = getVmHostName(vm)
@@ -71,7 +70,6 @@ const VMCard = ({ className, user, vm, vmDisplayData }: VMCardProps) => {
     )
   }
 
-  console.log(user)
   return (
     <Link href={`/vms/${hostName}`} onClick={() => localStorage.setItem('selectedVm', JSON.stringify(vm))}>
       <Card
@@ -103,12 +101,12 @@ const VMCard = ({ className, user, vm, vmDisplayData }: VMCardProps) => {
             <div className='border-b border-gray-700 mt-1 mb-2'></div>
           </div>
           <section className='grid grid-cols-2 gap-4'>
-            <Info label='ID' value={id ?? 'N/A'} />
-            <Info label='Power State' value={powerState ?? 'N/A'} />
-            <Info label='Architecture' value={architecture ?? 'N/A'} />
-            <Info label='OS Family' value={family ?? 'N/A'} />
-            <Info label='OS Version' value={version ?? 'N/A'} />
-            <Info label='Tools Version' value={toolVersion ?? 'N/A'} />
+            {vmDisplayData?.includes('id') && <Info label='ID' value={id ?? 'N/A'} />}
+            {vmDisplayData?.includes('powerState') && <Info label='Power State' value={powerState ?? 'N/A'} />}
+            {vmDisplayData?.includes('architecture') && <Info label='Architecture' value={architecture ?? 'N/A'} />}
+            {vmDisplayData?.includes('family') && <Info label='OS Family' value={family ?? 'N/A'} />}
+            {vmDisplayData?.includes('version') && <Info label='OS Version' value={version ?? 'N/A'} />}
+            {vmDisplayData?.includes('toolVersion') && <Info label='Tools Version' value={toolVersion ?? 'N/A'} />}
           </section>
         </CardContent>
       </Card>

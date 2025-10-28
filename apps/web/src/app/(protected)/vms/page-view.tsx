@@ -105,7 +105,6 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
     }
   }, [])
 
-  // persist display selections (no-op if unchanged)
   useEffect(() => {
     try {
       const serialized = JSON.stringify(selectedDisplayData)
@@ -117,7 +116,6 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
     }
   }, [selectedDisplayData])
 
-  // sync safeItems → searchResults only if content differs
   const lastSafeKeyRef = useRef('')
   useEffect(() => {
     const nextKey = idsKey(safeItems)
@@ -237,11 +235,14 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
   }, [filteredItems, params.sort, params.order])
 
   const displayedItems = useMemo(() => {
-    const base = params.sort ? sortedItems : filteredItems
-    if (!searchResults?.length) return base
-    const ids = new Set(searchResults.map(idOf))
-    return base.filter((c) => ids.has(idOf(c)))
-  }, [sortedItems, filteredItems, searchResults, params.sort])
+    let items = params.sort ? sortedItems : filteredItems
+    if (searchResults && searchResults.length > 0 && searchResults.length !== safeItems.length) {
+      const searchIds = new Set(searchResults.map((vm) => getVmId(vm)))
+      items = items.filter((vm) => searchIds.has(getVmId(vm)))
+    }
+
+    return items
+  }, [sortedItems, filteredItems, searchResults, safeItems, params.sort])
 
   const renderControls = () => (
     <div className='flex flex-wrap items-center justify-between w-full gap-4 [@container(max-width:1000px)]:flex-col [@container(max-width:1000px)]:items-start [@container(max-width:1000px)]:gap-6'>
@@ -373,32 +374,24 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
 
       <section className='px-12 my-8'>
         {params.view === 'list' ? (
-          <VMTable
-            key='table'
-            user={user}
-            vms={(params.sort ? sortedItems : filteredItems).filter((c) =>
-              searchResults.some(
-                (sr) =>
-                  getVmId(sr) === getVmId(c) || getVmName(sr) === getVmName(c) || getVmHostName(sr) === getVmHostName(c)
-              )
-            )}
-            selectedDisplayData={selectedDisplayData}
-          />
+          <VMTable key='table' user={user} vms={displayedItems} selectedDisplayData={selectedDisplayData} />
         ) : (
           <div className='flex flex-row flex-wrap gap-6'>
-            {displayedItems.map((vm, idx) => (
-              <div key={idOf(vm) || idx}>
-                <VMCard
-                  user={user}
-                  vm={vm}
-                  vmDisplayData={
-                    selectedDisplayData.length > 0
-                      ? selectedDisplayData
-                      : displayDataOptions.map((opt) => opt.value as VMCardData)
-                  }
-                />
-              </div>
-            ))}
+            {displayedItems.map((vm, idx) => {
+              return (
+                <div key={idOf(vm) || idx}>
+                  <VMCard
+                    user={user}
+                    vm={vm}
+                    vmDisplayData={
+                      selectedDisplayData.length > 0
+                        ? selectedDisplayData
+                        : displayDataOptions.map((opt) => opt.value as VMCardData)
+                    }
+                  />
+                </div>
+              )
+            })}
             <div ref={sentinelRef} className='h-px' />
           </div>
         )}
