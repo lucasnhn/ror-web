@@ -15,6 +15,7 @@ import {
   getVmId,
   getVmName,
   getVmPowerState,
+  getVmToolVersion,
   getVmVersion,
 } from '../utils/vms'
 
@@ -119,7 +120,7 @@ export const getVMTableColumns = (
         },
       }),
     isVisible('toolVersion') &&
-      columnHelper.accessor((row) => getVmVersion(row), {
+      columnHelper.accessor((row) => getVmToolVersion(row), {
         id: 'toolVersion',
         header: 'Tool Version',
         enableSorting: false,
