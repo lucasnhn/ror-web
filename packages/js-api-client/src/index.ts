@@ -43,4 +43,6 @@ export type {
   VulnerabilityReport,
   VulnerabilityReportResponse,
   VirtualMachine,
+  VirtualMachineNetworks,
+  VirtualMachineDisks,
 } from './types/entities'

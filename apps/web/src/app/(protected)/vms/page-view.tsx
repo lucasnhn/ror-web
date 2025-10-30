@@ -30,12 +30,13 @@ import {
   getVmFamily,
   getVmArchitecture,
   getVmToolVersion,
+  getTeamName,
 } from '@/features/vms/utils/vms'
 import { NotReadyMessage } from '@/components/ui/not-ready-message'
 import { cn } from '@/utils/clsxm'
 import { useRef, useState, useMemo, useEffect, useCallback } from 'react'
 import { VMCard } from '@/features/vms/components/vm-card'
-import { VMCardData } from '@/features/vms/types/vm-card-type'
+import { VMCardData } from '@/features/vms/types/vm-types'
 import { displayDataOptions, sortingOptions, filterOptions } from '@/features/vms/config/page-view-options'
 import { useDisplayData } from '@/hooks/use-display-data'
 import { ResourceControls } from '@/components/ui/resource-controls'
@@ -58,7 +59,10 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
     [vms]
   )
 
-  const filterDefinitions = [{ key: 'Power States', extractor: (vm: VirtualMachine) => getVmPowerState(vm) }]
+  const filterDefinitions = [
+    { key: 'Power States', extractor: (vm: VirtualMachine) => getVmPowerState(vm) },
+    { key: 'Teams', extractor: (vm: VirtualMachine) => getTeamName(vm) },
+  ]
 
   const { selectedFilters, setSelectedFilters, filteredItems, resetFilters } = useFilters<VirtualMachine>(
     safeItems,
@@ -131,6 +135,10 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
     {
       key: 'powerState',
       extractor: (vm) => getVmPowerState(vm),
+    },
+    {
+      key: 'team',
+      extractor: (vm) => getTeamName(vm),
     },
   ]
 

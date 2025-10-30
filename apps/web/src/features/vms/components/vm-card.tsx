@@ -16,6 +16,7 @@ import { cn } from '@/utils/clsxm'
 import Link from 'next/link'
 import { vmCardPowerStatus, pillPowerStatusColors } from '@/features/vms/utils/env-colors'
 import {
+  getTeamName,
   getVmArchitecture,
   getVmFamily,
   getVmHostName,
@@ -59,6 +60,8 @@ const VMCard = ({ className, vm, vmDisplayData }: VMCardProps) => {
   const toolVersion = getVmToolVersion(vm)
   const powerState = getVmPowerState(vm)
 
+  const teamName = getTeamName(vm)
+
   const envColor = vmCardPowerStatus[powerState ?? 'undefined'] ?? vmCardPowerStatus['undefined']
 
   const Info = ({ label, value }: { label: string; value: string | number }) => {
@@ -82,11 +85,11 @@ const VMCard = ({ className, vm, vmDisplayData }: VMCardProps) => {
         onKeyDown={(e) => e.key === 'Enter' && localStorage.setItem('selectedVm', JSON.stringify(vm))}
       >
         <CardHeader className='m-0 mb-7 p-0 w-full relative'>
-          <CardTitle className={cn('text-2xl rounded-t-xl px-6 py-2 flex', envColor[0], envColor[1])}>
-            {name}
+          <CardTitle className={cn('text-sm rounded-t-xl px-6 py-2 flex', envColor[0], envColor[1])}>
+            {hostName}
             <span
               className={cn(
-                'ml-auto flex items-center gap-1 text-xs font-normal normal-case px-2 py-1 rounded-full',
+                'ml-auto flex items-center text-xs font-normal normal-case px-2 rounded-full',
                 pillPowerStatusColors[powerState ?? 'undefined'][0]
               )}
             >
@@ -96,17 +99,20 @@ const VMCard = ({ className, vm, vmDisplayData }: VMCardProps) => {
         </CardHeader>
         <CardContent className='text-sm flex flex-col gap-3'>
           <div>
-            <p className='text-sm font-semibold text-gray-400 '>Hostname</p>
-            <p className='text-md'>{hostName || 'N/A'}</p>
+            <p className='text-sm font-semibold text-gray-400 '>Team</p>
+            <p className='text-md'>{teamName || 'N/A'}</p>
             <div className='border-b border-gray-700 mt-1 mb-2'></div>
           </div>
           <section className='grid grid-cols-2 gap-4'>
+            {vmDisplayData?.includes('name') && <Info label='OS-version' value={name ?? 'N/A'} />}
             {vmDisplayData?.includes('id') && <Info label='ID' value={id ?? 'N/A'} />}
-            {vmDisplayData?.includes('powerState') && <Info label='Power State' value={powerState ?? 'N/A'} />}
+            {vmDisplayData?.includes('powerState') && <Info label='Power' value={powerState ?? 'N/A'} />}
             {vmDisplayData?.includes('architecture') && <Info label='Architecture' value={architecture ?? 'N/A'} />}
-            {vmDisplayData?.includes('family') && <Info label='OS Family' value={family ?? 'N/A'} />}
-            {vmDisplayData?.includes('version') && <Info label='OS Version' value={version ?? 'N/A'} />}
-            {vmDisplayData?.includes('toolVersion') && <Info label='Tools Version' value={toolVersion ?? 'N/A'} />}
+            {vmDisplayData?.includes('family') && <Info label='OS-type' value={family ?? 'N/A'} />}
+            {vmDisplayData?.includes('version') && <Info label='Version' value={version ?? 'N/A'} />}
+            {vmDisplayData?.includes('toolVersion') && (
+              <Info label='VMware Tools version' value={toolVersion ?? 'N/A'} />
+            )}
           </section>
         </CardContent>
       </Card>

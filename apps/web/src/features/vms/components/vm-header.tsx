@@ -32,7 +32,7 @@ export const VMHeader = ({ className, tabs }: VMHeaderProps) => {
     <div>
       <div className={cn(className, 'relative flex h-48 w-full')}>
         <div className='flex flex-col justify-between w-full h-full z-10'>
-          <h1 className='text-center sm:text-left mx-auto sm:mx-12 my-auto sm:self-start text-3xl sm:text-5xl'>
+          <h1 className='text-center sm:text-left mx-auto sm:mx-12 my-auto sm:self-start text-2xl sm:text-4xl'>
             {hostname}
           </h1>
           <NavigationTabs className='mb-0' items={tabs} tabColor={cn(lightmode, darkmode)} />
@@ -69,7 +69,7 @@ export const VMHeader = ({ className, tabs }: VMHeaderProps) => {
                     </>
                   )}
                 </span>
-                <span className='hidden xl:block'>Power state:&nbsp;</span>
+                <span className='hidden xl:block'>Power:&nbsp;</span>
                 <span className='hidden md:block'>{powerstate || 'undefined'}</span>
               </p>
             </div>

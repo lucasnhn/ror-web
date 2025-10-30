@@ -6,10 +6,17 @@ import Link from 'next/link'
 import { Pill } from '@/components/shadcn/pill'
 import { vmCardColors } from '@/features/vms/utils/env-colors'
 import { User } from 'next-auth'
-import { VMCardData } from '@/features/vms/types/vm-card-type'
+import { VMColumnsData } from '@/features/vms/types/vm-types'
 import { createColumnHelper } from '@tanstack/react-table'
 import {
+  getSpecCoresPerSocket,
+  getSpecMemory,
+  getSpecSockets,
+  getStatusCpuUsage,
+  getTeamName,
   getVmArchitecture,
+  getVmDiskSizes,
+  getVmDiskUsages,
   getVmFamily,
   getVmHostName,
   getVmId,
@@ -23,13 +30,18 @@ const columnHelper = createColumnHelper<VirtualMachine>()
 
 export const getVMTableColumns = (
   user?: User,
-  selectedDisplayData?: VMCardData[]
+  selectedDisplayData?: VMColumnsData[]
 ): DataTableColumnDef<VirtualMachine>[] => {
   const showAllVMs = !selectedDisplayData || selectedDisplayData.length === 0
-  const isVisible = (data: VMCardData) => showAllVMs || selectedDisplayData.includes(data)
+  const isVisible = (data: VMColumnsData) => {
+    if (data === 'id' || data === 'architecture') {
+      return selectedDisplayData?.includes(data) ?? false
+    }
+    return showAllVMs || selectedDisplayData.includes(data)
+  }
 
   return [
-    columnHelper.accessor((row) => row.metadata?.name ?? 'Unnamed VM', {
+    columnHelper.accessor((row) => getVmHostName(row) ?? 'Unnamed VM', {
       id: 'hostName',
       header: 'Hostname',
       enableSorting: true,
@@ -66,6 +78,23 @@ export const getVMTableColumns = (
           },
         }
       ),
+    isVisible('team') &&
+      columnHelper.accessor(
+        (row) => {
+          const team = getTeamName(row)
+          return team
+        },
+        {
+          id: 'team',
+          header: 'Team',
+          enableSorting: true,
+          sortingFn: 'text',
+          cell: (info) => {
+            const team = info.getValue()
+            return <span>{team}</span>
+          },
+        }
+      ),
     isVisible('name') &&
       columnHelper.accessor(
         (row) => {
@@ -74,7 +103,7 @@ export const getVMTableColumns = (
         },
         {
           id: 'name',
-          header: 'Name',
+          header: 'OS-version',
           enableSorting: true,
           sortingFn: 'text',
           cell: (info) => {
@@ -83,22 +112,80 @@ export const getVMTableColumns = (
           },
         }
       ),
-    isVisible('family') &&
-      columnHelper.accessor(
-        (row) => {
-          const osFamily = getVmFamily(row)
-          return osFamily
+    // isVisible('family') &&
+    //   columnHelper.accessor(
+    //     (row) => {
+    //       const osFamily = getVmFamily(row)
+    //       return osFamily
+    //     },
+    //     {
+    //       id: 'family',
+    //       header: 'OS-type',
+    //       enableSorting: false,
+    //       cell: (info) => {
+    //         const osFamily = info.getValue()
+    //         return <span>{osFamily}</span>
+    //       },
+    //     }
+    //   ),
+    //Change this getters to the correct ones when available
+    isVisible('disk-size') &&
+      columnHelper.accessor((row) => getVmDiskSizes(row), {
+        id: 'disk-size',
+        header: 'Disk size (usage)',
+        enableSorting: false,
+        cell: (info) => {
+          const diskSizes = info.getValue()
+          const diskSizesInGB = diskSizes.map((size) => ((size ?? 0) / 1024 ** 3).toFixed(2) + ' GB')
+          const diskUsage = getVmDiskUsages(info.row.original)
+          const diskUsageInGB = diskUsage.map((usage) => ((usage ?? 0) / 1024 ** 3).toFixed(2) + ' GB')
+          return (
+            <div className='flex flex-wrap gap-2'>
+              {diskSizesInGB.map((size, idx) => (
+                <span key={idx} className='whitespace-nowrap'>
+                  {size} <span className='text-xs text-gray-500'>({diskUsageInGB[idx] ?? '0 GB'})</span>
+                </span>
+              ))}
+            </div>
+          )
         },
-        {
-          id: 'family',
-          header: 'Family',
-          enableSorting: false,
-          cell: (info) => {
-            const osFamily = info.getValue()
-            return <span>{osFamily}</span>
-          },
-        }
-      ),
+      }),
+    isVisible('memory') &&
+      columnHelper.accessor((row) => getSpecMemory(row), {
+        id: 'memory',
+        header: 'Memory',
+        enableSorting: false,
+        cell: (info) => {
+          const memory = info.getValue()
+          const memoryInGB = ((memory ?? 0) / 1024 ** 3).toFixed(2)
+          return <span>{memoryInGB} GB</span>
+        },
+      }),
+    isVisible('sockets') &&
+      columnHelper.accessor((row) => getSpecSockets(row), {
+        id: 'sockets',
+        header: 'Sockets (corePrSocket)',
+        enableSorting: false,
+        cell: (info) => {
+          const sockets = info.getValue()
+          const coresPerSocket = getSpecCoresPerSocket(info.row.original)
+          return (
+            <span>
+              {sockets} ({coresPerSocket})
+            </span>
+          )
+        },
+      }),
+    isVisible('cpu') &&
+      columnHelper.accessor((row) => getStatusCpuUsage(row), {
+        id: 'cpu',
+        header: 'CPU Usage',
+        enableSorting: false,
+        cell: (info) => {
+          const cpuUsage = info.getValue()
+          return <span>{cpuUsage} %</span>
+        },
+      }),
     isVisible('version') &&
       columnHelper.accessor((row) => getVmVersion(row), {
         id: 'version',
@@ -122,7 +209,7 @@ export const getVMTableColumns = (
     isVisible('toolVersion') &&
       columnHelper.accessor((row) => getVmToolVersion(row), {
         id: 'toolVersion',
-        header: 'Tool Version',
+        header: 'VMware Tools version',
         enableSorting: false,
         cell: (info) => {
           const toolVersion = info.getValue()
@@ -131,7 +218,7 @@ export const getVMTableColumns = (
       }),
     columnHelper.accessor((row) => getVmPowerState(row) ?? '', {
       id: 'powerState',
-      header: 'Power state',
+      header: 'Power',
       enableSorting: false,
       cell: (info) => {
         const osID = info.getValue()

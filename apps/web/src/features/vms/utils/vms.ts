@@ -1,5 +1,5 @@
 import { User } from 'next-auth'
-import { VMCardData } from '@/features/vms/types/vm-card-type'
+import { VMCardData } from '@/features/vms/types/vm-types'
 import type { VirtualMachine } from '@ror/js-api-client'
 import { Params } from '@/types/resources-page'
 
@@ -96,6 +96,49 @@ export const getVmToolVersion = (vm: VirtualMachine): string => {
   return vm.virtualmachine?.status?.operatingSystem?.toolVersion || 'Unknown'
 }
 
+export const getVmDisks = (vm: VirtualMachine) => {
+  return vm.virtualmachine?.status?.disks || []
+}
+
+export const getVmDiskSizes = (vm: VirtualMachine): number[] => {
+  const disks = getVmDisks(vm)
+  return disks.map((disk) => disk.sizeBytes || 0)
+}
+
+export const getVmDiskUsages = (vm: VirtualMachine): number[] => {
+  const disks = getVmDisks(vm)
+  return disks.map((disk) => disk.usageBytes || 0)
+}
+
+// export const getVmTotalDiskSize = (vm: VirtualMachine): number => {
+//   const sizes = getVmDiskSizes(vm)
+//   return sizes.reduce((total, size) => total + size, 0)
+// }
+
+// export const getVmTotalDiskUsage = (vm: VirtualMachine): number => {
+//   const usages = getVmDiskUsages(vm)
+//   return usages.reduce((total, usage) => total + usage, 0)
+// }
+
+// export const getVmDiskUtilization = (vm: VirtualMachine): number => {
+//   const totalSize = getVmTotalDiskSize(vm)
+//   const totalUsage = getVmTotalDiskUsage(vm)
+//   return totalSize > 0 ? (totalUsage / totalSize) * 100 : 0
+// }
+
+// export const getVmDiskInfo = (vm: VirtualMachine) => {
+//   const disks = getVmDisks(vm)
+//   return disks.map(disk => ({
+//     id: disk.id,
+//     name: disk.name,
+//     sizeBytes: disk.sizeBytes || 0,
+//     usageBytes: disk.usageBytes || 0,
+//     type: disk.type,
+//     isMounted: disk.isMounted,
+//     utilizationPercent: disk.sizeBytes ? ((disk.usageBytes || 0) / disk.sizeBytes) * 100 : 0
+//   }))
+// }
+
 export const getSpecSockets = (vm: VirtualMachine): number | undefined => {
   return vm?.virtualmachine?.spec?.cpu?.sockets ?? undefined
 }
@@ -124,10 +167,54 @@ export const getNetworks = (vm: VirtualMachine): Network[] => {
   }))
 }
 
+export const getNetworkId = (network: Network): string => {
+  return network?.id ?? 'unknown-id'
+}
+
 export const getVmOperatingSystem = (vm: VirtualMachine) => {
   return vm?.virtualmachine?.status?.operatingSystem
 }
 
 export const getVmSpec = (vm: VirtualMachine) => {
   return vm?.virtualmachine?.spec
+}
+
+export const getTeamName = (vm: VirtualMachine) => {
+  return vm?.virtualmachine?.status?.tags?.team?.description
+}
+
+export const getTeamValue = (vm: VirtualMachine) => {
+  return vm?.virtualmachine?.status?.tags?.team?.value
+}
+
+export const getAdGroup = (vm: VirtualMachine) => {
+  return vm?.virtualmachine?.status?.tags?._AdGroup?.value
+}
+
+export const serviceIdDescription = (vm: VirtualMachine) => {
+  return vm?.virtualmachine?.status?.tags?.serviceId?.description
+}
+
+export const serviceIdValue = (vm: VirtualMachine) => {
+  return vm?.virtualmachine?.status?.tags?.serviceId?.value
+}
+
+export const getVmMetadataName = (vm: VirtualMachine) => {
+  return vm?.metadata?.name
+}
+
+export const getLastUpdated = (vm: VirtualMachine) => {
+  return vm?.virtualmachine?.status?.lastUpdated
+}
+
+export const getLocation = (vm: VirtualMachine) => {
+  return vm?.virtualmachine?.status?.location
+}
+
+export const getProvider = (vm: VirtualMachine) => {
+  return vm?.virtualmachine?.provider
+}
+
+export const getTags = (vm: VirtualMachine) => {
+  return vm?.virtualmachine?.status?.tags || {}
 }
