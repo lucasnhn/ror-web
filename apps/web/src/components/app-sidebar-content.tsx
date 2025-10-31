@@ -30,7 +30,9 @@ interface Section {
   items: SidebarItem[]
 }
 
-const vmsEnabled = process.env.NEXT_PUBLIC_VMS_ENABLED === 'true'
+// Comment out to test VM in Beta
+//const vmsEnabled = process.env.NEXT_PUBLIC_VMS_ENABLED === 'true'
+const vmsEnabled = true
 
 /*
  * TODO: Add sections as they are created
