@@ -21,7 +21,7 @@ export function VmSearch({ items, onResultsChange }: VmSearchProps) {
 
   const { search } = useVmSearch(items, {
     threshold: 0.3,
-    keys: ['label', 'hostname', 'powerState', 'family'],
+    keys: ['label', 'hostName', 'powerState', 'family'],
   })
 
   const [debouncedQuery, setDebouncedQuery] = useState(query)

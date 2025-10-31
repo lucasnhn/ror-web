@@ -1,20 +1,20 @@
 import { Option } from '@/components/shadcn/multiselect'
 
 export const displayDataOptions: Option[] = [
-  { label: 'Name', value: 'os_name' },
-  { label: 'ID', value: 'os_id' },
+  { label: 'Name', value: 'name' },
+  { label: 'ID', value: 'id' },
   { label: 'Power State', value: 'powerState' },
-  { label: 'Architecture', value: 'os_architecture' },
-  { label: 'Family', value: 'os_family' },
-  { label: 'Version', value: 'os_version' },
-  { label: 'Tool Version', value: 'os_toolVersion' },
+  { label: 'Architecture', value: 'architecture' },
+  { label: 'Family', value: 'family' },
+  { label: 'Version', value: 'version' },
+  { label: 'Tool Version', value: 'toolVersion' },
 ]
 
 export const sortingOptions = [
-  { value: 'hostname', label: 'Hostname' },
+  { value: 'hostName', label: 'Hostname' },
   { value: 'name', label: 'Name' },
   { value: 'id', label: 'ID' },
-  { value: 'powerstate', label: 'Power State' },
+  { value: 'powerState', label: 'Power State' },
   { value: 'architecture', label: 'Architecture' },
   { value: 'family', label: 'Family' },
   { value: 'version', label: 'Version' },

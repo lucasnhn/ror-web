@@ -9,19 +9,29 @@
 import { authGuard } from '@/features/auth/utils/auth-guard'
 import PageView from './page-view'
 import { Header } from '@/components/layout/app-shell/header'
-import { mergedVms } from '@/features/vms/utils/merge-vms'
-import { parseVmSearchParams, VmSearchParams } from '@/features/vms/utils/search-params'
+import { normalizeParams } from '@/features/cluster/utils/normalize-params'
+import { fetchVms } from '@/features/vms/services/fetch-vms'
+import { getRorApi } from '@/services/ror-api'
 
-export default async function VMPage({ searchParams }: { searchParams: Promise<VmSearchParams> }) {
+export default async function VMPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>
+}) {
   const session = await authGuard()
   const user = session.user
+  const api = await getRorApi()
+
   const sp = await searchParams
-  const params = parseVmSearchParams(sp)
+  const params = normalizeParams(sp)
+
+  const fetchedVms = await fetchVms(api, params)
+  const vms = fetchedVms.vms
 
   return (
     <div className='w-full flex flex-col'>
       <Header title='Virtual machines' />
-      <PageView className='f' user={user} vms={mergedVms} params={params} />
+      <PageView user={user} vms={vms} params={params} />
     </div>
   )
 }

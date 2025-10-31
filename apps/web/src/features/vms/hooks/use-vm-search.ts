@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import Fuse from 'fuse.js'
-import { VirtualMachine } from '../utils/vms'
+import type { VirtualMachine } from '@ror/js-api-client'
+import { getVmFamily, getVmHostName, getVmName, getVmPowerState } from '../utils/vms'
 
 interface UseVmSearchOptions {
   threshold?: number
@@ -13,10 +14,10 @@ export const useVmSearch = (items: VirtualMachine[], options: UseVmSearchOptions
   const fuse = useMemo(() => {
     const flat = items.map((vm) => ({
       ...vm,
-      label: vm.metadata?.name ?? vm.virtualmachine?.spec?.name,
-      hostname: vm.virtualmachine?.status?.operatingsystem?.hostname,
-      powerState: vm.virtualmachine?.status?.operatingsystem?.powerstate,
-      family: vm.virtualmachine?.status?.operatingsystem?.family,
+      label: vm.metadata?.name ?? getVmName(vm),
+      hostname: getVmHostName(vm),
+      powerState: getVmPowerState(vm),
+      family: getVmFamily(vm),
     }))
 
     return new Fuse(flat, {

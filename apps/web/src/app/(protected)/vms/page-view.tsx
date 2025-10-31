@@ -19,7 +19,18 @@
 'use client'
 
 import MultipleSelector, { Option } from '@/components/shadcn/multiselect'
-import { PageViewProps, VirtualMachine } from '@/features/vms/utils/vms'
+import {
+  getVmId,
+  getVmName,
+  getVmVersion,
+  getVmOperatingSystem,
+  getVmPowerState,
+  getVmHostName,
+  PageViewProps,
+  getVmFamily,
+  getVmArchitecture,
+  getVmToolVersion,
+} from '@/features/vms/utils/vms'
 import { NotReadyMessage } from '@/components/ui/not-ready-message'
 import { cn } from '@/utils/clsxm'
 import { useRef, useState, useMemo, useEffect, useCallback } from 'react'
@@ -35,6 +46,7 @@ import { useFilters } from '@/hooks/use-filters'
 import { SortDefinition, useSorting } from '@/hooks/use-sorting'
 import { DataTable } from '@/components/ui/data-table'
 import { getVMTableColumns } from '@/features/vms/components/vm-columns'
+import type { VirtualMachine } from '@ror/js-api-client'
 
 export const PageView = ({ className, user, vms, params }: PageViewProps) => {
   const filtersOpen = params.filters === 'open'
@@ -42,17 +54,11 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
   const sentinelRef = useRef<HTMLDivElement>(null)
 
   const safeItems = useMemo(
-    () =>
-      vms.filter(
-        (c) =>
-          c.virtualmachine?.status?.operatingsystem && typeof c.virtualmachine?.status?.operatingsystem === 'object'
-      ),
+    () => vms.filter((c) => getVmOperatingSystem(c) && typeof getVmOperatingSystem(c) === 'object'),
     [vms]
   )
 
-  const filterDefinitions = [
-    { key: 'Power States', extractor: (vm: VirtualMachine) => vm.virtualmachine?.status?.operatingsystem?.powerstate },
-  ]
+  const filterDefinitions = [{ key: 'Power States', extractor: (vm: VirtualMachine) => getVmPowerState(vm) }]
 
   const { selectedFilters, setSelectedFilters, filteredItems, resetFilters } = useFilters<VirtualMachine>(
     safeItems,
@@ -65,7 +71,7 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
   const onDisplayChange = (selected: Option[]) => setSelectedDisplayData(selected.map((i) => i.value as VMCardData))
 
   // sync safeItems → searchResults only if content differs
-  const idOf = useCallback((c: VirtualMachine) => c.virtualmachine?.status?.operatingsystem?.id || '', [])
+  const idOf = useCallback((c: VirtualMachine) => getVmId(c) || '', [])
 
   const idsKey = useCallback((arr: VirtualMachine[]) => arr.map(idOf).join('|'), [idOf])
 
@@ -95,36 +101,36 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
 
   const sortDefinitions: SortDefinition<VirtualMachine>[] = [
     {
-      key: 'hostname',
-      extractor: (vm) => vm.virtualmachine?.status?.operatingsystem?.hostname,
+      key: 'hostName',
+      extractor: (vm) => getVmHostName(vm),
     },
     {
       key: 'name',
-      extractor: (vm) => vm.virtualmachine?.status?.operatingsystem?.name,
+      extractor: (vm) => getVmName(vm),
     },
     {
       key: 'id',
-      extractor: (vm) => vm.virtualmachine?.status?.operatingsystem?.id,
+      extractor: (vm) => getVmId(vm),
     },
     {
       key: 'family',
-      extractor: (vm) => vm.virtualmachine?.status?.operatingsystem?.family,
+      extractor: (vm) => getVmFamily(vm),
     },
     {
       key: 'architecture',
-      extractor: (vm) => vm.virtualmachine?.status?.operatingsystem?.architecture,
+      extractor: (vm) => getVmArchitecture(vm),
     },
     {
       key: 'version',
-      extractor: (vm) => vm.virtualmachine?.status?.operatingsystem?.version,
+      extractor: (vm) => getVmVersion(vm),
     },
     {
-      key: 'toolversion',
-      extractor: (vm) => vm.virtualmachine?.status?.operatingsystem?.toolversion,
+      key: 'toolVersion',
+      extractor: (vm) => getVmToolVersion(vm),
     },
     {
-      key: 'powerstate',
-      extractor: (vm) => vm.virtualmachine?.status?.operatingsystem?.powerstate,
+      key: 'powerState',
+      extractor: (vm) => getVmPowerState(vm),
     },
   ]
 
@@ -162,9 +168,9 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
         mapItem={(vm) => ({
           ...vm,
           label: vm.metadata?.name ?? vm.virtualmachine?.spec?.name,
-          hostname: vm.virtualmachine?.status?.operatingsystem?.hostname,
-          powerState: vm.virtualmachine?.status?.operatingsystem?.powerstate,
-          family: vm.virtualmachine?.status?.operatingsystem?.family,
+          hostName: getVmHostName(vm),
+          powerState: getVmPowerState(vm),
+          family: getVmFamily(vm),
         })}
         getItemsKey={idsKey}
         exportAsCSV={exportVmsAsCSV}
@@ -225,30 +231,27 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
             data={(params.sort ? sortedItems : filteredItems).filter((c) =>
               searchResults.some(
                 (sr) =>
-                  sr.virtualmachine?.status?.operatingsystem?.id === c.virtualmachine?.status?.operatingsystem?.id ||
-                  sr.virtualmachine?.status?.operatingsystem?.name ===
-                    c.virtualmachine?.status?.operatingsystem?.name ||
-                  sr.virtualmachine?.status?.operatingsystem?.hostname ===
-                    c.virtualmachine?.status?.operatingsystem?.hostname
+                  getVmId(sr) === getVmId(c) || getVmName(sr) === getVmName(c) || getVmHostName(sr) === getVmHostName(c)
               )
             )}
             columns={getVMTableColumns(user, selectedDisplayData)}
           />
         ) : (
           <div className='flex flex-row flex-wrap gap-6'>
-            {displayedItems.map((vm, idx) => (
-              <div key={idOf(vm) || idx}>
-                <VMCard
-                  user={user}
-                  vm={vm}
-                  vmDisplayData={
-                    selectedDisplayData.length > 0
-                      ? selectedDisplayData
-                      : displayDataOptions.map((opt) => opt.value as VMCardData)
-                  }
-                />
-              </div>
-            ))}
+            {displayedItems.map((vm, idx) => {
+              return (
+                <div key={idOf(vm) || idx}>
+                  <VMCard
+                    vm={vm}
+                    vmDisplayData={
+                      selectedDisplayData.length > 0
+                        ? selectedDisplayData
+                        : displayDataOptions.map((opt) => opt.value as VMCardData)
+                    }
+                  />
+                </div>
+              )
+            })}
             <div ref={sentinelRef} className='h-px' />
           </div>
         )}
