@@ -17,7 +17,7 @@ import {
   getVmArchitecture,
   getVmDiskSizes,
   getVmDiskUsages,
-  getVmFamily,
+  //getVmFamily,
   getVmHostName,
   getVmId,
   getVmName,
