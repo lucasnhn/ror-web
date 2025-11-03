@@ -61,7 +61,7 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
 
   const filterDefinitions = [
     { key: 'Power States', extractor: (vm: VirtualMachine) => getVmPowerState(vm) },
-    { key: 'Teams', extractor: (vm: VirtualMachine) => getTeamValue(vm) || 'No Team' },
+    { key: 'Teams', extractor: (vm: VirtualMachine) => getTeamValue(vm) },
   ]
 
   const { selectedFilters, setSelectedFilters, filteredItems, resetFilters } = useFilters<VirtualMachine>(
