@@ -1,5 +1,5 @@
 import { Option } from '@/components/shadcn/multiselect'
-import { getTeamName } from '../utils/vms'
+import { getTeamValue } from '../utils/vms'
 import type { VirtualMachine } from '@ror/js-api-client'
 
 export const displayDataOptions: Option[] = [
@@ -42,7 +42,7 @@ export const generateTeamOptions = (vms: VirtualMachine[]): Option[] => {
   const teams = new Set<string>()
 
   vms.forEach((vm) => {
-    const teamName = getTeamName(vm)
+    const teamName = getTeamValue(vm)
     if (teamName && teamName.trim()) {
       teams.add(teamName)
     }

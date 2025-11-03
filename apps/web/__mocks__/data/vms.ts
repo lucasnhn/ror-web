@@ -1,7 +1,7 @@
 export const mockVms = {
   resources: Array.from({ length: 104 }, (_, i) => {
     const idx = i + 1
-    const teams = ['Windows Driftsplatform', 'Linux driftsplattform']
+    const teams = ['Monitorering', 'stamnett']
     return {
       kind: 'VirtualMachine',
       apiVersion: 'general.ror.internal/v1alpha1',
@@ -109,7 +109,7 @@ export const mockVms = {
             team: {
               description: teams[idx % 2],
               key: 'team',
-              value: 'devops',
+              value: teams[idx % 2],
             },
             _AdGroup: {
               description: '',

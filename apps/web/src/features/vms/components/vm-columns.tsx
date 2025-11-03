@@ -13,11 +13,10 @@ import {
   getSpecMemory,
   getSpecSockets,
   getStatusCpuUsage,
-  getTeamName,
+  getTeamValue,
   getVmArchitecture,
   getVmDiskSizes,
   getVmDiskUsages,
-  //getVmFamily,
   getVmHostName,
   getVmId,
   getVmName,
@@ -81,7 +80,7 @@ export const getVMTableColumns = (
     isVisible('team') &&
       columnHelper.accessor(
         (row) => {
-          const team = getTeamName(row)
+          const team = getTeamValue(row)
           return team
         },
         {

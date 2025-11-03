@@ -34,7 +34,6 @@ import {
   getVmToolVersion,
   getAdGroup,
   getSpecMemory,
-  getTeamName,
   getTeamValue,
   VMDetailsProps,
   serviceIdDescription,
@@ -77,7 +76,7 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
   const powerState = getVmPowerState(vm)
   const toolVersion = getVmToolVersion(vm)
 
-  const teamName = getTeamName(vm)
+  const teamName = getTeamValue(vm)
   const teamValue = getTeamValue(vm)
   const AdGroup = getAdGroup(vm)
   const serviceId = serviceIdDescription(vm)
