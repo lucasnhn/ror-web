@@ -15,6 +15,7 @@ import { useVMContext } from '@/context/vm-context'
 import { NavigationTabs } from '@/components/ui/navigation-tabs'
 import { Power, PowerOff, TriangleAlert } from 'lucide-react'
 import { vmCardPowerStatus } from '../utils/env-colors'
+import { getVmHostName, getVmPowerState } from '../utils/vms'
 
 interface VMHeaderProps {
   className?: string
@@ -23,15 +24,15 @@ interface VMHeaderProps {
 
 export const VMHeader = ({ className, tabs }: VMHeaderProps) => {
   const { vm } = useVMContext()
-  const hostname = vm?.virtualmachine?.status?.operatingsystem?.hostname || 'Unknown VM'
-  const powerstate = vm?.virtualmachine?.status?.operatingsystem?.powerstate || 'undefined'
+  const hostname = getVmHostName(vm) || 'Unknown VM'
+  const powerstate = getVmPowerState(vm) || 'undefined'
   const [lightmode, darkmode] = vmCardPowerStatus[powerstate] || ['bg-gray-200', 'dark:bg-gray-600']
 
   return (
     <div>
       <div className={cn(className, 'relative flex h-48 w-full')}>
         <div className='flex flex-col justify-between w-full h-full z-10'>
-          <h1 className='text-center sm:text-left mx-auto sm:mx-12 my-auto sm:self-start text-3xl sm:text-5xl'>
+          <h1 className='text-center sm:text-left mx-auto sm:mx-12 my-auto sm:self-start text-2xl sm:text-4xl'>
             {hostname}
           </h1>
           <NavigationTabs className='mb-0' items={tabs} tabColor={cn(lightmode, darkmode)} />
@@ -68,7 +69,7 @@ export const VMHeader = ({ className, tabs }: VMHeaderProps) => {
                     </>
                   )}
                 </span>
-                <span className='hidden xl:block'>Power state:&nbsp;</span>
+                <span className='hidden xl:block'>Power:&nbsp;</span>
                 <span className='hidden md:block'>{powerstate || 'undefined'}</span>
               </p>
             </div>

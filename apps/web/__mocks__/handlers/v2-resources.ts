@@ -4,9 +4,11 @@ import { ingressesResponse } from '../data/ingresses'
 import { clustersVersion2 } from '../data/clusters'
 import datacenters from '../data/datacenters'
 import { vulnerabilityReports } from '../data/vulnerability-reports'
+import { mockVms } from '../data/vms'
 
 type Resource = (typeof clustersVersion2.resources)[number]
 type NotFound = { message: string }
+type ResourceVm = (typeof mockVms.resources)[number]
 
 /**
  * Define mock handlers for v2 resource-related endpoints
@@ -36,6 +38,12 @@ export const v2ResourcesHandlers = [
         return HttpResponse.json(datacenters) // Return all datacenter data
       case 'VulnerabilityReport':
         return HttpResponse.json(vulnerabilityReports) // Return all vulnerability report data
+      case 'VirtualMachine': {
+        const limit = Number(url.searchParams.get('limit') || 50)
+        const offset = Number(url.searchParams.get('offset') || 0)
+        const allVMs = mockVms.resources
+        return HttpResponse.json({ resources: allVMs.slice(offset, offset + limit) })
+      }
       default:
         return HttpResponse.json(null) // If unknown kind, return null
     }
