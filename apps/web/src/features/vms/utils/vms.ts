@@ -1,5 +1,5 @@
 import { User } from 'next-auth'
-import { VMCardData } from '@/features/vms/types/vm-card-type'
+import { VMCardData } from '@/features/vms/types/vm-types'
 import type { VirtualMachine } from '@ror/js-api-client'
 import { Params } from '@/types/resources-page'
 
@@ -96,6 +96,20 @@ export const getVmToolVersion = (vm: VirtualMachine): string => {
   return vm.virtualmachine?.status?.operatingSystem?.toolVersion || 'Unknown'
 }
 
+export const getVmDisks = (vm: VirtualMachine) => {
+  return vm.virtualmachine?.status?.disks || []
+}
+
+export const getVmDiskSizes = (vm: VirtualMachine): number[] => {
+  const disks = getVmDisks(vm)
+  return disks.map((disk) => disk.sizeBytes || 0)
+}
+
+export const getVmDiskUsages = (vm: VirtualMachine): number[] => {
+  const disks = getVmDisks(vm)
+  return disks.map((disk) => disk.usageBytes || 0)
+}
+
 export const getSpecSockets = (vm: VirtualMachine): number | undefined => {
   return vm?.virtualmachine?.spec?.cpu?.sockets ?? undefined
 }
@@ -124,10 +138,65 @@ export const getNetworks = (vm: VirtualMachine): Network[] => {
   }))
 }
 
+export const getNetworkId = (network: Network): string => {
+  return network?.id ?? 'unknown-id'
+}
+
 export const getVmOperatingSystem = (vm: VirtualMachine) => {
   return vm?.virtualmachine?.status?.operatingSystem
 }
 
 export const getVmSpec = (vm: VirtualMachine) => {
   return vm?.virtualmachine?.spec
+}
+
+export const getTeamName = (vm: VirtualMachine) => {
+  return vm?.virtualmachine?.status?.tags?.team?.description
+}
+
+export const getTeamValue = (vm: VirtualMachine) => {
+  return vm?.virtualmachine?.status?.tags?.team?.value
+}
+
+export const getAllTeamNames = (vms: VirtualMachine[]): string[] => {
+  const teamNames = new Set<string>()
+  vms.forEach((vm) => {
+    const teamName = getTeamName(vm)
+    if (teamName && teamName.trim()) {
+      teamNames.add(teamName)
+    }
+  })
+  return Array.from(teamNames).sort()
+}
+
+export const getAdGroup = (vm: VirtualMachine) => {
+  return vm?.virtualmachine?.status?.tags?._AdGroup?.value
+}
+
+export const serviceIdDescription = (vm: VirtualMachine) => {
+  return vm?.virtualmachine?.status?.tags?.serviceId?.description
+}
+
+export const serviceIdValue = (vm: VirtualMachine) => {
+  return vm?.virtualmachine?.status?.tags?.serviceId?.value
+}
+
+export const getVmMetadataName = (vm: VirtualMachine) => {
+  return vm?.metadata?.name
+}
+
+export const getLastUpdated = (vm: VirtualMachine) => {
+  return vm?.virtualmachine?.status?.lastUpdated
+}
+
+export const getLocation = (vm: VirtualMachine) => {
+  return vm?.virtualmachine?.status?.location
+}
+
+export const getProvider = (vm: VirtualMachine) => {
+  return vm?.virtualmachine?.provider
+}
+
+export const getTags = (vm: VirtualMachine) => {
+  return vm?.virtualmachine?.status?.tags || {}
 }

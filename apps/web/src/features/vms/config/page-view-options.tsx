@@ -1,24 +1,34 @@
 import { Option } from '@/components/shadcn/multiselect'
+import { getTeamName } from '../utils/vms'
+import type { VirtualMachine } from '@ror/js-api-client'
 
 export const displayDataOptions: Option[] = [
-  { label: 'Name', value: 'name' },
+  { label: 'OS-version', value: 'name' },
   { label: 'ID', value: 'id' },
-  { label: 'Power State', value: 'powerState' },
+  { label: 'Power', value: 'powerState' },
   { label: 'Architecture', value: 'architecture' },
-  { label: 'Family', value: 'family' },
+  //{ label: 'OS-type', value: 'family' },
   { label: 'Version', value: 'version' },
-  { label: 'Tool Version', value: 'toolVersion' },
+  { label: 'VMware Tools version', value: 'toolVersion' },
+  { label: 'Disk Size', value: 'disk-size' },
+  { label: 'Memory', value: 'memory' },
+  { label: 'CPU', value: 'cpu' },
+  { label: 'Team', value: 'team' },
 ]
 
 export const sortingOptions = [
   { value: 'hostName', label: 'Hostname' },
-  { value: 'name', label: 'Name' },
+  { value: 'name', label: 'OS-version' },
   { value: 'id', label: 'ID' },
-  { value: 'powerState', label: 'Power State' },
+  { value: 'powerState', label: 'Power' },
   { value: 'architecture', label: 'Architecture' },
-  { value: 'family', label: 'Family' },
+  //{ value: 'family', label: 'OS-type' },
   { value: 'version', label: 'Version' },
-  { value: 'toolVersion', label: 'Tool Version' },
+  { value: 'toolVersion', label: 'VMware Tools version' },
+  { value: 'disk-size', label: 'Disk Size' },
+  { value: 'memory', label: 'Memory' },
+  { value: 'cpu', label: 'CPU' },
+  { value: 'team', label: 'Team' },
 ]
 
 export const powerStateOptions: Option[] = [
@@ -27,7 +37,24 @@ export const powerStateOptions: Option[] = [
   { value: 'undefined', label: 'Undefined' },
 ]
 
-export const filterOptions = [
+// Generate team options from VM data
+export const generateTeamOptions = (vms: VirtualMachine[]): Option[] => {
+  const teams = new Set<string>()
+
+  vms.forEach((vm) => {
+    const teamName = getTeamName(vm)
+    if (teamName && teamName.trim()) {
+      teams.add(teamName)
+    }
+  })
+  teams.add('No Team')
+
+  return Array.from(teams)
+    .sort()
+    .map((team) => ({ value: team, label: team }))
+}
+
+export const generateFilterOptions = (vms: VirtualMachine[]) => [
   { label: 'Power States', placeholder: 'Choose Power State', data: powerStateOptions },
-  { label: 'More filters', placeholder: 'More filters here', data: [] },
+  { label: 'Teams', placeholder: 'Choose Team', data: generateTeamOptions(vms) },
 ]

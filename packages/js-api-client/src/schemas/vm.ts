@@ -118,3 +118,5 @@ export const VirtualMachineType = V2ResourceSchema.extend({
 })
 
 export const VMResourceResponseSchema = createV2ResourceResponseSchema(VirtualMachineType)
+export type VirtualMachineNetworks = z.infer<typeof VirtualMachineNetwork>
+export type VirtualMachineDisks = z.infer<typeof VirtualMachineDiskStatus>

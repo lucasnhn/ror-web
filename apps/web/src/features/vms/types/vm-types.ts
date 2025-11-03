@@ -7,3 +7,6 @@ export type VMCardData =
   | 'family'
   | 'version'
   | 'toolVersion'
+  | 'team'
+
+export type VMColumnsData = VMCardData | 'disk-size' | 'memory' | 'sockets' | 'cpu'

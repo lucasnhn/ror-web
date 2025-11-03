@@ -30,13 +30,14 @@ import {
   getVmFamily,
   getVmArchitecture,
   getVmToolVersion,
+  getTeamName,
 } from '@/features/vms/utils/vms'
 import { NotReadyMessage } from '@/components/ui/not-ready-message'
 import { cn } from '@/utils/clsxm'
 import { useRef, useState, useMemo, useEffect, useCallback } from 'react'
 import { VMCard } from '@/features/vms/components/vm-card'
-import { VMCardData } from '@/features/vms/types/vm-card-type'
-import { displayDataOptions, sortingOptions, filterOptions } from '@/features/vms/config/page-view-options'
+import { VMCardData } from '@/features/vms/types/vm-types'
+import { displayDataOptions, sortingOptions, generateFilterOptions } from '@/features/vms/config/page-view-options'
 import { useDisplayData } from '@/hooks/use-display-data'
 import { ResourceControls } from '@/components/ui/resource-controls'
 import { exportVmsAsCSV, exportVmsAsExcel } from '@/features/vms/utils/export-helpers'
@@ -58,7 +59,10 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
     [vms]
   )
 
-  const filterDefinitions = [{ key: 'Power States', extractor: (vm: VirtualMachine) => getVmPowerState(vm) }]
+  const filterDefinitions = [
+    { key: 'Power States', extractor: (vm: VirtualMachine) => getVmPowerState(vm) },
+    { key: 'Teams', extractor: (vm: VirtualMachine) => getTeamName(vm) },
+  ]
 
   const { selectedFilters, setSelectedFilters, filteredItems, resetFilters } = useFilters<VirtualMachine>(
     safeItems,
@@ -66,6 +70,9 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
   )
   const { selectedDisplayData, setSelectedDisplayData } = useDisplayData<VMCardData>('vms')
   const [searchResults, setSearchResults] = useState<VirtualMachine[]>(safeItems)
+
+  // Generate dynamic filter options based on available VMs
+  const filterOptions = useMemo(() => generateFilterOptions(safeItems), [safeItems])
 
   // Handler for display data changes
   const onDisplayChange = (selected: Option[]) => setSelectedDisplayData(selected.map((i) => i.value as VMCardData))
@@ -131,6 +138,10 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
     {
       key: 'powerState',
       extractor: (vm) => getVmPowerState(vm),
+    },
+    {
+      key: 'team',
+      extractor: (vm) => getTeamName(vm),
     },
   ]
 
@@ -225,36 +236,46 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
       </NotReadyMessage>
 
       <section className='px-12 my-8'>
-        {params.view === 'list' ? (
-          <DataTable
-            key='table'
-            data={(params.sort ? sortedItems : filteredItems).filter((c) =>
-              searchResults.some(
-                (sr) =>
-                  getVmId(sr) === getVmId(c) || getVmName(sr) === getVmName(c) || getVmHostName(sr) === getVmHostName(c)
-              )
-            )}
-            columns={getVMTableColumns(user, selectedDisplayData)}
-          />
-        ) : (
-          <div className='flex flex-row flex-wrap gap-6'>
-            {displayedItems.map((vm, idx) => {
-              return (
-                <div key={idOf(vm) || idx}>
-                  <VMCard
-                    vm={vm}
-                    vmDisplayData={
-                      selectedDisplayData.length > 0
-                        ? selectedDisplayData
-                        : displayDataOptions.map((opt) => opt.value as VMCardData)
-                    }
-                  />
+        {(() => {
+          // Group items by team name
+          const itemsByTeam = displayedItems.reduce<Record<string, VirtualMachine[]>>((acc, vm) => {
+            const team = getTeamName(vm) || 'No Team'
+            if (!acc[team]) acc[team] = []
+            acc[team].push(vm)
+            return acc
+          }, {})
+          const sortedTeams = Object.keys(itemsByTeam).sort()
+
+          return sortedTeams.map((team, idx) => (
+            <div key={team} className='mb-12'>
+              <h2 className='text-2xl font-semibold mb-4'>{team}</h2>
+              {params.view === 'list' ? (
+                <DataTable
+                  key={`table-${team}`}
+                  data={itemsByTeam[team]}
+                  columns={getVMTableColumns(user, selectedDisplayData)}
+                />
+              ) : (
+                <div className='flex flex-row flex-wrap gap-6'>
+                  {itemsByTeam[team].map((vm, vmIdx) => (
+                    <div key={idOf(vm) || vmIdx}>
+                      <VMCard
+                        vm={vm}
+                        vmDisplayData={
+                          selectedDisplayData.length > 0
+                            ? selectedDisplayData
+                            : displayDataOptions.map((opt) => opt.value as VMCardData)
+                        }
+                      />
+                    </div>
+                  ))}
+                  <div ref={sentinelRef} className='h-px' />
                 </div>
-              )
-            })}
-            <div ref={sentinelRef} className='h-px' />
-          </div>
-        )}
+              )}
+              {idx < sortedTeams.length - 1 && <hr className='my-8 border-t border-gray-800' />}
+            </div>
+          ))
+        })()}
       </section>
     </div>
   )

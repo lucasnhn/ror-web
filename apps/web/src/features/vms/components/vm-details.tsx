@@ -19,7 +19,7 @@ import 'react-resizable/css/styles.css'
 import { useState } from 'react'
 import { Pill } from '@/components/shadcn/pill'
 import { vmActionsColors } from '../utils/env-colors'
-import { getSpecMemory, Network, VMDetailsProps } from '../utils/vms'
+
 import {
   getVmArchitecture,
   getVmFamily,
@@ -31,8 +31,14 @@ import {
   getSpecSockets,
   getSpecCoresPerSocket,
   getStatusCpuUsage,
-  getNetworks,
   getVmToolVersion,
+  getAdGroup,
+  getSpecMemory,
+  getTeamName,
+  getTeamValue,
+  VMDetailsProps,
+  serviceIdDescription,
+  serviceIdValue,
 } from '../utils/vms'
 import { standardLayouts } from '@/features/vms/config/vm-details-layout'
 
@@ -71,15 +77,11 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
   const powerState = getVmPowerState(vm)
   const toolVersion = getVmToolVersion(vm)
 
-  const networks = getNetworks(vm) || []
-  const networksLength = networks.length
-  const listNetworks = networks.map((network, index) => {
-    return {
-      ...network,
-      id: network.id ?? `Network ${index + 1}`,
-    } as Network
-  })
-  const visibleNetworks = listNetworks.slice(0, 2)
+  const teamName = getTeamName(vm)
+  const teamValue = getTeamValue(vm)
+  const AdGroup = getAdGroup(vm)
+  const serviceId = serviceIdDescription(vm)
+  const serviceValue = serviceIdValue(vm)
 
   console.log(user)
 
@@ -122,7 +124,6 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
             <div className='flex gap-2'>
               <div className='flex flex-1 flex-col gap-2'>
                 <div className='flex flex-col'>
-                  <b>Memory: </b>
                   <span>{memoryInGB} GB</span>
                 </div>
               </div>
@@ -154,7 +155,46 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
               </div>
             </div>
           </div>
-
+          {teamName && (
+            <div key='team' className='drag-handle '>
+              <CardHeader title='Team' />
+              <div className='flex gap-2'>
+                <div className='flex flex-1 flex-col gap-2'>
+                  <div className='flex flex-col'>
+                    <span>
+                      {teamName} ({teamValue})
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+          {AdGroup && (
+            <div key='AD groups' className='drag-handle '>
+              <CardHeader title='AD Group' />
+              <div className='flex gap-2'>
+                <div className='flex flex-1 flex-col gap-2'>
+                  <div className='flex flex-col'>
+                    <span>{AdGroup}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+          {serviceId && (
+            <div key='service-id' className='drag-handle '>
+              <CardHeader title='Service ID' />
+              <div className='flex gap-2'>
+                <div className='flex flex-1 flex-col gap-2'>
+                  <div className='flex flex-col'>
+                    <span>
+                      {serviceId} ({serviceValue})
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
           <div key='info' className='drag-handle '>
             <CardHeader title='Operating System' />
             <div className='flex gap-2'>
@@ -164,7 +204,7 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
                   <span>{id}</span>
                 </div>
                 <div className='flex flex-col'>
-                  <b>Name: </b>
+                  <b>OS-version: </b>
                   <span>{name}</span>
                 </div>
                 <div className='flex flex-col'>
@@ -178,7 +218,7 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
               </div>
               <div className='flex flex-1 flex-col gap-2'>
                 <div className='flex flex-col'>
-                  <b>Tool version: </b>
+                  <b>VMware Tools version: </b>
                   <span>{toolVersion}</span>
                 </div>
                 <div className='flex flex-col'>
@@ -186,40 +226,9 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
                   <span>{architecture}</span>
                 </div>
                 <div className='flex flex-col'>
-                  <b>Family: </b>
+                  <b>OS-type: </b>
                   <span>{family}</span>
                 </div>
-              </div>
-            </div>
-          </div>
-          <div key='networks' className='drag-handle'>
-            <CardHeader title={`Networks (${networksLength})`} />
-            <div className='flex gap-2'>
-              <div className='flex flex-1 flex-col gap-2'>
-                {visibleNetworks.map((network: Network) => (
-                  <div key={network.id} className='mb-2 p-2 border rounded-lg'>
-                    <div className='flex flex-col'>
-                      <b>ID: </b>
-                      <span>{network.id}</span>
-                    </div>
-                    <div className='flex flex-col'>
-                      <b>IPv4: </b>
-                      <span>{network.ipv4}</span>
-                    </div>
-                    <div className='flex flex-col'>
-                      <b>IPv6: </b>
-                      <span>{network.ipv6}</span>
-                    </div>
-                    <div className='flex flex-col'>
-                      <b>MAC-address: </b>
-                      <span>{network.mac}</span>
-                    </div>
-                    <div className='flex flex-col'>
-                      <b>DNS server: </b>
-                      <span>{network.dns}</span>
-                    </div>
-                  </div>
-                ))}
               </div>
             </div>
           </div>
@@ -228,7 +237,7 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
             <div className='flex gap-2'>
               <div className='flex flex-1 flex-col gap-2'>
                 <div className='flex flex-col'>
-                  <b>Power state: </b>
+                  <b>Power: </b>
                   <span>{powerState === 'poweredOn' ? 'On' : powerState === 'poweredOff' ? 'Off' : 'Unknown'}</span>
                   <b>Actions:</b>
                   {powerState === 'poweredOn' ? null : (
