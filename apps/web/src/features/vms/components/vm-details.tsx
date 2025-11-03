@@ -38,6 +38,7 @@ import {
   VMDetailsProps,
   serviceIdDescription,
   serviceIdValue,
+  getTeamName,
 } from '../utils/vms'
 import { standardLayouts } from '@/features/vms/config/vm-details-layout'
 
@@ -76,7 +77,7 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
   const powerState = getVmPowerState(vm)
   const toolVersion = getVmToolVersion(vm)
 
-  const teamName = getTeamValue(vm)
+  const teamName = getTeamName(vm)
   const teamValue = getTeamValue(vm)
   const AdGroup = getAdGroup(vm)
   const serviceId = serviceIdDescription(vm)
@@ -161,7 +162,7 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
                 <div className='flex flex-1 flex-col gap-2'>
                   <div className='flex flex-col'>
                     <span>
-                      {teamName} ({teamValue})
+                      {teamValue} ({teamName})
                     </span>
                   </div>
                 </div>
