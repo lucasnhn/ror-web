@@ -110,35 +110,6 @@ export const getVmDiskUsages = (vm: VirtualMachine): number[] => {
   return disks.map((disk) => disk.usageBytes || 0)
 }
 
-// export const getVmTotalDiskSize = (vm: VirtualMachine): number => {
-//   const sizes = getVmDiskSizes(vm)
-//   return sizes.reduce((total, size) => total + size, 0)
-// }
-
-// export const getVmTotalDiskUsage = (vm: VirtualMachine): number => {
-//   const usages = getVmDiskUsages(vm)
-//   return usages.reduce((total, usage) => total + usage, 0)
-// }
-
-// export const getVmDiskUtilization = (vm: VirtualMachine): number => {
-//   const totalSize = getVmTotalDiskSize(vm)
-//   const totalUsage = getVmTotalDiskUsage(vm)
-//   return totalSize > 0 ? (totalUsage / totalSize) * 100 : 0
-// }
-
-// export const getVmDiskInfo = (vm: VirtualMachine) => {
-//   const disks = getVmDisks(vm)
-//   return disks.map(disk => ({
-//     id: disk.id,
-//     name: disk.name,
-//     sizeBytes: disk.sizeBytes || 0,
-//     usageBytes: disk.usageBytes || 0,
-//     type: disk.type,
-//     isMounted: disk.isMounted,
-//     utilizationPercent: disk.sizeBytes ? ((disk.usageBytes || 0) / disk.sizeBytes) * 100 : 0
-//   }))
-// }
-
 export const getSpecSockets = (vm: VirtualMachine): number | undefined => {
   return vm?.virtualmachine?.spec?.cpu?.sockets ?? undefined
 }
@@ -185,6 +156,17 @@ export const getTeamName = (vm: VirtualMachine) => {
 
 export const getTeamValue = (vm: VirtualMachine) => {
   return vm?.virtualmachine?.status?.tags?.team?.value
+}
+
+export const getAllTeamNames = (vms: VirtualMachine[]): string[] => {
+  const teamNames = new Set<string>()
+  vms.forEach((vm) => {
+    const teamName = getTeamName(vm)
+    if (teamName && teamName.trim()) {
+      teamNames.add(teamName)
+    }
+  })
+  return Array.from(teamNames).sort()
 }
 
 export const getAdGroup = (vm: VirtualMachine) => {

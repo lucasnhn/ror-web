@@ -37,7 +37,7 @@ import { cn } from '@/utils/clsxm'
 import { useRef, useState, useMemo, useEffect, useCallback } from 'react'
 import { VMCard } from '@/features/vms/components/vm-card'
 import { VMCardData } from '@/features/vms/types/vm-types'
-import { displayDataOptions, sortingOptions, filterOptions } from '@/features/vms/config/page-view-options'
+import { displayDataOptions, sortingOptions, generateFilterOptions } from '@/features/vms/config/page-view-options'
 import { useDisplayData } from '@/hooks/use-display-data'
 import { ResourceControls } from '@/components/ui/resource-controls'
 import { exportVmsAsCSV, exportVmsAsExcel } from '@/features/vms/utils/export-helpers'
@@ -70,6 +70,9 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
   )
   const { selectedDisplayData, setSelectedDisplayData } = useDisplayData<VMCardData>('vms')
   const [searchResults, setSearchResults] = useState<VirtualMachine[]>(safeItems)
+
+  // Generate dynamic filter options based on available VMs
+  const filterOptions = useMemo(() => generateFilterOptions(safeItems), [safeItems])
 
   // Handler for display data changes
   const onDisplayChange = (selected: Option[]) => setSelectedDisplayData(selected.map((i) => i.value as VMCardData))

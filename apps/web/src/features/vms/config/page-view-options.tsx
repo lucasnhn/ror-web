@@ -1,4 +1,6 @@
 import { Option } from '@/components/shadcn/multiselect'
+import { getTeamName } from '../utils/vms'
+import type { VirtualMachine } from '@ror/js-api-client'
 
 export const displayDataOptions: Option[] = [
   { label: 'OS-version', value: 'name' },
@@ -35,13 +37,24 @@ export const powerStateOptions: Option[] = [
   { value: 'undefined', label: 'Undefined' },
 ]
 
-export const teamOptions: Option[] = [
-  { value: 'Linux driftsplattform', label: 'Linux driftsplattform' },
-  { value: 'Windows Driftsplatform', label: 'Windows Driftsplatform' },
-]
+// Generate team options from VM data
+export const generateTeamOptions = (vms: VirtualMachine[]): Option[] => {
+  const teams = new Set<string>()
 
-export const filterOptions = [
+  vms.forEach((vm) => {
+    const teamName = getTeamName(vm)
+    if (teamName && teamName.trim()) {
+      teams.add(teamName)
+    }
+  })
+  teams.add('No Team')
+
+  return Array.from(teams)
+    .sort()
+    .map((team) => ({ value: team, label: team }))
+}
+
+export const generateFilterOptions = (vms: VirtualMachine[]) => [
   { label: 'Power States', placeholder: 'Choose Power State', data: powerStateOptions },
-  { label: 'Teams', placeholder: 'Choose Team', data: teamOptions },
-  { label: 'More filters', placeholder: 'More filters here', data: [] },
+  { label: 'Teams', placeholder: 'Choose Team', data: generateTeamOptions(vms) },
 ]

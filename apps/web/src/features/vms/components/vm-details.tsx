@@ -31,13 +31,11 @@ import {
   getSpecSockets,
   getSpecCoresPerSocket,
   getStatusCpuUsage,
-  // getNetworks,
   getVmToolVersion,
   getAdGroup,
   getSpecMemory,
   getTeamName,
   getTeamValue,
-  // Network,
   VMDetailsProps,
   serviceIdDescription,
   serviceIdValue,
@@ -78,16 +76,6 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
   const family = getVmFamily(vm)
   const powerState = getVmPowerState(vm)
   const toolVersion = getVmToolVersion(vm)
-
-  // const networks = getNetworks(vm) || []
-  // const networksLength = networks.length
-  // const listNetworks = networks.map((network, index) => {
-  //   return {
-  //     ...network,
-  //     id: network.id ?? `Network ${index + 1}`,
-  //   } as Network
-  // })
-  // const visibleNetworks = listNetworks.slice(0, 2)
 
   const teamName = getTeamName(vm)
   const teamValue = getTeamValue(vm)
@@ -244,37 +232,6 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
               </div>
             </div>
           </div>
-          {/* <div key='networks' className='drag-handle'>
-            <CardHeader title={`Networks (${networksLength})`} />
-            <div className='flex gap-2'>
-              <div className='flex flex-1 flex-col gap-2'>
-                {visibleNetworks.map((network: Network) => (
-                  <div key={network.id} className='mb-2 p-2 border rounded-lg'>
-                    <div className='flex flex-col'>
-                      <b>ID: </b>
-                      <span>{network.id}</span>
-                    </div>
-                    <div className='flex flex-col'>
-                      <b>IPv4: </b>
-                      <span>{network.ipv4}</span>
-                    </div>
-                    <div className='flex flex-col'>
-                      <b>IPv6: </b>
-                      <span>{network.ipv6}</span>
-                    </div>
-                    <div className='flex flex-col'>
-                      <b>MAC-address: </b>
-                      <span>{network.mac}</span>
-                    </div>
-                    <div className='flex flex-col'>
-                      <b>DNS server: </b>
-                      <span>{network.dns}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div> */}
           <div key='controlPanel' className='drag-handle '>
             <CardHeader title='Control Panel' />
             <div className='flex gap-2'>
