@@ -154,7 +154,7 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
               </div>
             </div>
           </div>
-          {teamName && (
+          {teamValue && (
             <div key='team' className='drag-handle '>
               <CardHeader title='Team' />
               <div className='flex gap-2'>
