@@ -44,9 +44,9 @@ export const mockVms = {
             {
               id: `disk-${idx}`,
               name: `disk-${idx}-vmdk`,
-              sizeBytes: 26843545600,
+              sizeBytes: 78843545600,
               type: 'persistent',
-              usageBytes: 2684354560,
+              usageBytes: 35843545600,
               isMounted: true,
             },
             {
@@ -54,7 +54,7 @@ export const mockVms = {
               name: `disk-${idx + 1}-vmdk`,
               sizeBytes: 35843545600,
               type: 'persistent',
-              usageBytes: 1684354560,
+              usageBytes: 28984354560,
               isMounted: false,
             },
             {
@@ -62,7 +62,7 @@ export const mockVms = {
               name: `disk-${idx + 2}-vmdk`,
               sizeBytes: 54843545600,
               type: 'persistent',
-              usageBytes: 684354560,
+              usageBytes: 3684354560,
               isMounted: true,
             },
           ],
