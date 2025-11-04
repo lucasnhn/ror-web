@@ -2,7 +2,7 @@
 
 import { VirtualMachineDisks } from '@ror/js-api-client'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, Legend, ResponsiveContainer } from 'recharts'
-import { AlertTriangle } from 'lucide-react'
+import { AlertTriangle, AlertCircle, CheckCircle } from 'lucide-react'
 
 export const DiskCharts = ({ items }: { items: VirtualMachineDisks[] }) => {
   const chartData = items.map((disk) => {
@@ -24,7 +24,7 @@ export const DiskCharts = ({ items }: { items: VirtualMachineDisks[] }) => {
       const size = disk.sizeBytes ? Number(disk.sizeBytes) / 1024 ** 3 : 0
       const usage = disk.usageBytes ? Number(disk.usageBytes) / 1024 ** 3 : 0
       const percentUsed = size > 0 ? (usage / size) * 100 : 0
-      return percentUsed > 80
+      return percentUsed > 80 && percentUsed <= 95
     })
     .map((disk) => {
       const size = disk.sizeBytes ? Number(disk.sizeBytes) / 1024 ** 3 : 0
@@ -34,9 +34,49 @@ export const DiskCharts = ({ items }: { items: VirtualMachineDisks[] }) => {
       return { name, percentUsed }
     })
 
+  // Check for disks with less than 5% available space (critical)
+  const criticalSpaceDisks = items
+    .filter((disk) => {
+      const size = disk.sizeBytes ? Number(disk.sizeBytes) / 1024 ** 3 : 0
+      const usage = disk.usageBytes ? Number(disk.usageBytes) / 1024 ** 3 : 0
+      const percentUsed = size > 0 ? (usage / size) * 100 : 0
+      return percentUsed > 95
+    })
+    .map((disk) => {
+      const size = disk.sizeBytes ? Number(disk.sizeBytes) / 1024 ** 3 : 0
+      const usage = disk.usageBytes ? Number(disk.usageBytes) / 1024 ** 3 : 0
+      const percentUsed = size > 0 ? (usage / size) * 100 : 0
+      const freeSpace = size - usage
+      const name = disk.name || disk.id || 'Unknown Disk'
+      return { name, percentUsed, freeSpace }
+    })
+
   return (
     <div className='border border-border rounded-lg p-4 bg-background'>
       <h3 className='text-lg font-semibold mb-4'>All Disks Usage</h3>
+
+      {/* Critical Disk Space Warning (less than 5% free) */}
+      {criticalSpaceDisks.length > 0 && (
+        <div className='mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg'>
+          <div className='flex items-start gap-2'>
+            <AlertCircle className='h-5 w-5 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0' />
+            <div>
+              <h4 className='font-semibold text-red-800 dark:text-red-200 text-sm'>Critical Disk Space Warning</h4>
+              <p className='text-red-700 dark:text-red-300 text-xs mt-1'>
+                The following disk{criticalSpaceDisks.length > 1 ? 's have' : ' has'} less than 5% free space remaining:
+              </p>
+              <ul className='mt-2 space-y-1'>
+                {criticalSpaceDisks.map((disk, index) => (
+                  <li key={index} className='text-red-700 dark:text-red-300 text-xs'>
+                    • <strong>{disk.name}</strong>: {disk.percentUsed.toFixed(1)}% used ({disk.freeSpace.toFixed(1)} GB
+                    free)
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Low Disk Space Warning */}
       {lowSpaceDisks.length > 0 && (
@@ -55,6 +95,21 @@ export const DiskCharts = ({ items }: { items: VirtualMachineDisks[] }) => {
                   </li>
                 ))}
               </ul>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* All Clear Status - when no warnings */}
+      {criticalSpaceDisks.length === 0 && lowSpaceDisks.length === 0 && items.length > 0 && (
+        <div className='mb-4 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg'>
+          <div className='flex items-start gap-2'>
+            <CheckCircle className='h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0' />
+            <div>
+              <h4 className='font-semibold text-green-800 dark:text-green-200 text-sm'>Disk Space Status: Healthy</h4>
+              <p className='text-green-700 dark:text-green-300 text-xs mt-1'>
+                All disks have sufficient free space (less than 80% used). No action required.
+              </p>
             </div>
           </div>
         </div>
