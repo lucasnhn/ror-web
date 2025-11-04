@@ -2,8 +2,7 @@
 
 import { VirtualMachineDisks } from '@ror/js-api-client'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, Legend, ResponsiveContainer } from 'recharts'
-import { AlertTriangle, X } from 'lucide-react'
-import { useState } from 'react'
+import { AlertTriangle } from 'lucide-react'
 
 export const DiskCharts = ({ items }: { items: VirtualMachineDisks[] }) => {
   const chartData = items.map((disk) => {
@@ -34,10 +33,6 @@ export const DiskCharts = ({ items }: { items: VirtualMachineDisks[] }) => {
       const name = disk.name || disk.id || 'Unknown Disk'
       return { name, percentUsed }
     })
-
-  const [isVisible, setIsVisible] = useState(true)
-
-  if (!isVisible) return null
 
   return (
     <div className='border border-border rounded-lg p-4 bg-background'>
