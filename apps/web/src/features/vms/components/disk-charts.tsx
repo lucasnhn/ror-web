@@ -51,7 +51,7 @@ export const DiskCharts = ({ items }: { items: VirtualMachineDisks[] }) => {
             <div>
               <h4 className='font-semibold text-yellow-800 dark:text-yellow-200 text-sm'>Low Disk Space Warning</h4>
               <p className='text-yellow-700 dark:text-yellow-300 text-xs mt-1'>
-                The following disk{lowSpaceDisks.length > 1 ? 's have' : ' has'} less than 20% free space:
+                The following disk{lowSpaceDisks.length > 1 ? 's have' : ' has'} more than 80% used:
               </p>
               <ul className='mt-2 space-y-1'>
                 {lowSpaceDisks.map((disk, index) => (
