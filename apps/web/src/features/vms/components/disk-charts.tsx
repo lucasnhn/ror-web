@@ -3,7 +3,6 @@
 import { VirtualMachineDisks } from '@ror/js-api-client'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, Legend, ResponsiveContainer } from 'recharts'
 import { AlertTriangle, X } from 'lucide-react'
-import { Button } from '@ror/react'
 import { useState } from 'react'
 
 export const DiskCharts = ({ items }: { items: VirtualMachineDisks[] }) => {
@@ -20,7 +19,7 @@ export const DiskCharts = ({ items }: { items: VirtualMachineDisks[] }) => {
     }
   })
 
-  // Check for disks with less than 10 GB available space
+  // Check for disks with less than 20% available space
   const lowSpaceDisks = items
     .filter((disk) => {
       const size = disk.sizeBytes ? Number(disk.sizeBytes) / 1024 ** 3 : 0
