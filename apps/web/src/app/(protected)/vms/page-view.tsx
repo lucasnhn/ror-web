@@ -30,7 +30,7 @@ import {
   getVmFamily,
   getVmArchitecture,
   getVmToolVersion,
-  getTeamName,
+  getTeamValue,
 } from '@/features/vms/utils/vms'
 import { NotReadyMessage } from '@/components/ui/not-ready-message'
 import { cn } from '@/utils/clsxm'
@@ -61,7 +61,7 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
 
   const filterDefinitions = [
     { key: 'Power States', extractor: (vm: VirtualMachine) => getVmPowerState(vm) },
-    { key: 'Teams', extractor: (vm: VirtualMachine) => getTeamName(vm) },
+    { key: 'Teams', extractor: (vm: VirtualMachine) => getTeamValue(vm) },
   ]
 
   const { selectedFilters, setSelectedFilters, filteredItems, resetFilters } = useFilters<VirtualMachine>(
@@ -141,7 +141,7 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
     },
     {
       key: 'team',
-      extractor: (vm) => getTeamName(vm),
+      extractor: (vm) => getTeamValue(vm),
     },
   ]
 
@@ -239,7 +239,7 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
         {(() => {
           // Group items by team name
           const itemsByTeam = displayedItems.reduce<Record<string, VirtualMachine[]>>((acc, vm) => {
-            const team = getTeamName(vm) || 'No Team'
+            const team = getTeamValue(vm) || 'No Team'
             if (!acc[team]) acc[team] = []
             acc[team].push(vm)
             return acc
