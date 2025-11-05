@@ -200,3 +200,5 @@ export const getProvider = (vm: VirtualMachine) => {
 export const getTags = (vm: VirtualMachine) => {
   return vm?.virtualmachine?.status?.tags || {}
 }
+
+export const getVmsKey = (vm: VirtualMachine[] = []) => (Array.isArray(vm) ? vm.map(getVmId).join(',') : '')

@@ -31,6 +31,7 @@ import {
   getVmArchitecture,
   getVmToolVersion,
   getTeamName,
+  getVmsKey,
 } from '@/features/vms/utils/vms'
 import { NotReadyMessage } from '@/components/ui/not-ready-message'
 import { cn } from '@/utils/clsxm'
@@ -48,15 +49,29 @@ import { SortDefinition, useSorting } from '@/hooks/use-sorting'
 import { DataTable } from '@/components/ui/data-table'
 import { getVMTableColumns } from '@/features/vms/components/vm-columns'
 import type { VirtualMachine } from '@ror/js-api-client'
+import { useInfiniteLoader } from '@/hooks/use-infinite-loader'
+import { loadMoreVMs } from '@/utils/vms-actions'
 
 export const PageView = ({ className, user, vms, params }: PageViewProps) => {
   const filtersOpen = params.filters === 'open'
 
-  const sentinelRef = useRef<HTMLDivElement>(null)
+  const { items, sentinelRef, isLoading, hasMore } = useInfiniteLoader<VirtualMachine>({
+    initial: vms,
+    sort: params.sort,
+    pageSize: 50,
+    getItemId: getVmId,
+    getItemsKey: getVmsKey,
+    loadMore: async (offset, limit) => {
+      const res = await loadMoreVMs({ offset, limit, sort: params.sort })
+      return { items: res.items ?? [], hasMore: res.hasMore }
+    },
+  })
+
+  //const sentinelRef = useRef<HTMLDivElement>(null)
 
   const safeItems = useMemo(
-    () => vms.filter((c) => getVmOperatingSystem(c) && typeof getVmOperatingSystem(c) === 'object'),
-    [vms]
+    () => items.filter((c) => getVmOperatingSystem(c) && typeof getVmOperatingSystem(c) === 'object'),
+    [items]
   )
 
   const filterDefinitions = [
@@ -70,8 +85,6 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
   )
   const { selectedDisplayData, setSelectedDisplayData } = useDisplayData<VMCardData>('vms')
   const [searchResults, setSearchResults] = useState<VirtualMachine[]>(safeItems)
-
-  // Generate dynamic filter options based on available VMs
   const filterOptions = useMemo(() => generateFilterOptions(safeItems), [safeItems])
 
   // Handler for display data changes
@@ -183,11 +196,11 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
           powerState: getVmPowerState(vm),
           family: getVmFamily(vm),
         })}
-        getItemsKey={idsKey}
+        getItemsKey={getVmsKey}
         exportAsCSV={exportVmsAsCSV}
         exportAsExcel={exportVmsAsExcel}
         filteredItems={displayedItems}
-        allItems={vms}
+        allItems={items}
       />
     </div>
   )
@@ -254,6 +267,9 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
                   key={`table-${team}`}
                   data={itemsByTeam[team]}
                   columns={getVMTableColumns(user, selectedDisplayData)}
+                  // hasMore={hasMore}
+                  // isLoading={isLoading}
+                  // sentinelRef={sentinelRef}
                 />
               ) : (
                 <div className='flex flex-row flex-wrap gap-6'>
@@ -269,14 +285,21 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
                       />
                     </div>
                   ))}
-                  <div ref={sentinelRef} className='h-px' />
                 </div>
               )}
+
               {idx < sortedTeams.length - 1 && <hr className='my-8 border-t border-gray-800' />}
             </div>
           ))
         })()}
+
+        {/* Infinite scroll sentinel - placed outside team groups */}
+        <div ref={sentinelRef} className='h-px' />
       </section>
+      {isLoading && <div style={{ textAlign: 'center', padding: 16 }}>Loading...</div>}
+      {!hasMore && items.length > 0 && (
+        <div style={{ textAlign: 'center', padding: 16, color: '#888' }}>All VMs are loaded.</div>
+      )}
     </div>
   )
 }
