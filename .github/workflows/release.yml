@@ -157,10 +157,9 @@ jobs:
           
           # Extract changelog entry for this version
           if [ -f "CHANGELOG.md" ]; then
-            # Get content between version headers, escape for JSON
-            CHANGELOG_ENTRY=$(awk "/^## \[$VERSION\]/{flag=1; next} flag{print} /^### |^---$/{flag=0}" CHANGELOG.md | sed '/^### /d' | sed '/^---$/d' | sed 's/^- /• /' | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
-            if [ -n "$CHANGELOG_ENTRY" ]; then
-              echo "TAG_MESSAGE=$CHANGELOG_ENTRY" >> $GITHUB_ENV
+            TAG_MESSAGE=$(awk "/## \[${VERSION}\]/ { found=1; next }found && /^###/ { exit }found && /^## \[/ { exit }found && /^- / { print } " CHANGELOG.md | sed ':a;N;$!ba;s/\n/\\n/g')
+            if [ -n "$TAG_MESSAGE" ]; then
+              echo "TAG_MESSAGE=$TAG_MESSAGE" >> $GITHUB_ENV
             else
               echo "TAG_MESSAGE=Se CHANGELOG.md for details" >> $GITHUB_ENV
             fi

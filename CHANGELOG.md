@@ -20,6 +20,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Description: TEST of webhock
 - Impact: Test teams
 
+### Fixed
+
+- TEST
+
+## [v0.3.5] - 2025-10-28
+
 ---
 
 ## Template for future releases:
