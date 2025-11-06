@@ -39,7 +39,7 @@ export const v2ResourcesHandlers = [
       case 'VulnerabilityReport':
         return HttpResponse.json(vulnerabilityReports) // Return all vulnerability report data
       case 'VirtualMachine': {
-        const limit = Number(url.searchParams.get('limit') || 50)
+        const limit = Number(url.searchParams.get('limit') || 40)
         const offset = Number(url.searchParams.get('offset') || 0)
         const allVMs = mockVms.resources
         return HttpResponse.json({ resources: allVMs.slice(offset, offset + limit) })

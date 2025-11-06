@@ -12,6 +12,14 @@ import { Header } from '@/components/layout/app-shell/header'
 import { normalizeParams } from '@/features/cluster/utils/normalize-params'
 import { fetchVms } from '@/features/vms/services/fetch-vms'
 import { getRorApi } from '@/services/ror-api'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'ROR - VM',
+  description: 'View virtual machines',
+}
+
+export const dynamic = 'force-dynamic'
 
 export default async function VMPage({
   searchParams,
