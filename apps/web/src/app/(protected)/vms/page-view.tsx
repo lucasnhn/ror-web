@@ -240,12 +240,10 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
     )
 
   const GridView = () => {
-    // Check if user has filtered to exactly 2 teams
     const filteredTeams = selectedFilters['Teams'] || []
     const shouldGroupByTeam = filteredTeams.length >= 1
 
     if (shouldGroupByTeam) {
-      // Group items by team name when exactly 2 teams are selected
       const itemsByTeam = displayedItems.reduce<Record<string, VirtualMachine[]>>((acc, vm) => {
         const team = getTeamName(vm) || 'No Team'
         if (!acc[team]) acc[team] = []
@@ -332,12 +330,10 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
   }
 
   const TableView = () => {
-    // Check if user has filtered to exactly 2 teams
     const filteredTeams = selectedFilters['Teams'] || []
     const shouldGroupByTeam = filteredTeams.length >= 1
 
     if (shouldGroupByTeam) {
-      // Group items by team name when exactly 2 teams are selected
       const itemsByTeam = displayedItems.reduce<Record<string, VirtualMachine[]>>((acc, vm) => {
         const team = getTeamName(vm) || 'No Team'
         if (!acc[team]) acc[team] = []
