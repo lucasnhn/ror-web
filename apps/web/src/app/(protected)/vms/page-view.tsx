@@ -342,7 +342,11 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
 
         {!hasMore && items.length > 0 && (
           <div className='text-center py-4'>
-            <div className='text-sm text-muted-foreground'>All VMs are loaded.</div>
+            <div className='text-sm text-muted-foreground'>
+              {items.length < 50
+                ? 'All VMs are loaded.'
+                : 'Showing available VMs. Some VMs may not be visible due to API limitations.'}
+            </div>
           </div>
         )}
       </div>

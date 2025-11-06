@@ -60,11 +60,15 @@ export interface UseVmLayoutReturn {
 }
 
 export const getVmId = (vm: VirtualMachine): string => {
-  return vm.virtualmachine?.status?.operatingSystem?.id || vm.metadata?.name || vm.metadata?.uid || 'unknown-id'
+  return vm.virtualmachine?.status?.operatingSystem?.id || 'unknown-id'
+}
+
+export const getExternalId = (vm: VirtualMachine) => {
+  return vm.virtualmachine?.externalId
 }
 
 export const getVmHostName = (vm: VirtualMachine): string => {
-  return vm.virtualmachine?.status?.operatingSystem?.hostName || vm.metadata?.name || 'unnamed-vm'
+  return vm.virtualmachine?.status?.operatingSystem?.hostName || 'unnamed-vm'
 }
 
 export const getVmPowerState = (vm: VirtualMachine): string => {
@@ -189,4 +193,4 @@ export const getProvider = (vm: VirtualMachine) => {
 export const getTags = (vm: VirtualMachine) => {
   return vm?.virtualmachine?.status?.tags || {}
 }
-export const getVmsKey = (vms: VirtualMachine[] = []) => (Array.isArray(vms) ? vms.map(getVmId).join('|') : '')
+export const getVmsKey = (vms: VirtualMachine[] = []) => (Array.isArray(vms) ? vms.map(getExternalId).join('|') : '')

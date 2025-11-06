@@ -103,8 +103,20 @@ export function useInfiniteLoader<T>({
           setConsecutiveEmptyLoads((prev) => {
             const newCount = prev + 1
             console.log(`[useInfiniteLoader] No new items added, consecutive empty loads: ${newCount}`)
-            if (newCount >= 3) {
+
+            // If we get all duplicates on the first failed load, it suggests API pagination issues
+            if (newCount === 1 && data.items.length > 0) {
+              console.log(
+                `[useInfiniteLoader] ⚠️  API returned ${data.items.length} items but all were duplicates - API pagination may not be working properly`
+              )
+            }
+
+            if (newCount >= 2) {
+              // Reduced from 3 to 2 for faster detection
               console.log(`[useInfiniteLoader] Circuit breaker triggered - stopping infinite loading`)
+              console.log(
+                `[useInfiniteLoader] This usually means the API doesn't support pagination or is returning duplicate data`
+              )
               setHasMore(false)
             }
             return newCount
