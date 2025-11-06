@@ -62,7 +62,12 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
     getItemId: getVmId,
     getItemsKey: getVmsKey,
     loadMore: async (offset, limit) => {
-      const res = await loadMoreVMs({ offset, limit, sort: params.sort })
+      const res = await loadMoreVMs({
+        offset,
+        limit,
+        sort: params.sort,
+        order: params.order,
+      })
       return { items: res.items ?? [], hasMore: res.hasMore }
     },
   })
@@ -76,7 +81,7 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
 
   const filterDefinitions = [
     { key: 'Power States', extractor: (vm: VirtualMachine) => getVmPowerState(vm) },
-    { key: 'Teams', extractor: (vm: VirtualMachine) => getTeamName(vm) },
+    { key: 'Teams', extractor: (vm: VirtualMachine) => getTeamName(vm) || 'No Team' },
   ]
 
   const { selectedFilters, setSelectedFilters, filteredItems, resetFilters } = useFilters<VirtualMachine>(
@@ -233,6 +238,159 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
       </div>
     )
 
+  const GridView = () => {
+    // Check if user has filtered to exactly 2 teams
+    const filteredTeams = selectedFilters['Teams'] || []
+    const shouldGroupByTeam = filteredTeams.length >= 1
+
+    if (shouldGroupByTeam) {
+      // Group items by team name when exactly 2 teams are selected
+      const itemsByTeam = displayedItems.reduce<Record<string, VirtualMachine[]>>((acc, vm) => {
+        const team = getTeamName(vm) || 'No Team'
+        if (!acc[team]) acc[team] = []
+        acc[team].push(vm)
+        return acc
+      }, {})
+      const sortedTeams = Object.keys(itemsByTeam).sort()
+
+      return (
+        <div>
+          {sortedTeams.map((team, idx) => (
+            <div key={team} className='mb-12'>
+              <h2 className='text-2xl font-semibold mb-4'>{team}</h2>
+              <div className='flex flex-row flex-wrap gap-6'>
+                {itemsByTeam[team].map((vm, vmIdx) => (
+                  <div key={idOf(vm) || vmIdx}>
+                    <VMCard
+                      vm={vm}
+                      vmDisplayData={
+                        selectedDisplayData.length > 0
+                          ? selectedDisplayData
+                          : displayDataOptions.map((opt) => opt.value as VMCardData) || []
+                      }
+                    />
+                  </div>
+                ))}
+              </div>
+              {idx < sortedTeams.length - 1 && <hr className='my-8 border-t border-gray-300 dark:border-gray-700' />}
+            </div>
+          ))}
+
+          {/* Infinite scroll sentinel - placed outside team groups */}
+          <div ref={sentinelRef} className='h-px w-full' />
+
+          {isLoading && (
+            <div className='text-center py-4'>
+              <div className='text-sm text-muted-foreground'>Loading more VMs...</div>
+            </div>
+          )}
+
+          {!hasMore && items.length > 0 && (
+            <div className='text-center py-4'>
+              <div className='text-sm text-muted-foreground'>All VMs are loaded.</div>
+            </div>
+          )}
+        </div>
+      )
+    }
+
+    // Default view without team grouping
+    return (
+      <div>
+        <div className='flex flex-row flex-wrap gap-6'>
+          {displayedItems.map((vm, vmIdx) => (
+            <div key={idOf(vm) || vmIdx}>
+              <VMCard
+                vm={vm}
+                vmDisplayData={
+                  selectedDisplayData.length > 0
+                    ? selectedDisplayData
+                    : displayDataOptions.map((opt) => opt.value as VMCardData) || []
+                }
+              />
+            </div>
+          ))}
+        </div>
+
+        {/* Infinite scroll sentinel */}
+        <div ref={sentinelRef} className='h-px w-full' />
+
+        {isLoading && (
+          <div className='text-center py-4'>
+            <div className='text-sm text-muted-foreground'>Loading more VMs...</div>
+          </div>
+        )}
+
+        {!hasMore && items.length > 0 && (
+          <div className='text-center py-4'>
+            <div className='text-sm text-muted-foreground'>All VMs are loaded.</div>
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  const TableView = () => {
+    // Check if user has filtered to exactly 2 teams
+    const filteredTeams = selectedFilters['Teams'] || []
+    const shouldGroupByTeam = filteredTeams.length >= 1
+
+    if (shouldGroupByTeam) {
+      // Group items by team name when exactly 2 teams are selected
+      const itemsByTeam = displayedItems.reduce<Record<string, VirtualMachine[]>>((acc, vm) => {
+        const team = getTeamName(vm) || 'No Team'
+        if (!acc[team]) acc[team] = []
+        acc[team].push(vm)
+        return acc
+      }, {})
+      const sortedTeams = Object.keys(itemsByTeam).sort()
+
+      return (
+        <div>
+          {sortedTeams.map((team, idx) => (
+            <div key={team} className='mb-12'>
+              <h2 className='text-2xl font-semibold mb-4'>{team}</h2>
+              <DataTable
+                key={`table-${team}`}
+                data={itemsByTeam[team]}
+                columns={getVMTableColumns(user, selectedDisplayData)}
+              />
+              {idx < sortedTeams.length - 1 && <hr className='my-8 border-t border-gray-300 dark:border-gray-700' />}
+            </div>
+          ))}
+
+          {/* Infinite scroll sentinel - placed outside team groups */}
+          <div ref={sentinelRef} className='h-px w-full' />
+
+          {isLoading && (
+            <div className='text-center py-4'>
+              <div className='text-sm text-muted-foreground'>Loading more VMs...</div>
+            </div>
+          )}
+
+          {!hasMore && items.length > 0 && (
+            <div className='text-center py-4'>
+              <div className='text-sm text-muted-foreground'>All VMs are loaded.</div>
+            </div>
+          )}
+        </div>
+      )
+    }
+
+    // Default table view without team grouping
+    return (
+      <div>
+        <DataTable
+          data={displayedItems}
+          columns={getVMTableColumns(user, selectedDisplayData)}
+          hasMore={hasMore}
+          isLoading={isLoading}
+          sentinelRef={sentinelRef}
+        />
+      </div>
+    )
+  }
+
   return (
     <div className={cn(className, '@container')}>
       <div className={cn('border-b', filtersOpen && 'pb-2')}>
@@ -248,59 +406,9 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
         complete product as quick as possible :)
       </NotReadyMessage>
 
-      <section className='px-12 my-8'>
-        {(() => {
-          // Group items by team name
-          const itemsByTeam = displayedItems.reduce<Record<string, VirtualMachine[]>>((acc, vm) => {
-            const team = getTeamName(vm) || 'No Team'
-            if (!acc[team]) acc[team] = []
-            acc[team].push(vm)
-            return acc
-          }, {})
-          const sortedTeams = Object.keys(itemsByTeam).sort()
-
-          return sortedTeams.map((team, idx) => (
-            <div key={team} className='mb-12'>
-              <h2 className='text-2xl font-semibold mb-4'>{team}</h2>
-              {params.view === 'list' ? (
-                <DataTable
-                  key={`table-${team}`}
-                  data={itemsByTeam[team]}
-                  columns={getVMTableColumns(user, selectedDisplayData)}
-                  // hasMore={hasMore}
-                  // isLoading={isLoading}
-                  // sentinelRef={sentinelRef}
-                />
-              ) : (
-                <div className='flex flex-row flex-wrap gap-6'>
-                  {itemsByTeam[team].map((vm, vmIdx) => (
-                    <div key={idOf(vm) || vmIdx}>
-                      <VMCard
-                        vm={vm}
-                        vmDisplayData={
-                          selectedDisplayData.length > 0
-                            ? selectedDisplayData
-                            : displayDataOptions.map((opt) => opt.value as VMCardData)
-                        }
-                      />
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {idx < sortedTeams.length - 1 && <hr className='my-8 border-t border-gray-800' />}
-            </div>
-          ))
-        })()}
-
-        {/* Infinite scroll sentinel - placed outside team groups */}
-        <div ref={sentinelRef} className='h-px' />
-      </section>
-      {isLoading && <div style={{ textAlign: 'center', padding: 16 }}>Loading...</div>}
-      {!hasMore && items.length > 0 && (
-        <div style={{ textAlign: 'center', padding: 16, color: '#888' }}>All VMs are loaded.</div>
-      )}
+      <section className='px-12 my-8'>{params.view === 'list' ? <TableView /> : <GridView />}</section>
     </div>
   )
 }
+
 export default PageView
