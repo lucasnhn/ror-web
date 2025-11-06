@@ -1,7 +1,45 @@
 /**
  * VMs Page View Component
  * FILE OVERVIEW:
- * ------------------------
+ * ------  const { items, sentinelRef, isLoading, hasMore, fetchMore } = useInfiniteLoader<VirtualMachine>({
+    initial: vms,
+    sort: params.sort,
+    pageSize: 50,
+    getItemId: getVmId,
+    getItemsKey: getVmsKey,
+    loadMore: async (offset, limit) => {
+      console.log(`[PageView] loadMore called - offset: ${offset}, limit: ${limit}`)
+      console.log(`[PageView] Current params - sort: ${params.sort}, order: ${params.order}`)
+      
+      try {
+        const res = await loadMoreVMs({
+          offset,
+          limit,
+          sort: params.sort,
+          order: params.order,
+        })
+        
+        console.log(`[PageView] loadMoreVMs response:`, {
+          itemsCount: res.items?.length || 0,
+          hasMore: res.hasMore,
+          firstItem: res.items?.[0]?.metadata?.name || 'N/A',
+          lastItem: res.items?.[res.items.length - 1]?.metadata?.name || 'N/A'
+        })
+        
+        return { items: res.items ?? [], hasMore: res.hasMore }
+      } catch (error) {
+        console.error(`[PageView] Error in loadMore:`, error)
+        return { items: [], hasMore: false }
+      }
+    },
+  })
+
+  console.log(`[PageView] Current state - items: ${items.length}, isLoading: ${isLoading}, hasMore: ${hasMore}`)
+  console.log(`[PageView] First 3 items:`, items.slice(0, 3).map(vm => vm.metadata?.name || 'unnamed'))
+  console.log(`[PageView] Filter state:`, selectedFilters)
+  console.log(`[PageView] Search results:`, searchResults.length)
+
+  //const sentinelRef = useRef<HTMLDivElement>(null)--
  * Renders the main content of the Virtual Machines (VMs) page, including controls for searching, filtering, sorting, and toggling between grid and list views.
  * It also manages the state for selected display data, filters, and search results.
  *
@@ -56,7 +94,7 @@ import { loadMoreVMs } from '@/utils/vms-actions'
 export const PageView = ({ className, user, vms, params }: PageViewProps) => {
   const filtersOpen = params.filters === 'open'
 
-  const { items, sentinelRef, isLoading, hasMore } = useInfiniteLoader<VirtualMachine>({
+  const { items, sentinelRef, isLoading, hasMore, fetchMore } = useInfiniteLoader<VirtualMachine>({
     initial: vms,
     sort: params.sort,
     pageSize: 50,
@@ -108,6 +146,19 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
       lastSafeKeyRef.current = nextKey
     }
   }, [safeItems, idsKey])
+
+  // Debug effect to track state changes
+  useEffect(() => {
+    console.log(`[PageView] State changed - isLoading: ${isLoading}, hasMore: ${hasMore}, items: ${items.length}`)
+  }, [isLoading, hasMore, items.length])
+
+  useEffect(() => {
+    console.log(`[PageView] Filters changed:`, selectedFilters)
+  }, [selectedFilters])
+
+  useEffect(() => {
+    console.log(`[PageView] Sort/Order changed - sort: ${params.sort}, order: ${params.order}`)
+  }, [params.sort, params.order])
 
   const pathname = usePathname()
   const router = useRouter()
@@ -240,59 +291,6 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
     )
 
   const GridView = () => {
-    const filteredTeams = selectedFilters['Teams'] || []
-    const shouldGroupByTeam = filteredTeams.length >= 1
-
-    if (shouldGroupByTeam) {
-      const itemsByTeam = displayedItems.reduce<Record<string, VirtualMachine[]>>((acc, vm) => {
-        const team = getTeamName(vm) || 'No Team'
-        if (!acc[team]) acc[team] = []
-        acc[team].push(vm)
-        return acc
-      }, {})
-      const sortedTeams = Object.keys(itemsByTeam).sort()
-
-      return (
-        <div>
-          {sortedTeams.map((team, idx) => (
-            <div key={team} className='mb-12'>
-              <h2 className='text-2xl font-semibold mb-4'>{team}</h2>
-              <div className='flex flex-row flex-wrap gap-6'>
-                {itemsByTeam[team].map((vm, vmIdx) => (
-                  <div key={idOf(vm) || vmIdx}>
-                    <VMCard
-                      vm={vm}
-                      vmDisplayData={
-                        selectedDisplayData.length > 0
-                          ? selectedDisplayData
-                          : displayDataOptions.map((opt) => opt.value as VMCardData) || []
-                      }
-                    />
-                  </div>
-                ))}
-              </div>
-              {idx < sortedTeams.length - 1 && <hr className='my-8 border-t border-gray-300 dark:border-gray-700' />}
-            </div>
-          ))}
-
-          {/* Infinite scroll sentinel - placed outside team groups */}
-          <div ref={sentinelRef} className='h-px w-full' />
-
-          {isLoading && (
-            <div className='text-center py-4'>
-              <div className='text-sm text-muted-foreground'>Loading more VMs...</div>
-            </div>
-          )}
-
-          {!hasMore && items.length > 0 && (
-            <div className='text-center py-4'>
-              <div className='text-sm text-muted-foreground'>All VMs are loaded.</div>
-            </div>
-          )}
-        </div>
-      )
-    }
-
     // Default view without team grouping
     return (
       <div>
@@ -311,8 +309,13 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
           ))}
         </div>
 
-        {/* Infinite scroll sentinel */}
-        <div ref={sentinelRef} className='h-px w-full' />
+        {/* Infinite scroll sentinel - made visible for debugging */}
+        <div
+          ref={sentinelRef}
+          className='h-8 w-full bg-red-200 dark:bg-red-800 flex items-center justify-center text-xs text-red-700 dark:text-red-300 border border-red-400 my-4'
+        >
+          🎯 Scroll Sentinel (Debug) - {hasMore ? 'More available' : 'No more items'}
+        </div>
 
         {isLoading && (
           <div className='text-center py-4'>
@@ -330,50 +333,6 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
   }
 
   const TableView = () => {
-    const filteredTeams = selectedFilters['Teams'] || []
-    const shouldGroupByTeam = filteredTeams.length >= 1
-
-    if (shouldGroupByTeam) {
-      const itemsByTeam = displayedItems.reduce<Record<string, VirtualMachine[]>>((acc, vm) => {
-        const team = getTeamName(vm) || 'No Team'
-        if (!acc[team]) acc[team] = []
-        acc[team].push(vm)
-        return acc
-      }, {})
-      const sortedTeams = Object.keys(itemsByTeam).sort()
-
-      return (
-        <div>
-          {sortedTeams.map((team, idx) => (
-            <div key={team} className='mb-12'>
-              <h2 className='text-2xl font-semibold mb-4'>{team}</h2>
-              <DataTable
-                key={`table-${team}`}
-                data={itemsByTeam[team]}
-                columns={getVMTableColumns(user, selectedDisplayData)}
-              />
-              {idx < sortedTeams.length - 1 && <hr className='my-8 border-t border-gray-300 dark:border-gray-700' />}
-            </div>
-          ))}
-
-          {/* Infinite scroll sentinel - placed outside team groups */}
-          <div ref={sentinelRef} className='h-px w-full' />
-
-          {isLoading && (
-            <div className='text-center py-4'>
-              <div className='text-sm text-muted-foreground'>Loading more VMs...</div>
-            </div>
-          )}
-
-          {!hasMore && items.length > 0 && (
-            <div className='text-center py-4'>
-              <div className='text-sm text-muted-foreground'>All VMs are loaded.</div>
-            </div>
-          )}
-        </div>
-      )
-    }
-
     // Default table view without team grouping
     return (
       <div>
@@ -402,6 +361,46 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
         expect finished functionality or that all data is present. The development team is working hard on delivering a
         complete product as quick as possible :)
       </NotReadyMessage>
+      {/* Debug section for lazy loading - remove in production */}
+      <div className='mt-4 p-4rounded border'>
+        <h4 className='font-semibold text-sm mb-2'>Debug Info (Lazy Loading)</h4>
+        <div className='text-xs space-y-1'>
+          <p>
+            <strong>Items loaded:</strong> {items.length}
+          </p>
+          <p>
+            <strong>Safe items:</strong> {safeItems.length}
+          </p>
+          <p>
+            <strong>Filtered items:</strong> {filteredItems.length}
+          </p>
+          <p>
+            <strong>Displayed items:</strong> {displayedItems.length}
+          </p>
+          <p>
+            <strong>Has more:</strong> {hasMore.toString()}
+          </p>
+          <p>
+            <strong>Is loading:</strong> {isLoading.toString()}
+          </p>
+          <p>
+            <strong>Sort:</strong> {params.sort || 'none'}
+          </p>
+          <p>
+            <strong>Order:</strong> {params.order || 'none'}
+          </p>
+        </div>
+        <button
+          onClick={() => {
+            console.log('[Debug] Manual fetchMore triggered')
+            fetchMore()
+          }}
+          disabled={isLoading || !hasMore}
+          className='mt-2 px-3 py-1 bg-blue-500 text-white rounded disabled:bg-gray-400 text-xs'
+        >
+          Load More (Manual Test)
+        </button>
+      </div>
 
       <section className='px-12 my-8'>{params.view === 'list' ? <TableView /> : <GridView />}</section>
     </div>
