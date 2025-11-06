@@ -10,6 +10,7 @@
     loadMore: async (offset, limit) => {
       console.log(`[PageView] loadMore called - offset: ${offset}, limit: ${limit}`)
       console.log(`[PageView] Current params - sort: ${params.sort}, order: ${params.order}`)
+      console.log(`[PageView] Current items count before API call: ${items.length}`)
       
       try {
         const res = await loadMoreVMs({
@@ -23,7 +24,20 @@
           itemsCount: res.items?.length || 0,
           hasMore: res.hasMore,
           firstItem: res.items?.[0]?.metadata?.name || 'N/A',
-          lastItem: res.items?.[res.items.length - 1]?.metadata?.name || 'N/A'
+          lastItem: res.items?.[res.items.length - 1]?.metadata?.name || 'N/A',
+          allItemIds: res.items?.slice(0, 5).map(vm => vm.metadata?.uid?.slice(0, 8)) || []
+        })
+        
+        // Check for duplicates with existing items
+        const existingIds = new Set(items.map(vm => getVmId(vm)))
+        const newItemIds = res.items?.map(vm => getVmId(vm)) || []
+        const duplicateCount = newItemIds.filter(id => existingIds.has(id)).length
+        
+        console.log(`[PageView] Duplicate analysis:`, {
+          existingCount: items.length,
+          newItemsCount: res.items?.length || 0,
+          duplicatesFound: duplicateCount,
+          uniqueNewItems: (res.items?.length || 0) - duplicateCount
         })
         
         return { items: res.items ?? [], hasMore: res.hasMore }
@@ -113,10 +127,13 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
 
   //const sentinelRef = useRef<HTMLDivElement>(null)
 
-  const safeItems = useMemo(
-    () => items.filter((c) => getVmOperatingSystem(c) && typeof getVmOperatingSystem(c) === 'object'),
-    [items]
-  )
+  const safeItems = useMemo(() => {
+    const filtered = items.filter((c) => getVmOperatingSystem(c) && typeof getVmOperatingSystem(c) === 'object')
+    console.log(
+      `[PageView] Safe items filtering - total items: ${items.length}, safe items: ${filtered.length}, filtered out: ${items.length - filtered.length}`
+    )
+    return filtered
+  }, [items])
 
   const filterDefinitions = [
     { key: 'Power States', extractor: (vm: VirtualMachine) => getVmPowerState(vm) },

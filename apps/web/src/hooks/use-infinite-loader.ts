@@ -42,6 +42,7 @@ export function useInfiniteLoader<T>({
   const [items, setItems] = useState<T[]>(initial)
   const [isLoading, setIsLoading] = useState(false)
   const [hasMore, setHasMore] = useState(true)
+  const [consecutiveEmptyLoads, setConsecutiveEmptyLoads] = useState(0)
 
   // DOM sentinel. When this element becomes visible, more items are fetched automatically.
   const sentinelRef = useRef<HTMLDivElement>(null)
@@ -60,15 +61,19 @@ export function useInfiniteLoader<T>({
       lastKeyRef.current = nextKey
       setItems(initial)
       setHasMore(true)
+      setConsecutiveEmptyLoads(0) // Reset circuit breaker
       runIdRef.current++ // invalidate in-flight requests
     }
   }, [initial, getItemsKey])
 
   // Reset when the sorting order changes
   useEffect(() => {
+    console.log(`[useInfiniteLoader] Sort changed to: ${sort}, resetting hasMore and runId`)
+    setItems(initial) // Reset to initial items when sort changes
     setHasMore(true)
+    setConsecutiveEmptyLoads(0) // Reset circuit breaker
     runIdRef.current++ // invalidate previous fetches
-  }, [sort])
+  }, [sort, initial])
 
   // Fetch more items (manually or triggered by scroll)
   const fetchMore = useCallback(async () => {
@@ -89,6 +94,25 @@ export function useInfiniteLoader<T>({
       setItems((prev) => {
         const seen = new Set(prev.map(getItemId))
         const incoming = data.items.filter((item) => !seen.has(getItemId(item)))
+        console.log(
+          `[useInfiniteLoader] Adding ${incoming.length} new items (filtered ${data.items.length - incoming.length} duplicates)`
+        )
+
+        // Circuit breaker: if we get no new items multiple times, stop loading
+        if (incoming.length === 0) {
+          setConsecutiveEmptyLoads((prev) => {
+            const newCount = prev + 1
+            console.log(`[useInfiniteLoader] No new items added, consecutive empty loads: ${newCount}`)
+            if (newCount >= 3) {
+              console.log(`[useInfiniteLoader] Circuit breaker triggered - stopping infinite loading`)
+              setHasMore(false)
+            }
+            return newCount
+          })
+        } else {
+          setConsecutiveEmptyLoads(0) // Reset counter when we successfully add items
+        }
+
         return incoming.length ? [...prev, ...incoming] : prev
       })
 
