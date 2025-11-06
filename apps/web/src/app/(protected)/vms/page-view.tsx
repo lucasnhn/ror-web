@@ -30,6 +30,8 @@ import {
   getVmFamily,
   getVmArchitecture,
   getVmToolVersion,
+  getTeamName,
+  getVmsKey,
   getTeamValue,
 } from '@/features/vms/utils/vms'
 import { NotReadyMessage } from '@/components/ui/not-ready-message'
@@ -48,20 +50,39 @@ import { SortDefinition, useSorting } from '@/hooks/use-sorting'
 import { DataTable } from '@/components/ui/data-table'
 import { getVMTableColumns } from '@/features/vms/components/vm-columns'
 import type { VirtualMachine } from '@ror/js-api-client'
+import { useInfiniteLoader } from '@/hooks/use-infinite-loader'
+import { loadMoreVMs } from '@/utils/vms-actions'
 
 export const PageView = ({ className, user, vms, params }: PageViewProps) => {
   const filtersOpen = params.filters === 'open'
 
-  const sentinelRef = useRef<HTMLDivElement>(null)
+  const { items, sentinelRef, isLoading, hasMore } = useInfiniteLoader<VirtualMachine>({
+    initial: vms,
+    sort: params.sort,
+    pageSize: 50,
+    getItemId: getVmId,
+    getItemsKey: getVmsKey,
+    loadMore: async (offset, limit) => {
+      const res = await loadMoreVMs({
+        offset,
+        limit,
+        sort: params.sort,
+        order: params.order,
+      })
+      return { items: res.items ?? [], hasMore: res.hasMore }
+    },
+  })
+
+  //const sentinelRef = useRef<HTMLDivElement>(null)
 
   const safeItems = useMemo(
-    () => vms.filter((c) => getVmOperatingSystem(c) && typeof getVmOperatingSystem(c) === 'object'),
-    [vms]
+    () => items.filter((c) => getVmOperatingSystem(c) && typeof getVmOperatingSystem(c) === 'object'),
+    [items]
   )
 
   const filterDefinitions = [
     { key: 'Power States', extractor: (vm: VirtualMachine) => getVmPowerState(vm) },
-    { key: 'Teams', extractor: (vm: VirtualMachine) => getTeamValue(vm) },
+    { key: 'Teams', extractor: (vm: VirtualMachine) => getTeamName(vm) || 'No Team' },
   ]
 
   const { selectedFilters, setSelectedFilters, filteredItems, resetFilters } = useFilters<VirtualMachine>(
@@ -70,8 +91,6 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
   )
   const { selectedDisplayData, setSelectedDisplayData } = useDisplayData<VMCardData>('vms')
   const [searchResults, setSearchResults] = useState<VirtualMachine[]>(safeItems)
-
-  // Generate dynamic filter options based on available VMs
   const filterOptions = useMemo(() => generateFilterOptions(safeItems), [safeItems])
 
   // Handler for display data changes
@@ -183,11 +202,11 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
           powerState: getVmPowerState(vm),
           family: getVmFamily(vm),
         })}
-        getItemsKey={idsKey}
+        getItemsKey={getVmsKey}
         exportAsCSV={exportVmsAsCSV}
         exportAsExcel={exportVmsAsExcel}
         filteredItems={displayedItems}
-        allItems={vms}
+        allItems={items}
       />
     </div>
   )
@@ -220,6 +239,155 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
       </div>
     )
 
+  const GridView = () => {
+    const filteredTeams = selectedFilters['Teams'] || []
+    const shouldGroupByTeam = filteredTeams.length >= 1
+
+    if (shouldGroupByTeam) {
+      const itemsByTeam = displayedItems.reduce<Record<string, VirtualMachine[]>>((acc, vm) => {
+        const team = getTeamName(vm) || 'No Team'
+        if (!acc[team]) acc[team] = []
+        acc[team].push(vm)
+        return acc
+      }, {})
+      const sortedTeams = Object.keys(itemsByTeam).sort()
+
+      return (
+        <div>
+          {sortedTeams.map((team, idx) => (
+            <div key={team} className='mb-12'>
+              <h2 className='text-2xl font-semibold mb-4'>{team}</h2>
+              <div className='flex flex-row flex-wrap gap-6'>
+                {itemsByTeam[team].map((vm, vmIdx) => (
+                  <div key={idOf(vm) || vmIdx}>
+                    <VMCard
+                      vm={vm}
+                      vmDisplayData={
+                        selectedDisplayData.length > 0
+                          ? selectedDisplayData
+                          : displayDataOptions.map((opt) => opt.value as VMCardData) || []
+                      }
+                    />
+                  </div>
+                ))}
+              </div>
+              {idx < sortedTeams.length - 1 && <hr className='my-8 border-t border-gray-300 dark:border-gray-700' />}
+            </div>
+          ))}
+
+          {/* Infinite scroll sentinel - placed outside team groups */}
+          <div ref={sentinelRef} className='h-px w-full' />
+
+          {isLoading && (
+            <div className='text-center py-4'>
+              <div className='text-sm text-muted-foreground'>Loading more VMs...</div>
+            </div>
+          )}
+
+          {!hasMore && items.length > 0 && (
+            <div className='text-center py-4'>
+              <div className='text-sm text-muted-foreground'>All VMs are loaded.</div>
+            </div>
+          )}
+        </div>
+      )
+    }
+
+    // Default view without team grouping
+    return (
+      <div>
+        <div className='flex flex-row flex-wrap gap-6'>
+          {displayedItems.map((vm, vmIdx) => (
+            <div key={idOf(vm) || vmIdx}>
+              <VMCard
+                vm={vm}
+                vmDisplayData={
+                  selectedDisplayData.length > 0
+                    ? selectedDisplayData
+                    : displayDataOptions.map((opt) => opt.value as VMCardData) || []
+                }
+              />
+            </div>
+          ))}
+        </div>
+
+        {/* Infinite scroll sentinel */}
+        <div ref={sentinelRef} className='h-px w-full' />
+
+        {isLoading && (
+          <div className='text-center py-4'>
+            <div className='text-sm text-muted-foreground'>Loading more VMs...</div>
+          </div>
+        )}
+
+        {!hasMore && items.length > 0 && (
+          <div className='text-center py-4'>
+            <div className='text-sm text-muted-foreground'>All VMs are loaded.</div>
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  const TableView = () => {
+    const filteredTeams = selectedFilters['Teams'] || []
+    const shouldGroupByTeam = filteredTeams.length >= 1
+
+    if (shouldGroupByTeam) {
+      const itemsByTeam = displayedItems.reduce<Record<string, VirtualMachine[]>>((acc, vm) => {
+        const team = getTeamName(vm) || 'No Team'
+        if (!acc[team]) acc[team] = []
+        acc[team].push(vm)
+        return acc
+      }, {})
+      const sortedTeams = Object.keys(itemsByTeam).sort()
+
+      return (
+        <div>
+          {sortedTeams.map((team, idx) => (
+            <div key={team} className='mb-12'>
+              <h2 className='text-2xl font-semibold mb-4'>{team}</h2>
+              <DataTable
+                key={`table-${team}`}
+                data={itemsByTeam[team]}
+                columns={getVMTableColumns(user, selectedDisplayData)}
+              />
+              {idx < sortedTeams.length - 1 && <hr className='my-8 border-t border-gray-300 dark:border-gray-700' />}
+            </div>
+          ))}
+
+          {/* Infinite scroll sentinel - placed outside team groups */}
+          <div ref={sentinelRef} className='h-px w-full' />
+
+          {isLoading && (
+            <div className='text-center py-4'>
+              <div className='text-sm text-muted-foreground'>Loading more VMs...</div>
+            </div>
+          )}
+
+          {!hasMore && items.length > 0 && (
+            <div className='text-center py-4'>
+              <div className='text-sm text-muted-foreground'>All VMs are loaded.</div>
+            </div>
+          )}
+        </div>
+      )
+    }
+
+    // Default table view without team grouping
+    return (
+      <div>
+        <DataTable
+          data={displayedItems}
+          columns={getVMTableColumns(user, selectedDisplayData)}
+          hasMore={hasMore}
+          isLoading={isLoading}
+          sentinelRef={sentinelRef}
+        />
+      </div>
+    )
+  }
+
   return (
     <div className={cn(className, '@container')}>
       <div className={cn('border-b', filtersOpen && 'pb-2')}>
@@ -235,49 +403,9 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
         complete product as quick as possible :)
       </NotReadyMessage>
 
-      <section className='px-12 my-8'>
-        {(() => {
-          // Group items by team name
-          const itemsByTeam = displayedItems.reduce<Record<string, VirtualMachine[]>>((acc, vm) => {
-            const team = getTeamValue(vm) || 'No Team'
-            if (!acc[team]) acc[team] = []
-            acc[team].push(vm)
-            return acc
-          }, {})
-          const sortedTeams = Object.keys(itemsByTeam).sort()
-
-          return sortedTeams.map((team, idx) => (
-            <div key={team} className='mb-12'>
-              <h2 className='text-2xl font-semibold mb-4'>{team}</h2>
-              {params.view === 'list' ? (
-                <DataTable
-                  key={`table-${team}`}
-                  data={itemsByTeam[team]}
-                  columns={getVMTableColumns(user, selectedDisplayData)}
-                />
-              ) : (
-                <div className='flex flex-row flex-wrap gap-6'>
-                  {itemsByTeam[team].map((vm, vmIdx) => (
-                    <div key={idOf(vm) || vmIdx}>
-                      <VMCard
-                        vm={vm}
-                        vmDisplayData={
-                          selectedDisplayData.length > 0
-                            ? selectedDisplayData
-                            : displayDataOptions.map((opt) => opt.value as VMCardData)
-                        }
-                      />
-                    </div>
-                  ))}
-                  <div ref={sentinelRef} className='h-px' />
-                </div>
-              )}
-              {idx < sortedTeams.length - 1 && <hr className='my-8 border-t border-gray-800' />}
-            </div>
-          ))
-        })()}
-      </section>
+      <section className='px-12 my-8'>{params.view === 'list' ? <TableView /> : <GridView />}</section>
     </div>
   )
 }
+
 export default PageView

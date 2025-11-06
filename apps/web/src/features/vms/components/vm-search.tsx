@@ -15,7 +15,7 @@ import { Input } from '@/components/shadcn/input'
 import { useVmSearch } from '../hooks/use-vm-search'
 import { useDebouncedValue } from '@/hooks/use-debounced-value'
 import { VirtualMachine } from '@ror/js-api-client'
-import { getVmKey } from '../utils/vms'
+import { getVmsKey } from '../utils/vms'
 
 export interface VmSearchProps {
   items: VirtualMachine[]
@@ -30,7 +30,7 @@ export function VmSearch({ items, onResultsChange }: VmSearchProps) {
   const lastSentKeyRef = useRef('')
 
   useEffect(() => {
-    const nextKey = getVmKey(results)
+    const nextKey = getVmsKey(results)
     if (nextKey !== lastSentKeyRef.current) {
       onResultsChange?.(results)
       lastSentKeyRef.current = nextKey
