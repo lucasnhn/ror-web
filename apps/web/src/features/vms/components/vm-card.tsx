@@ -16,7 +16,7 @@ import { cn } from '@/utils/clsxm'
 import Link from 'next/link'
 import { vmCardPowerStatus, pillPowerStatusColors } from '@/features/vms/utils/env-colors'
 import {
-  getTeamName,
+  getTeamValue,
   getVmArchitecture,
   getVmFamily,
   getVmHostName,
@@ -60,7 +60,7 @@ const VMCard = ({ className, vm, vmDisplayData }: VMCardProps) => {
   const toolVersion = getVmToolVersion(vm)
   const powerState = getVmPowerState(vm)
 
-  const teamName = getTeamName(vm)
+  const teamName = getTeamValue(vm)
 
   const envColor = vmCardPowerStatus[powerState ?? 'undefined'] ?? vmCardPowerStatus['undefined']
 

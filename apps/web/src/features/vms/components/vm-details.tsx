@@ -34,11 +34,11 @@ import {
   getVmToolVersion,
   getAdGroup,
   getSpecMemory,
-  getTeamName,
   getTeamValue,
   VMDetailsProps,
   serviceIdDescription,
   serviceIdValue,
+  getTeamName,
 } from '../utils/vms'
 import { standardLayouts } from '@/features/vms/config/vm-details-layout'
 
@@ -155,14 +155,14 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
               </div>
             </div>
           </div>
-          {teamName && (
+          {teamValue && (
             <div key='team' className='drag-handle '>
               <CardHeader title='Team' />
               <div className='flex gap-2'>
                 <div className='flex flex-1 flex-col gap-2'>
                   <div className='flex flex-col'>
                     <span>
-                      {teamName} ({teamValue})
+                      {teamValue} ({teamName})
                     </span>
                   </div>
                 </div>

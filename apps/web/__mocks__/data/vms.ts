@@ -1,7 +1,8 @@
 export const mockVms = {
   resources: Array.from({ length: 104 }, (_, i) => {
     const idx = i + 1
-    const teams = ['Windows Driftsplatform', 'Linux driftsplattform']
+    const teams = ['Monitorering', 'stamnett']
+    const hostnames = ['MTRD-WD-ANS01', 'LTRD-WD-ANS02', 'PTRD-WD-ANS03', 'LTRD-WD-ANS04']
     return {
       kind: 'VirtualMachine',
       apiVersion: 'general.ror.internal/v1alpha1',
@@ -43,9 +44,9 @@ export const mockVms = {
             {
               id: `disk-${idx}`,
               name: `disk-${idx}-vmdk`,
-              sizeBytes: 26843545600,
+              sizeBytes: 78843545600,
               type: 'persistent',
-              usageBytes: 2684354560,
+              usageBytes: 35843545600,
               isMounted: true,
             },
             {
@@ -53,7 +54,7 @@ export const mockVms = {
               name: `disk-${idx + 1}-vmdk`,
               sizeBytes: 35843545600,
               type: 'persistent',
-              usageBytes: 1684354560,
+              usageBytes: 20843545600,
               isMounted: false,
             },
             {
@@ -61,7 +62,7 @@ export const mockVms = {
               name: `disk-${idx + 2}-vmdk`,
               sizeBytes: 54843545600,
               type: 'persistent',
-              usageBytes: 684354560,
+              usageBytes: 40084354560,
               isMounted: true,
             },
           ],
@@ -95,7 +96,7 @@ export const mockVms = {
             name: `Red Hat Enterprise Linux`,
             family: 'Linux',
             version: '5.4.0-208-generic',
-            hostName: `LTRD-WD-ANS01.365lab.no-mock${idx}`,
+            hostName: hostnames[idx % hostnames.length],
             powerState: idx % 3 === 0 ? 'poweredOn' : idx % 3 === 1 ? 'poweredOff' : 'undefined',
             toolVersion: '11360',
             architecture: 'X86',
@@ -109,7 +110,7 @@ export const mockVms = {
             team: {
               description: teams[idx % 2],
               key: 'team',
-              value: 'devops',
+              value: teams[idx % 2],
             },
             _AdGroup: {
               description: '',

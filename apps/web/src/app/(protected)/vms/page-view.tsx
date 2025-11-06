@@ -32,6 +32,7 @@ import {
   getVmToolVersion,
   getTeamName,
   getVmsKey,
+  getTeamValue,
 } from '@/features/vms/utils/vms'
 import { NotReadyMessage } from '@/components/ui/not-ready-message'
 import { cn } from '@/utils/clsxm'
@@ -159,7 +160,7 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
     },
     {
       key: 'team',
-      extractor: (vm) => getTeamName(vm),
+      extractor: (vm) => getTeamValue(vm),
     },
   ]
 

@@ -141,3 +141,38 @@ jobs:
           helm push ${{ env.APP }}-${HELM_VERSION}.tgz oci://${{ env.REGISTRY }}/norskhelsenett/helm/
         env:
           ROR_VERSION: ${{ needs.setenv.outputs.rorversion }}
+  Notify-slack:
+    name: Notify slack
+    runs-on: ubuntu-latest
+    needs: publish-helm
+    if: "!contains(github.ref, '-')"
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Set version and get changelog entry
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          
+          # Extract changelog entry for this version
+          if [ -f "CHANGELOG.md" ]; then
+            TAG_MESSAGE=$(awk "/## \[${VERSION}\]/ { found=1; next }found && /^###/ { exit }found && /^## \[/ { exit }found && /^- / { print } " CHANGELOG.md | sed ':a;N;$!ba;s/\n/\\n/g')
+            if [ -n "$TAG_MESSAGE" ]; then
+              echo "TAG_MESSAGE=$TAG_MESSAGE" >> $GITHUB_ENV
+            else
+              echo "TAG_MESSAGE=Se CHANGELOG.md for details" >> $GITHUB_ENV
+            fi
+          else
+            echo "TAG_MESSAGE=No changelog available" >> $GITHUB_ENV
+          fi
+          
+      - name: Notify Slack on new Release
+        uses: slackapi/slack-github-action@v1.22.0
+        with:
+          payload: |
+            {
+              "text": "🚀 TEST! New ROR-WEB release: v${{ env.VERSION }}\n${{ env.TAG_MESSAGE }}\n\n🔗 https://github.com/NorskHelsenett/ror-web/blob/main/CHANGELOG.mg"
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL_TEST }}

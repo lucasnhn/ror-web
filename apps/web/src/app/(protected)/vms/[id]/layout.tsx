@@ -80,7 +80,7 @@ export default function VmPageLayout({ params, children }: VmPageLayoutProps) {
           <VMHeader tabs={tabs} />
         </div>
         <NotReadyMessage className='mx-6 mt-8'>
-          The VM page is still under development.. Data and functionality is missing, but they are coming soon.
+          The VM page is still under development. Some features may be missing or incomplete.
         </NotReadyMessage>
         <div className='pt-2 px-6 md:px-6 md:pt-8'>{children}</div>
       </Fragment>
