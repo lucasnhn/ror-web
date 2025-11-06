@@ -1,3 +1,10 @@
+/*
+ * FILE OVERVIEW:
+ *
+ * A header component for displaying cluster information, including a title,
+ * navigation tabs, and a status area.
+ */
+
 'use client'
 
 import { HealthCircle } from './health-circle'
@@ -12,6 +19,12 @@ interface ClusterHeaderProps {
   tabs: navigationItemObject[]
 }
 
+/**
+ * Renders the header section for a cluster resource, displaying the cluster name, environment, and health status.
+ *
+ * @param className - Optional additional CSS classes to apply to the header.
+ * @param tabs - An array of tab definitions to be rendered in the header.
+ */
 export const ClusterHeader = ({ className, tabs }: ClusterHeaderProps) => {
   const { cluster } = useClusterContext()
   const environment = getEnvironment(cluster)

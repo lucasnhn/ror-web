@@ -49,6 +49,15 @@ const createTabNavigationItems = (vmId: string): navigationItemObject[] => {
   ]
 }
 
+/**
+ * Layout component for the VM (Virtual Machine) detail page.
+ *
+ * @param params - Route parameters, including the VM ID.
+ * @param children - React children to be rendered within the layout.
+ *
+ * @returns The layout for the VM page, including loading/error handling,
+ *          context provider, header, and content area.
+ */
 export default function VmPageLayout({ params, children }: VmPageLayoutProps) {
   const { id, vm, isLoading, error } = useVmLayout({ params })
 

@@ -1,3 +1,10 @@
+/*
+ * FILE OVERVIEW:
+ *
+ * A header component for displaying resource information, including a title,
+ * navigation tabs, and a status area.
+ */
+
 'use client'
 
 import { cn } from '@/utils/clsxm'
@@ -13,6 +20,17 @@ interface ResourceHeaderProps {
   titleSize?: string // optional override
 }
 
+/**
+ * Renders a resource header section with a title, navigation tabs, and an optional right-aligned content area.
+ *
+ * @param className - Additional CSS classes to apply to the root container.
+ * @param title - The main title displayed in the header.
+ * @param tabs - An array of tab items to render in the navigation section.
+ * @param rightContent - Optional React node to display in the right section (e.g., status, actions).
+ * @param lightmodeColor - CSS classes for background or text color in light mode.
+ * @param darkmodeColor - CSS classes for background or text color in dark mode.
+ * @param titleSize - Optional CSS classes to control the size of the title text. Defaults to 'text-4xl sm:text-[4rem]'.
+ */
 export const ResourceHeader = ({
   className,
   title,
