@@ -13,6 +13,7 @@ import { navigationItemObject } from '@/app/(protected)/vms/[id]/layout'
 import { useVMContext } from '@/context/vm-context'
 import { Power, PowerOff, TriangleAlert } from 'lucide-react'
 import { vmCardPowerStatus } from '../utils/env-colors'
+import { getVmHostName, getVmPowerState } from '../utils/vms'
 import { ResourceHeader } from '@/components/ui/resource-header'
 
 interface VMHeaderProps {
@@ -20,25 +21,24 @@ interface VMHeaderProps {
   tabs: navigationItemObject[]
 }
 
+function PowerIcon({ state }: { state: string }) {
+  if (state === 'poweredOn') return <Power size={32} />
+  if (state === 'poweredOff') return <PowerOff size={32} />
+  return <TriangleAlert size={32} />
+}
+
 export const VMHeader = ({ className, tabs }: VMHeaderProps) => {
   const { vm } = useVMContext()
-  const hostname = vm?.virtualmachine?.status?.operatingsystem?.hostname || 'Unknown VM'
-  const powerstate = vm?.virtualmachine?.status?.operatingsystem?.powerstate || 'undefined'
+  const hostname = getVmHostName(vm) || 'Unknown VM'
+  const powerstate = getVmPowerState(vm) || 'undefined'
   const [lightmode, darkmode] = vmCardPowerStatus[powerstate] || ['bg-gray-200', 'dark:bg-gray-600']
 
-  // Right-side content (status section)
   const rightContent = (
     <div className='flex items-center gap-4'>
       <div className='flex flex-col font-bold xl:font-normal'>
         <p className='text-lg flex items-center'>
           <span className='flex items-center pr-3'>
-            {powerstate === 'poweredOn' ? (
-              <Power size={32} />
-            ) : powerstate === 'poweredOff' ? (
-              <PowerOff size={32} />
-            ) : (
-              <TriangleAlert size={32} />
-            )}
+            <PowerIcon state={powerstate} />
           </span>
           <span className='hidden xl:block'>Power state:&nbsp;</span>
           <span className='hidden md:block'>{powerstate}</span>

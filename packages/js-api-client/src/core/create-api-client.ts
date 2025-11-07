@@ -13,6 +13,7 @@ import { createDaemonSetService } from '../services/deamon-sets'
 import { createReplicaSetService } from '../services/replica-sets'
 import { createPriceService } from '../services/prices'
 import { createDatacentersService } from '../services/datacenters'
+import { createVirtualMachineService } from '../services/vm'
 
 function setDefaultHeaders(config: ApiClientConfig): Record<string, string> {
   return {
@@ -54,6 +55,7 @@ export function createApiClient(config: ApiClientConfig) {
     service: createServiceService(request),
     users: createUsersService(request),
     vulnerabilityReport: createVulnerabilityReportService(request),
+    virtualMachine: createVirtualMachineService(request),
   }
 
   return services

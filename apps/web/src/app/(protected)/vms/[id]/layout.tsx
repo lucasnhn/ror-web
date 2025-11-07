@@ -11,6 +11,7 @@
 'use client'
 
 import { Fragment, ReactNode } from 'react'
+import { routes } from '@/config/routes'
 import { NotReadyMessage } from '@/components/ui/not-ready-message'
 import { VMProvider } from '@/context/vm-context'
 import { VMHeader } from '@/features/vms/components/vm-header'
@@ -23,6 +24,8 @@ interface VmPageLayoutProps {
   children: ReactNode
 }
 
+const { vm, vmRawData, vmNetworks, vmDisks, vmMetaData } = routes.app
+
 export interface navigationItemObject {
   label: string
   href: string
@@ -32,19 +35,23 @@ const createTabNavigationItems = (vmId: string): navigationItemObject[] => {
   return [
     {
       label: 'Details',
-      href: `/vms/${vmId}`,
+      href: vm.getHref(vmId),
     },
     {
-      label: 'Metrics',
-      href: `/vms/${vmId}/metrics`,
+      label: vmNetworks.label,
+      href: vmNetworks.getHref(vmId),
     },
     {
-      label: 'Logs',
-      href: `/vms/${vmId}/logs`,
+      label: vmDisks.label,
+      href: vmDisks.getHref(vmId),
     },
     {
-      label: 'Raw Data',
-      href: `/vms/${vmId}/raw_data`,
+      label: vmMetaData.label,
+      href: vmMetaData.getHref(vmId),
+    },
+    {
+      label: vmRawData.label,
+      href: vmRawData.getHref(vmId),
     },
   ]
 }
@@ -80,7 +87,7 @@ export default function VmPageLayout({ params, children }: VmPageLayoutProps) {
       <Fragment>
         <VMHeader tabs={tabs} />
         <NotReadyMessage className='mx-6 mt-8'>
-          The VM page is still under development. Data and functionality is missing, but they are coming soon.
+          The VM page is still under development. Some features may be missing or incomplete.
         </NotReadyMessage>
         <div className='pt-2 px-6 md:px-6 md:pt-8'>{children}</div>
       </Fragment>

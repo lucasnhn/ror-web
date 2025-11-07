@@ -122,5 +122,21 @@ export const routes = {
       label: 'Virtual machine',
       getHref: (id: string) => `/vms/${id}`,
     },
+    vmRawData: {
+      label: 'Raw data',
+      getHref: (id: string) => `/vms/${id}/raw-data`,
+    },
+    vmNetworks: {
+      label: 'Networks',
+      getHref: (id: string) => `/vms/${id}/networks`,
+    },
+    vmDisks: {
+      label: 'Disks',
+      getHref: (id: string) => `/vms/${id}/disks`,
+    },
+    vmMetaData: {
+      label: 'Metadata',
+      getHref: (id: string) => `/vms/${id}/metadata`,
+    },
   },
 } as const

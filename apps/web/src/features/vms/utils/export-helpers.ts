@@ -5,7 +5,8 @@
  */
 
 import { exportAsCSV, exportAsExcel } from '@/utils/export-utils'
-import type { VirtualMachine } from '../utils/vms'
+import type { VirtualMachine } from '@ror/js-api-client'
+import { getVmHostName, getVmId, getVmOperatingSystem, getVmPowerState, getVmSpec } from './vms'
 
 /**
  * Extracts exportable properties from a VirtualMachine object.
@@ -18,18 +19,18 @@ import type { VirtualMachine } from '../utils/vms'
  * @returns An object with exportable VM properties.
  */
 const exportableFromVm = (vm: VirtualMachine) => {
-  const os = vm.virtualmachine?.status?.operatingsystem ?? {}
-  const spec = vm.virtualmachine?.spec ?? {}
+  const os = getVmOperatingSystem(vm) ?? {}
+  const spec = getVmSpec(vm) ?? {}
 
   return {
     name: vm.metadata?.name ?? spec.name ?? '',
-    id: vm.id ?? '',
-    hostname: os.hostname ?? '',
-    powerState: os.powerstate ?? '',
+    id: getVmId(vm) ?? '',
+    hostname: getVmHostName(vm) ?? '',
+    powerState: getVmPowerState(vm) ?? '',
     family: os.family ?? '',
     version: os.version ?? '',
     architecture: os.architecture ?? '',
-    toolVersion: os.toolversion ?? '',
+    toolVersion: os.toolVersion ?? '',
   }
 }
 
