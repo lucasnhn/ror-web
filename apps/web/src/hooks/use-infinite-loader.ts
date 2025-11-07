@@ -42,7 +42,6 @@ export function useInfiniteLoader<T>({
   const [items, setItems] = useState<T[]>(initial)
   const [isLoading, setIsLoading] = useState(false)
   const [hasMore, setHasMore] = useState(true)
-  const [consecutiveEmptyLoads, setConsecutiveEmptyLoads] = useState(0)
 
   // DOM sentinel. When this element becomes visible, more items are fetched automatically.
   const sentinelRef = useRef<HTMLDivElement>(null)
@@ -61,19 +60,15 @@ export function useInfiniteLoader<T>({
       lastKeyRef.current = nextKey
       setItems(initial)
       setHasMore(true)
-      setConsecutiveEmptyLoads(0) // Reset circuit breaker
       runIdRef.current++ // invalidate in-flight requests
     }
   }, [initial, getItemsKey])
 
   // Reset when the sorting order changes
   useEffect(() => {
-    console.log(`[useInfiniteLoader] Sort changed to: ${sort}, resetting hasMore and runId`)
-    setItems(initial) // Reset to initial items when sort changes
     setHasMore(true)
-    setConsecutiveEmptyLoads(0) // Reset circuit breaker
     runIdRef.current++ // invalidate previous fetches
-  }, [sort, initial])
+  }, [sort])
 
   // Fetch more items (manually or triggered by scroll)
   const fetchMore = useCallback(async () => {
@@ -94,37 +89,6 @@ export function useInfiniteLoader<T>({
       setItems((prev) => {
         const seen = new Set(prev.map(getItemId))
         const incoming = data.items.filter((item) => !seen.has(getItemId(item)))
-        console.log(
-          `[useInfiniteLoader] Adding ${incoming.length} new items (filtered ${data.items.length - incoming.length} duplicates)`
-        )
-
-        // Circuit breaker: if we get no new items multiple times, stop loading
-        if (incoming.length === 0) {
-          setConsecutiveEmptyLoads((prev) => {
-            const newCount = prev + 1
-            console.log(`[useInfiniteLoader] No new items added, consecutive empty loads: ${newCount}`)
-
-            // If we get all duplicates on the first failed load, it suggests API pagination issues
-            if (newCount === 1 && data.items.length > 0) {
-              console.log(
-                `[useInfiniteLoader] ⚠️  API returned ${data.items.length} items but all were duplicates - API pagination may not be working properly`
-              )
-            }
-
-            if (newCount >= 2) {
-              // Reduced from 3 to 2 for faster detection
-              console.log(`[useInfiniteLoader] Circuit breaker triggered - stopping infinite loading`)
-              console.log(
-                `[useInfiniteLoader] This usually means the API doesn't support pagination or is returning duplicate data`
-              )
-              setHasMore(false)
-            }
-            return newCount
-          })
-        } else {
-          setConsecutiveEmptyLoads(0) // Reset counter when we successfully add items
-        }
-
         return incoming.length ? [...prev, ...incoming] : prev
       })
 

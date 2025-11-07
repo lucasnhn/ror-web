@@ -58,3 +58,8 @@ export const generateFilterOptions = (vms: VirtualMachine[]) => [
   { label: 'Power States', placeholder: 'Choose Power State', data: powerStateOptions },
   { label: 'Teams', placeholder: 'Choose Team', data: generateTeamOptions(vms) },
 ]
+
+export const filterOptions = [
+  { label: 'Power States', placeholder: 'Choose Power State', data: powerStateOptions },
+  { label: 'Teams', placeholder: 'Choose Team', data: [] },
+]

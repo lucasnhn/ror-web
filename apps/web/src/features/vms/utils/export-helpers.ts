@@ -6,7 +6,7 @@
 
 import { exportAsCSV, exportAsExcel } from '@/utils/export-utils'
 import type { VirtualMachine } from '@ror/js-api-client'
-import { getVmHostName, getVmId, getVmOperatingSystem, getVmPowerState, getVmSpec } from './vms'
+import { getVmHostName, getVmOperatingSystemId, getVmOperatingSystem, getVmPowerState, getVmSpec } from './vms'
 
 /**
  * Extracts exportable properties from a VirtualMachine object.
@@ -24,7 +24,7 @@ const exportableFromVm = (vm: VirtualMachine) => {
 
   return {
     name: vm.metadata?.name ?? spec.name ?? '',
-    id: getVmId(vm) ?? '',
+    id: getVmOperatingSystemId(vm) ?? '',
     hostname: getVmHostName(vm) ?? '',
     powerState: getVmPowerState(vm) ?? '',
     family: os.family ?? '',

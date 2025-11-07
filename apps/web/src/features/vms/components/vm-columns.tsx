@@ -18,7 +18,7 @@ import {
   getVmDiskSizes,
   getVmDiskUsages,
   getVmHostName,
-  getVmId,
+  getVmOperatingSystemId,
   getVmName,
   getVmPowerState,
   getVmToolVersion,
@@ -27,10 +27,7 @@ import {
 
 const columnHelper = createColumnHelper<VirtualMachine>()
 
-export const getVMTableColumns = (
-  user?: User,
-  selectedDisplayData?: VMColumnsData[]
-): DataTableColumnDef<VirtualMachine>[] => {
+export const getVMTableColumns = (selectedDisplayData?: VMColumnsData[]): DataTableColumnDef<VirtualMachine>[] => {
   const showAllVMs = !selectedDisplayData || selectedDisplayData.length === 0
   const isVisible = (data: VMColumnsData) => {
     if (data === 'id' || data === 'architecture') {
@@ -63,7 +60,7 @@ export const getVMTableColumns = (
     isVisible('id') &&
       columnHelper.accessor(
         (row) => {
-          const osID = getVmId(row)
+          const osID = getVmOperatingSystemId(row)
           return osID
         },
         {
