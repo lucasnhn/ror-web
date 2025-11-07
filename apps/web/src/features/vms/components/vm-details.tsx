@@ -24,7 +24,7 @@ import {
   getVmArchitecture,
   getVmFamily,
   getVmHostName,
-  getVmId,
+  getVmOperatingSystemId,
   getVmName,
   getVmPowerState,
   getVmVersion,
@@ -68,7 +68,7 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
   const memory = getSpecMemory(vm)
   const memoryInGB = ((memory ?? 0) / 1024 ** 3).toFixed(2)
 
-  const id = getVmId(vm)
+  const id = getVmOperatingSystemId(vm)
   const name = getVmName(vm)
   const version = getVmVersion(vm)
   const hostName = getVmHostName(vm)
