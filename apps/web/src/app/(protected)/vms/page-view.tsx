@@ -18,9 +18,10 @@
 
 'use client'
 
-import MultipleSelector, { Option } from '@/components/shadcn/multiselect'
+import { Option } from '@/components/shadcn/multiselect'
 import {
   getVmOperatingSystemId,
+  getVmUniqueKey,
   getVmName,
   getVmVersion,
   getVmOperatingSystem,
@@ -39,7 +40,7 @@ import { cn } from '@/utils/clsxm'
 import { useRef, useState, useMemo, useEffect, useCallback } from 'react'
 import { VMCard } from '@/features/vms/components/vm-card'
 import { VMCardData } from '@/features/vms/types/vm-types'
-import { displayDataOptions, sortingOptions, generateFilterOptions } from '@/features/vms/config/page-view-options'
+import { displayDataOptions, sortingOptions } from '@/features/vms/config/page-view-options'
 import { useDisplayData } from '@/hooks/use-display-data'
 import { ResourceControls } from '@/components/ui/resource-controls'
 import { exportVmsAsCSV, exportVmsAsExcel } from '@/features/vms/utils/export-helpers'
@@ -54,14 +55,14 @@ import { useInfiniteLoader } from '@/hooks/use-infinite-loader'
 import { loadMoreVMs } from '@/utils/vms-actions'
 import { VmFilterSection } from '@/features/vms/components/vm-filter-section'
 
-export const PageView = ({ className, user, vms, params }: PageViewProps) => {
+export const PageView = ({ className, vms, params }: PageViewProps) => {
   const filtersOpen = params.filters === 'open'
 
   const { items, sentinelRef, isLoading, hasMore } = useInfiniteLoader<VirtualMachine>({
     initial: vms,
     sort: params.sort,
     pageSize: 50,
-    getItemId: getVmHostName,
+    getItemId: getVmUniqueKey,
     getItemsKey: getVmsKey,
     loadMore: async (offset, limit) => {
       const res = await loadMoreVMs({
@@ -144,8 +145,8 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
 
   const displayedItems = useMemo(() => {
     if (!searchResults?.length) return sortedItems
-    const ids = new Set(searchResults.map(getVmHostName))
-    return sortedItems.filter((c) => ids.has(getVmHostName(c)))
+    const ids = new Set(searchResults.map(getVmUniqueKey))
+    return sortedItems.filter((c) => ids.has(getVmUniqueKey(c)))
   }, [sortedItems, searchResults])
 
   const renderControls = () => (
@@ -201,7 +202,7 @@ export const PageView = ({ className, user, vms, params }: PageViewProps) => {
           <div ref={sentinelRef} className='h-px w-full' />
         </div>
         {isLoading && <div style={{ textAlign: 'center', padding: 16 }}>Loading...</div>}
-        {!hasMore && <div style={{ textAlign: 'center', padding: 16, color: '#888' }}>All Vms are loaded.</div>}
+        {!hasMore && <div style={{ textAlign: 'center', padding: 16, color: '#888' }}>All VMs are loaded.</div>}
       </div>
     )
   }

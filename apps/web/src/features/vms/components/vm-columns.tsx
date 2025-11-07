@@ -5,7 +5,6 @@ import type { DataTableColumnDef } from '@/components/ui/data-table'
 import Link from 'next/link'
 import { Pill } from '@/components/shadcn/pill'
 import { vmCardColors } from '@/features/vms/utils/env-colors'
-import { User } from 'next-auth'
 import { VMColumnsData } from '@/features/vms/types/vm-types'
 import { createColumnHelper } from '@tanstack/react-table'
 import {
