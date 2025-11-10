@@ -6,7 +6,7 @@ import { Layer } from '@ror/react'
 import { ExternalLink } from 'lucide-react'
 import { User } from 'next-auth'
 import { toast } from 'sonner'
-import type { Layouts } from 'react-grid-layout'
+import type { Layout, Layouts } from 'react-grid-layout'
 import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
 import { CodeSnippet } from '../../../components/ui/code-snippet'
@@ -37,6 +37,8 @@ interface ClusterDetailsProps {
   className?: string
 }
 
+const LOG_NS = '[ClusterDetails]'
+
 /**
  * Displays detailed information about a cluster, including resources, metadata, tools, versions, and pricing.
  *
@@ -58,7 +60,12 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
     resetToSaved,
     resetToDefault,
   } = useLayoutPreferences('clusterCards', standardLayouts)
-  console.log('key', layoutKey)
+  console.info(`${LOG_NS} render`, {
+    layoutKey,
+    currentBreakpoint,
+    keys: Object.keys(layouts || {}),
+    bpItems: (layouts?.[currentBreakpoint] || []).length,
+  })
 
   const clusterId = getClusterId(cluster)
   const cpu = getClusterResource(cluster, 'cpu')
@@ -82,14 +89,33 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
       <Button
         onClick={() => {
           const newLayouts: Layouts = { ...layouts, [currentBreakpoint]: layouts[currentBreakpoint] }
+          console.info(`${LOG_NS} Save layout click`, {
+            currentBreakpoint,
+            beforeCount: (layouts?.[currentBreakpoint] || []).length,
+            keys: Object.keys(layouts || {}),
+          })
           saveLayouts(newLayouts)
           toast.info('Layout saved')
         }}
       >
         Save layout
       </Button>
-      <Button onClick={resetToSaved}>Reset to saved</Button>
-      <Button onClick={resetToDefault}>Reset to default</Button>
+      <Button
+        onClick={() => {
+          console.info(`${LOG_NS} Reset to saved click`)
+          resetToSaved()
+        }}
+      >
+        Reset to saved
+      </Button>
+      <Button
+        onClick={() => {
+          console.info(`${LOG_NS} Reset to default click`)
+          resetToDefault()
+        }}
+      >
+        Reset to default
+      </Button>
     </div>
   )
 
@@ -203,6 +229,20 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
     </>
   )
 
+  const onLayoutChange = (layout: Layout[]) => {
+    console.info(`${LOG_NS} onLayoutChange`, {
+      currentBreakpoint,
+      itemCount: layout.length,
+      sample: layout.slice(0, 3),
+    })
+    setLayouts({ ...layouts, [currentBreakpoint]: layout })
+  }
+
+  const onBreakpointChange = (bp: string) => {
+    console.info(`${LOG_NS} onBreakpointChange`, { from: currentBreakpoint, to: bp })
+    setCurrentBreakpoint(bp)
+  }
+
   return (
     <div>
       <LayoutButtons />
@@ -210,8 +250,8 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
         className={className}
         layouts={layouts}
         layoutKey={layoutKey}
-        onLayoutChange={(layout) => setLayouts({ ...layouts, [currentBreakpoint]: layout })}
-        onBreakpointChange={setCurrentBreakpoint}
+        onLayoutChange={onLayoutChange}
+        onBreakpointChange={onBreakpointChange}
       >
         <div key='memory' className='drag-handle'>
           <MemoryCard />
