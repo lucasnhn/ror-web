@@ -37,15 +37,7 @@ import {
 import { standardLayouts } from '@/features/vms/config/vm-details-layout'
 import { useLayoutPreferences } from '@/hooks/use-layout-preferences'
 import { GridLayoutWrapper } from '@/components/ui/grid-layout-wrapper'
-
-const CardHeader = ({ title }: { title: string }) => {
-  return (
-    <div className='mb-2'>
-      <h2 className='text-xl font-semibold'>{title}</h2>
-      <hr />
-    </div>
-  )
-}
+import { CardHeader } from '@/components/ui/grid-layout-card'
 
 export const VMDetails = ({ user, className }: VMDetailsProps) => {
   const { vm } = useVMContext()
@@ -53,6 +45,7 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
     'vmDetails',
     standardLayouts
   )
+  console.log('key', layoutKey)
   console.log(currentBreakpoint) // For future use if needed
   const cpuUsage = getStatusCpuUsage(vm)
   const cpuSockets = getSpecSockets(vm)
@@ -76,193 +69,244 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
   const serviceValue = serviceIdValue(vm)
 
   console.log(user)
+
+  const MemoryCard = () => (
+    <>
+      <CardHeader title='Memory' />
+      <div className='flex gap-2'>
+        <div className='flex flex-1 flex-col gap-2'>
+          <div className='flex flex-col'>
+            <span>{memoryInGB} GB</span>
+          </div>
+        </div>
+      </div>
+    </>
+  )
+
+  const ConfigurationCard = () => (
+    <>
+      <CardHeader title='Configuration' />
+      <div className='flex gap-2'>
+        <div className='flex flex-1 flex-col gap-2'>
+          <div className='flex flex-col'>
+            <b>CPU Sockets: </b>
+            <span>{cpuSockets}</span>
+          </div>
+          <div className='flex flex-col'>
+            <b>CPU Cores per Socket: </b>
+            <span>{cpuCoresPerSocket}</span>
+          </div>
+        </div>
+      </div>
+    </>
+  )
+
+  const CpuCard = () => (
+    <>
+      <CardHeader title='CPU' />
+      <div className='flex gap-2'>
+        <div className='flex flex-1 flex-col gap-2'>
+          <div className='flex flex-col'>
+            <b>CPU Usage: </b>
+            <span>{cpuUsage}%</span>
+          </div>
+        </div>
+      </div>
+    </>
+  )
+
+  const TeamCard = () => (
+    <>
+      <CardHeader title='Team' />
+      <div className='flex gap-2'>
+        <div className='flex flex-1 flex-col gap-2'>
+          <div className='flex flex-col'>
+            <span>
+              {teamValue} ({teamName})
+            </span>
+          </div>
+        </div>
+      </div>
+    </>
+  )
+
+  const AdGroupsCard = () => (
+    <>
+      <CardHeader title='AD Group' />
+      <div className='flex gap-2'>
+        <div className='flex flex-1 flex-col gap-2'>
+          <div className='flex flex-col'>
+            <span>{AdGroup}</span>
+          </div>
+        </div>
+      </div>
+    </>
+  )
+
+  const ServiceIdCard = () => (
+    <>
+      <CardHeader title='Service ID' />
+      <div className='flex gap-2'>
+        <div className='flex flex-1 flex-col gap-2'>
+          <div className='flex flex-col'>
+            <span>
+              {serviceId} ({serviceValue})
+            </span>
+          </div>
+        </div>
+      </div>
+    </>
+  )
+
+  const InfoCard = () => (
+    <>
+      <CardHeader title='Operating System' />
+      <div className='flex gap-2'>
+        <div className='flex flex-1 flex-col gap-2'>
+          <div className='flex flex-col'>
+            <b>Id: </b>
+            <span>{id}</span>
+          </div>
+          <div className='flex flex-col'>
+            <b>OS-version: </b>
+            <span>{name}</span>
+          </div>
+          <div className='flex flex-col'>
+            <b>Version: </b>
+            <span>{version}</span>
+          </div>
+          <div className='flex flex-col'>
+            <b>Hostname: </b>
+            <span>{hostName}</span>
+          </div>
+        </div>
+        <div className='flex flex-1 flex-col gap-2'>
+          <div className='flex flex-col'>
+            <b>VMware Tools version: </b>
+            <span>{toolVersion}</span>
+          </div>
+          <div className='flex flex-col'>
+            <b>Architecture: </b>
+            <span>{architecture}</span>
+          </div>
+          <div className='flex flex-col'>
+            <b>OS-type: </b>
+            <span>{family}</span>
+          </div>
+        </div>
+      </div>
+    </>
+  )
+
+  const ControlPanelCard = () => (
+    <>
+      <CardHeader title='Control Panel' />
+      <div className='flex gap-2'>
+        <div className='flex flex-1 flex-col gap-2'>
+          <div className='flex flex-col'>
+            <b>Power: </b>
+            <span>{powerState === 'poweredOn' ? 'On' : powerState === 'poweredOff' ? 'Off' : 'Unknown'}</span>
+            <b>Actions:</b>
+            {powerState === 'poweredOn' ? null : (
+              <Pill
+                asChild
+                variant={vmActionsColors['powerOn']}
+                className='mt-2 px-3 cursor-pointer'
+                onClick={() => {
+                  // TODO: Implement turn on functionality
+                }}
+              >
+                <button type='button'>Turn on</button>
+              </Pill>
+            )}
+            {powerState === 'poweredOff' ? null : (
+              <Pill
+                asChild
+                variant={vmActionsColors['powerOff']}
+                className='mt-2 px-3 cursor-pointer'
+                onClick={() => {
+                  // TODO: Implement turn off functionality
+                }}
+              >
+                <button type='button'>Turn off</button>
+              </Pill>
+            )}
+            <Pill
+              asChild
+              variant={vmActionsColors['restart']}
+              className='mt-2 px-3 cursor-pointer'
+              onClick={() => {
+                // TODO: Implement restart functionality
+              }}
+            >
+              <button type='button'>Restart</button>
+            </Pill>
+            <Pill
+              asChild
+              variant={vmActionsColors['suspend']}
+              className='mt-2 px-3 cursor-pointer'
+              onClick={() => {
+                // TODO: Implement suspend functionality
+              }}
+            >
+              <button type='button'>Suspend</button>
+            </Pill>
+            <Pill
+              asChild
+              variant={vmActionsColors['delete']}
+              className='mt-2 px-3 cursor-pointer'
+              onClick={() => {
+                // TODO: Implement delete functionality
+              }}
+            >
+              <button type='button'>Delete</button>
+            </Pill>
+          </div>
+        </div>
+      </div>
+    </>
+  )
+
   return (
-    <GridLayoutWrapper
-      className={className}
-      layouts={layouts}
-      layoutKey={layoutKey}
-      onLayoutChange={(layout) => setLayouts({ ...layouts, [currentBreakpoint]: layout })}
-      onBreakpointChange={setCurrentBreakpoint}
-    >
-      <div key='memory' className='drag-handle '>
-        <CardHeader title='Memory' />
-        <div className='flex gap-2'>
-          <div className='flex flex-1 flex-col gap-2'>
-            <div className='flex flex-col'>
-              <span>{memoryInGB} GB</span>
-            </div>
-          </div>
+    <div>
+      <GridLayoutWrapper
+        className={className}
+        layouts={layouts}
+        layoutKey={layoutKey}
+        onLayoutChange={(layout) => setLayouts({ ...layouts, [currentBreakpoint]: layout })}
+        onBreakpointChange={setCurrentBreakpoint}
+      >
+        <div key='memory' className='drag-handle '>
+          <MemoryCard />
         </div>
-      </div>
-      <div key={'configuration'} className='drag-handle '>
-        <CardHeader title='Configuration' />
-        <div className='flex gap-2'>
-          <div className='flex flex-1 flex-col gap-2'>
-            <div className='flex flex-col'>
-              <b>CPU Sockets: </b>
-              <span>{cpuSockets}</span>
-            </div>
-            <div className='flex flex-col'>
-              <b>CPU Cores per Socket: </b>
-              <span>{cpuCoresPerSocket}</span>
-            </div>
-          </div>
+        <div key='configuration' className='drag-handle '>
+          <ConfigurationCard />
         </div>
-      </div>
-      <div key='cpu' className='drag-handle '>
-        <CardHeader title='CPU' />
-        <div className='flex gap-2'>
-          <div className='flex flex-1 flex-col gap-2'>
-            <div className='flex flex-col'>
-              <b>CPU Usage: </b>
-              <span>{cpuUsage}%</span>
-            </div>
-          </div>
+        <div key='cpu' className='drag-handle '>
+          <CpuCard />
         </div>
-      </div>
-      {teamValue && (
+        {/* {teamValue && ( */}
         <div key='team' className='drag-handle '>
-          <CardHeader title='Team' />
-          <div className='flex gap-2'>
-            <div className='flex flex-1 flex-col gap-2'>
-              <div className='flex flex-col'>
-                <span>
-                  {teamValue} ({teamName})
-                </span>
-              </div>
-            </div>
-          </div>
+          <TeamCard />
         </div>
-      )}
-      {AdGroup && (
-        <div key='AD groups' className='drag-handle '>
-          <CardHeader title='AD Group' />
-          <div className='flex gap-2'>
-            <div className='flex flex-1 flex-col gap-2'>
-              <div className='flex flex-col'>
-                <span>{AdGroup}</span>
-              </div>
-            </div>
-          </div>
+        {/* )} */}
+        {/* {AdGroup && ( */}
+        <div key='ad-groups' className='drag-handle '>
+          <AdGroupsCard />
         </div>
-      )}
-      {serviceId && (
+        {/* )} */}
+        {/* {serviceId && ( */}
         <div key='service-id' className='drag-handle '>
-          <CardHeader title='Service ID' />
-          <div className='flex gap-2'>
-            <div className='flex flex-1 flex-col gap-2'>
-              <div className='flex flex-col'>
-                <span>
-                  {serviceId} ({serviceValue})
-                </span>
-              </div>
-            </div>
-          </div>
+          <ServiceIdCard />
         </div>
-      )}
-      <div key='info' className='drag-handle '>
-        <CardHeader title='Operating System' />
-        <div className='flex gap-2'>
-          <div className='flex flex-1 flex-col gap-2'>
-            <div className='flex flex-col'>
-              <b>Id: </b>
-              <span>{id}</span>
-            </div>
-            <div className='flex flex-col'>
-              <b>OS-version: </b>
-              <span>{name}</span>
-            </div>
-            <div className='flex flex-col'>
-              <b>Version: </b>
-              <span>{version}</span>
-            </div>
-            <div className='flex flex-col'>
-              <b>Hostname: </b>
-              <span>{hostName}</span>
-            </div>
-          </div>
-          <div className='flex flex-1 flex-col gap-2'>
-            <div className='flex flex-col'>
-              <b>VMware Tools version: </b>
-              <span>{toolVersion}</span>
-            </div>
-            <div className='flex flex-col'>
-              <b>Architecture: </b>
-              <span>{architecture}</span>
-            </div>
-            <div className='flex flex-col'>
-              <b>OS-type: </b>
-              <span>{family}</span>
-            </div>
-          </div>
+        {/* )} */}
+        <div key='info' className='drag-handle '>
+          <InfoCard />
         </div>
-      </div>
-      <div key='controlPanel' className='drag-handle '>
-        <CardHeader title='Control Panel' />
-        <div className='flex gap-2'>
-          <div className='flex flex-1 flex-col gap-2'>
-            <div className='flex flex-col'>
-              <b>Power: </b>
-              <span>{powerState === 'poweredOn' ? 'On' : powerState === 'poweredOff' ? 'Off' : 'Unknown'}</span>
-              <b>Actions:</b>
-              {powerState === 'poweredOn' ? null : (
-                <Pill
-                  asChild
-                  variant={vmActionsColors['powerOn']}
-                  className='mt-2 px-3 cursor-pointer'
-                  onClick={() => {
-                    // TODO: Implement turn on functionality
-                  }}
-                >
-                  <button type='button'>Turn on</button>
-                </Pill>
-              )}
-              {powerState === 'poweredOff' ? null : (
-                <Pill
-                  asChild
-                  variant={vmActionsColors['powerOff']}
-                  className='mt-2 px-3 cursor-pointer'
-                  onClick={() => {
-                    // TODO: Implement turn off functionality
-                  }}
-                >
-                  <button type='button'>Turn off</button>
-                </Pill>
-              )}
-              <Pill
-                asChild
-                variant={vmActionsColors['restart']}
-                className='mt-2 px-3 cursor-pointer'
-                onClick={() => {
-                  // TODO: Implement restart functionality
-                }}
-              >
-                <button type='button'>Restart</button>
-              </Pill>
-              <Pill
-                asChild
-                variant={vmActionsColors['suspend']}
-                className='mt-2 px-3 cursor-pointer'
-                onClick={() => {
-                  // TODO: Implement suspend functionality
-                }}
-              >
-                <button type='button'>Suspend</button>
-              </Pill>
-              <Pill
-                asChild
-                variant={vmActionsColors['delete']}
-                className='mt-2 px-3 cursor-pointer'
-                onClick={() => {
-                  // TODO: Implement delete functionality
-                }}
-              >
-                <button type='button'>Delete</button>
-              </Pill>
-            </div>
-          </div>
+        <div key='control-panel' className='drag-handle '>
+          <ControlPanelCard />
         </div>
-      </div>
-    </GridLayoutWrapper>
+      </GridLayoutWrapper>
+    </div>
   )
 }

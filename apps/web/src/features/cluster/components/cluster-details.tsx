@@ -58,6 +58,7 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
     resetToSaved,
     resetToDefault,
   } = useLayoutPreferences('clusterCards', standardLayouts)
+  console.log('key', layoutKey)
 
   const clusterId = getClusterId(cluster)
   const cpu = getClusterResource(cluster, 'cpu')
