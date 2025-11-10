@@ -20,7 +20,7 @@ import {
   getVmArchitecture,
   getVmFamily,
   getVmHostName,
-  getVmId,
+  getVmOperatingSystemId,
   getVmName,
   getVmPowerState,
   getVmToolVersion,
@@ -52,7 +52,7 @@ function CardContent({ className, ...props }: React.ComponentProps<'div'>) {
 
 const VMCard = ({ className, vm, vmDisplayData }: VMCardProps) => {
   const name = getVmName(vm)
-  const id = getVmId(vm)
+  const id = getVmOperatingSystemId(vm)
   const family = getVmFamily(vm)
   const hostName = getVmHostName(vm)
   const version = getVmVersion(vm)

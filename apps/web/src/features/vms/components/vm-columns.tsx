@@ -5,7 +5,6 @@ import type { DataTableColumnDef } from '@/components/ui/data-table'
 import Link from 'next/link'
 import { Pill } from '@/components/shadcn/pill'
 import { vmCardColors } from '@/features/vms/utils/env-colors'
-import { User } from 'next-auth'
 import { VMColumnsData } from '@/features/vms/types/vm-types'
 import { createColumnHelper } from '@tanstack/react-table'
 import {
@@ -18,7 +17,7 @@ import {
   getVmDiskSizes,
   getVmDiskUsages,
   getVmHostName,
-  getVmId,
+  getVmOperatingSystemId,
   getVmName,
   getVmPowerState,
   getVmToolVersion,
@@ -27,10 +26,7 @@ import {
 
 const columnHelper = createColumnHelper<VirtualMachine>()
 
-export const getVMTableColumns = (
-  user?: User,
-  selectedDisplayData?: VMColumnsData[]
-): DataTableColumnDef<VirtualMachine>[] => {
+export const getVMTableColumns = (selectedDisplayData?: VMColumnsData[]): DataTableColumnDef<VirtualMachine>[] => {
   const showAllVMs = !selectedDisplayData || selectedDisplayData.length === 0
   const isVisible = (data: VMColumnsData) => {
     if (data === 'id' || data === 'architecture') {
@@ -63,7 +59,7 @@ export const getVMTableColumns = (
     isVisible('id') &&
       columnHelper.accessor(
         (row) => {
-          const osID = getVmId(row)
+          const osID = getVmOperatingSystemId(row)
           return osID
         },
         {

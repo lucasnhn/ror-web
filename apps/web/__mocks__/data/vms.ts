@@ -2,12 +2,17 @@ export const mockVms = {
   resources: Array.from({ length: 104 }, (_, i) => {
     const idx = i + 1
     const teams = ['Monitorering', 'stamnett']
-    const hostnames = ['MTRD-WD-ANS01', 'LTRD-WD-ANS02', 'PTRD-WD-ANS03', 'LTRD-WD-ANS04']
+    const hostnames = [
+      'LTRD-WD-ANS01.365lab.no-mock',
+      'TTRD-WD-ANS02.365lab.no-mock',
+      'PTRD-WD-ANS03.365lab.no-mock',
+      'MTRD-WD-ANS04.365lab.no-mock',
+    ]
     return {
       kind: 'VirtualMachine',
       apiVersion: 'general.ror.internal/v1alpha1',
       metadata: {
-        name: `LTRD-WD-ANS01.365lab.no-mock${idx}`,
+        name: `LTRD-WD-ANS01.365lab.no-mock-${idx}`,
         uid: `mock-uid-${idx}`,
       },
       rormeta: {
@@ -25,7 +30,7 @@ export const mockVms = {
             coresPerSocket: 1,
             sockets: 2,
           },
-          name: `LTRD-WD-ANS01.365lab.no-mock${idx}`,
+          name: `LTRD-WD-ANS01.365lab.no-mock-${idx}`,
           disks: null,
           memory: {
             sizeBytes: 4294967296,
@@ -43,7 +48,7 @@ export const mockVms = {
           disks: [
             {
               id: `disk-${idx}`,
-              name: `disk-${idx}-vmdk`,
+              name: `disk-LTRD-WD-ANS01.365lab.no-mock-${idx}-vmdk`,
               sizeBytes: 78843545600,
               type: 'persistent',
               usageBytes: 35843545600,
@@ -51,7 +56,7 @@ export const mockVms = {
             },
             {
               id: `disk-${idx + 1}`,
-              name: `disk-${idx + 1}-vmdk`,
+              name: `disk-LTRD-WD-ANS01.365lab.no-mock-${idx + 1}-vmdk`,
               sizeBytes: 35843545600,
               type: 'persistent',
               usageBytes: 20843545600,
@@ -96,7 +101,7 @@ export const mockVms = {
             name: `Red Hat Enterprise Linux`,
             family: 'Linux',
             version: '5.4.0-208-generic',
-            hostName: hostnames[idx % hostnames.length],
+            hostName: `LTRD-WD-ANS01.365lab.no-mock-${idx}`,
             powerState: idx % 3 === 0 ? 'poweredOn' : idx % 3 === 1 ? 'poweredOff' : 'undefined',
             toolVersion: '11360',
             architecture: 'X86',

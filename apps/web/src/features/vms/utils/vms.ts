@@ -59,12 +59,12 @@ export interface UseVmLayoutReturn {
   error: string | null
 }
 
-export const getVmId = (vm: VirtualMachine): string => {
-  return vm.virtualmachine?.status?.operatingSystem?.id || vm.metadata?.name || vm.metadata?.uid || 'unknown-id'
+export const getVmOperatingSystemId = (vm: VirtualMachine): string => {
+  return vm.virtualmachine?.status?.operatingSystem?.id || 'unknown-id'
 }
 
 export const getVmHostName = (vm: VirtualMachine): string => {
-  return vm.virtualmachine?.status?.operatingSystem?.hostName || vm.metadata?.name || 'unnamed-vm'
+  return vm.virtualmachine?.status?.operatingSystem?.hostName || 'Unknown VM'
 }
 
 export const getVmPowerState = (vm: VirtualMachine): string => {
@@ -189,4 +189,17 @@ export const getProvider = (vm: VirtualMachine) => {
 export const getTags = (vm: VirtualMachine) => {
   return vm?.virtualmachine?.status?.tags || {}
 }
-export const getVmsKey = (vms: VirtualMachine[] = []) => (Array.isArray(vms) ? vms.map(getVmId).join('|') : '')
+export const getVmUniqueKey = (vm: VirtualMachine) => {
+  const hostname = getVmHostName(vm)
+  const uid = vm?.metadata?.uid
+  // If both hostname and uid are available, combine them; else use whichever is available
+  if (hostname && hostname !== 'Unknown VM' && uid) {
+    return `${hostname}-${uid}`
+  }
+  if (uid) {
+    return uid
+  }
+  // Fallback: at least use hostname (may be 'Unknown VM')
+  return hostname
+}
+export const getVmsKey = (vms: VirtualMachine[] = []) => (Array.isArray(vms) ? vms.map(getVmUniqueKey).join('|') : '')
