@@ -116,6 +116,7 @@ export function useLayoutPreferences(key: LayoutKey, defaultLayouts: Layouts) {
         key,
         hasSaved: !!saved,
         savedKeys: saved ? Object.keys(saved) : [],
+        prefs,
       })
       if (isLayouts(saved)) {
         setLayouts(saved)
