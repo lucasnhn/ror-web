@@ -7,6 +7,13 @@ import { Pill } from '@/components/shadcn/pill'
 import { vmCardColors } from '@/features/vms/utils/env-colors'
 import { VMColumnsData } from '@/features/vms/types/vm-types'
 import { createColumnHelper } from '@tanstack/react-table'
+import type { VMWithBackupStatus } from '@/features/backup/utils/map-backup-to-vm'
+import {
+  useBackupStatus,
+  getVMBackupStatus,
+  compareVMsByBackupStatus,
+  getVMActiveBackupStatus,
+} from '@/features/backup/hooks/useBackupStatus'
 import {
   getSpecCoresPerSocket,
   getSpecMemory,
@@ -24,9 +31,12 @@ import {
   getVmVersion,
 } from '../utils/vms'
 
-const columnHelper = createColumnHelper<VirtualMachine>()
+// Union type to handle both regular VMs and VMs with backup status
+type VMTableRow = VirtualMachine | VMWithBackupStatus
 
-export const getVMTableColumns = (selectedDisplayData?: VMColumnsData[]): DataTableColumnDef<VirtualMachine>[] => {
+const columnHelper = createColumnHelper<VMTableRow>()
+
+export const getVMTableColumns = (selectedDisplayData?: VMColumnsData[]): DataTableColumnDef<VMTableRow>[] => {
   const showAllVMs = !selectedDisplayData || selectedDisplayData.length === 0
   const isVisible = (data: VMColumnsData) => {
     if (data === 'id' || data === 'architecture') {
@@ -90,6 +100,14 @@ export const getVMTableColumns = (selectedDisplayData?: VMColumnsData[]): DataTa
           },
         }
       ),
+    isVisible('activeBackup') &&
+      columnHelper.accessor((row) => getVMActiveBackupStatus(row), {
+        id: 'activeBackup',
+        header: 'Active Backup?',
+        enableSorting: true,
+        //sortingFn: (rowA, rowB) => compareVMsByBackupStatus(rowA.original, rowB.original),
+        cell: (info) => <span>{info.getValue() ? 'Yes' : 'No'}</span>,
+      }),
     isVisible('name') &&
       columnHelper.accessor(
         (row) => {
@@ -224,5 +242,5 @@ export const getVMTableColumns = (selectedDisplayData?: VMColumnsData[]): DataTa
         )
       },
     }),
-  ].filter(Boolean) as DataTableColumnDef<VirtualMachine>[]
+  ].filter(Boolean) as DataTableColumnDef<VMTableRow>[]
 }

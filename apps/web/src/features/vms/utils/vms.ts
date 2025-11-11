@@ -1,7 +1,7 @@
-import { User } from 'next-auth'
+import type { VirtualMachine, User } from '@ror/js-api-client'
 import { VMCardData } from '@/features/vms/types/vm-types'
-import type { VirtualMachine } from '@ror/js-api-client'
 import { Params } from '@/types/resources-page'
+import type { VMWithBackupStatus } from '@/features/backup/utils/map-backup-to-vm'
 
 export interface VmResponse {
   resources: VirtualMachine[]
@@ -10,7 +10,7 @@ export interface VmResponse {
 export interface VMCardProps {
   className?: string
   user?: User
-  vm: VirtualMachine
+  vm: VirtualMachine | VMWithBackupStatus
   vmDisplayData: VMCardData[]
 }
 
@@ -22,8 +22,8 @@ export interface VMTableProps {
 
 export interface PageViewProps {
   className?: string
-  user: User
-  vms: VirtualMachine[]
+  user?: User
+  vms: VirtualMachine[] | VMWithBackupStatus[]
   params: Params
 }
 
@@ -203,3 +203,7 @@ export const getVmUniqueKey = (vm: VirtualMachine) => {
   return hostname
 }
 export const getVmsKey = (vms: VirtualMachine[] = []) => (Array.isArray(vms) ? vms.map(getVmUniqueKey).join('|') : '')
+
+export const getVmExternalId = (vm: VirtualMachine) => {
+  return vm?.virtualmachine?.externalId
+}
