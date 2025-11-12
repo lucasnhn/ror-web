@@ -31,6 +31,7 @@ import { standardLayouts } from '../config/cluster-details-layouts'
 import { GridLayoutWrapper } from '@/components/ui/grid-layout-wrapper'
 import { CardHeader, CardItem } from '@/components/ui/grid-layout-card'
 import { useLayoutPreferences } from '@/hooks/use-layout-preferences'
+import { useRef } from 'react'
 
 interface ClusterDetailsProps {
   user?: User
@@ -49,6 +50,7 @@ const LOG_NS = '[ClusterDetails]'
  */
 export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
   const { cluster } = useClusterContext()
+  const applyingRef = useRef(false)
 
   const {
     layouts,
@@ -67,6 +69,19 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
     bpItems: (layouts?.[currentBreakpoint] || []).length,
   })
 
+  const onLayoutChange = (layout: Layout[]) => {
+    if (applyingRef.current) {
+      console.info('[ClusterDetails] onLayoutChange swallowed (post-reset)', { bp: currentBreakpoint })
+      applyingRef.current = false
+      return
+    }
+    console.info('[ClusterDetails] onLayoutChange applied', { bp: currentBreakpoint, count: layout.length })
+    setLayouts({
+      ...layouts,
+      [currentBreakpoint]: layout,
+    })
+  }
+
   const clusterId = getClusterId(cluster)
   const cpu = getClusterResource(cluster, 'cpu')
   const memory = getClusterResource(cluster, 'memory')
@@ -83,6 +98,41 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
   const workspace = getWorkspace(cluster)
   const datacenter = getDatacenter(cluster)
   const provider = getProvider(cluster)
+
+  // const LayoutButtons = () => (
+  //   <div className='flex sm:flex-row flex-col gap-2 mb-3'>
+  //     <Button
+  //       onClick={() => {
+  //         const newLayouts: Layouts = { ...layouts, [currentBreakpoint]: layouts[currentBreakpoint] }
+  //         console.info(`${LOG_NS} Save layout click`, {
+  //           currentBreakpoint,
+  //           beforeCount: (layouts?.[currentBreakpoint] || []).length,
+  //           keys: Object.keys(layouts || {}),
+  //         })
+  //         saveLayouts(newLayouts)
+  //         toast.info('Layout saved')
+  //       }}
+  //     >
+  //       Save layout
+  //     </Button>
+  //     <Button
+  //       onClick={() => {
+  //         console.info(`${LOG_NS} Reset to saved click`)
+  //         resetToSaved()
+  //       }}
+  //     >
+  //       Reset to saved
+  //     </Button>
+  //     <Button
+  //       onClick={() => {
+  //         console.info(`${LOG_NS} Reset to default click`)
+  //         resetToDefault()
+  //       }}
+  //     >
+  //       Reset to default
+  //     </Button>
+  //   </div>
+  // )
 
   const LayoutButtons = () => (
     <div className='flex sm:flex-row flex-col gap-2 mb-3'>
@@ -103,6 +153,7 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
       <Button
         onClick={() => {
           console.info(`${LOG_NS} Reset to saved click`)
+          applyingRef.current = true // <-- arm the guard
           resetToSaved()
         }}
       >
@@ -111,6 +162,7 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
       <Button
         onClick={() => {
           console.info(`${LOG_NS} Reset to default click`)
+          applyingRef.current = true // <-- arm the guard
           resetToDefault()
         }}
       >
@@ -229,14 +281,14 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
     </>
   )
 
-  const onLayoutChange = (layout: Layout[]) => {
-    console.info(`${LOG_NS} onLayoutChange`, {
-      currentBreakpoint,
-      itemCount: layout.length,
-      sample: layout.slice(0, 3),
-    })
-    setLayouts({ ...layouts, [currentBreakpoint]: layout })
-  }
+  // const onLayoutChange = (layout: Layout[]) => {
+  //   console.info(`${LOG_NS} onLayoutChange`, {
+  //     currentBreakpoint,
+  //     itemCount: layout.length,
+  //     sample: layout.slice(0, 3),
+  //   })
+  //   setLayouts({ ...layouts, [currentBreakpoint]: layout })
+  // }
 
   const onBreakpointChange = (bp: string) => {
     console.info(`${LOG_NS} onBreakpointChange`, { from: currentBreakpoint, to: bp })
