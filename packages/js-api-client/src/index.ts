@@ -45,4 +45,6 @@ export type {
   VirtualMachine,
   VirtualMachineNetworks,
   VirtualMachineDisks,
+  BackupJob,
+  BackupRun,
 } from './types/entities'
