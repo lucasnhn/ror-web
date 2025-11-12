@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import type { Layouts } from 'react-grid-layout'
 import {
   getSavedUserPreferenceObject,
@@ -59,20 +59,6 @@ export function useLayoutPreferences(key: LayoutKey, defaultLayouts: Layouts) {
   })
   const [layoutKey, setLayoutKey] = useState(0)
   const [currentBreakpoint, setCurrentBreakpoint] = useState('lg')
-  const [hasManualReset, setHasManualReset] = useState(false)
-
-  useEffect(() => {
-    if (!isClient || hasManualReset) return
-    try {
-      const prefs = getSavedUserPreferenceObject(PREFERENCES_KEY, DEFAULT_USERPREFERENCES)
-      const saved = (prefs as Preferences)[key]?.layouts
-      const next = isLayouts(saved) ? saved : defaultLayouts
-      setLayouts(next)
-      console.info(`${LOG_NS} effect->load`, { key, hasSaved: !!saved })
-    } catch (e) {
-      console.warn(`${LOG_NS} effect->load error`, e)
-    }
-  }, [key, defaultLayouts, isClient, hasManualReset])
 
   const saveLayouts = (newLayouts: Layouts) => {
     try {
@@ -96,7 +82,6 @@ export function useLayoutPreferences(key: LayoutKey, defaultLayouts: Layouts) {
       setLayouts(defaultLayouts)
       updateUserPreferenceObject(PREFERENCES_KEY, { [key]: { layouts: defaultLayouts } })
       setLayoutKey((prev) => prev + 1)
-      setHasManualReset(true)
       console.info(`${LOG_NS} resetToDefault applied`)
     } catch (e) {
       console.error(`${LOG_NS} resetToDefault error`, e)
@@ -110,7 +95,6 @@ export function useLayoutPreferences(key: LayoutKey, defaultLayouts: Layouts) {
       if (isLayouts(saved)) {
         setLayouts(saved)
         setLayoutKey((prev) => prev + 1)
-        setHasManualReset(true)
         console.info(`${LOG_NS} resetToSaved applied`)
       }
     } catch (e) {
