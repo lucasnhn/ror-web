@@ -1,6 +1,6 @@
 import type { BackupRun, BackupJob } from '@ror/js-api-client'
-import { BackupActiveTarget } from '@/features/backup/utils/backup-job'
-import { getLastBackupRun } from '@/features/backup/utils/backup-job'
+import { BackupActiveTarget } from '@/features/vms/backup/utils/backup-job'
+import { getLastBackupRun } from '@/features/vms/backup/utils/backup-job'
 
 export interface LastBackupInfo {
   startTime: string | null

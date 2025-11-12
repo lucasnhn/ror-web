@@ -7,9 +7,9 @@
  */
 
 import { cn } from '@/utils/clsxm'
-import { useActiveBackupStatus, useBackupStatus } from '@/features/backup/hooks/useBackupStatus'
+import { useActiveBackupStatus, useBackupStatus } from '@/features/vms/backup/hooks/useBackupStatus'
 import type { VirtualMachine } from '@ror/js-api-client'
-import type { VMWithBackupStatus } from '@/features/backup/utils/map-backup-to-vm'
+import type { VMWithBackupStatus } from '@/features/vms/backup/utils/map-backup-to-vm'
 
 type VMTableRow = VirtualMachine | VMWithBackupStatus
 

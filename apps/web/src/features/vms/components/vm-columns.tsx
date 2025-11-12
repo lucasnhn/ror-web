@@ -7,13 +7,13 @@ import { Pill } from '@/components/shadcn/pill'
 import { vmCardColors } from '@/features/vms/utils/env-colors'
 import { VMColumnsData } from '@/features/vms/types/vm-types'
 import { createColumnHelper } from '@tanstack/react-table'
-import type { VMWithBackupStatus } from '@/features/backup/utils/map-backup-to-vm'
+import type { VMWithBackupStatus } from '@/features/vms/backup/utils/map-backup-to-vm'
 import {
   useBackupStatus,
   getVMBackupStatus,
   compareVMsByBackupStatus,
   getVMActiveBackupStatus,
-} from '@/features/backup/hooks/useBackupStatus'
+} from '@/features/vms/backup/hooks/useBackupStatus'
 import {
   getSpecCoresPerSocket,
   getSpecMemory,

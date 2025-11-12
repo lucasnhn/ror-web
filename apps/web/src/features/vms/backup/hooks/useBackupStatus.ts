@@ -1,6 +1,6 @@
 import type { VirtualMachine } from '@ror/js-api-client'
-import type { VMWithBackupStatus } from '@/features/backup/utils/map-backup-to-vm'
-import type { LastBackupInfo } from '@/features/backup/utils/backup-run'
+import type { VMWithBackupStatus } from '@/features/vms/backup/utils/map-backup-to-vm'
+import type { LastBackupInfo } from '@/features/vms/backup/utils/backup-run'
 
 type VMTableRow = VirtualMachine | VMWithBackupStatus
 

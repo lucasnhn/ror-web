@@ -1,8 +1,8 @@
 import { BackupJob, BackupRun, VirtualMachine } from '@ror/js-api-client'
 import { getVmExternalId } from '@/features/vms/utils/vms'
-import { getBackupJobActiveTargets } from '@/features/backup/utils/backup-job'
-import { getBackupRunActiveTargets, getVMLastBackupInfo } from '@/features/backup/utils/backup-run'
-import type { LastBackupInfo } from '@/features/backup/utils/backup-run'
+import { getBackupJobActiveTargets } from '@/features/vms/backup/utils/backup-job'
+import { getBackupRunActiveTargets, getVMLastBackupInfo } from '@/features/vms/backup/utils/backup-run'
+import type { LastBackupInfo } from '@/features/vms/backup/utils/backup-run'
 
 export type VMWithBackupStatus = VirtualMachine & {
   backupStatus: {

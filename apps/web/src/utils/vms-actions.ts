@@ -2,9 +2,9 @@
 
 import { getRorApi } from '@/services/ror-api'
 import type { VirtualMachine } from '@ror/js-api-client'
-import { fetchBackupJobs } from '@/features/backup/services/fetch-backupJobs'
-import { fetchBackupRuns } from '@/features/backup/services/fetch-backupRuns'
-import { mapBackupToVM } from '@/features/backup/utils/map-backup-to-vm'
+import { fetchBackupJobs } from '@/features/vms/backup/services/fetch-backupJobs'
+import { fetchBackupRuns } from '@/features/vms/backup/services/fetch-backupRuns'
+import { mapBackupToVM } from '@/features/vms/backup/utils/map-backup-to-vm'
 
 type LoadMoreOpts = { offset: number; limit: number; sort?: string; order?: 'asc' | 'desc' }
 

@@ -27,7 +27,7 @@ import {
   getVmVersion,
   VMCardProps,
 } from '@/features/vms/utils/vms'
-import { BackupStatusDisplay } from '@/features/backup/components'
+import { BackupStatusDisplay } from '@/features/vms/backup/components'
 
 function Card({ className, ...props }: React.ComponentProps<'div'>) {
   return (
