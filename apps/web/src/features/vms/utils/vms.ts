@@ -1,7 +1,7 @@
 import type { VirtualMachine, User } from '@ror/js-api-client'
 import { VMCardData } from '@/features/vms/types/vm-types'
 import { Params } from '@/types/resources-page'
-import type { VMWithBackupStatus } from '@/features/backup/utils/map-backup-to-vm'
+import type { VMWithBackupStatus } from '@/features/vms/backup/utils/map-backup-to-vm'
 
 export interface VmResponse {
   resources: VirtualMachine[]

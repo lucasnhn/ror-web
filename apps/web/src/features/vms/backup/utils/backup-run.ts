@@ -8,6 +8,43 @@ export interface LastBackupInfo {
   expiryTime: string | null
 }
 
+export interface BackupRunInfo {
+  id: string | null
+  startTime: string | null
+  endTime: string | null
+  expiryTime: string | null
+  // Additional details for expanded view
+  size: {
+    sourceSize: number | null
+    logicalSize: number | null
+    physicalSize: number | null
+  } | null
+  backupDestinations:
+    | {
+        name: string | null
+        id: string | null
+        type: string | null
+        status: string | null
+      }[]
+    | null
+}
+
+export const getBackupRunSourceSize = (backupRun: BackupRun) => {
+  return backupRun?.backuprun?.status?.backupStorage?.sourceSize ?? null
+}
+
+export const getBackupRunLogicalSize = (backupRun: BackupRun) => {
+  return backupRun?.backuprun?.status?.backupStorage?.logicalSize ?? null
+}
+
+export const getBackupRunPhysicalSize = (backupRun: BackupRun) => {
+  return backupRun?.backuprun?.status?.backupStorage?.physicalSize ?? null
+}
+
+export const getBackupRunSizeUnit = (backupRun: BackupRun) => {
+  return backupRun?.backuprun?.status?.backupStorage?.unit ?? null
+}
+
 export const getBackupRunActiveTargets = (backupRun: BackupRun): BackupActiveTarget[] => {
   const activeTargets = backupRun?.backuprun?.status?.backupTargets ?? []
   return activeTargets.map((target) => ({
@@ -28,12 +65,30 @@ export const getBackupRunExternalId = (backupActiveTarget: BackupActiveTarget) =
 }
 
 export const getBackupRunInfo = (backupRun: BackupRun) => {
+  const storage = backupRun?.backuprun?.status?.backupStorage
+  const destinations = backupRun?.backuprun?.status?.backupDestinations ?? []
+
   return {
     id: backupRun?.backuprun?.id ?? null,
     startTime: backupRun?.backuprun?.status?.startTime ?? null,
     endTime: backupRun?.backuprun?.status?.endTime ?? null,
     expiryTime: backupRun?.backuprun?.status?.expiryTime ?? null,
-    status: backupRun?.backuprun?.status?.backupDestinations?.[0]?.status ?? null,
+    size: storage
+      ? {
+          sourceSize: storage.sourceSize ?? null,
+          logicalSize: storage.logicalSize ?? null,
+          physicalSize: storage.physicalSize ?? null,
+        }
+      : null,
+    backupDestinations:
+      destinations.length > 0
+        ? destinations.map((dest) => ({
+            name: dest?.name ?? null,
+            id: dest?.id ?? null,
+            type: dest?.type ?? null,
+            status: dest?.status ?? null,
+          }))
+        : null,
   }
 }
 
@@ -106,4 +161,19 @@ export const getVMLastBackupInfo = (
   }
 
   return latestBackupInfo
+}
+
+/**
+ * Gets backup run info for multiple run IDs
+ * @param runIds - Array of backup run IDs
+ * @param backupRuns - Array of all backup runs to search through
+ * @returns Array of backup run info objects
+ */
+export const getBackupRunsInfoFromIds = (runIds: string[], backupRuns: BackupRun[]) => {
+  return runIds
+    .map((runId) => {
+      const matchingRun = backupRuns.find((run) => run?.backuprun?.id === runId)
+      return matchingRun ? getBackupRunInfo(matchingRun) : null
+    })
+    .filter(Boolean) // Remove null values
 }

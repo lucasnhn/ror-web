@@ -56,6 +56,12 @@ export const BackupRunSpec = z.object({
   delete: z.boolean().nullable().optional(),
 })
 
+export const LastBackupRunInfo = z.object({
+  startTime: z.string().nullable().optional(),
+  endTime: z.string().nullable().optional(),
+  expiryTime: z.string().nullable().optional(),
+})
+
 // -------------------------
 // Main schema
 // -------------------------
@@ -74,3 +80,4 @@ export const BackupRunSchema = V2ResourceSchema.extend({
 })
 
 export const BackupRunResponseSchema = createV2ResourceResponseSchema(BackupRunSchema)
+export type BackupRunLastRunInfo = z.infer<typeof LastBackupRunInfo>

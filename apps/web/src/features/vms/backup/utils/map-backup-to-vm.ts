@@ -9,6 +9,8 @@ export type VMWithBackupStatus = VirtualMachine & {
     hasBackupJob: boolean
     hasBackupRun: boolean
     lastBackupInfo?: LastBackupInfo | null
+    relatedBackupJobs?: BackupJob[]
+    relatedBackupRuns?: BackupRun[]
   }
 }
 
@@ -39,6 +41,8 @@ export function mapBackupToVM(
         hasBackupJob: relatedJobs.length > 0,
         hasBackupRun: relatedRuns.length > 0,
         lastBackupInfo,
+        relatedBackupJobs: relatedJobs,
+        relatedBackupRuns: relatedRuns,
       },
     }
   })

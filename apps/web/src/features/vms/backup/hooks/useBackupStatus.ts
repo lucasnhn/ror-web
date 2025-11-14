@@ -1,4 +1,4 @@
-import type { VirtualMachine } from '@ror/js-api-client'
+import type { BackupJob, BackupRun, VirtualMachine } from '@ror/js-api-client'
 import type { VMWithBackupStatus } from '@/features/vms/backup/utils/map-backup-to-vm'
 import type { LastBackupInfo } from '@/features/vms/backup/utils/backup-run'
 
@@ -26,6 +26,8 @@ export const useBackupStatus = (vm: VMTableRow): BackupStatusResult => {
       hasBackupJob: boolean
       hasBackupRun: boolean
       lastBackupInfo?: LastBackupInfo | null
+      relatedBackupJobs?: BackupJob[]
+      relatedBackupRuns?: BackupRun[]
     }
     const hasBackupJob = backupStatus.hasBackupJob
     const hasBackupRun = backupStatus.hasBackupRun

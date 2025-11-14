@@ -146,20 +146,9 @@ export const mockBackupJobs = {
             ],
             activeTargets: [
               {
-                name: 'LTRD-WD-ANS01.365lab.no-mock-10',
-                id: '2516',
-                externalId: '501425ca-4dd7-1950-f259-3e53d087a310',
-                source: {
-                  name: 'm-trd-vcenter-02.drift.nhn.no',
-                  id: '193',
-                  uuid: '3acf4419-4708-4869-b7a5-28edc591fe2a',
-                  type: 'kVCenter',
-                },
-              },
-              {
-                name: 'LTRD-WD-ANS01.365lab.no-mock-15',
-                id: '2617',
-                externalId: '501425ca-4dd7-1950-f259-3e53d087a315',
+                name: 'LTRD-WD-ANS01.365lab.no-mock-20',
+                id: '2718',
+                externalId: '501425ca-4dd7-1950-f259-3e53d087a320',
                 source: {
                   name: 'm-trd-vcenter-02.drift.nhn.no',
                   id: '193',
