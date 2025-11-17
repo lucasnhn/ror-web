@@ -303,48 +303,7 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
     <div>
       <div className='flex flex-col gap-12'>
         <div className='flex gap-20'>
-          {currentLayouts().clusterCards.layouts[0] && (
-            <div className='flex'>
-              <pre>{JSON.stringify(currentLayouts().clusterCards.layouts.lg[0], null, 2)}</pre>
-              <pre>{JSON.stringify(currentLayouts().clusterCards.layouts.lg[1], null, 2)}</pre>
-              <pre>{JSON.stringify(currentLayouts().clusterCards.layouts.lg[2], null, 2)}</pre>
-              <pre>{JSON.stringify(currentLayouts().clusterCards.layouts.lg[3], null, 2)}</pre>
-              <pre>{JSON.stringify(currentLayouts().clusterCards.layouts.lg[4], null, 2)}</pre>
-              <pre>{JSON.stringify(currentLayouts().clusterCards.layouts.lg[5], null, 2)}</pre>
-            </div>
-          )}
-          {currentLayouts().clusterCards.layouts[1] && (
-            <div className='flex'>
-              <pre>{JSON.stringify(currentLayouts().clusterCards.layouts.md[0], null, 2)}</pre>
-              <pre>{JSON.stringify(currentLayouts().clusterCards.layouts.md[1], null, 2)}</pre>
-              <pre>{JSON.stringify(currentLayouts().clusterCards.layouts.md[2], null, 2)}</pre>
-              <pre>{JSON.stringify(currentLayouts().clusterCards.layouts.md[3], null, 2)}</pre>
-              <pre>{JSON.stringify(currentLayouts().clusterCards.layouts.md[4], null, 2)}</pre>
-              <pre>{JSON.stringify(currentLayouts().clusterCards.layouts.md[5], null, 2)}</pre>
-            </div>
-          )}
-        </div>
-        <div className='flex gap-20'>
-          {currentLayouts().clusterCards.layouts[2] && (
-            <div className='flex'>
-              <pre>{JSON.stringify(currentLayouts().clusterCards.layouts.sm[0], null, 2)}</pre>
-              <pre>{JSON.stringify(currentLayouts().clusterCards.layouts.sm[1], null, 2)}</pre>
-              <pre>{JSON.stringify(currentLayouts().clusterCards.layouts.sm[2], null, 2)}</pre>
-              <pre>{JSON.stringify(currentLayouts().clusterCards.layouts.sm[3], null, 2)}</pre>
-              <pre>{JSON.stringify(currentLayouts().clusterCards.layouts.sm[4], null, 2)}</pre>
-              <pre>{JSON.stringify(currentLayouts().clusterCards.layouts.sm[5], null, 2)}</pre>
-            </div>
-          )}
-          {currentLayouts().clusterCards.layouts[3] && (
-            <div className='flex'>
-              <pre>{JSON.stringify(currentLayouts().clusterCards.layouts.xs[0], null, 2)}</pre>
-              <pre>{JSON.stringify(currentLayouts().clusterCards.layouts.xs[1], null, 2)}</pre>
-              <pre>{JSON.stringify(currentLayouts().clusterCards.layouts.xs[2], null, 2)}</pre>
-              <pre>{JSON.stringify(currentLayouts().clusterCards.layouts.xs[3], null, 2)}</pre>
-              <pre>{JSON.stringify(currentLayouts().clusterCards.layouts.xs[4], null, 2)}</pre>
-              <pre>{JSON.stringify(currentLayouts().clusterCards.layouts.xs[5], null, 2)}</pre>
-            </div>
-          )}
+          <pre>{JSON.stringify(currentLayouts().clusterCards.layouts, null, 4)}</pre>
         </div>
       </div>
       <LayoutButtons />
