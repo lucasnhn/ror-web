@@ -50,43 +50,74 @@ export function getSavedUserPreferenceObject(
     const storedValues = window.localStorage.getItem(key)
 
     if (storedValues) {
-      const parsed = JSON.parse(storedValues)
+      // First, attempt a normal JSON.parse. If that fails we try a best-effort
+      // repair which can recover some kinds of corrupted JSON strings that we
+      // have seen in production (trailing commas, or surrounding garbage).
+      let parsed: unknown | null = null
 
-      // First try a strict parse
-      const result = userPreferencesSchema.safeParse(parsed)
-      if (result.success) return result.data
-
-      // If strict parse fails, attempt a safe migration by merging the
-      // parsed object into the default preferences and validating again.
-      // This helps when production users have older or partial data.
       try {
-        const migrated: Partial<Preferences> = {
-          ...defaultValue,
-          ...parsed,
-          // attempt to shallow-merge known nested preference objects to
-          // preserve nested layout maps instead of overwriting them.
-          clusterCards: { ...(defaultValue.clusterCards ?? {}), ...(parsed.clusterCards ?? {}) },
-          vmDetails: { ...(defaultValue.vmDetails ?? {}), ...(parsed.vmDetails ?? {}) },
-        } as Partial<Preferences>
-
-        const migratedResult = userPreferencesSchema.safeParse(migrated)
-        if (migratedResult.success) {
-          // Persist the migrated, validated preferences so subsequent reads
-          // won't require migration.
-          try {
-            saveUserPreferencesObject(key, migratedResult.data)
-          } catch (e) {
-            // swallow persistence errors but still return the migrated data
-            console.warn('Could not persist migrated user preferences', e)
+        parsed = JSON.parse(storedValues)
+      } catch {
+        // Try a tolerant recovery: take the substring between the first '{'
+        // and the last '}' and strip common trailing-comma mistakes. This is
+        // conservative and only applied as a last-ditch effort to avoid
+        // silently discarding users' layouts when the stored string is
+        // slightly malformed.
+        try {
+          const first = storedValues.indexOf('{')
+          const last = storedValues.lastIndexOf('}')
+          if (first !== -1 && last !== -1 && last > first) {
+            let candidate = storedValues.slice(first, last + 1)
+            // remove trailing commas like `,}` or `, ]`
+            candidate = candidate.replace(/,\s*(?=[}\]])/g, '')
+            parsed = JSON.parse(candidate)
+            console.warn('Recovered user-preferences from malformed JSON')
+          } else {
+            console.warn('Could not find JSON object bounds when recovering user-preferences')
           }
-          return migratedResult.data
+        } catch (recoverErr) {
+          console.warn('Failed to recover malformed user-preferences JSON', recoverErr)
         }
-      } catch (e) {
-        console.warn('Migration attempt failed for user preferences', e)
       }
 
-      // If everything fails, log and fall back to defaults.
-      console.warn('User preferences failed validation, returning defaults')
+      if (parsed) {
+        const parsedPrefs = parsed as Partial<Preferences>
+        // First try a strict parse using zod
+        const result = userPreferencesSchema.safeParse(parsed)
+        if (result.success) return result.data
+
+        // If strict parse fails, attempt a safe migration by merging the
+        // parsed object into the default preferences and validating again.
+        // This helps when production users have older or partial data.
+        try {
+          const migrated: Partial<Preferences> = {
+            ...defaultValue,
+            ...parsedPrefs,
+            // attempt to shallow-merge known nested preference objects to
+            // preserve nested layout maps instead of overwriting them.
+            clusterCards: { ...(defaultValue.clusterCards ?? {}), ...(parsedPrefs.clusterCards ?? {}) },
+            vmDetails: { ...(defaultValue.vmDetails ?? {}), ...(parsedPrefs.vmDetails ?? {}) },
+          } as Partial<Preferences>
+
+          const migratedResult = userPreferencesSchema.safeParse(migrated)
+          if (migratedResult.success) {
+            // Persist the migrated, validated preferences so subsequent reads
+            // won't require migration.
+            try {
+              saveUserPreferencesObject(key, migratedResult.data)
+            } catch (e) {
+              // swallow persistence errors but still return the migrated data
+              console.warn('Could not persist migrated user preferences', e)
+            }
+            return migratedResult.data
+          }
+        } catch (e) {
+          console.warn('Migration attempt failed for user preferences', e)
+        }
+
+        // If everything fails, log and fall back to defaults.
+        console.warn('User preferences failed validation, returning defaults')
+      }
     }
   } catch (error) {
     console.error('Could not get the user preferences from localstorage: ', error)
