@@ -303,7 +303,7 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
     <div>
       <div className='flex flex-col gap-12'>
         <div className='flex gap-20'>
-          {currentLayouts().clusterCards.layouts.lg && (
+          {currentLayouts().clusterCards.layouts[0] && (
             <div className='flex'>
               <pre>{JSON.stringify(currentLayouts().clusterCards.layouts.lg[0], null, 2)}</pre>
               <pre>{JSON.stringify(currentLayouts().clusterCards.layouts.lg[1], null, 2)}</pre>
@@ -313,7 +313,7 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
               <pre>{JSON.stringify(currentLayouts().clusterCards.layouts.lg[5], null, 2)}</pre>
             </div>
           )}
-          {currentLayouts().clusterCards.layouts.md && (
+          {currentLayouts().clusterCards.layouts[1] && (
             <div className='flex'>
               <pre>{JSON.stringify(currentLayouts().clusterCards.layouts.md[0], null, 2)}</pre>
               <pre>{JSON.stringify(currentLayouts().clusterCards.layouts.md[1], null, 2)}</pre>
@@ -325,7 +325,7 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
           )}
         </div>
         <div className='flex gap-20'>
-          {currentLayouts().clusterCards.layouts.sm && (
+          {currentLayouts().clusterCards.layouts[2] && (
             <div className='flex'>
               <pre>{JSON.stringify(currentLayouts().clusterCards.layouts.sm[0], null, 2)}</pre>
               <pre>{JSON.stringify(currentLayouts().clusterCards.layouts.sm[1], null, 2)}</pre>
@@ -335,7 +335,7 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
               <pre>{JSON.stringify(currentLayouts().clusterCards.layouts.sm[5], null, 2)}</pre>
             </div>
           )}
-          {currentLayouts().clusterCards.layouts.xs && (
+          {currentLayouts().clusterCards.layouts[3] && (
             <div className='flex'>
               <pre>{JSON.stringify(currentLayouts().clusterCards.layouts.xs[0], null, 2)}</pre>
               <pre>{JSON.stringify(currentLayouts().clusterCards.layouts.xs[1], null, 2)}</pre>
