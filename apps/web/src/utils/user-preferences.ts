@@ -51,7 +51,42 @@ export function getSavedUserPreferenceObject(
 
     if (storedValues) {
       const parsed = JSON.parse(storedValues)
-      return userPreferencesSchema.parse(parsed)
+
+      // First try a strict parse
+      const result = userPreferencesSchema.safeParse(parsed)
+      if (result.success) return result.data
+
+      // If strict parse fails, attempt a safe migration by merging the
+      // parsed object into the default preferences and validating again.
+      // This helps when production users have older or partial data.
+      try {
+        const migrated: Partial<Preferences> = {
+          ...defaultValue,
+          ...parsed,
+          // attempt to shallow-merge known nested preference objects to
+          // preserve nested layout maps instead of overwriting them.
+          clusterCards: { ...(defaultValue.clusterCards ?? {}), ...(parsed.clusterCards ?? {}) },
+          vmDetails: { ...(defaultValue.vmDetails ?? {}), ...(parsed.vmDetails ?? {}) },
+        } as Partial<Preferences>
+
+        const migratedResult = userPreferencesSchema.safeParse(migrated)
+        if (migratedResult.success) {
+          // Persist the migrated, validated preferences so subsequent reads
+          // won't require migration.
+          try {
+            saveUserPreferencesObject(key, migratedResult.data)
+          } catch (e) {
+            // swallow persistence errors but still return the migrated data
+            console.warn('Could not persist migrated user preferences', e)
+          }
+          return migratedResult.data
+        }
+      } catch (e) {
+        console.warn('Migration attempt failed for user preferences', e)
+      }
+
+      // If everything fails, log and fall back to defaults.
+      console.warn('User preferences failed validation, returning defaults')
     }
   } catch (error) {
     console.error('Could not get the user preferences from localstorage: ', error)
