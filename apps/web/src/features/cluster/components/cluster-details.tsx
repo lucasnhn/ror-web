@@ -61,7 +61,7 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
     saveLayouts,
     resetToSaved,
     resetToDefault,
-    // getCurrentLayouts,
+    getCurrentLayouts,
   } = useLayoutPreferences('clusterCards', standardLayouts)
   console.info(`${LOG_NS} render`, {
     layoutKey,
@@ -295,17 +295,17 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
     console.info(`${LOG_NS} onBreakpointChange`, { from: currentBreakpoint, to: bp })
     setCurrentBreakpoint(bp)
   }
-  // const currentLayouts = () => {
-  //   return getCurrentLayouts()
-  // }
+  const currentLayouts = () => {
+    return getCurrentLayouts()
+  }
 
   return (
     <div>
-      {/* <div className='flex flex-col gap-12'>
+      <div className='flex flex-col gap-12'>
         <div className='flex gap-20'>
           <pre>{JSON.stringify(currentLayouts(), null, 4)}</pre>
         </div>
-      </div> */}
+      </div>
       <LayoutButtons />
       <GridLayoutWrapper
         className={className}

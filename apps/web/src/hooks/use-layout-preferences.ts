@@ -147,11 +147,11 @@ export function useLayoutPreferences(key: LayoutKey, defaultLayouts: Layouts) {
     }
   }
 
-  // const getCurrentLayouts = () => {
-  //   const prefs = getSavedUserPreferenceObject(PREFERENCES_KEY, DEFAULT_USERPREFERENCES)
-  //   console.log('getCurrentLayouts prefs: ', prefs)
-  //   return prefs
-  // }
+  const getCurrentLayouts = () => {
+    const prefs = getSavedUserPreferenceObject(PREFERENCES_KEY, DEFAULT_USERPREFERENCES)
+    console.log('getCurrentLayouts prefs: ', prefs)
+    return prefs
+  }
 
   // Helper to produce a deep clone of layouts using structuredClone when
   // available, falling back to JSON serialization.
@@ -188,6 +188,6 @@ export function useLayoutPreferences(key: LayoutKey, defaultLayouts: Layouts) {
     saveLayouts,
     resetToSaved,
     resetToDefault,
-    // getCurrentLayouts,
+    getCurrentLayouts,
   }
 }
