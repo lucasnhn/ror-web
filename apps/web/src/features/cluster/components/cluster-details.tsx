@@ -61,7 +61,7 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
     saveLayouts,
     resetToSaved,
     resetToDefault,
-    getCurrentLayouts,
+    // getCurrentLayouts,
   } = useLayoutPreferences('clusterCards', standardLayouts)
   console.info(`${LOG_NS} render`, {
     layoutKey,
