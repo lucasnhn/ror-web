@@ -303,7 +303,7 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
     <div>
       <div className='flex flex-col gap-12'>
         <div className='flex gap-20'>
-          <pre>{JSON.stringify(currentLayouts().clusterCards.layouts, null, 4)}</pre>
+          <pre>{JSON.stringify(currentLayouts(), null, 4)}</pre>
         </div>
       </div>
       <LayoutButtons />
