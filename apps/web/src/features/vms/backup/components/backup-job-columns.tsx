@@ -2,13 +2,7 @@
 
 import { ColumnDef } from '@tanstack/react-table'
 import type { BackupJob } from '@ror/js-api-client'
-import {
-  getBackupJobStartTime,
-  getBackupJobRetentionDisplay,
-  getBackupJobAllRetentions,
-  getBackupJobRetentionDuration,
-  getBackupJobRetentionUnit,
-} from '../utils/backup-job'
+import { getBackupJobStartTime, getBackupJobRetentionDuration, getBackupJobRetentionUnit } from '../utils/backup-job'
 import { Pill } from '@/components/shadcn/pill'
 import type { BackupRunInfo } from '../utils/backup-run'
 
@@ -33,7 +27,7 @@ export const BackupRunDetails = ({ backupRun }: { backupRun: BackupRunInfo }) =>
   const primaryDestination = backupRun.backupDestinations?.[0]
 
   return (
-    <div className='border border-gray-300 dark:border-gray-600 p-4 rounded-lg space-y-3'>
+    <div className='border border-gray-300 dark:border-gray-600 p-4 rounded-lg space-y-3 w-full'>
       <h4 className='font-semibold text-gray-800 dark:text-gray-200'>Backup Run Details</h4>
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
         {/* Size Information */}
@@ -65,14 +59,14 @@ export const BackupRunDetails = ({ backupRun }: { backupRun: BackupRunInfo }) =>
       </div>
 
       {/* All Destinations */}
-      <div className='border-t border-gray-300 dark:border-gray-600 pt-3'>
+      <div className='mt-5'>
         <label className='text-sm font-bold uppercase tracking-wide text-gray-700 dark:text-gray-300'>
           Backup Destinations
         </label>
-        <div className='grid grid-cols-1 md:grid-cols-2 gap-2 mt-2'>
+        <div className='grid gap-2 mt-2'>
           {backupRun.backupDestinations && backupRun.backupDestinations.length > 0 ? (
             backupRun.backupDestinations.map((dest, index) => (
-              <div key={index} className='relative p-2 rounded-lg border border-gray-300 dark:border-gray-600'>
+              <div key={index} className='relative p-2 rounded-lg border border-gray-300 dark:border-gray-400'>
                 <div className='absolute top-2 right-2'>
                   <span
                     className={`px-2 py-1 rounded-full text-xs font-bold ${

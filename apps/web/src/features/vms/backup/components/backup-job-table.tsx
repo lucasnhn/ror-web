@@ -100,7 +100,7 @@ export const BackupJobTable = ({ items, backupRuns }: BackupJobTableProps) => (
                           className='p-0'
                           style={{ gridColumn: '1 / -1' }}
                         >
-                          <div className='w-full bg-[var(--r-layer-2)] brightness-105 dark:brightness-125 px-4 py-4'>
+                          <div className='w-full bg-[var(--r-layer-2)] brightness-105 dark:brightness-90 px-4 py-4'>
                             <BackupRunDetails backupRun={nestedBackupRunInfo} />
                           </div>
                         </TableCell>

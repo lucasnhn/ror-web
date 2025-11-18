@@ -1,3 +1,4 @@
+import { Params } from '@/types/resources-page'
 import type { BackupJob } from '@ror/js-api-client'
 
 export interface ActiveTargetSource {
@@ -12,6 +13,12 @@ export interface BackupActiveTarget {
   id?: string
   externalId?: string
   source: ActiveTargetSource | null
+}
+
+export interface PageViewProps {
+  className?: string
+  backupJobs: BackupJob[]
+  params: Params
 }
 
 export const getBackupJobActiveTargets = (backupJob: BackupJob): BackupActiveTarget[] => {
@@ -71,4 +78,27 @@ export const getBackupJobRetentionDisplay = (backupJob: BackupJob) => {
 // Get all backup run IDs for a backup job
 export const getBackupJobAllRunIds = (backupJob: BackupJob): string[] => {
   return backupJob?.backupjob?.status?.backupRunIds ?? []
+}
+
+export const getBackupJobId = (backupJob: BackupJob) => {
+  return backupJob?.backupjob?.id ?? 'No backupJob ID'
+}
+
+export const getBackupJobKey = (backupJob: BackupJob[] = []) =>
+  Array.isArray(backupJob) ? backupJob.map(getBackupJobId).join('|') : ''
+
+export const getBackupJobLocation = (backupJob: BackupJob) => {
+  return backupJob?.backupjob?.status?.location ?? 'No location'
+}
+
+export const getBackupJobSource = (backupJob: BackupJob) => {
+  return backupJob?.backupjob?.source ?? 'No source'
+}
+
+export const getBackupJobSchedules = (backupJob: BackupJob) => {
+  return backupJob?.backupjob?.status?.resourceBackupJobSpec?.schedules ?? []
+}
+
+export const getBackupJobActiveTargetsColumns = (backupJob: BackupJob) => {
+  return backupJob?.backupjob?.status?.resourceBackupJobSpec?.activeTargets ?? []
 }

@@ -238,7 +238,7 @@ export const mockBackupRuns = {
         source: 'mtr1-bck-ccl01.drift.nhn.no',
         status: {
           id: '11158793:1762763214507514',
-          backupJobId: '44923908281402464:1614676439887:11158793',
+          backupJobId: '4923908281402464:1614676439887:11158793',
           backupTargets: [
             {
               name: 'LTRD-WD-ANS01.365lab.no-mock-1',

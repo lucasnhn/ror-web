@@ -1,6 +1,15 @@
 import type { BackupRun, BackupJob } from '@ror/js-api-client'
 import { BackupActiveTarget } from '@/features/vms/backup/utils/backup-job'
 import { getLastBackupRun } from '@/features/vms/backup/utils/backup-job'
+import { Params } from '@/types/resources-page'
+import { get } from 'http'
+
+export interface PageViewProps {
+  className?: string
+  backupRuns: BackupRun[]
+  params: Params
+  backupJobId?: string
+}
 
 export interface LastBackupInfo {
   startTime: string | null
@@ -27,6 +36,37 @@ export interface BackupRunInfo {
         status: string | null
       }[]
     | null
+}
+
+export const getBackupRunId = (backupRun: BackupRun) => {
+  return backupRun?.backuprun?.id ?? 'No ID'
+}
+
+export const getBackupRunKey = (backupRun: BackupRun[] = []) =>
+  Array.isArray(backupRun) ? backupRun.map(getBackupRunId).join('|') : ''
+
+export const getBackupRunSource = (backupRun: BackupRun) => {
+  return backupRun?.backuprun?.source ?? 'No source'
+}
+
+export const getBackupRunActiveTargetsColumns = (backupRun: BackupRun) => {
+  return backupRun?.backuprun?.status?.backupTargets ?? []
+}
+
+export const getBackupRunStartTime = (backupRun: BackupRun) => {
+  return backupRun?.backuprun?.status?.startTime ?? 'No start time'
+}
+
+export const getBackupRunEndTime = (backupRun: BackupRun) => {
+  return backupRun?.backuprun?.status?.endTime ?? 'No end time'
+}
+
+export const getBackupRunExpiryTime = (backupRun: BackupRun) => {
+  return backupRun?.backuprun?.status?.expiryTime ?? 'No expiry time'
+}
+
+export const getBackupRunMappedBackupJobId = (backupRun: BackupRun) => {
+  return backupRun?.backuprun?.status?.backupJobId ?? 'No mapped BackupJob ID'
 }
 
 export const getBackupRunSourceSize = (backupRun: BackupRun) => {
