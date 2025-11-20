@@ -17,7 +17,7 @@ const ResponsiveGridLayout = WidthProvider(Responsive)
 interface GridLayoutWrapperProps {
   className?: string
   layouts: Layouts
-  onLayoutChange?: (layout: Layout[]) => void
+  onLayoutChange?: (currentLayout: Layout[], allLayouts: Layouts) => void
   onBreakpointChange?: (breakpoint: string) => void
   layoutKey?: number // optional, for "reset" triggers
   children: React.ReactNode
@@ -80,7 +80,9 @@ export const GridLayoutWrapper = ({
         rowHeight={30}
         draggableHandle='.drag-handle'
         draggableCancel='.no-drag'
-        onLayoutChange={onLayoutChange}
+        onLayoutChange={(currentLayout, allLayouts) => {
+          onLayoutChange?.(currentLayout, allLayouts)
+        }}
         onBreakpointChange={onBreakpointChange}
       >
         {children}
