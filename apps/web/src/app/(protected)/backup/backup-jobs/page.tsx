@@ -35,7 +35,7 @@ export default async function BackupJobPage({
 
   return (
     <div className='w-full flex flex-col'>
-      <Header title='Backup Jobs' />
+      <Header title='Backup jobs' />
       <PageView backupJobs={backupJobs} params={params} />
     </div>
   )

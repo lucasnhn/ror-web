@@ -35,7 +35,6 @@ export const getBackupRunTableColumns = (
         header: 'ID',
         enableSorting: true,
         sortingFn: 'text',
-        size: 250, // Set minimum width for long IDs
         cell: (info) => {
           const id = info.getValue()
           return React.createElement(
@@ -71,7 +70,7 @@ export const getBackupRunTableColumns = (
       },
       {
         id: 'activeTargets',
-        header: 'Active Targets',
+        header: 'Active targets',
         enableSorting: false,
         cell: (info) => {
           const activeTargets = info.getValue()
@@ -90,7 +89,7 @@ export const getBackupRunTableColumns = (
       },
       {
         id: 'startTime',
-        header: 'Start Time',
+        header: 'Start time',
         enableSorting: true,
         sortingFn: 'text',
         cell: (info) => {
@@ -106,7 +105,7 @@ export const getBackupRunTableColumns = (
       },
       {
         id: 'endTime',
-        header: 'End Time',
+        header: 'End time',
         enableSorting: true,
         sortingFn: 'text',
         cell: (info) => {
@@ -122,7 +121,7 @@ export const getBackupRunTableColumns = (
       },
       {
         id: 'expiryTime',
-        header: 'Expiry Time',
+        header: 'Expiry time',
         enableSorting: true,
         sortingFn: 'text',
         cell: (info) => {
@@ -138,10 +137,9 @@ export const getBackupRunTableColumns = (
       },
       {
         id: 'backupJobId',
-        header: 'Backup Job ID',
+        header: 'Backup job ID',
         enableSorting: true,
         sortingFn: 'text',
-        size: 300, // Set minimum width for this column
         cell: (info) => {
           const backupJobId = info.getValue()
           return React.createElement(

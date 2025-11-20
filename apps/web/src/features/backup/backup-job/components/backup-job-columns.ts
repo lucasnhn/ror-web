@@ -104,7 +104,7 @@ export const getBackupJobTableColumns = (
       },
       {
         id: 'activeTargets',
-        header: 'Active Targets',
+        header: 'Active targets',
         enableSorting: false,
         cell: (info) => {
           const activeTargets = info.getValue()
@@ -123,7 +123,7 @@ export const getBackupJobTableColumns = (
       },
       {
         id: 'backupRunIds',
-        header: 'Backup Run IDs',
+        header: 'Backup run IDs',
         enableSorting: false,
         cell: (info) => {
           const backupRunIds = info.getValue()

@@ -1,3 +1,11 @@
+/**
+ * Backup Runs Page Component
+ * FILE OVERVIEW:
+ * ------------------------
+ * This file defines a React component that serves as the main entry point for the Backup Runs page.
+ * It handles authentication, data fetching, and rendering of the page layout.
+ **/
+
 import { normalizeParams } from '@/features/cluster/utils/normalize-params'
 import { getRorApi } from '@/services/ror-api'
 import { Metadata } from 'next'
@@ -30,7 +38,7 @@ export default async function BackupRunPage({
 
   return (
     <div className='w-full flex flex-col'>
-      <Header title='Backup Runs' />
+      <Header title='Backup runs' />
       <PageView backupRuns={backupRuns} params={params} backupJobId={backupJobId} />
     </div>
   )

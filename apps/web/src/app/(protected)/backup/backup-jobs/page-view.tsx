@@ -6,6 +6,7 @@ import {
   getBackupJobId,
   getBackupJobKey,
   getBackupJobLocation,
+  getBackupJobSource,
 } from '@/features/vms/backup/utils/backup-job'
 import { useFilters } from '@/hooks/use-filters'
 import { useInfiniteLoader } from '@/hooks/use-infinite-loader'
@@ -16,23 +17,15 @@ import { usePathname, useRouter } from 'next/navigation'
 import { SortDefinition, useSorting } from '@/hooks/use-sorting'
 import { useDisplayData } from '@/hooks/use-display-data'
 import type { BackupJobColumnsData } from '@/features/backup/backup-job/types/backup-job-types'
-import { Option } from '@/components/shadcn/multiselect'
 import { getBackupJobTableColumns } from '@/features/backup/backup-job/components/backup-job-columns'
 import { cn } from '@/utils/clsxm'
 import { NotReadyMessage } from '@/components/ui/not-ready-message'
 import { SortSelect } from '@/components/ui/sort-select'
-import { sortingOptionsBackupJob } from '@/features/vms/backup/config/page-view-options'
+import { sortingOptionsBackupJob } from '@/features/backup/config/page-view-options'
 import { Input } from '@/components/shadcn/input'
-import { Download, RotateCw, Search } from 'lucide-react'
+import { RotateCw, Search } from 'lucide-react'
 import { useDebouncedValue } from '@/hooks/use-debounced-value'
 import { Button } from '@/components/shadcn/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/shadcn/dropdown-menu'
-import { exportAsExcel } from '@/utils/export-utils'
 
 export const PageView = ({ className, backupJobs, params }: PageViewProps) => {
   const filtersOpen = params.filters === 'open'
@@ -58,16 +51,15 @@ export const PageView = ({ className, backupJobs, params }: PageViewProps) => {
 
   const filterDefinitions = [
     { key: 'location', extractor: (backupJobs: BackupJob) => getBackupJobLocation(backupJobs) },
+    { key: 'source', extractor: (backupJobs: BackupJob) => getBackupJobSource(backupJobs) },
   ]
 
   const definitions: SortDefinition<BackupJob>[] = [
+    { key: 'source', extractor: (item) => getBackupJobSource(item) },
     { key: 'location', extractor: (item) => getBackupJobLocation(item) },
   ]
 
-  const { selectedFilters, setSelectedFilters, filteredItems, resetFilters } = useFilters<BackupJob>(
-    safeItems,
-    filterDefinitions
-  )
+  const { filteredItems, resetFilters } = useFilters<BackupJob>(safeItems, filterDefinitions)
   const { selectedDisplayData, setSelectedDisplayData } = useDisplayData<BackupJobColumnsData>('backup-jobs')
   const [searchResults, setSearchResults] = useState<BackupJob[]>(safeItems)
   const [searchQuery, setSearchQuery] = useState('')
@@ -155,28 +147,6 @@ export const PageView = ({ className, backupJobs, params }: PageViewProps) => {
           <RotateCw className='h-4 w-4' />
           Refresh
         </Button>
-        {/* <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button>
-              <Download />
-              Export
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuItem onClick={() => exportAsCSV(filteredItems, `ror-${domain}-filtered.csv`)}>
-              Export Filtered (CSV)
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => exportAsExcel(filteredItems, `ror-${domain}-filtered.xlsx`)}>
-              Export Filtered (Excel)
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => exportAsCSV(allItems, `ror-${domain}-all.csv`)}>
-              Export All (CSV)
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => exportAsExcel(allItems, `ror-${domain}-all.xlsx`)}>
-              Export All (Excel)
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu> */}
       </div>
     </div>
   )
