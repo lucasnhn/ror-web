@@ -62,7 +62,7 @@ export const PageView = ({ className, backupRuns, params, backupJobId }: PageVie
   ]
 
   const { filteredItems, resetFilters } = useFilters<BackupRun>(safeItems, filterDefinitions)
-  const { selectedDisplayData, setSelectedDisplayData } = useDisplayData<BackupRunColumnsData>('backup-runs')
+  const { setSelectedDisplayData } = useDisplayData<BackupRunColumnsData>('backup-runs')
   const [searchResults, setSearchResults] = useState<BackupRun[]>(safeItems)
   // Initialize search query from backupJobId parameter
   const [searchQuery, setSearchQuery] = useState(backupJobId || '')
@@ -159,7 +159,7 @@ export const PageView = ({ className, backupRuns, params, backupJobId }: PageVie
       <div>
         <DataTable
           data={displayedItems}
-          columns={getBackupRunTableColumns(selectedDisplayData)}
+          columns={getBackupRunTableColumns()}
           hasMore={hasMore}
           isLoading={isLoading}
           sentinelRef={sentinelRef}

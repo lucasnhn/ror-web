@@ -60,7 +60,7 @@ export const PageView = ({ className, backupJobs, params }: PageViewProps) => {
   ]
 
   const { filteredItems, resetFilters } = useFilters<BackupJob>(safeItems, filterDefinitions)
-  const { selectedDisplayData, setSelectedDisplayData } = useDisplayData<BackupJobColumnsData>('backup-jobs')
+  const { setSelectedDisplayData } = useDisplayData<BackupJobColumnsData>('backup-jobs')
   const [searchResults, setSearchResults] = useState<BackupJob[]>(safeItems)
   const [searchQuery, setSearchQuery] = useState('')
   const debouncedQuery = useDebouncedValue(searchQuery, 120)
@@ -156,7 +156,7 @@ export const PageView = ({ className, backupJobs, params }: PageViewProps) => {
       <div>
         <DataTable
           data={displayedItems}
-          columns={getBackupJobTableColumns(selectedDisplayData)}
+          columns={getBackupJobTableColumns()}
           hasMore={hasMore}
           isLoading={isLoading}
           sentinelRef={sentinelRef}
