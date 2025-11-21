@@ -23,7 +23,6 @@ import {
 } from '@/features/vms/backup/utils/backup-run'
 import { formatDistance, format, isAfter } from 'date-fns'
 import { Clock, Calendar, HardDrive, AlertTriangle, CheckCircle, XCircle, Loader } from 'lucide-react'
-import { get } from 'http'
 
 interface BackupOverviewProps {
   vm: VMWithBackupStatus
@@ -77,7 +76,7 @@ const getBackupStatusColor = (isActive: boolean, hasRuns: boolean, latestStatus:
   }
 }
 
-export const BackupOverview: React.FC<BackupOverviewProps> = ({ vm, backupJobs, backupRuns }) => {
+export const BackupOverview: React.FC<BackupOverviewProps> = ({ backupJobs, backupRuns }) => {
   const latestRun = React.useMemo(() => {
     if (backupRuns.length === 0) return null
 
@@ -216,8 +215,9 @@ export const BackupOverview: React.FC<BackupOverviewProps> = ({ vm, backupJobs, 
     )
   }
 
+  const [isExpanded, setIsExpanded] = React.useState(false)
+
   const BackupRunCard = ({ run, isLatest }: { run: BackupRun; isLatest: boolean }) => {
-    const [isExpanded, setIsExpanded] = React.useState(false)
     const runInfo = getBackupRunInfo(run)
     const startTime = getBackupRunStartTime(run)
     const endTime = getBackupRunEndTime(run)

@@ -8,7 +8,6 @@ import {
   getBackupJobSource,
   getBackupJobLocation,
   getBackupJobSchedules,
-  getBackupJobActiveTargetsColumns,
   getBackupJobAllRunIds,
   getBackupJobActiveTargets,
 } from '@/features/vms/backup/utils/backup-job'
@@ -17,10 +16,9 @@ import React from 'react'
 
 interface ExpandableTargetsProps {
   targets: Array<{ name?: string }>
-  count: number
 }
 
-const ExpandableTargets: React.FC<ExpandableTargetsProps> = ({ targets, count }) => {
+const ExpandableTargets: React.FC<ExpandableTargetsProps> = ({ targets }) => {
   const [isExpanded, setIsExpanded] = React.useState(false)
 
   if (!isExpanded) {
@@ -187,7 +185,6 @@ export const getBackupJobTableColumns = (): DataTableColumnDef<BackupJob>[] => {
             },
             React.createElement(ExpandableTargets, {
               targets: activeTargets,
-              count: targetCount,
             })
           )
         },

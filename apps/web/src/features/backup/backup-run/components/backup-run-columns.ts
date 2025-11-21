@@ -3,7 +3,6 @@
 import { DataTableColumnDef } from '@/components/ui/data-table'
 import {
   getBackupRunActiveTargets,
-  getBackupRunActiveTargetsColumns,
   getBackupRunEndTime,
   getBackupRunExpiryTime,
   getBackupRunId,
@@ -17,9 +16,8 @@ import React from 'react'
 
 interface ExpandableTargetsProps {
   targets: Array<{ name?: string }>
-  count: number
 }
-const ExpandableTargets: React.FC<ExpandableTargetsProps> = ({ targets, count }) => {
+const ExpandableTargets: React.FC<ExpandableTargetsProps> = ({ targets }) => {
   const [isExpanded, setIsExpanded] = React.useState(false)
 
   if (!isExpanded) {
@@ -202,7 +200,6 @@ export const getBackupRunTableColumns = (): DataTableColumnDef<BackupRun>[] => {
             },
             React.createElement(ExpandableTargets, {
               targets: activeTargets,
-              count: targetCount,
             })
           )
         },
