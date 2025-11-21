@@ -80,4 +80,3 @@ export const BackupRunSchema = V2ResourceSchema.extend({
 })
 
 export const BackupRunResponseSchema = createV2ResourceResponseSchema(BackupRunSchema)
-export type BackupRunLastRunInfo = z.infer<typeof LastBackupRunInfo>

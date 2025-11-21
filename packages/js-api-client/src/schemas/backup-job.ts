@@ -77,4 +77,3 @@ export const BackupJobSchema = V2ResourceSchema.extend({
 })
 
 export const BackupJobResponseSchema = createV2ResourceResponseSchema(BackupJobSchema)
-export type BackupJobSchedule = z.infer<typeof BackupJobSchedules>

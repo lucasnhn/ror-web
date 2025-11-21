@@ -32,7 +32,6 @@ export function mapBackupToVM(
       return activeTargets.some((target) => target.externalId === vmExternalId)
     })
 
-    // Get last backup info - check both job-linked runs and standalone historical runs
     const lastBackupInfo = getVMLastBackupInfo(relatedJobs, backupRuns, relatedRuns)
 
     return {

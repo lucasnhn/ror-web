@@ -77,7 +77,6 @@ export const BackupStatusDisplay = ({ vm, className }: BackupStatusDisplayProps)
     return <NoBackupDisplay />
   }
 
-  // Determine styling based on backup status
   const isActive = activeBackupStatus.hasActiveBackup
   const isHistorical = activeBackupStatus.hasHistoricalBackup
 
@@ -106,7 +105,6 @@ export const BackupStatusDisplay = ({ vm, className }: BackupStatusDisplayProps)
 
   return (
     <div className={containerStyles}>
-      {/* Status Badge */}
       {isActive && (
         <div className='absolute top-0 right-0 bg-green-400 text-white text-xs px-2 py-1 rounded-bl-md font-medium'>
           ACTIVE
@@ -118,14 +116,12 @@ export const BackupStatusDisplay = ({ vm, className }: BackupStatusDisplayProps)
         </div>
       )}
 
-      {/* Title with Status Indicator */}
       <h5 className={titleStyles}>
         {isActive && <span className='w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse'></span>}
         {isHistorical && <span className='w-2 h-2 bg-orange-400 rounded-full mr-2'></span>}
         Last Backup
       </h5>
 
-      {/* Backup Information */}
       <div className='grid grid-cols-1 gap-2 text-xs'>
         <BackupInfoItem
           icon='started'

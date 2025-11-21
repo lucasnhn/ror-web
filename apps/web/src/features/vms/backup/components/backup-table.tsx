@@ -2,7 +2,7 @@
 
 import { DataTable } from '@/components/ui/data-table'
 import type { BackupJob, BackupRun } from '@ror/js-api-client'
-import { backupJobColumns, backupRunsColumns, BackupRunDetails } from './backup-job-columns'
+import { backupJobColumns, backupRunsColumns, BackupRunDetails } from './backup-columns'
 import type { BackupRunInfo } from '../utils/backup-run'
 import { TableRow, TableCell } from '@ror/react/components/table/table'
 import { getBackupJobAllRunIds, getLastBackupRun } from '../utils/backup-job'

@@ -47,6 +47,4 @@ export type {
   VirtualMachineDisks,
   BackupJob,
   BackupRun,
-  BackupRunLastRunInfo,
-  BackupJobSchedule,
 } from './types/entities'

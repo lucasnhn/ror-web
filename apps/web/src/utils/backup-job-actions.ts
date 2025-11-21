@@ -2,7 +2,6 @@
 
 import { getRorApi } from '@/services/ror-api'
 import type { BackupJob } from '@ror/js-api-client'
-import { fetchVms } from '@/features/vms/services/fetch-vms'
 
 type LoadMoreOpts = { offset: number; limit: number; sort?: string; order?: 'asc' | 'desc' }
 

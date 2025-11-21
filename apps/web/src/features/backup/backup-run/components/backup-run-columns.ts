@@ -12,7 +12,6 @@ import {
 } from '@/features/vms/backup/utils/backup-run'
 import { BackupRun } from '@ror/js-api-client'
 import { createColumnHelper } from '@tanstack/react-table'
-import { BackupRunColumnsData } from '../types/backup-run-types'
 import React from 'react'
 
 const columnHelper = createColumnHelper<BackupRun>()
@@ -21,9 +20,7 @@ const formatDateTime = (dateString: string) => {
   return new Date(dateString).toLocaleString('en-GB', { timeZone: 'Europe/Oslo' })
 }
 
-export const getBackupRunTableColumns = (
-  selectedDisplayData?: BackupRunColumnsData[]
-): DataTableColumnDef<BackupRun>[] => {
+export const getBackupRunTableColumns = (): DataTableColumnDef<BackupRun>[] => {
   return [
     columnHelper.accessor(
       (row) => {
@@ -77,7 +74,6 @@ export const getBackupRunTableColumns = (
           if (!activeTargets || activeTargets.length === 0) {
             return 'No active targets'
           }
-          // Convert active targets array to a readable string
           return `${activeTargets.length} target(s)`
         },
       }

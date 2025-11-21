@@ -2,11 +2,7 @@
 
 import { useVMContext } from '@/context/vm-context'
 import { useActiveBackupStatus, useBackupStatus } from '@/features/vms/backup/hooks/useBackupStatus'
-import {
-  BackupJobTable,
-  BackupRunsTable,
-  getLatestBackupRunId,
-} from '@/features/vms/backup/components/backup-job-table'
+import { BackupJobTable, BackupRunsTable, getLatestBackupRunId } from '@/features/vms/backup/components/backup-table'
 import type { VMWithBackupStatus } from '@/features/vms/backup/utils/map-backup-to-vm'
 
 export default function VMBackupPage() {
@@ -25,11 +21,9 @@ export default function VMBackupPage() {
     <div>
       {hasBackupDataArrays ? (
         <div>
-          {/* Show backup jobs table if there are backup jobs */}
           {relatedBackupJobs.length > 0 ? (
             <BackupJobTable items={relatedBackupJobs} backupRuns={relatedBackupRuns} />
           ) : relatedBackupRuns.length > 0 ? (
-            /* Show standalone backup runs table if only runs exist */
             <div>
               <h3 className='text-lg font-semibold mb-4'>Historical Backup Runs</h3>
               <p className='text-sm text-gray-600 mb-4'>
@@ -38,9 +32,7 @@ export default function VMBackupPage() {
               <BackupRunsTable backupRuns={relatedBackupRuns} latestRunId={getLatestBackupRunId(relatedBackupRuns)} />
             </div>
           ) : (
-            <div className='p-4 bg-gray-50 border border-gray-200 rounded'>
-              <p className='text-gray-600'>No backup jobs or runs found for this VM.</p>
-            </div>
+            <p className='text-gray-600'>No backup jobs or runs found for this VM.</p>
           )}
         </div>
       ) : (

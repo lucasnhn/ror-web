@@ -6,7 +6,6 @@
  * It handles authentication, data fetching, and rendering of the page layout.
  */
 
-import { authGuard } from '@/features/auth/utils/auth-guard'
 import PageView from './page-view'
 import { Header } from '@/components/layout/app-shell/header'
 import { normalizeParams } from '@/features/cluster/utils/normalize-params'
@@ -29,8 +28,6 @@ export default async function VMPage({
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>
 }) {
-  const session = await authGuard()
-  const user = session.user
   const api = await getRorApi()
 
   const sp = await searchParams

@@ -14,92 +14,6 @@ const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString('en-GB', { timeZone: 'Europe/Oslo' })
 }
 
-export const BackupRunDetails = ({ backupRun }: { backupRun: BackupRunInfo }) => {
-  // Calculate data transferred and compression ratio from size info
-  const formatBytes = (bytes: number) => {
-    if (bytes === 0) return '0 B'
-    const k = 1024
-    const sizes = ['B', 'KB', 'MB', 'GB', 'TB']
-    const i = Math.floor(Math.log(bytes) / Math.log(k))
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
-  }
-
-  const primaryDestination = backupRun.backupDestinations?.[0]
-
-  return (
-    <div className='border border-gray-300 dark:border-gray-600 p-4 rounded-lg space-y-3 w-full'>
-      <h4 className='font-semibold text-gray-800 dark:text-gray-200'>Backup Run Details</h4>
-      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-        {/* Size Information */}
-        {backupRun.size?.sourceSize && (
-          <div>
-            <label className='text-xs font-bold uppercase tracking-wide text-gray-700 dark:text-gray-300'>
-              Source Size
-            </label>
-            <p className='text-sm text-gray-900 dark:text-gray-100'>{formatBytes(backupRun.size.sourceSize)}</p>
-          </div>
-        )}
-        {backupRun.size?.logicalSize && (
-          <div>
-            <label className='text-xs font-bold uppercase tracking-wide text-gray-700 dark:text-gray-300'>
-              Logical Size
-            </label>
-            <p className='text-sm text-gray-900 dark:text-gray-100'>{formatBytes(backupRun.size.logicalSize)}</p>
-          </div>
-        )}
-
-        {backupRun.size?.physicalSize && (
-          <div>
-            <label className='text-xs font-bold uppercase tracking-wide text-gray-700 dark:text-gray-300'>
-              Physical Size
-            </label>
-            <p className='text-sm text-gray-900 dark:text-gray-100'>{formatBytes(backupRun.size.physicalSize)}</p>
-          </div>
-        )}
-      </div>
-
-      {/* All Destinations */}
-      <div className='mt-5'>
-        <label className='text-sm font-bold uppercase tracking-wide text-gray-700 dark:text-gray-300'>
-          Backup Destinations
-        </label>
-        <div className='grid gap-2 mt-2'>
-          {backupRun.backupDestinations && backupRun.backupDestinations.length > 0 ? (
-            backupRun.backupDestinations.map((dest, index) => (
-              <div key={index} className='relative p-2 rounded-lg border border-gray-300 dark:border-gray-400'>
-                <div className='absolute top-2 right-2'>
-                  <span
-                    className={`px-2 py-1 rounded-full text-xs font-bold ${
-                      dest.status === 'Succeeded'
-                        ? 'text-green-800'
-                        : dest.status === 'Failed'
-                          ? 'text-red-800'
-                          : dest.status === 'Running'
-                            ? 'text-blue-800'
-                            : 'text-gray-800'
-                    }`}
-                  >
-                    {dest.status || 'Unknown'}
-                  </span>
-                </div>
-                <div className='pr-20'>
-                  <div className='text-sm font-medium text-gray-900 dark:text-gray-100'>{dest.name}</div>
-                  <div className='text-sm text-gray-600 dark:text-gray-400'>Type: {dest.type}</div>
-                  <div className='text-sm text-gray-600 dark:text-gray-400'>ID: {dest.id ? dest.id : 'N/A'}</div>
-                </div>
-              </div>
-            ))
-          ) : (
-            <div className='p-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800'>
-              <span className='text-sm text-gray-500 dark:text-gray-400'>No backup destinations configured</span>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  )
-}
-
 export const backupJobColumns: ColumnDef<BackupJob>[] = [
   {
     id: 'expander',
@@ -288,3 +202,84 @@ export const backupRunsColumns = (latestRunId?: string | null): ColumnDef<Backup
     },
   },
 ]
+
+export const BackupRunDetails = ({ backupRun }: { backupRun: BackupRunInfo }) => {
+  const formatBytes = (bytes: number) => {
+    if (bytes === 0) return '0 B'
+    const k = 1024
+    const sizes = ['B', 'KB', 'MB', 'GB', 'TB']
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+  }
+  return (
+    <div className='border border-gray-300 dark:border-gray-600 p-4 rounded-lg space-y-3 w-full'>
+      <h4 className='font-semibold text-gray-800 dark:text-gray-200'>Backup Run Details</h4>
+      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+        {backupRun.size?.sourceSize && (
+          <div>
+            <label className='text-xs font-bold uppercase tracking-wide text-gray-700 dark:text-gray-300'>
+              Source Size
+            </label>
+            <p className='text-sm text-gray-900 dark:text-gray-100'>{formatBytes(backupRun.size.sourceSize)}</p>
+          </div>
+        )}
+        {backupRun.size?.logicalSize && (
+          <div>
+            <label className='text-xs font-bold uppercase tracking-wide text-gray-700 dark:text-gray-300'>
+              Logical Size
+            </label>
+            <p className='text-sm text-gray-900 dark:text-gray-100'>{formatBytes(backupRun.size.logicalSize)}</p>
+          </div>
+        )}
+
+        {backupRun.size?.physicalSize && (
+          <div>
+            <label className='text-xs font-bold uppercase tracking-wide text-gray-700 dark:text-gray-300'>
+              Physical Size
+            </label>
+            <p className='text-sm text-gray-900 dark:text-gray-100'>{formatBytes(backupRun.size.physicalSize)}</p>
+          </div>
+        )}
+      </div>
+
+      {/* All Destinations */}
+      <div className='mt-5'>
+        <label className='text-sm font-bold uppercase tracking-wide text-gray-700 dark:text-gray-300'>
+          Backup Destinations
+        </label>
+        <div className='grid gap-2 mt-2'>
+          {backupRun.backupDestinations && backupRun.backupDestinations.length > 0 ? (
+            backupRun.backupDestinations.map((dest, index) => (
+              <div key={index} className='relative p-2 rounded-lg border border-gray-300 dark:border-gray-400'>
+                <div className='absolute top-2 right-2'>
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs font-bold ${
+                      dest.status === 'Succeeded'
+                        ? 'text-green-800'
+                        : dest.status === 'Failed'
+                          ? 'text-red-800'
+                          : dest.status === 'Running'
+                            ? 'text-blue-800'
+                            : 'text-gray-800'
+                    }`}
+                  >
+                    {dest.status || 'Unknown'}
+                  </span>
+                </div>
+                <div className='pr-20'>
+                  <div className='text-sm font-medium text-gray-900 dark:text-gray-100'>{dest.name}</div>
+                  <div className='text-sm text-gray-600 dark:text-gray-400'>Type: {dest.type}</div>
+                  <div className='text-sm text-gray-600 dark:text-gray-400'>ID: {dest.id ? dest.id : 'N/A'}</div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className='p-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800'>
+              <span className='text-sm text-gray-500 dark:text-gray-400'>No backup destinations configured</span>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}

@@ -76,8 +76,6 @@ export const PageView = ({ className, vms, params }: PageViewProps) => {
     },
   })
 
-  //const sentinelRef = useRef<HTMLDivElement>(null)
-
   const safeItems = useMemo(
     () => items.filter((c) => getVmOperatingSystem(c) && typeof getVmOperatingSystem(c) === 'object'),
     [items]
@@ -104,15 +102,9 @@ export const PageView = ({ className, vms, params }: PageViewProps) => {
   const { selectedDisplayData, setSelectedDisplayData } = useDisplayData<VMCardData>('vms')
   const [searchResults, setSearchResults] = useState<(VirtualMachine | VMWithBackupStatus)[]>(safeItems)
   const sortedItems = useSorting({ items: filteredItems, sortKey: params.sort, sortOrder: params.order, definitions })
-  //const filterOptions = useMemo(() => generateFilterOptions(safeItems), [safeItems])
 
   // Handler for display data changes
   const onDisplayChange = (selected: Option[]) => setSelectedDisplayData(selected.map((i) => i.value as VMCardData))
-
-  // sync safeItems → searchResults only if content differs
-  //const idOf = useCallback((c: VirtualMachine) => getVmId(c) || '', [])
-
-  //const idsKey = useCallback((arr: VirtualMachine[]) => arr.map(idOf).join('|'), [idOf])
 
   const lastSafeKeyRef = useRef('')
   useEffect(() => {
@@ -183,7 +175,6 @@ export const PageView = ({ className, vms, params }: PageViewProps) => {
   )
 
   const GridView = () => {
-    // Default view without team grouping
     return (
       <div>
         <div className='flex flex-row flex-wrap gap-6'>

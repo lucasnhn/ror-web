@@ -22,7 +22,6 @@ export interface BackupRunInfo {
   startTime: string | null
   endTime: string | null
   expiryTime: string | null
-  // Additional details for expanded view
   size: {
     sourceSize: number | null
     logicalSize: number | null
@@ -140,14 +139,11 @@ export const getBackupRunInfo = (backupRun: BackupRun) => {
  */
 export const getLastBackupRunInfoFromJob = (backupJob: BackupJob, backupRuns: BackupRun[]) => {
   const lastBackupRunId = getLastBackupRun(backupJob)
-
   if (!lastBackupRunId) {
     return null
   }
 
-  // Find the backup run that matches the ID
   const matchingBackupRun = backupRuns.find((run) => run?.backuprun?.id === lastBackupRunId)
-
   if (!matchingBackupRun) {
     return null
   }
@@ -170,7 +166,6 @@ export const getVMLastBackupInfo = (
   let latestBackupInfo = null
   let latestDate = null
 
-  // First, check backup runs from active backup jobs
   for (const job of relatedBackupJobs) {
     const backupInfo = getLastBackupRunInfoFromJob(job, backupRuns)
 
@@ -184,7 +179,6 @@ export const getVMLastBackupInfo = (
     }
   }
 
-  // If no backup info from jobs, check historical backup runs directly
   if (!latestBackupInfo && relatedBackupRuns) {
     for (const run of relatedBackupRuns) {
       const backupInfo = getBackupRunInfo(run)
@@ -215,5 +209,5 @@ export const getBackupRunsInfoFromIds = (runIds: string[], backupRuns: BackupRun
       const matchingRun = backupRuns.find((run) => run?.backuprun?.id === runId)
       return matchingRun ? getBackupRunInfo(matchingRun) : null
     })
-    .filter(Boolean) // Remove null values
+    .filter(Boolean)
 }

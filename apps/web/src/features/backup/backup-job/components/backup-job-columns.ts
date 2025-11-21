@@ -2,7 +2,6 @@
 
 import { BackupJob } from '@ror/js-api-client'
 import { createColumnHelper } from '@tanstack/react-table'
-import { BackupJobColumnsData } from '../types/backup-job-types'
 import { DataTableColumnDef } from '@/components/ui/data-table'
 import {
   getBackupJobId,
@@ -17,9 +16,7 @@ import React from 'react'
 
 const columnHelper = createColumnHelper<BackupJob>()
 
-export const getBackupJobTableColumns = (
-  selectedDisplayData?: BackupJobColumnsData[]
-): DataTableColumnDef<BackupJob>[] => {
+export const getBackupJobTableColumns = (): DataTableColumnDef<BackupJob>[] => {
   return [
     columnHelper.accessor(
       (row) => {
@@ -31,7 +28,6 @@ export const getBackupJobTableColumns = (
         header: 'ID',
         enableSorting: true,
         sortingFn: 'text',
-        size: 300, // Set minimum width for long IDs
         cell: (info) => {
           const id = info.getValue()
           return React.createElement(
@@ -90,10 +86,7 @@ export const getBackupJobTableColumns = (
           if (!schedules || schedules.length === 0) {
             return 'No schedules'
           }
-          // Convert schedules array to a readable string
-          return schedules
-            .map((schedule: any) => `${schedule.frequency || 'Unknown'} ${schedule.unit || ''}`)
-            .join(', ')
+          return schedules.map((schedule: any) => `${schedule.unit || ''}`).join(', ')
         },
       }
     ),
@@ -111,7 +104,6 @@ export const getBackupJobTableColumns = (
           if (!activeTargets || activeTargets.length === 0) {
             return 'No active targets'
           }
-          // Convert active targets array to a readable string
           return `${activeTargets.length} target(s)`
         },
       }

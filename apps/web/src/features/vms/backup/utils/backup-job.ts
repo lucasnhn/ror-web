@@ -56,7 +56,6 @@ export const getBackupJobRetentionUnit = (backupJob: BackupJob) => {
   return backupJob?.backupjob?.status?.resourceBackupJobSpec?.schedules?.[0]?.retention?.unit ?? 'No retention unit'
 }
 
-// Get all retention settings from all schedules
 export const getBackupJobAllRetentions = (backupJob: BackupJob) => {
   const schedules = backupJob?.backupjob?.status?.resourceBackupJobSpec?.schedules ?? []
   return schedules.map((schedule, index) => ({
@@ -67,7 +66,6 @@ export const getBackupJobAllRetentions = (backupJob: BackupJob) => {
   }))
 }
 
-// Get formatted retention string for display
 export const getBackupJobRetentionDisplay = (backupJob: BackupJob) => {
   const retentions = getBackupJobAllRetentions(backupJob)
   if (retentions.length === 0) return 'No retention configured'
@@ -75,7 +73,6 @@ export const getBackupJobRetentionDisplay = (backupJob: BackupJob) => {
   return retentions.map((ret) => `${ret.duration} ${ret.unit} (${ret.destination})`).join(', ')
 }
 
-// Get all backup run IDs for a backup job
 export const getBackupJobAllRunIds = (backupJob: BackupJob): string[] => {
   return backupJob?.backupjob?.status?.backupRunIds ?? []
 }
