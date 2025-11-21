@@ -2,6 +2,7 @@
 
 import { DataTableColumnDef } from '@/components/ui/data-table'
 import {
+  getBackupRunActiveTargets,
   getBackupRunActiveTargetsColumns,
   getBackupRunEndTime,
   getBackupRunExpiryTime,
@@ -13,6 +14,76 @@ import {
 import { BackupRun } from '@ror/js-api-client'
 import { createColumnHelper } from '@tanstack/react-table'
 import React from 'react'
+
+interface ExpandableTargetsProps {
+  targets: Array<{ name?: string }>
+  count: number
+}
+const ExpandableTargets: React.FC<ExpandableTargetsProps> = ({ targets, count }) => {
+  const [isExpanded, setIsExpanded] = React.useState(false)
+
+  if (!isExpanded) {
+    return React.createElement(
+      'div',
+      {
+        className: 'flex items-center space-x-2',
+      },
+      React.createElement(
+        'span',
+        {
+          className: 'truncate',
+        },
+        targets.length + ' targets '
+      ),
+      React.createElement(
+        'div',
+        {
+          className:
+            'text-xs bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 px-2 py-1 rounded-full text-gray-600 dark:text-gray-300 font-medium transition-colors',
+          onClick: (e: React.MouseEvent) => {
+            e.stopPropagation()
+            setIsExpanded(true)
+          },
+        },
+        `+Show`
+      )
+    )
+  }
+
+  return React.createElement(
+    'div',
+    {
+      className: 'space-y-1',
+    },
+    React.createElement(
+      'button',
+      {
+        onClick: (e: React.MouseEvent) => {
+          e.stopPropagation()
+          setIsExpanded(false)
+        },
+        className: 'text-xs text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium',
+      },
+      '← Show less'
+    ),
+    React.createElement(
+      'div',
+      {
+        className: 'max-h-32 overflow-y-auto space-y-1',
+      },
+      targets.map((target, index) => {
+        return React.createElement(
+          'div',
+          {
+            key: index,
+            className: 'text-xs p-1 text-gray-700 dark:text-gray-300',
+          },
+          target?.name || `Unnamed target ${index + 1}`
+        )
+      })
+    )
+  )
+}
 
 const columnHelper = createColumnHelper<BackupRun>()
 
@@ -62,24 +133,6 @@ export const getBackupRunTableColumns = (): DataTableColumnDef<BackupRun>[] => {
     ),
     columnHelper.accessor(
       (row) => {
-        const backupRunActiveTargets = getBackupRunActiveTargetsColumns(row)
-        return backupRunActiveTargets
-      },
-      {
-        id: 'activeTargets',
-        header: 'Active targets',
-        enableSorting: false,
-        cell: (info) => {
-          const activeTargets = info.getValue()
-          if (!activeTargets || activeTargets.length === 0) {
-            return 'No active targets'
-          }
-          return `${activeTargets.length} target(s)`
-        },
-      }
-    ),
-    columnHelper.accessor(
-      (row) => {
         const backupRunStartTime = getBackupRunStartTime(row)
         return backupRunStartTime
       },
@@ -123,6 +176,35 @@ export const getBackupRunTableColumns = (): DataTableColumnDef<BackupRun>[] => {
         cell: (info) => {
           const expiryTime = info.getValue()
           return formatDateTime(expiryTime)
+        },
+      }
+    ),
+    columnHelper.accessor(
+      (row) => {
+        const backupRunActiveTargets = getBackupRunActiveTargets(row)
+        return backupRunActiveTargets
+      },
+      {
+        id: 'activeTargets',
+        header: 'Active targets',
+        enableSorting: false,
+        cell: (info) => {
+          const activeTargets = info.getValue()
+          const targetCount = activeTargets.length
+
+          if (!activeTargets || targetCount === 0) {
+            return 'No active targets'
+          }
+          return React.createElement(
+            'div',
+            {
+              className: 'max-w-xs',
+            },
+            React.createElement(ExpandableTargets, {
+              targets: activeTargets,
+              count: targetCount,
+            })
+          )
         },
       }
     ),

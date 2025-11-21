@@ -1,4 +1,4 @@
-' use client'
+'use client'
 
 import { BackupJob } from '@ror/js-api-client'
 import { createColumnHelper } from '@tanstack/react-table'
@@ -10,9 +10,81 @@ import {
   getBackupJobSchedules,
   getBackupJobActiveTargetsColumns,
   getBackupJobAllRunIds,
+  getBackupJobActiveTargets,
 } from '@/features/vms/backup/utils/backup-job'
 import Link from 'next/link'
 import React from 'react'
+
+interface ExpandableTargetsProps {
+  targets: Array<{ name?: string }>
+  count: number
+}
+
+const ExpandableTargets: React.FC<ExpandableTargetsProps> = ({ targets, count }) => {
+  const [isExpanded, setIsExpanded] = React.useState(false)
+
+  if (!isExpanded) {
+    return React.createElement(
+      'div',
+      {
+        className: 'flex items-center space-x-2',
+      },
+      React.createElement(
+        'span',
+        {
+          className: 'truncate',
+        },
+        targets.length + ' targets '
+      ),
+      React.createElement(
+        'div',
+        {
+          className:
+            'text-xs bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 px-2 py-1 rounded-full text-gray-600 dark:text-gray-300 font-medium transition-colors',
+          onClick: (e: React.MouseEvent) => {
+            e.stopPropagation()
+            setIsExpanded(true)
+          },
+        },
+        `+Show`
+      )
+    )
+  }
+
+  return React.createElement(
+    'div',
+    {
+      className: 'space-y-1',
+    },
+    React.createElement(
+      'button',
+      {
+        onClick: (e: React.MouseEvent) => {
+          e.stopPropagation()
+          setIsExpanded(false)
+        },
+        className: 'text-xs text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium',
+      },
+      '← Show less'
+    ),
+    React.createElement(
+      'div',
+      {
+        className: 'max-h-32 overflow-y-auto space-y-1',
+      },
+      ...targets.map((target, index) =>
+        React.createElement(
+          'div',
+          {
+            key: index,
+            className: 'text-xs p-1 text-gray-700 dark:text-gray-300',
+          },
+          target?.name || `Unnamed target ${index + 1}`
+        )
+      )
+    )
+  )
+}
 
 const columnHelper = createColumnHelper<BackupJob>()
 
@@ -92,7 +164,7 @@ export const getBackupJobTableColumns = (): DataTableColumnDef<BackupJob>[] => {
     ),
     columnHelper.accessor(
       (row) => {
-        const activeTargets = getBackupJobActiveTargetsColumns(row)
+        const activeTargets = getBackupJobActiveTargets(row)
         return activeTargets
       },
       {
@@ -101,10 +173,23 @@ export const getBackupJobTableColumns = (): DataTableColumnDef<BackupJob>[] => {
         enableSorting: false,
         cell: (info) => {
           const activeTargets = info.getValue()
-          if (!activeTargets || activeTargets.length === 0) {
+          const targetCount = activeTargets.length
+
+          if (!activeTargets || targetCount === 0) {
             return 'No active targets'
           }
-          return `${activeTargets.length} target(s)`
+
+          // For multiple targets, create a compact expandable view
+          return React.createElement(
+            'div',
+            {
+              className: 'max-w-xs',
+            },
+            React.createElement(ExpandableTargets, {
+              targets: activeTargets,
+              count: targetCount,
+            })
+          )
         },
       }
     ),

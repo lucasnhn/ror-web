@@ -5,3 +5,4 @@
  */
 
 export { BackupStatusDisplay } from './backup-status-display'
+export { BackupOverview } from './backup-overview'

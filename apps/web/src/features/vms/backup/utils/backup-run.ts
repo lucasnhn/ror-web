@@ -98,9 +98,9 @@ export const getBackupRunActiveTargets = (backupRun: BackupRun): BackupActiveTar
   }))
 }
 
-export const getBackupRunExternalId = (backupActiveTarget: BackupActiveTarget) => {
-  return backupActiveTarget?.externalId ?? 'No backupRun External ID'
-}
+// export const getBackupRunExternalId = (backupActiveTarget: BackupActiveTarget) => {
+//   return backupActiveTarget?.externalId ?? 'No backupRun External ID'
+// }
 
 export const getBackupRunInfo = (backupRun: BackupRun) => {
   const storage = backupRun?.backuprun?.status?.backupStorage

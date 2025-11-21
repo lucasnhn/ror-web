@@ -43,13 +43,13 @@ const BackupInfoItem = ({ icon, label, value }: BackupInfoItemProps) => {
 }
 
 const NoBackupDisplay = () => (
-  <div className='mt-4 p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-800/50'>
-    <h5 className='font-semibold text-sm text-gray-600 dark:text-gray-400 tracking-wide'>Backup</h5>
-    <div className='flex items-center justify-center py-2'>
-      <div className='text-center'>
-        <div className='w-8 h-8 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center mx-auto mb-2'>
+  <div className='mt-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800/50'>
+    <h5 className='font-semibold text-sm text-gray-700 dark:text-gray-300 tracking-wide mb-3'>Backup Status</h5>
+    <div className='flex items-center justify-center py-3'>
+      <div className='text-center space-y-2'>
+        <div className='w-10 h-10 bg-gray-200 dark:bg-gray-600 rounded-full flex items-center justify-center mx-auto'>
           <svg
-            className='w-4 h-4 text-gray-500 dark:text-gray-400'
+            className='w-5 h-5 text-gray-500 dark:text-gray-400'
             fill='none'
             stroke='currentColor'
             viewBox='0 0 24 24'
@@ -62,7 +62,7 @@ const NoBackupDisplay = () => (
             />
           </svg>
         </div>
-        <p className='text-sm text-gray-500 dark:text-gray-400'>No backup found</p>
+        <p className='text-sm text-gray-500 dark:text-gray-400 font-medium'>No backup configured</p>
       </div>
     </div>
   </div>
