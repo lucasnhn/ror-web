@@ -1,16 +1,11 @@
 'use client'
 
 import { useVMContext } from '@/context/vm-context'
-import { useActiveBackupStatus, useBackupStatus } from '@/features/vms/backup/hooks/useBackupStatus'
 import { BackupJobTable, BackupRunsTable, getLatestBackupRunId } from '@/features/vms/backup/components/backup-table'
 import type { VMWithBackupStatus } from '@/features/vms/backup/utils/map-backup-to-vm'
 
 export default function VMBackupPage() {
   const { vm } = useVMContext()
-  const activeBackupStatus = useActiveBackupStatus(vm)
-  const backupStatus = useBackupStatus(vm)
-
-  // Check if VM is enhanced with backup status and has backup data arrays
   const enhancedVM = vm as VMWithBackupStatus
   const hasBackupDataArrays = 'backupStatus' in enhancedVM && enhancedVM.backupStatus?.relatedBackupJobs !== undefined
 

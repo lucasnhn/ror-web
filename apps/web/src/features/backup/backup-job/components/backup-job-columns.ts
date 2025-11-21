@@ -86,7 +86,7 @@ export const getBackupJobTableColumns = (): DataTableColumnDef<BackupJob>[] => {
           if (!schedules || schedules.length === 0) {
             return 'No schedules'
           }
-          return schedules.map((schedule: any) => `${schedule.unit || ''}`).join(', ')
+          return schedules.map((schedule) => `${schedule.unit || ''}`).join(', ')
         },
       }
     ),

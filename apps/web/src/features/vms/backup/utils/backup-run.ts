@@ -2,7 +2,6 @@ import type { BackupRun, BackupJob } from '@ror/js-api-client'
 import { BackupActiveTarget } from '@/features/vms/backup/utils/backup-job'
 import { getLastBackupRun } from '@/features/vms/backup/utils/backup-job'
 import { Params } from '@/types/resources-page'
-import { get } from 'http'
 
 export interface PageViewProps {
   className?: string

@@ -71,7 +71,7 @@ export const backupRunsColumns = (latestRunId?: string | null): ColumnDef<Backup
   {
     header: 'Backup Run ID',
     accessorFn: (row) => row.id,
-    cell: ({ getValue, row }) => {
+    cell: ({ getValue }) => {
       const runId = getValue() as string
       const isLatest = latestRunId && runId === latestRunId
 
@@ -86,11 +86,8 @@ export const backupRunsColumns = (latestRunId?: string | null): ColumnDef<Backup
   {
     header: 'Start Time',
     accessorFn: (row) => row.startTime,
-    cell: ({ getValue, row }) => {
+    cell: ({ getValue }) => {
       const startTime = getValue() as string | null
-      const runId = row.original.id
-      const isLatest = latestRunId && runId === latestRunId
-
       if (!startTime) return <span className='text-gray-400'>N/A</span>
 
       const formattedDate = formatDate(startTime)
@@ -107,11 +104,8 @@ export const backupRunsColumns = (latestRunId?: string | null): ColumnDef<Backup
   {
     header: 'End Time',
     accessorFn: (row) => row.endTime,
-    cell: ({ getValue, row }) => {
+    cell: ({ getValue }) => {
       const endTime = getValue() as string | null
-      const runId = row.original.id
-      const isLatest = latestRunId && runId === latestRunId
-
       if (!endTime) return <span className='text-gray-400'>N/A</span>
 
       const formattedDate = formatDate(endTime)
@@ -128,11 +122,8 @@ export const backupRunsColumns = (latestRunId?: string | null): ColumnDef<Backup
   {
     header: 'Expiry Time',
     accessorFn: (row) => row.expiryTime,
-    cell: ({ getValue, row }) => {
+    cell: ({ getValue }) => {
       const expiryTime = getValue() as string | null
-      const runId = row.original.id
-      const isLatest = latestRunId && runId === latestRunId
-
       if (!expiryTime) return <span className='text-gray-400'>N/A</span>
 
       const formattedDate = formatDate(expiryTime)
@@ -151,11 +142,8 @@ export const backupRunsColumns = (latestRunId?: string | null): ColumnDef<Backup
   {
     header: 'Status',
     accessorFn: (row) => row.backupDestinations?.[0]?.status,
-    cell: ({ getValue, row }) => {
+    cell: ({ getValue }) => {
       const status = getValue() as string | null
-      const runId = row.original.id
-      const isLatest = latestRunId && runId === latestRunId
-
       if (!status) return <span className='text-gray-400'>N/A</span>
 
       return (
@@ -178,11 +166,8 @@ export const backupRunsColumns = (latestRunId?: string | null): ColumnDef<Backup
   {
     header: 'Duration',
     accessorFn: (row) => ({ start: row.startTime, end: row.endTime }),
-    cell: ({ getValue, row }) => {
+    cell: ({ getValue }) => {
       const { start, end } = getValue() as { start: string | null; end: string | null }
-      const runId = row.original.id
-      const isLatest = latestRunId && runId === latestRunId
-
       if (!start || !end) return <span className='text-gray-400'>N/A</span>
 
       const startDate = new Date(start)
