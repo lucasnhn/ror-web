@@ -583,6 +583,322 @@
 //   )
 // }
 
+// 'use client'
+
+// import { useEffect, useRef, useMemo, useState, useCallback } from 'react'
+// import { GridStack } from 'gridstack'
+// import 'gridstack/dist/gridstack.min.css'
+
+// import { toast } from 'sonner'
+// import { User } from 'next-auth'
+// import { ExternalLink } from 'lucide-react'
+// import { Layer } from '@ror/react'
+
+// import { useClusterContext } from '@/context/cluster-context'
+// import { CardHeader, CardItem } from '@/components/ui/grid-layout-card'
+// import { CodeSnippet } from '@/components/ui/code-snippet'
+// import {
+//   getClusterId,
+//   getClusterResource,
+//   getCreated,
+//   getDatacenter,
+//   getHaClusterPlaneValue,
+//   getKubectlLogin,
+//   getLastObserved,
+//   getPrices,
+//   getProject,
+//   getProvider,
+//   getRorLogin,
+//   getTools,
+//   getVersions,
+//   getWorkspace,
+// } from '../utils/cluster'
+// import { formatObservationDate, formatResource } from '../utils/formats'
+// // import { type GridstackItem } from '@/components/ui/gridstack-wrapper'
+
+// interface ClusterDetailsProps {
+//   user?: User
+//   className?: string
+// }
+
+// type WidgetItem = {
+//   id: string
+//   x: number
+//   y: number
+//   w: number
+//   h: number
+//   content: React.ReactNode
+// }
+
+// export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
+//   const { cluster } = useClusterContext()
+//   const gridRef = useRef<HTMLDivElement | null>(null)
+
+//   const clusterId = getClusterId(cluster)
+//   const cpu = getClusterResource(cluster, 'cpu')
+//   const memory = getClusterResource(cluster, 'memory')
+//   const gpu = getClusterResource(cluster, 'gpu')
+//   const disk = getClusterResource(cluster, 'disk')
+//   const tools = getTools(cluster)
+//   const prices = getPrices(cluster)
+//   const lastObserved = getLastObserved(cluster)
+//   const created = getCreated(cluster)
+//   const rorLogin = getRorLogin(cluster)
+//   const kubectlLogin = getKubectlLogin(cluster, user?.email || '<user-email missing>')
+//   const versions = getVersions(cluster)
+//   const project = getProject(cluster)
+//   const workspace = getWorkspace(cluster)
+//   const datacenter = getDatacenter(cluster)
+//   const provider = getProvider(cluster)
+
+//   const MemoryCard = useCallback(
+//     () => (
+//       <div className='h-full w-full flex flex-col bg-(--r-layer) p-4 rounded-md'>
+//         <CardHeader title='Memory' />
+//         <div className='flex flex-col gap-2'>
+//           <CardItem label='CPU'>{formatResource('cpu', cpu)}</CardItem>
+//           <CardItem label='Memory'>{formatResource('memory', memory)}</CardItem>
+//           <CardItem label='GPU'>{formatResource('gpu', gpu)}</CardItem>
+//           <CardItem label='Disk'>{formatResource('disk', disk)}</CardItem>
+//         </div>
+//       </div>
+//     ),
+//     [cpu, memory, gpu, disk]
+//   )
+
+//   const InfoCard = useCallback(
+//     () => (
+//       <div className='h-full w-full flex flex-col bg-(--r-layer) p-4 rounded-md'>
+//         <CardHeader title='Information' />
+//         <div className='flex gap-2'>
+//           <div className='flex flex-1 flex-col gap-2'>
+//             <CardItem label='Cluster ID:'>{clusterId}</CardItem>
+//             <CardItem label='Project:'>{project}</CardItem>
+//             <CardItem label='Workspace:'>{workspace}</CardItem>
+//             <CardItem label='Datacenter:'>{datacenter}</CardItem>
+//           </div>
+//           <div className='flex flex-1 flex-col gap-2'>
+//             <CardItem label='Provider:'>{provider}</CardItem>
+//             <CardItem label='HA control plane:'>{getHaClusterPlaneValue(cluster)}</CardItem>
+//             <CardItem label='Egress IP:'>MOCK EGRESS IP</CardItem>
+//           </div>
+//         </div>
+//       </div>
+//     ),
+//     [cluster, clusterId, datacenter, provider, project, workspace]
+//   )
+
+//   const ObservedCard = useCallback(
+//     () => (
+//       <div className='h-full w-full flex flex-col bg-(--r-layer) p-4 rounded-md'>
+//         <CardHeader title='Observed' />
+//         <div className='flex flex-col gap-2'>
+//           <CardItem label='Last observed:'>
+//             {lastObserved ? formatObservationDate(lastObserved.toString()) : 'Missing…'}
+//           </CardItem>
+//           <CardItem label='Created:'>{created ? formatObservationDate(created.toString()) : 'Missing…'}</CardItem>
+//         </div>
+//       </div>
+//     ),
+//     [lastObserved, created]
+//   )
+
+//   const ToolsCard = useCallback(
+//     () => (
+//       <div className='h-full w-full flex flex-col bg-(--r-layer) p-4 rounded-md'>
+//         <CardHeader title='Tools' />
+//         <div className='flex flex-col gap-2'>
+//           <section className='flex flex-col'>
+//             {tools.argo ? (
+//               <a
+//                 onClick={(e) => e.stopPropagation()}
+//                 href={`https://${tools.argo}`}
+//                 target='_blank'
+//                 rel='noopener noreferrer'
+//                 className='flex gap-2 font-bold text-blue-500 w-fit'
+//               >
+//                 <span>ArgoCD</span>
+//                 <ExternalLink className='w-5 h-5' />
+//               </a>
+//             ) : (
+//               <p className='flex [@container(max-width:360px)]:flex-col overflow-none'>
+//                 <span className='font-bold'>ArgoCD &nbsp;</span>
+//                 <span>missing ...</span>
+//               </p>
+//             )}
+//           </section>
+//           <Layer level={2}>
+//             <CodeSnippet type='single'>{rorLogin}</CodeSnippet>
+//           </Layer>
+//           <Layer level={2}>
+//             <CodeSnippet type='single'>{kubectlLogin}</CodeSnippet>
+//           </Layer>
+//         </div>
+//       </div>
+//     ),
+//     [tools, rorLogin, kubectlLogin]
+//   )
+
+//   const VersionsCard = useCallback(
+//     () => (
+//       <div className='h-full w-full flex flex-col bg-(--r-layer) p-4 rounded-md'>
+//         <CardHeader title='Versions' />
+//         <div className='flex flex-col gap-3'>
+//           <div className='flex flex-col gap-1'>
+//             <b>Tooling version: </b>
+//             <span>{versions.nhnTooling.version}</span>
+//           </div>
+//           <div className='flex flex-col gap-1'>
+//             <b>Agent version: </b>
+//             <span>{versions.agent.version}</span>
+//           </div>
+//           <div className='flex flex-col gap-1'>
+//             <b>Kubernetes version: </b>
+//             <span>{versions.kubernetes.version}</span>
+//           </div>
+//         </div>
+//       </div>
+//     ),
+//     [versions]
+//   )
+
+//   const PricesCard = useCallback(
+//     () => (
+//       <div className='h-full w-full flex flex-col bg-(--r-layer) p-4 rounded-md'>
+//         <CardHeader title='Prices' />
+//         <div className='flex flex-col gap-2'>
+//           <span>
+//             <b>Monthly price: </b> {prices.monthly || 0} kr
+//           </span>
+//           <span>
+//             <b>Yearly price: </b> {prices.yearly || 0} kr
+//           </span>
+//         </div>
+//       </div>
+//     ),
+//     [prices]
+//   )
+
+//   // Widgets defined here
+//   const items: WidgetItem[] = useMemo(
+//     () => [
+//       {
+//         id: 'memory',
+//         x: 0,
+//         y: 0,
+//         w: 4,
+//         h: 8,
+//         content: <MemoryCard />,
+//       },
+//       {
+//         id: 'info',
+//         x: 4,
+//         y: 0,
+//         w: 8,
+//         h: 8,
+//         content: <InfoCard />,
+//       },
+//       {
+//         id: 'observed',
+//         x: 0,
+//         y: 8,
+//         w: 4,
+//         h: 6,
+//         content: <ObservedCard />,
+//       },
+//       {
+//         id: 'tools',
+//         x: 4,
+//         y: 8,
+//         w: 8,
+//         h: 8,
+//         content: <ToolsCard />,
+//       },
+//       {
+//         id: 'versions',
+//         x: 0,
+//         y: 14,
+//         w: 6,
+//         h: 6,
+//         content: <VersionsCard />,
+//       },
+//       {
+//         id: 'prices',
+//         x: 6,
+//         y: 14,
+//         w: 6,
+//         h: 4,
+//         content: <PricesCard />,
+//       },
+//     ],
+//     [MemoryCard, InfoCard, ObservedCard, ToolsCard, VersionsCard, PricesCard]
+//   )
+//   useEffect(() => {
+//     if (!gridRef.current) return
+
+//     const opts: GridStackOptions = {
+//       // version‑12 uses CSS variables for layout, less custom CSS required. :contentReference[oaicite:2]{index=2}
+//       cellHeight: 100,
+//       float: true,
+//       margin: 5,
+//     }
+
+//     const grid = GridStack.init(opts, gridRef.current)
+
+//     // Option A: Load items from JSON
+//     const serialized = items.map((item) => ({
+//       x: item.x,
+//       y: item.y,
+//       w: item.w,
+//       h: item.h,
+//       id: item.id,
+//       content: '', // content will be in DOM as we render below
+//     }))
+//     grid.load(serialized)
+
+//     return () => grid.destroy(false)
+//   }, [items])
+
+//   // const grid = GridStack.init()
+//   // grid.load(items)
+
+//   return (
+//     // <div className={className}>
+//     //   <div className="grid-stack" ref={gridRef}>
+//     //     {widgets.map(widget => (
+//     //       <GridstackItem
+//     //         key={widget.id}
+//     //         className="grid-stack-item"
+//     //         data-gs-x={widget.x}
+//     //         data-gs-y={widget.y}
+//     //         data-gs-w={widget.minWidth}
+//     //         data-gs-h={widget.minHeight}
+//     //       >
+//     //         <div className="grid-stack-item-content h-full overflow-hidden">
+//     //           {widget.content}
+//     //         </div>
+//     //       </GridstackItem>
+//     //     ))}
+//     //   </div>
+//     // </div>
+
+//     <div className='grid-stack' ref={gridRef}>
+//       {items.map((item) => (
+//         <div
+//           key={item.id}
+//           className='grid-stack-item'
+//           data-gs-x={item.x}
+//           data-gs-y={item.y}
+//           data-gs-w={item.w}
+//           data-gs-h={item.h}
+//         >
+//           <div className='grid-stack-item-content'>{item.content}</div>
+//         </div>
+//       ))}
+//     </div>
+//   )
+// }
+
 'use client'
 
 import { useEffect, useRef, useMemo, useState, useCallback } from 'react'
@@ -627,12 +943,19 @@ type WidgetItem = {
   y: number
   w: number
   h: number
+  minW?: number
+  minH?: number
   content: React.ReactNode
 }
+import { type GridStackNode } from 'gridstack'
+import { createRoot } from 'react-dom/client'
+
+const reactRoots = new WeakMap<Element, ReturnType<typeof createRoot>>()
 
 export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
   const { cluster } = useClusterContext()
-  const gridRef = useRef<HTMLDivElement | null>(null)
+  const gridRef = useRef<GridStack | null>(null)
+  const didInitRef = useRef(false)
 
   const clusterId = getClusterId(cluster)
   const cpu = getClusterResource(cluster, 'cpu')
@@ -727,6 +1050,25 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
               </p>
             )}
           </section>
+          <section className='flex flex-col'>
+            {tools.grafana ? (
+              <a
+                onClick={(e) => e.stopPropagation()}
+                href={`https://${tools.grafana}`}
+                target='_blank'
+                rel='noopener noreferrer'
+                className='flex gap-2 font-bold text-blue-500 w-fit'
+              >
+                <span>Grafana</span>
+                <ExternalLink className='w-5 h-5' />
+              </a>
+            ) : (
+              <p className='flex [@container(max-width:360px)]:flex-col overflow-none'>
+                <span className='font-bold'>Grafana &nbsp;</span>
+                <span>missing ...</span>
+              </p>
+            )}
+          </section>
           <Layer level={2}>
             <CodeSnippet type='single'>{rorLogin}</CodeSnippet>
           </Layer>
@@ -779,121 +1121,77 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
     [prices]
   )
 
-  // Widgets defined here
   const items: WidgetItem[] = useMemo(
     () => [
-      {
-        id: 'memory',
-        x: 0,
-        y: 0,
-        w: 4,
-        h: 8,
-        content: <MemoryCard />,
-      },
-      {
-        id: 'info',
-        x: 4,
-        y: 0,
-        w: 8,
-        h: 8,
-        content: <InfoCard />,
-      },
-      {
-        id: 'observed',
-        x: 0,
-        y: 8,
-        w: 4,
-        h: 6,
-        content: <ObservedCard />,
-      },
-      {
-        id: 'tools',
-        x: 4,
-        y: 8,
-        w: 8,
-        h: 8,
-        content: <ToolsCard />,
-      },
-      {
-        id: 'versions',
-        x: 0,
-        y: 14,
-        w: 6,
-        h: 6,
-        content: <VersionsCard />,
-      },
-      {
-        id: 'prices',
-        x: 6,
-        y: 14,
-        w: 6,
-        h: 4,
-        content: <PricesCard />,
-      },
+      { id: 'memory', x: 5, y: 0, w: 2, h: 10, minW: 2, minH: 10, content: <MemoryCard /> },
+      { id: 'info', x: 0, y: 0, w: 5, h: 10, minW: 3, minH: 10, content: <InfoCard /> },
+      { id: 'observed', x: 4, y: 10, w: 3, h: 10, minW: 2, minH: 6, content: <ObservedCard /> },
+      { id: 'tools', x: 7, y: 0, w: 3, h: 10, minW: 2, minH: 8, content: <ToolsCard /> },
+      { id: 'versions', x: 0, y: 10, w: 4, h: 10, minW: 2, minH: 9, content: <VersionsCard /> },
+      { id: 'prices', x: 7, y: 10, w: 3, h: 10, minW: 2, minH: 4, content: <PricesCard /> },
     ],
     [MemoryCard, InfoCard, ObservedCard, ToolsCard, VersionsCard, PricesCard]
   )
-  useEffect(() => {
+
+  const addNewWidget = useCallback(() => {
     if (!gridRef.current) return
 
-    const opts: GridStackOptions = {
-      // version‑12 uses CSS variables for layout, less custom CSS required. :contentReference[oaicite:2]{index=2}
-      cellHeight: 100,
-      float: true,
-      margin: 5,
-    }
+    items.forEach((item) => {
+      const node: GridStackNode = {
+        x: item.x,
+        y: item.y,
+        w: item.w,
+        h: item.h,
+        minW: item.minW,
+        minH: item.minH,
+      }
 
-    const grid = GridStack.init(opts, gridRef.current)
-
-    // Option A: Load items from JSON
-    const serialized = items.map((item) => ({
-      x: item.x,
-      y: item.y,
-      w: item.w,
-      h: item.h,
-      id: item.id,
-      content: '', // content will be in DOM as we render below
-    }))
-    grid.load(serialized)
-
-    return () => grid.destroy(false)
+      const el = gridRef.current.addWidget(node)
+      const contentEl = el.querySelector('.grid-stack-item-content')!
+      const root = createRoot(contentEl)
+      reactRoots.set(contentEl, root)
+      root.render(item.content)
+    })
   }, [items])
 
-  const grid = GridStack.init()
-  grid.load(items)
+  useEffect(() => {
+    if (didInitRef.current) return
+    didInitRef.current = true
+
+    const grid = GridStack.init({
+      float: true,
+      cellHeight: '30px',
+      minRow: 1,
+      margin: 5,
+    })
+
+    gridRef.current = grid
+
+    const renderReact = (el: Element) => {
+      let root = reactRoots.get(el)
+      if (!root) {
+        root = createRoot(el)
+        reactRoots.set(el, root)
+      }
+    }
+
+    grid.engine.nodes.forEach((node) => {
+      const item = node.el!
+      const contentEl = item.querySelector('.grid-stack-item-content')!
+      renderReact(contentEl)
+    })
+
+    addNewWidget()
+
+    return () => {
+      grid.destroy(false)
+      gridRef.current = null
+    }
+  }, [addNewWidget])
 
   return (
-    // <div className={className}>
-    //   <div className="grid-stack" ref={gridRef}>
-    //     {widgets.map(widget => (
-    //       <GridstackItem
-    //         key={widget.id}
-    //         className="grid-stack-item"
-    //         data-gs-x={widget.x}
-    //         data-gs-y={widget.y}
-    //         data-gs-w={widget.minWidth}
-    //         data-gs-h={widget.minHeight}
-    //       >
-    //         <div className="grid-stack-item-content h-full overflow-hidden">
-    //           {widget.content}
-    //         </div>
-    //       </GridstackItem>
-    //     ))}
-    //   </div>
-    // </div>
-    <div className='grid-stack' ref={gridRef}>
-      {items.map((item) => (
-        <div
-          key={item.id}
-          className='grid-stack-item'
-          data-gs-x={item.x}
-          data-gs-y={item.y}
-          data-gs-w={item.w}
-          data-gs-h={item.h}
-        >
-          <div className='grid-stack-item-content'>{item.content}</div>
-        </div>
-      ))}
+    <div>
+      <section className='grid-stack' />
     </div>
   )
 }
