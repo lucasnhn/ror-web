@@ -44,8 +44,8 @@ const BackupInfoItem = ({ icon, label, value }: BackupInfoItemProps) => {
 
 const NoBackupDisplay = () => (
   <div className='mt-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800/50'>
-    <h5 className='font-semibold text-sm text-gray-700 dark:text-gray-300 tracking-wide mb-3'>Backup Status</h5>
-    <div className='flex items-center justify-center py-3'>
+    <h5 className='font-semibold text-sm text-gray-700 dark:text-gray-300 tracking-wide '>Backup Status</h5>
+    <div className='flex items-center justify-center'>
       <div className='text-center space-y-2'>
         <div className='w-10 h-10 bg-gray-200 dark:bg-gray-600 rounded-full flex items-center justify-center mx-auto'>
           <svg
