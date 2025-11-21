@@ -27,6 +27,7 @@ import {
   getVmVersion,
   VMCardProps,
 } from '@/features/vms/utils/vms'
+import { BackupStatusDisplay } from '@/features/vms/backup/components'
 
 function Card({ className, ...props }: React.ComponentProps<'div'>) {
   return (
@@ -114,6 +115,8 @@ const VMCard = ({ className, vm, vmDisplayData }: VMCardProps) => {
               <Info label='VMware Tools version' value={toolVersion ?? 'N/A'} />
             )}
           </section>
+          <div className='border-b border-gray-700 mt-1 mb-2'></div>
+          {vmDisplayData?.includes('lastBackup') && <BackupStatusDisplay vm={vm} />}
         </CardContent>
       </Card>
     </Link>

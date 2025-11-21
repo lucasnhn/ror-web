@@ -146,20 +146,9 @@ export const mockBackupJobs = {
             ],
             activeTargets: [
               {
-                name: 'LTRD-WD-ANS01.365lab.no-mock-10',
-                id: '2516',
-                externalId: '501425ca-4dd7-1950-f259-3e53d087a310',
-                source: {
-                  name: 'm-trd-vcenter-02.drift.nhn.no',
-                  id: '193',
-                  uuid: '3acf4419-4708-4869-b7a5-28edc591fe2a',
-                  type: 'kVCenter',
-                },
-              },
-              {
-                name: 'LTRD-WD-ANS01.365lab.no-mock-15',
-                id: '2617',
-                externalId: '501425ca-4dd7-1950-f259-3e53d087a315',
+                name: 'LTRD-WD-ANS01.365lab.no-mock-20',
+                id: '2718',
+                externalId: '501425ca-4dd7-1950-f259-3e53d087a320',
                 source: {
                   name: 'm-trd-vcenter-02.drift.nhn.no',
                   id: '193',
@@ -173,6 +162,76 @@ export const mockBackupJobs = {
           location: 'TRD1',
           policyName: 'Daily-7D',
           backupRunIds: ['11158794:1762777612377236', '11158794:1762763214507515', '11158794:1762748804990048'],
+        },
+        spec: {
+          name: '',
+          status: '',
+          policyId: '',
+          schedules: [],
+          activeTargets: [],
+          indirectBackupTargets: [],
+        },
+      },
+    },
+    {
+      kind: 'BackupJob',
+      apiVersion: 'backup.ror.internal/v1alpha1',
+      metadata: {
+        name: '4923908281402464:1614676439887:11158795',
+        uid: '3a7cecdb-2587-5444-ad7e-3405506cc789',
+      },
+      rormeta: {
+        ownerref: {
+          scope: 'ror',
+          subject: 'globalscope',
+        },
+        action: 'Add',
+      },
+      backupjob: {
+        id: '4923908281402464:1614676439887:11158795',
+        provider: 'cohesity',
+        source: 'mtr1-bck-ccl01.drift.nhn.no',
+        status: {
+          resourceBackupJobSpec: {
+            name: 'tr1-vs-nhn-12h-single-vm',
+            status: 'active',
+            policyId: '4923908281402464:1614676439887:3155',
+            schedules: [
+              {
+                startTime: '06:00',
+                endTime: 'none',
+                frequency: 12,
+                unit: 'Hours',
+                retention: {
+                  duration: 14,
+                  unit: 'Days',
+                },
+                destination: {
+                  name: 'mtr1-bck-ccl01.drift.nhn.no',
+                  id: '',
+                  type: 'local',
+                  status: 'active',
+                },
+              },
+            ],
+            activeTargets: [
+              {
+                name: 'LTRD-WD-ANS01.365lab.no-mock-1',
+                id: '2515',
+                externalId: '501425ca-4dd7-1950-f259-3e53d087a31',
+                source: {
+                  name: 'm-trd-vcenter-02.drift.nhn.no',
+                  id: '193',
+                  uuid: '3acf4419-4708-4869-b7a5-28edc591fe2a',
+                  type: 'kVCenter',
+                },
+              },
+            ],
+            indirectBackupTargets: null,
+          },
+          location: 'OSL1',
+          policyName: 'Frequent-12H',
+          backupRunIds: [],
         },
         spec: {
           name: '',

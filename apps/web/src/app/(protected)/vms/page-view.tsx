@@ -51,6 +51,7 @@ import { SortDefinition, useSorting } from '@/hooks/use-sorting'
 import { DataTable } from '@/components/ui/data-table'
 import { getVMTableColumns } from '@/features/vms/components/vm-columns'
 import type { VirtualMachine } from '@ror/js-api-client'
+import type { VMWithBackupStatus } from '@/features/vms/backup/utils/map-backup-to-vm'
 import { useInfiniteLoader } from '@/hooks/use-infinite-loader'
 import { loadMoreVMs } from '@/utils/vms-actions'
 import { VmFilterSection } from '@/features/vms/components/vm-filter-section'
@@ -58,7 +59,7 @@ import { VmFilterSection } from '@/features/vms/components/vm-filter-section'
 export const PageView = ({ className, vms, params }: PageViewProps) => {
   const filtersOpen = params.filters === 'open'
 
-  const { items, sentinelRef, isLoading, hasMore } = useInfiniteLoader<VirtualMachine>({
+  const { items, sentinelRef, isLoading, hasMore } = useInfiniteLoader<VirtualMachine | VMWithBackupStatus>({
     initial: vms,
     sort: params.sort,
     pageSize: 50,
@@ -75,18 +76,16 @@ export const PageView = ({ className, vms, params }: PageViewProps) => {
     },
   })
 
-  //const sentinelRef = useRef<HTMLDivElement>(null)
-
   const safeItems = useMemo(
     () => items.filter((c) => getVmOperatingSystem(c) && typeof getVmOperatingSystem(c) === 'object'),
     [items]
   )
 
   const filterDefinitions = [
-    { key: 'Power States', extractor: (vm: VirtualMachine) => getVmPowerState(vm) },
-    { key: 'Teams', extractor: (vm: VirtualMachine) => getTeamName(vm) || 'No Team' },
+    { key: 'Power States', extractor: (vm: VirtualMachine | VMWithBackupStatus) => getVmPowerState(vm) },
+    { key: 'Teams', extractor: (vm: VirtualMachine | VMWithBackupStatus) => getTeamName(vm) || 'No Team' },
   ]
-  const definitions: SortDefinition<VirtualMachine>[] = [
+  const definitions: SortDefinition<VirtualMachine | VMWithBackupStatus>[] = [
     { key: 'hostName', extractor: (vm) => getVmHostName(vm) },
     { key: 'name', extractor: (vm) => getVmName(vm) },
     { key: 'id', extractor: (vm) => getVmOperatingSystemId(vm) },
@@ -97,22 +96,15 @@ export const PageView = ({ className, vms, params }: PageViewProps) => {
     { key: 'powerState', extractor: (vm) => getVmPowerState(vm) },
     { key: 'team', extractor: (vm) => getTeamValue(vm) },
   ]
-  const { selectedFilters, setSelectedFilters, filteredItems, resetFilters } = useFilters<VirtualMachine>(
-    safeItems,
-    filterDefinitions
-  )
+  const { selectedFilters, setSelectedFilters, filteredItems, resetFilters } = useFilters<
+    VirtualMachine | VMWithBackupStatus
+  >(safeItems, filterDefinitions)
   const { selectedDisplayData, setSelectedDisplayData } = useDisplayData<VMCardData>('vms')
-  const [searchResults, setSearchResults] = useState<VirtualMachine[]>(safeItems)
+  const [searchResults, setSearchResults] = useState<(VirtualMachine | VMWithBackupStatus)[]>(safeItems)
   const sortedItems = useSorting({ items: filteredItems, sortKey: params.sort, sortOrder: params.order, definitions })
-  //const filterOptions = useMemo(() => generateFilterOptions(safeItems), [safeItems])
 
   // Handler for display data changes
   const onDisplayChange = (selected: Option[]) => setSelectedDisplayData(selected.map((i) => i.value as VMCardData))
-
-  // sync safeItems → searchResults only if content differs
-  //const idOf = useCallback((c: VirtualMachine) => getVmId(c) || '', [])
-
-  //const idsKey = useCallback((arr: VirtualMachine[]) => arr.map(idOf).join('|'), [idOf])
 
   const lastSafeKeyRef = useRef('')
   useEffect(() => {
@@ -183,7 +175,6 @@ export const PageView = ({ className, vms, params }: PageViewProps) => {
   )
 
   const GridView = () => {
-    // Default view without team grouping
     return (
       <div>
         <div className='flex flex-row flex-wrap gap-6'>

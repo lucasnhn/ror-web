@@ -14,6 +14,8 @@ export const displayDataOptions: Option[] = [
   { label: 'Memory', value: 'memory' },
   { label: 'CPU', value: 'cpu' },
   { label: 'Team', value: 'team' },
+  { label: 'Backup Status', value: 'activeBackup' },
+  { label: 'Last Backup', value: 'lastBackup' },
 ]
 
 export const sortingOptions = [
