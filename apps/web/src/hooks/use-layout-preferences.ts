@@ -203,6 +203,7 @@ import {
   Preferences,
 } from '@/utils/user-preferences'
 import { LayoutKey } from '@/types/layouts'
+import { StoredLayoutItem, Layouts } from '@/utils/layout-item'
 
 // ---- Types ----------------------------------------------------
 
@@ -225,8 +226,6 @@ export type RGLLayoutItem = {
   // allow extra fields if schema has them
   [key: string]: unknown
 }
-
-export type Layouts = Record<string, RGLLayoutItem[]>
 
 /**
  * Type guard that checks whether a value matches the expected "Layouts" shape.

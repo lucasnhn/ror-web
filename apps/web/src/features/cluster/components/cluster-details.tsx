@@ -31,6 +31,8 @@ import { formatObservationDate, formatResource } from '../utils/formats'
 import { useLayoutPreferences } from '@/hooks/use-layout-preferences'
 import { type GridStackNode } from 'gridstack'
 import { createRoot } from 'react-dom/client'
+import { StoredLayoutItem } from '@/utils/layout-item'
+import { standardLayouts } from '../config/cluster-details-layouts'
 
 interface ClusterDetailsProps {
   user?: User
@@ -221,29 +223,73 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
     [prices]
   )
 
+  const breakpoints = {
+    xs: 0,
+    sm: 576,
+    md: 780,
+    lg: 992,
+    xl: 1400,
+  }
+
   const {
     // layouts,
     // setLayouts,
     layoutKey,
-    // currentBreakpoint,
-    // setCurrentBreakpoint,
+    currentBreakpoint,
+    setCurrentBreakpoint,
     saveLayouts,
     resetToSaved,
     resetToDefault,
     getCurrentLayouts,
   } = useLayoutPreferences('clusterCards', layout)
 
-  const items: WidgetItem[] = useMemo(
-    () => [
-      { id: 'memory', x: 5, y: 0, w: 2, h: 10, minW: 2, minH: 10, content: <MemoryCard /> },
-      { id: 'info', x: 0, y: 0, w: 5, h: 10, minW: 3, minH: 10, content: <InfoCard /> },
-      { id: 'observed', x: 4, y: 10, w: 3, h: 10, minW: 2, minH: 6, content: <ObservedCard /> },
-      { id: 'tools', x: 7, y: 0, w: 3, h: 10, minW: 2, minH: 8, content: <ToolsCard /> },
-      { id: 'versions', x: 0, y: 10, w: 4, h: 10, minW: 2, minH: 9, content: <VersionsCard /> },
-      { id: 'prices', x: 7, y: 10, w: 3, h: 10, minW: 2, minH: 4, content: <PricesCard /> },
-    ],
-    [MemoryCard, InfoCard, ObservedCard, ToolsCard, VersionsCard, PricesCard]
-  )
+  const handleResize = () => {
+    const width = window.innerWidth
+    if (width >= breakpoints.xl) {
+      setCurrentBreakpoint('xl')
+    } else if (width >= breakpoints.lg) {
+      setCurrentBreakpoint('lg')
+    } else if (width >= breakpoints.md) {
+      setCurrentBreakpoint('md')
+    } else if (width >= breakpoints.sm) {
+      setCurrentBreakpoint('sm')
+    } else {
+      setCurrentBreakpoint('xs')
+    }
+  }
+
+  // const items: WidgetItem[] = useMemo(
+  //   () => [
+  //     { id: 'memory', x: 5, y: 0, w: 2, h: 10, minW: 2, minH: 10, content: <MemoryCard /> },
+  //     { id: 'info', x: 0, y: 0, w: 5, h: 10, minW: 3, minH: 10, content: <InfoCard /> },
+  //     { id: 'observed', x: 4, y: 10, w: 3, h: 10, minW: 2, minH: 6, content: <ObservedCard /> },
+  //     { id: 'tools', x: 7, y: 0, w: 3, h: 10, minW: 2, minH: 8, content: <ToolsCard /> },
+  //     { id: 'versions', x: 0, y: 10, w: 4, h: 10, minW: 2, minH: 9, content: <VersionsCard /> },
+  //     { id: 'prices', x: 7, y: 10, w: 3, h: 10, minW: 2, minH: 4, content: <PricesCard /> },
+  //   ],
+  //   [MemoryCard, InfoCard, ObservedCard, ToolsCard, VersionsCard, PricesCard]
+  // )
+
+  const items: WidgetItem[] = useMemo(() => {
+    const baseLayout = standardLayouts[currentBreakpoint] || []
+
+    const layoutMap = baseLayout.reduce(
+      (acc, l) => {
+        acc[l.i] = l
+        return acc
+      },
+      {} as Record<string, StoredLayoutItem>
+    )
+
+    return [
+      { id: 'memory', ...layoutMap['memory'], content: <MemoryCard /> },
+      { id: 'info', ...layoutMap['info'], content: <InfoCard /> },
+      { id: 'observed', ...layoutMap['observed'], content: <ObservedCard /> },
+      { id: 'tools', ...layoutMap['tools'], content: <ToolsCard /> },
+      { id: 'versions', ...layoutMap['versions'], content: <VersionsCard /> },
+      { id: 'prices', ...layoutMap['prices'], content: <PricesCard /> },
+    ]
+  }, [currentBreakpoint, MemoryCard, InfoCard, ObservedCard, ToolsCard, VersionsCard, PricesCard])
 
   useEffect(() => {
     const container = gridContainerRef.current
@@ -252,11 +298,19 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
     container.innerHTML = '' // Clear existing DOM
 
     const prefs = getCurrentLayouts()
-    const savedLayouts = prefs.clusterCards?.layouts
+    const savedLayouts = prefs.clusterCards?.layouts as Record<
+      string,
+      { i: string; x: number; y: number; w: number; h: number }[]
+    >
     const savedMap: Record<string, { x: number; y: number; w: number; h: number }> = {}
 
-    if (savedLayouts && typeof savedLayouts === 'object' && Array.isArray(savedLayouts.lg)) {
-      for (const l of savedLayouts.lg) {
+    const layoutForBreakpoint =
+      savedLayouts?.[currentBreakpoint] ?? standardLayouts[currentBreakpoint] ?? standardLayouts.lg
+
+    console.log('Loading layout for:', currentBreakpoint, layoutForBreakpoint)
+
+    if (Array.isArray(layoutForBreakpoint)) {
+      for (const l of layoutForBreakpoint) {
         if (!l) continue
         savedMap[String(l.i)] = { x: l.x, y: l.y, w: l.w, h: l.h }
       }
@@ -264,7 +318,7 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
 
     const grid = GridStack.init(
       {
-        column: 10,
+        column: 12,
         float: true,
         cellHeight: '30px',
         minRow: 1,
@@ -327,13 +381,29 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
       grid.destroy(false)
       gridRef.current = null
     }
-  }, [layoutKey])
+  }, [layoutKey, currentBreakpoint])
+
+  useEffect(() => {
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   const LayoutButtons = () => (
     <div className='flex sm:flex-row flex-col gap-2 mb-3'>
       <Button
         onClick={() => {
-          saveLayouts(layout)
+          const layoutMap = {
+            [currentBreakpoint]: layout.map((l) => ({
+              i: l.id,
+              x: l.x,
+              y: l.y,
+              w: l.w,
+              h: l.h,
+            })),
+          }
+
+          saveLayouts(layoutMap)
           toast.info('Layout saved')
         }}
       >
