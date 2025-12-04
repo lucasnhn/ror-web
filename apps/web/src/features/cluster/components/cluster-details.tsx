@@ -56,9 +56,6 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
   const gridContainerRef = useRef<HTMLDivElement | null>(null)
 
   const [layout, setLayout] = useState<{ id: string; x: number; y: number; w: number; h: number }[]>([])
-  const [savedLayout, setSavedLayout] = useState<{ id: string; x: number; y: number; w: number; h: number }[] | null>(
-    null
-  )
 
   const clusterId = getClusterId(cluster)
   const cpu = getClusterResource(cluster, 'cpu')
