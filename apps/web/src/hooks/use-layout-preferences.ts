@@ -216,7 +216,7 @@ export type GridStackLayoutItem = {
 }
 
 // Minimal react-grid-layout-like shape we persist in preferences
-type RGLLayoutItem = {
+export type RGLLayoutItem = {
   i: string
   x: number
   y: number

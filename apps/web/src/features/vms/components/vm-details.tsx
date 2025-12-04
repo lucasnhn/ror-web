@@ -35,7 +35,7 @@ import {
   getTeamName,
 } from '../utils/vms'
 import { standardLayouts } from '@/features/vms/config/vm-details-layout'
-import { useLayoutPreferences } from '@/hooks/use-layout-preferences'
+import { Layouts, RGLLayoutItem, useLayoutPreferences } from '@/hooks/use-layout-preferences'
 import { GridLayoutWrapper } from '@/components/ui/grid-layout-wrapper'
 import { CardHeader } from '@/components/ui/grid-layout-card'
 
@@ -43,7 +43,7 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
   const { vm } = useVMContext()
   const { layouts, setLayouts, layoutKey, currentBreakpoint, setCurrentBreakpoint } = useLayoutPreferences(
     'vmDetails',
-    standardLayouts
+    standardLayouts as Layouts
   )
   console.log('key', layoutKey)
   console.log(currentBreakpoint) // For future use if needed
@@ -273,7 +273,7 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
         className={className}
         layouts={layouts}
         layoutKey={layoutKey}
-        onLayoutChange={(layout) => setLayouts({ ...layouts, [currentBreakpoint]: layout })}
+        onLayoutChange={(layout) => setLayouts({ ...layouts, [currentBreakpoint]: layout as RGLLayoutItem[] })}
         onBreakpointChange={setCurrentBreakpoint}
       >
         <div key='memory' className='drag-handle '>
