@@ -267,6 +267,7 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
 
     const grid = GridStack.init(
       {
+        column: 10,
         float: true,
         cellHeight: '30px',
         minRow: 1,
@@ -329,93 +330,7 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
       grid.destroy(false)
       gridRef.current = null
     }
-  }, [layoutKey]) // 🔥 key change: makes GridStack rebuild when layoutKey changes
-
-  // useEffect(() => {
-  //   const container = gridContainerRef.current
-  //   if (!container) return
-
-  //   container.innerHTML = ''
-
-  //   const prefs = getCurrentLayouts()
-  //   const savedLayouts = prefs.clusterCards?.layouts
-  //   const savedMap: Record<string, { x: number; y: number; w: number; h: number }> = {}
-
-  //   if (savedLayouts && typeof savedLayouts === 'object' && Array.isArray(savedLayouts.lg)) {
-  //     for (const l of savedLayouts.lg) {
-  //       if (!l) continue
-  //       savedMap[String(l.i)] = { x: l.x, y: l.y, w: l.w, h: l.h }
-  //     }
-  //   }
-
-  //   const grid = GridStack.init(
-  //     {
-  //       float: true,
-  //       cellHeight: '30px',
-  //       minRow: 1,
-  //       margin: 5,
-  //       staticGrid: false,
-  //       disableDrag: false,
-  //       disableResize: false,
-  //     },
-  //     container
-  //   )
-
-  //   gridRef.current = grid
-
-  //   items.forEach((item) => {
-  //     const fromSaved = savedMap[item.id]
-
-  //     const node: GridStackNode = {
-  //       x: fromSaved?.x ?? item.x,
-  //       y: fromSaved?.y ?? item.y,
-  //       w: fromSaved?.w ?? item.w,
-  //       h: fromSaved?.h ?? item.h,
-  //       minW: item.minW,
-  //       minH: item.minH,
-  //       id: item.id,
-  //     }
-
-  //     const el = grid.addWidget(node)
-  //     const contentEl = el.querySelector(
-  //       '.grid-stack-item-content'
-  //     ) as HTMLDivElement
-
-  //     let root = reactRoots.get(contentEl)
-  //     if (!root) {
-  //       root = createRoot(contentEl)
-  //       reactRoots.set(contentEl, root)
-  //     }
-  //     root.render(item.content)
-  //   })
-
-  //   const handleChange = () => {
-  //     const nodes = grid.engine.nodes
-  //     const newLayout = nodes.map((n) => ({
-  //       id: String(n.id ?? ''),
-  //       x: n.x ?? 0,
-  //       y: n.y ?? 0,
-  //       w: n.w ?? 0,
-  //       h: n.h ?? 0,
-  //     }))
-  //     setLayout(newLayout)
-  //   }
-
-  // grid.on('change', handleChange)
-  // grid.on('dragstop', handleChange)
-  // grid.on('resizestop', handleChange)
-
-  // // optional: capture initial layout
-  // handleChange()
-
-  // return () => {
-  //   grid.off('change')
-  //   grid.off('dragstop')
-  //   grid.off('resizestop')
-  //   grid.destroy(false)
-  //   gridRef.current = null
-  // }
-  // }, [])
+  }, [layoutKey])
 
   const LayoutButtons = () => (
     <div className='flex sm:flex-row flex-col gap-2 mb-3'>
@@ -435,7 +350,9 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
   return (
     <div>
       <LayoutButtons />
-      <section ref={gridContainerRef} className='border rounded-lg' />
+      <section className='border rounded-lg p-1'>
+        <div ref={gridContainerRef} />
+      </section>
     </div>
   )
 }
