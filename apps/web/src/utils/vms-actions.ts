@@ -2,6 +2,9 @@
 
 import { getRorApi } from '@/services/ror-api'
 import type { VirtualMachine } from '@ror/js-api-client'
+import { fetchBackupJobs } from '@/features/vms/backup/services/fetch-backupJobs'
+import { fetchBackupRuns } from '@/features/vms/backup/services/fetch-backupRuns'
+import { mapBackupToVM } from '@/features/vms/backup/utils/map-backup-to-vm'
 
 type LoadMoreOpts = { offset: number; limit: number; sort?: string; order?: 'asc' | 'desc' }
 
@@ -14,11 +17,23 @@ export async function loadMoreVMs({ offset, limit, sort, order }: LoadMoreOpts) 
   if (sort) params.set('sort', sort)
   if (order) params.set('order', order)
 
-  const res = await api.virtualMachine.list(params)
-  const items: VirtualMachine[] = res?.resources ?? []
+  // Fetch VMs and backup data in parallel
+  const [vmRes, backupJobsRes, backupRunsRes] = await Promise.all([
+    api.virtualMachine.list(params),
+    fetchBackupJobs(api, { page: 1, limit: 1000, order: 'asc' }).catch(() => ({ backupJobs: [] })),
+    fetchBackupRuns(api, { page: 1, limit: 1000, order: 'asc' }).catch(() => ({ backupRuns: [] })),
+  ])
+
+  const vms: VirtualMachine[] = vmRes?.resources ?? []
+  const backupJobs = backupJobsRes.backupJobs || []
+  const backupRuns = backupRunsRes.backupRuns || []
+
+  // Enhance VMs with backup status
+  const vmsWithBackup = mapBackupToVM(vms, backupJobs, backupRuns)
+
   return {
-    items,
-    hasMore: items.length === limit,
-    nextOffset: items.length === limit ? offset + limit : null,
+    items: vmsWithBackup,
+    hasMore: vms.length === limit,
+    nextOffset: vms.length === limit ? offset + limit : null,
   }
 }

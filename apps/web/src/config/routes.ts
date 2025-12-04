@@ -138,5 +138,17 @@ export const routes = {
       label: 'Metadata',
       getHref: (id: string) => `/vms/${id}/metadata`,
     },
+    backup: {
+      label: 'Backup',
+      getHref: (id: string) => `/vms/${id}/backup`,
+    },
+    backupRuns: {
+      label: 'Backup runs',
+      getHref: () => `/backup/backup-runs`,
+    },
+    backupJobs: {
+      label: 'Backup jobs',
+      getHref: () => `/backup/backup-jobs`,
+    },
   },
 } as const

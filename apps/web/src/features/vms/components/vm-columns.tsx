@@ -7,6 +7,8 @@ import { Pill } from '@/components/shadcn/pill'
 import { vmCardColors } from '@/features/vms/utils/env-colors'
 import { VMColumnsData } from '@/features/vms/types/vm-types'
 import { createColumnHelper } from '@tanstack/react-table'
+import type { VMWithBackupStatus } from '@/features/vms/backup/utils/map-backup-to-vm'
+import { getVMActiveBackupStatus } from '@/features/vms/backup/hooks/useBackupStatus'
 import {
   getSpecCoresPerSocket,
   getSpecMemory,
@@ -24,9 +26,12 @@ import {
   getVmVersion,
 } from '../utils/vms'
 
-const columnHelper = createColumnHelper<VirtualMachine>()
+// Union type to handle both regular VMs and VMs with backup status
+type VMTableRow = VirtualMachine | VMWithBackupStatus
 
-export const getVMTableColumns = (selectedDisplayData?: VMColumnsData[]): DataTableColumnDef<VirtualMachine>[] => {
+const columnHelper = createColumnHelper<VMTableRow>()
+
+export const getVMTableColumns = (selectedDisplayData?: VMColumnsData[]): DataTableColumnDef<VMTableRow>[] => {
   const showAllVMs = !selectedDisplayData || selectedDisplayData.length === 0
   const isVisible = (data: VMColumnsData) => {
     if (data === 'id' || data === 'architecture') {
@@ -90,6 +95,14 @@ export const getVMTableColumns = (selectedDisplayData?: VMColumnsData[]): DataTa
           },
         }
       ),
+    isVisible('activeBackup') &&
+      columnHelper.accessor((row) => getVMActiveBackupStatus(row), {
+        id: 'activeBackup',
+        header: 'Active backup?',
+        enableSorting: true,
+        //sortingFn: (rowA, rowB) => compareVMsByBackupStatus(rowA.original, rowB.original),
+        cell: (info) => <span>{info.getValue() ? 'Yes' : 'No'}</span>,
+      }),
     isVisible('name') &&
       columnHelper.accessor(
         (row) => {
@@ -107,23 +120,6 @@ export const getVMTableColumns = (selectedDisplayData?: VMColumnsData[]): DataTa
           },
         }
       ),
-    // isVisible('family') &&
-    //   columnHelper.accessor(
-    //     (row) => {
-    //       const osFamily = getVmFamily(row)
-    //       return osFamily
-    //     },
-    //     {
-    //       id: 'family',
-    //       header: 'OS-type',
-    //       enableSorting: false,
-    //       cell: (info) => {
-    //         const osFamily = info.getValue()
-    //         return <span>{osFamily}</span>
-    //       },
-    //     }
-    //   ),
-    //Change this getters to the correct ones when available
     isVisible('disk-size') &&
       columnHelper.accessor((row) => getVmDiskSizes(row), {
         id: 'disk-size',
@@ -174,7 +170,7 @@ export const getVMTableColumns = (selectedDisplayData?: VMColumnsData[]): DataTa
     isVisible('cpu') &&
       columnHelper.accessor((row) => getStatusCpuUsage(row), {
         id: 'cpu',
-        header: 'CPU Usage',
+        header: 'CPU usage',
         enableSorting: false,
         cell: (info) => {
           const cpuUsage = info.getValue()
@@ -224,5 +220,5 @@ export const getVMTableColumns = (selectedDisplayData?: VMColumnsData[]): DataTa
         )
       },
     }),
-  ].filter(Boolean) as DataTableColumnDef<VirtualMachine>[]
+  ].filter(Boolean) as DataTableColumnDef<VMTableRow>[]
 }
