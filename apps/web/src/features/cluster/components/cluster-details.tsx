@@ -1,16 +1,14 @@
 'use client'
 
-import { useEffect, useRef, useMemo, useState, useCallback } from 'react'
-import { Button } from '@/components/shadcn/button'
-import { GridStack } from 'gridstack'
-import 'gridstack/dist/gridstack.min.css'
-import { toast } from 'sonner'
-import { User } from 'next-auth'
-import { ExternalLink } from 'lucide-react'
-import { Layer } from '@ror/react'
-import { useClusterContext } from '@/context/cluster-context'
-import { CardHeader, CardItem } from '@/components/ui/grid-layout-card'
 import { CodeSnippet } from '@/components/ui/code-snippet'
+import { CardHeader, CardItem } from '@/components/ui/grid-layout-card'
+import { useClusterContext } from '@/context/cluster-context'
+import { Layer } from '@ror/react'
+import 'gridstack/dist/gridstack.min.css'
+import { ExternalLink } from 'lucide-react'
+import { User } from 'next-auth'
+import { useCallback } from 'react'
+import { standardLayouts } from '../config/cluster-details-layouts'
 import {
   getClusterId,
   getClusterResource,
@@ -28,36 +26,15 @@ import {
   getWorkspace,
 } from '../utils/cluster'
 import { formatObservationDate, formatResource } from '../utils/formats'
-import { useLayoutPreferences } from '@/hooks/use-layout-preferences'
-import { type GridStackNode } from 'gridstack'
-import { createRoot } from 'react-dom/client'
-import { StoredLayoutItem } from '@/utils/layout-item'
-import { standardLayouts } from '../config/cluster-details-layouts'
+import { GridLayoutWrapper } from '@/components/ui/grid-layout-wrapper'
 
 interface ClusterDetailsProps {
   user?: User
   className?: string
 }
 
-type WidgetItem = {
-  id: string
-  x: number
-  y: number
-  w: number
-  h: number
-  minW?: number
-  minH?: number
-  content: React.ReactNode
-}
-
-const reactRoots = new WeakMap<Element, ReturnType<typeof createRoot>>()
-
-export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
+export const ClusterDetails = ({ user }: ClusterDetailsProps) => {
   const { cluster } = useClusterContext()
-  const gridRef = useRef<GridStack | null>(null)
-  const gridContainerRef = useRef<HTMLDivElement | null>(null)
-
-  const [layout, setLayout] = useState<{ id: string; x: number; y: number; w: number; h: number }[]>([])
 
   const clusterId = getClusterId(cluster)
   const cpu = getClusterResource(cluster, 'cpu')
@@ -223,203 +200,18 @@ export const ClusterDetails = ({ user, className }: ClusterDetailsProps) => {
     [prices]
   )
 
-  const breakpoints = {
-    xs: 0,
-    sm: 576,
-    md: 780,
-    lg: 992,
-    xl: 1400,
+  const widgetContent: Record<string, React.ReactNode> = {
+    memory: <MemoryCard />,
+    info: <InfoCard />,
+    observed: <ObservedCard />,
+    tools: <ToolsCard />,
+    versions: <VersionsCard />,
+    prices: <PricesCard />,
   }
-
-  const {
-    // layouts,
-    // setLayouts,
-    layoutKey,
-    currentBreakpoint,
-    setCurrentBreakpoint,
-    saveLayouts,
-    resetToSaved,
-    resetToDefault,
-    getCurrentLayouts,
-  } = useLayoutPreferences('clusterCards', layout)
-
-  const handleResize = () => {
-    const width = window.innerWidth
-    if (width >= breakpoints.xl) {
-      setCurrentBreakpoint('xl')
-    } else if (width >= breakpoints.lg) {
-      setCurrentBreakpoint('lg')
-    } else if (width >= breakpoints.md) {
-      setCurrentBreakpoint('md')
-    } else if (width >= breakpoints.sm) {
-      setCurrentBreakpoint('sm')
-    } else {
-      setCurrentBreakpoint('xs')
-    }
-  }
-
-  // const items: WidgetItem[] = useMemo(
-  //   () => [
-  //     { id: 'memory', x: 5, y: 0, w: 2, h: 10, minW: 2, minH: 10, content: <MemoryCard /> },
-  //     { id: 'info', x: 0, y: 0, w: 5, h: 10, minW: 3, minH: 10, content: <InfoCard /> },
-  //     { id: 'observed', x: 4, y: 10, w: 3, h: 10, minW: 2, minH: 6, content: <ObservedCard /> },
-  //     { id: 'tools', x: 7, y: 0, w: 3, h: 10, minW: 2, minH: 8, content: <ToolsCard /> },
-  //     { id: 'versions', x: 0, y: 10, w: 4, h: 10, minW: 2, minH: 9, content: <VersionsCard /> },
-  //     { id: 'prices', x: 7, y: 10, w: 3, h: 10, minW: 2, minH: 4, content: <PricesCard /> },
-  //   ],
-  //   [MemoryCard, InfoCard, ObservedCard, ToolsCard, VersionsCard, PricesCard]
-  // )
-
-  const items: WidgetItem[] = useMemo(() => {
-    const baseLayout = standardLayouts[currentBreakpoint] || []
-
-    const layoutMap = baseLayout.reduce(
-      (acc, l) => {
-        acc[l.i] = l
-        return acc
-      },
-      {} as Record<string, StoredLayoutItem>
-    )
-
-    return [
-      { id: 'memory', ...layoutMap['memory'], content: <MemoryCard /> },
-      { id: 'info', ...layoutMap['info'], content: <InfoCard /> },
-      { id: 'observed', ...layoutMap['observed'], content: <ObservedCard /> },
-      { id: 'tools', ...layoutMap['tools'], content: <ToolsCard /> },
-      { id: 'versions', ...layoutMap['versions'], content: <VersionsCard /> },
-      { id: 'prices', ...layoutMap['prices'], content: <PricesCard /> },
-    ]
-  }, [currentBreakpoint, MemoryCard, InfoCard, ObservedCard, ToolsCard, VersionsCard, PricesCard])
-
-  useEffect(() => {
-    const container = gridContainerRef.current
-    if (!container) return
-
-    container.innerHTML = '' // Clear existing DOM
-
-    const prefs = getCurrentLayouts()
-    const savedLayouts = prefs.clusterCards?.layouts as Record<
-      string,
-      { i: string; x: number; y: number; w: number; h: number }[]
-    >
-    const savedMap: Record<string, { x: number; y: number; w: number; h: number }> = {}
-
-    const layoutForBreakpoint =
-      savedLayouts?.[currentBreakpoint] ?? standardLayouts[currentBreakpoint] ?? standardLayouts.lg
-
-    console.log('Loading layout for:', currentBreakpoint, layoutForBreakpoint)
-
-    if (Array.isArray(layoutForBreakpoint)) {
-      for (const l of layoutForBreakpoint) {
-        if (!l) continue
-        savedMap[String(l.i)] = { x: l.x, y: l.y, w: l.w, h: l.h }
-      }
-    }
-
-    const grid = GridStack.init(
-      {
-        column: 12,
-        float: true,
-        cellHeight: '30px',
-        minRow: 1,
-        margin: 5,
-        staticGrid: false,
-        disableDrag: false,
-        disableResize: false,
-      },
-      container
-    )
-
-    gridRef.current = grid
-
-    items.forEach((item) => {
-      const fromSaved = savedMap[item.id]
-
-      const node: GridStackNode = {
-        x: fromSaved?.x ?? item.x,
-        y: fromSaved?.y ?? item.y,
-        w: fromSaved?.w ?? item.w,
-        h: fromSaved?.h ?? item.h,
-        minW: item.minW,
-        minH: item.minH,
-        id: item.id,
-      }
-
-      const el = grid.addWidget(node)
-      const contentEl = el.querySelector('.grid-stack-item-content') as HTMLDivElement
-
-      let root = reactRoots.get(contentEl)
-      if (!root) {
-        root = createRoot(contentEl)
-        reactRoots.set(contentEl, root)
-      }
-      root.render(item.content)
-    })
-
-    const handleChange = () => {
-      const nodes = grid.engine.nodes
-      const newLayout = nodes.map((n) => ({
-        id: String(n.id ?? ''),
-        x: n.x ?? 0,
-        y: n.y ?? 0,
-        w: n.w ?? 0,
-        h: n.h ?? 0,
-      }))
-      setLayout(newLayout)
-    }
-
-    grid.on('change', handleChange)
-    grid.on('dragstop', handleChange)
-    grid.on('resizestop', handleChange)
-
-    handleChange() // capture initial layout
-
-    return () => {
-      grid.off('change')
-      grid.off('dragstop')
-      grid.off('resizestop')
-      grid.destroy(false)
-      gridRef.current = null
-    }
-  }, [layoutKey, currentBreakpoint])
-
-  useEffect(() => {
-    handleResize()
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
-
-  const LayoutButtons = () => (
-    <div className='flex sm:flex-row flex-col gap-2 mb-3'>
-      <Button
-        onClick={() => {
-          const layoutMap = {
-            [currentBreakpoint]: layout.map((l) => ({
-              i: l.id,
-              x: l.x,
-              y: l.y,
-              w: l.w,
-              h: l.h,
-            })),
-          }
-
-          saveLayouts(layoutMap)
-          toast.info('Layout saved')
-        }}
-      >
-        Save layout
-      </Button>
-      <Button onClick={resetToSaved}>Reset to saved</Button>
-      <Button onClick={resetToDefault}>Reset to default</Button>
-    </div>
-  )
 
   return (
     <div>
-      <LayoutButtons />
-      <section className='border rounded-lg p-1'>
-        <div ref={gridContainerRef} />
-      </section>
+      <GridLayoutWrapper preferenceKey={'clusterCards'} standardLayouts={standardLayouts} contentMap={widgetContent} />
     </div>
   )
 }
