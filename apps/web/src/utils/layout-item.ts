@@ -9,6 +9,7 @@ export type StoredLayoutItem = {
   [key: string]: unknown
 }
 
+export type Layout = { id: string; x: number; y: number; w: number; h: number }
 export type Layouts = Record<string, StoredLayoutItem[]>
 
 export function normalizeToLayouts(value: Layouts | GridStackLayoutItem[]): Layouts {
@@ -24,3 +25,26 @@ export function normalizeToLayouts(value: Layouts | GridStackLayoutItem[]): Layo
   }
   return value
 }
+
+export type LayoutItem = {
+  i: string
+  x: number
+  y: number
+  w: number
+  h: number
+  minW: number
+  minH: number
+}
+
+export type WidgetItem = {
+  id: string
+  x: number
+  y: number
+  w: number
+  h: number
+  minW: number
+  minH: number
+  content: React.ReactNode
+}
+
+export type ItemsLayouts = Record<string, LayoutItem[]>
