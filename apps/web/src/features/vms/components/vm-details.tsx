@@ -58,7 +58,7 @@ type WidgetItem = {
 
 const reactRoots = new WeakMap<Element, ReturnType<typeof createRoot>>()
 
-export const VMDetails = ({ user, className }: VMDetailsProps) => {
+export const VMDetails = ({ user }: VMDetailsProps) => {
   const { vm } = useVMContext()
   const gridRef = useRef<GridStack | null>(null)
   const gridContainerRef = useRef<HTMLDivElement | null>(null)

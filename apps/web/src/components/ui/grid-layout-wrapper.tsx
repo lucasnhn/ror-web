@@ -6,7 +6,7 @@
 
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { GridStack, type GridStackNode } from 'gridstack'
 import { useLayoutPreferences } from '@/hooks/use-layout-preferences'
 import { LayoutKey } from '@/types/layouts'
@@ -53,7 +53,7 @@ export const GridLayoutWrapper = ({
     getCurrentLayouts,
   } = useLayoutPreferences(preferenceKey, layout)
 
-  const handleResize = () => {
+  const handleResize = useCallback(() => {
     const width = window.innerWidth
     if (width >= breakpoints.xl) {
       setCurrentBreakpoint('xl')
@@ -66,7 +66,7 @@ export const GridLayoutWrapper = ({
     } else {
       setCurrentBreakpoint('xs')
     }
-  }
+  }, [setCurrentBreakpoint])
 
   useEffect(() => {
     const container = gridContainerRef.current
@@ -164,13 +164,13 @@ export const GridLayoutWrapper = ({
       grid.destroy(false)
       gridRef.current = null
     }
-  }, [layoutKey, currentBreakpoint])
+  }, [layoutKey, currentBreakpoint, getCurrentLayouts, preferenceKey, standardLayouts, contentMap, onLayoutChange])
 
   useEffect(() => {
     handleResize()
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
-  }, [])
+  }, [handleResize])
 
   const LayoutButtons = () => (
     <div className='flex sm:flex-row flex-col gap-2 mb-3'>
