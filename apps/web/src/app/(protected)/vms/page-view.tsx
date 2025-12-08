@@ -31,9 +31,13 @@ import {
   getVmFamily,
   getVmArchitecture,
   getVmToolVersion,
-  getTeamName,
   getVmsKey,
   getTeamValue,
+  getTeamIdentifier,
+  comparePowerState,
+  getVmDiskSizes,
+  getSpecMemory,
+  getSpecCpuTotal,
 } from '@/features/vms/utils/vms'
 import { NotReadyMessage } from '@/components/ui/not-ready-message'
 import { cn } from '@/utils/clsxm'
@@ -83,7 +87,19 @@ export const PageView = ({ className, vms, params }: PageViewProps) => {
 
   const filterDefinitions = [
     { key: 'Power States', extractor: (vm: VirtualMachine | VMWithBackupStatus) => getVmPowerState(vm) },
-    { key: 'Teams', extractor: (vm: VirtualMachine | VMWithBackupStatus) => getTeamName(vm) || 'No Team' },
+    { key: 'Teams', extractor: (vm: VirtualMachine | VMWithBackupStatus) => getTeamIdentifier(vm) },
+    {
+      key: 'Backup',
+      extractor: (vm: VirtualMachine | VMWithBackupStatus) => {
+        if ('backupStatus' in vm) {
+          const backupStatus = vm.backupStatus as { hasBackupJob: boolean; hasBackupRun: boolean }
+          if (backupStatus.hasBackupJob) return 'activeBackup'
+          if (backupStatus.hasBackupRun) return 'historicalBackup'
+          return 'noBackup'
+        }
+        return 'noBackup'
+      },
+    },
   ]
   const definitions: SortDefinition<VirtualMachine | VMWithBackupStatus>[] = [
     { key: 'hostName', extractor: (vm) => getVmHostName(vm) },
@@ -93,8 +109,36 @@ export const PageView = ({ className, vms, params }: PageViewProps) => {
     { key: 'architecture', extractor: (vm) => getVmArchitecture(vm) },
     { key: 'version', extractor: (vm) => getVmVersion(vm) },
     { key: 'toolVersion', extractor: (vm) => getVmToolVersion(vm) },
-    { key: 'powerState', extractor: (vm) => getVmPowerState(vm) },
+    { key: 'powerState', extractor: getVmPowerState, compareFn: comparePowerState },
     { key: 'team', extractor: (vm) => getTeamValue(vm) },
+    { key: 'disk-usage', extractor: (vm) => getVmDiskSizes(vm).reduce((a, b) => a + b, 0) },
+    { key: 'memory', extractor: (vm) => getSpecMemory(vm) },
+    { key: 'cpu', extractor: (vm) => getSpecCpuTotal(vm) },
+    {
+      key: 'activeBackup',
+      extractor: (vm) => {
+        if ('backupStatus' in vm) {
+          const backupStatus = vm.backupStatus as { hasBackupJob: boolean; hasBackupRun: boolean }
+          if (backupStatus.hasBackupJob) return 1 // Active backup
+          if (backupStatus.hasBackupRun) return 2 // Historical backup
+          return 3 // No backup
+        }
+        return 3 // No backup data
+      },
+      compareFn: (a, b) => {
+        const getBackupPriority = (vm: VirtualMachine | VMWithBackupStatus) => {
+          if ('backupStatus' in vm) {
+            const backupStatus = vm.backupStatus as { hasBackupJob: boolean; hasBackupRun: boolean }
+            if (backupStatus.hasBackupJob) return 1 // Active backup (highest priority)
+            if (backupStatus.hasBackupRun) return 2 // Historical backup
+            return 3 // No backup (lowest priority)
+          }
+          return 3 // No backup data
+        }
+
+        return getBackupPriority(a) - getBackupPriority(b)
+      },
+    },
   ]
   const { selectedFilters, setSelectedFilters, filteredItems, resetFilters } = useFilters<
     VirtualMachine | VMWithBackupStatus
@@ -222,6 +266,7 @@ export const PageView = ({ className, vms, params }: PageViewProps) => {
           filtersOpen={filtersOpen}
           selectedFilters={selectedFilters}
           setSelectedFilters={setSelectedFilters}
+          vms={vms}
         />
       </div>
 

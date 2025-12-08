@@ -10,7 +10,7 @@
  */
 'use client'
 
-import { Fragment, ReactNode } from 'react'
+import { Fragment, ReactNode, useEffect, useState } from 'react'
 import { routes } from '@/config/routes'
 import { NotReadyMessage } from '@/components/ui/not-ready-message'
 import { VMProvider } from '@/context/vm-context'
@@ -24,7 +24,7 @@ interface VmPageLayoutProps {
   children: ReactNode
 }
 
-const { vm, vmRawData, vmNetworks, vmDisks, vmMetaData, backup } = routes.app
+const { vm, vmRawData, vmNetworks, vmDisks, vmMetaData, vmBackup } = routes.app
 
 export interface navigationItemObject {
   label: string
@@ -50,12 +50,12 @@ const createTabNavigationItems = (vmId: string): navigationItemObject[] => {
       href: vmMetaData.getHref(vmId),
     },
     {
-      label: vmRawData.label,
-      href: vmRawData.getHref(vmId),
+      label: vmBackup.label,
+      href: vmBackup.getHref(vmId),
     },
     {
-      label: backup.label,
-      href: backup.getHref(vmId),
+      label: vmRawData.label,
+      href: vmRawData.getHref(vmId),
     },
   ]
 }
@@ -72,6 +72,19 @@ const createTabNavigationItems = (vmId: string): navigationItemObject[] => {
 export default function VmPageLayout({ params, children }: VmPageLayoutProps) {
   const { id, vm, isLoading, error } = useVmLayout({ params })
 
+  // const [id, setId] = useState('')
+  // const [vm, setVm] = useState(null)
+
+  // useEffect(() => {
+  //   params.then(async ({ id }) => {
+  //     setId(id)
+  //     const stored = localStorage.getItem('selectedVm')
+  //     setVm(stored ? JSON.parse(stored) : null)
+  //   })
+  // }, [params])
+  // if(!vm){
+  //   return <div>Loading VM data...</div>
+  // }
   if (isLoading) {
     return <div>Loading VM data...</div>
   }

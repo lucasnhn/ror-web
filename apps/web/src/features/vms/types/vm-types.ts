@@ -9,6 +9,5 @@ export type VMCardData =
   | 'toolVersion'
   | 'team'
   | 'activeBackup'
-  | 'lastBackup'
 
-export type VMColumnsData = VMCardData | 'disk-size' | 'memory' | 'sockets' | 'cpu'
+export type VMColumnsData = VMCardData | 'disk-usage' | 'memory' | 'sockets' | 'cpu'

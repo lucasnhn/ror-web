@@ -23,7 +23,7 @@ export const mockBackupRuns = {
           backupJobId: '4923908281402464:1614676439887:11158793',
           backupTargets: [
             {
-              name: 'LTRD-WD-ANS01.365lab.no-mock-1',
+              name: 'Mock-virtual-machine-1',
               id: '2606',
               externalId: '501425ca-4dd7-1950-f259-3e53d087a31',
               source: {
@@ -40,7 +40,7 @@ export const mockBackupRuns = {
               },
             },
             {
-              name: 'LTRD-WD-ANS01.365lab.no-mock-5',
+              name: 'Mock-virtual-machine-5',
               id: '2515',
               externalId: '501425ca-4dd7-1950-f259-3e53d087a35',
               source: {
@@ -115,7 +115,7 @@ export const mockBackupRuns = {
           backupJobId: '4923908281402464:1614676439887:11158793',
           backupTargets: [
             {
-              name: 'LTRD-WD-ANS01.365lab.no-mock-9',
+              name: 'Mock-virtual-machine-9',
               id: '2516',
               externalId: '501425ca-4dd7-1950-f259-3e53d087a39',
               source: {
@@ -178,7 +178,7 @@ export const mockBackupRuns = {
           backupJobId: '4923908281402464:1614676439887:11158794',
           backupTargets: [
             {
-              name: 'LTRD-WD-ANS01.365lab.no-mock-20',
+              name: 'Mock-virtual-machine-20',
               id: '2520',
               externalId: '501425ca-4dd7-1950-f259-3e53d087a320',
               source: {
@@ -241,7 +241,7 @@ export const mockBackupRuns = {
           backupJobId: '4923908281402464:1614676439887:11158793',
           backupTargets: [
             {
-              name: 'LTRD-WD-ANS01.365lab.no-mock-1',
+              name: 'Mock-virtual-machine-1',
               id: '2515',
               externalId: '501425ca-4dd7-1950-f259-3e53d087a31',
               source: {
@@ -310,7 +310,7 @@ export const mockBackupRuns = {
           backupJobId: '4923908281402464:1614676439887:11158793',
           backupTargets: [
             {
-              name: 'LTRD-WD-ANS01.365lab.no-mock-5',
+              name: 'Mock-virtual-machine-5',
               id: '2515',
               externalId: '501425ca-4dd7-1950-f259-3e53d087a35',
               source: {
@@ -373,7 +373,7 @@ export const mockBackupRuns = {
           backupJobId: '4923908281402464:1614676439887:11158793',
           backupTargets: [
             {
-              name: 'LTRD-WD-ANS01.365lab.no-mock-1',
+              name: 'Mock-virtual-machine-1',
               id: '2515',
               externalId: '501425ca-4dd7-1950-f259-3e53d087a31',
               source: {
@@ -436,7 +436,7 @@ export const mockBackupRuns = {
           backupJobId: '4923908281402464:1614676439887:11158794',
           backupTargets: [
             {
-              name: 'LTRD-WD-ANS01.365lab.no-mock-10',
+              name: 'Mock-virtual-machine-10',
               id: '2516',
               externalId: '501425ca-4dd7-1950-f259-3e53d087a310',
               source: {
@@ -499,7 +499,7 @@ export const mockBackupRuns = {
           backupJobId: '4923908281402464:1614676439887:11158794',
           backupTargets: [
             {
-              name: 'LTRD-WD-ANS01.365lab.no-mock-15',
+              name: 'Mock-virtual-machine-15',
               id: '2617',
               externalId: '501425ca-4dd7-1950-f259-3e53d087a315',
               source: {

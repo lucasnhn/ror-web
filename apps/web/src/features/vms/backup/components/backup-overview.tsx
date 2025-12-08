@@ -215,9 +215,8 @@ export const BackupOverview: React.FC<BackupOverviewProps> = ({ backupJobs, back
     )
   }
 
-  const [isExpanded, setIsExpanded] = React.useState(false)
-
   const BackupRunCard = ({ run, isLatest }: { run: BackupRun; isLatest: boolean }) => {
+    const [isExpanded, setIsExpanded] = React.useState(false)
     const runInfo = getBackupRunInfo(run)
     const startTime = getBackupRunStartTime(run)
     const endTime = getBackupRunEndTime(run)
@@ -234,7 +233,9 @@ export const BackupOverview: React.FC<BackupOverviewProps> = ({ backupJobs, back
               {getStatusIcon(status)}
               <span>Backup Run</span>
               {isLatest && (
-                <Badge className='bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300'>Latest</Badge>
+                <Badge className='bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300 text-sm'>
+                  Latest
+                </Badge>
               )}
             </div>
             <div className='flex items-center space-x-2'>
@@ -293,7 +294,7 @@ export const BackupOverview: React.FC<BackupOverviewProps> = ({ backupJobs, back
             </div>
           )}
 
-          <div className='flex items-center justify-between pt-2 border-t text-sm text-gray-500 dark:text-gray-400'>
+          <div className='flex items-center justify-between pt-2 text-sm text-gray-500 dark:text-gray-400'>
             <button
               onClick={() => setIsExpanded(!isExpanded)}
               className='flex items-center p-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors'
@@ -320,7 +321,7 @@ export const BackupOverview: React.FC<BackupOverviewProps> = ({ backupJobs, back
           {isExpanded && (
             <div className='space-y-4 pt-2 border-t'>
               {runInfo?.size && (
-                <div className='pt-2 border-t'>
+                <div className='pt-2 '>
                   <label className='text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-2 block'>
                     Backup Size
                   </label>
@@ -412,10 +413,8 @@ export const BackupOverview: React.FC<BackupOverviewProps> = ({ backupJobs, back
   }
 
   return (
-    <div className='space-y-6'>
+    <div className='space-y-6 mb-6'>
       <BackupStatusCard />
-
-      {/* Backup Jobs and Runs */}
       <Tabs defaultValue={backupJobs.length > 0 ? 'jobs' : 'runs'} className='w-full'>
         <TabsList className='grid w-full grid-cols-2'>
           <TabsTrigger value='jobs' disabled={backupJobs.length === 0}>
@@ -428,7 +427,7 @@ export const BackupOverview: React.FC<BackupOverviewProps> = ({ backupJobs, back
 
         <TabsContent value='jobs' className='space-y-4'>
           {backupJobs.length > 0 ? (
-            <div className='grid gap-4'>
+            <div className='grid grid-cols-1 lg:grid-cols-2 gap-4'>
               {backupJobs.map((job, index) => (
                 <BackupJobCard key={getBackupJobId(job) || index} job={job} index={index} />
               ))}
@@ -440,7 +439,7 @@ export const BackupOverview: React.FC<BackupOverviewProps> = ({ backupJobs, back
 
         <TabsContent value='runs' className='space-y-4'>
           {backupRuns.length > 0 ? (
-            <div className='grid gap-4'>
+            <div className='grid grid-cols-1 lg:grid-cols-2 gap-4'>
               {backupRuns
                 .sort((a, b) => {
                   const aTime = getBackupRunStartTime(a)

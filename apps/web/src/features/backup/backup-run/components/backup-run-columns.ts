@@ -13,75 +13,7 @@ import {
 import { BackupRun } from '@ror/js-api-client'
 import { createColumnHelper } from '@tanstack/react-table'
 import React from 'react'
-
-interface ExpandableTargetsProps {
-  targets: Array<{ name?: string }>
-}
-const ExpandableTargets: React.FC<ExpandableTargetsProps> = ({ targets }) => {
-  const [isExpanded, setIsExpanded] = React.useState(false)
-
-  if (!isExpanded) {
-    return React.createElement(
-      'div',
-      {
-        className: 'flex items-center space-x-2',
-      },
-      React.createElement(
-        'span',
-        {
-          className: 'truncate',
-        },
-        targets.length + ' targets '
-      ),
-      React.createElement(
-        'div',
-        {
-          className:
-            'text-xs bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 px-2 py-1 rounded-full text-gray-600 dark:text-gray-300 font-medium transition-colors',
-          onClick: (e: React.MouseEvent) => {
-            e.stopPropagation()
-            setIsExpanded(true)
-          },
-        },
-        `+Show`
-      )
-    )
-  }
-
-  return React.createElement(
-    'div',
-    {
-      className: 'space-y-1',
-    },
-    React.createElement(
-      'button',
-      {
-        onClick: (e: React.MouseEvent) => {
-          e.stopPropagation()
-          setIsExpanded(false)
-        },
-        className: 'text-xs text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium',
-      },
-      '← Show less'
-    ),
-    React.createElement(
-      'div',
-      {
-        className: 'max-h-32 overflow-y-auto space-y-1',
-      },
-      targets.map((target, index) => {
-        return React.createElement(
-          'div',
-          {
-            key: index,
-            className: 'text-xs p-1 text-gray-700 dark:text-gray-300',
-          },
-          target?.name || `Unnamed target ${index + 1}`
-        )
-      })
-    )
-  )
-}
+import { ActiveTargetsTooltip } from '@/features/backup/utils/active-targets-tooltip'
 
 const columnHelper = createColumnHelper<BackupRun>()
 
@@ -193,15 +125,12 @@ export const getBackupRunTableColumns = (): DataTableColumnDef<BackupRun>[] => {
           if (!activeTargets || targetCount === 0) {
             return 'No active targets'
           }
-          return React.createElement(
-            'div',
-            {
-              className: 'max-w-xs',
-            },
-            React.createElement(ExpandableTargets, {
-              targets: activeTargets,
-            })
-          )
+          return React.createElement(ActiveTargetsTooltip, {
+            ids: activeTargets.map((t: any) => ({
+              id: t.name || 'Unnamed target',
+              //href: routes.app.vmBackup.getHref(t.name?.toLowerCase()),
+            })),
+          })
         },
       }
     ),
