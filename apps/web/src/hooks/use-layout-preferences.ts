@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useRef, type SetStateAction } from 'react'
+import { useEffect, useState, useRef, type SetStateAction, useCallback } from 'react'
 import {
   getSavedUserPreferenceObject,
   updateUserPreferenceObject,
@@ -168,11 +168,11 @@ export function useLayoutPreferences(key: LayoutKey, defaultLayoutsInput: Layout
     }
   }
 
-  const getCurrentLayouts = () => {
+  const getCurrentLayouts = useCallback(() => {
     const prefs = getSavedUserPreferenceObject(PREFERENCES_KEY, DEFAULT_USERPREFERENCES)
     console.log('getCurrentLayouts prefs: ', prefs)
     return prefs
-  }
+  }, [])
 
   function clone<T>(v: T): T {
     try {
