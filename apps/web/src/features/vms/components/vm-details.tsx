@@ -29,26 +29,24 @@ import {
   getVmVersion,
   getSpecSockets,
   getSpecCoresPerSocket,
-  getStatusCpuUsage,
   getVmToolVersion,
-  getAdGroup,
   getSpecMemory,
   getTeamValue,
   VMDetailsProps,
-  serviceIdDescription,
-  serviceIdValue,
   getTeamDescription,
   getLocation,
+  getTags,
+  getLastUpdated,
 } from '../utils/vms'
 import { Card, CardContent, CardHeader as ShadcnCardHeader, CardTitle } from '@/components/shadcn/card'
 import { DetailedCPUUsage } from './detailed-cpu-usage'
 import { DetailedDiskUsage } from './detailed-disk-usage'
+import { Badge } from '@/components/shadcn/badge'
 
 export const VMDetails = ({ user, className }: VMDetailsProps) => {
   const { vm } = useVMContext()
-  const cpuUsage = getStatusCpuUsage(vm)
-  const cpuSockets = getSpecSockets(vm)
-  const cpuCoresPerSocket = getSpecCoresPerSocket(vm)
+  const cpuSockets = getSpecSockets(vm) || 0
+  const cpuCoresPerSocket = getSpecCoresPerSocket(vm) || 0
   const memory = getSpecMemory(vm)
   const memoryInGB = ((memory ?? 0) / 1024 ** 3).toFixed(2)
 
@@ -64,8 +62,21 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
   const teamName = getTeamDescription(vm)
   const teamValue = getTeamValue(vm)
   const location = getLocation(vm)
-  const serviceId = serviceIdDescription(vm)
-  const serviceValue = serviceIdValue(vm)
+  const lastUpdatedRaw = getLastUpdated(vm)
+  const lastUpdated = lastUpdatedRaw
+    ? new Date(lastUpdatedRaw).toLocaleString('nb-NO', {
+        year: 'numeric',
+        month: 'short',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+      })
+    : 'Ukjent'
+
+  const tags = getTags(vm)
+  const tagKey = Object.keys(tags)
 
   console.log(user)
 
@@ -86,7 +97,12 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
   const ConfigurationCard = () => (
     <Card>
       <ShadcnCardHeader>
-        <CardTitle>Configuration</CardTitle>
+        <div className='flex justify-between items-center'>
+          <CardTitle>CPU configuration</CardTitle>
+          <Badge variant='secondary' className='text-xs'>
+            {cpuSockets * cpuCoresPerSocket} cores in total
+          </Badge>
+        </div>
       </ShadcnCardHeader>
       <CardContent>
         <div className='flex flex-col gap-3'>
@@ -103,7 +119,9 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
     </Card>
   )
 
-  const CpuCard = () => <DetailedCPUUsage />
+  const CpuCard = () => {
+    return <DetailedCPUUsage />
+  }
 
   const DiskCard = () => (
     <Card>
@@ -154,32 +172,34 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
     </Card>
   )
 
-  const ServiceIdCard = () => {
-    if (!serviceId) {
-      return (
-        <Card>
-          <ShadcnCardHeader>
-            <CardTitle>Service ID</CardTitle>
-          </ShadcnCardHeader>
-          <CardContent>
-            <span className='font-medium'>No Service ID assigned</span>
-          </CardContent>
-        </Card>
-      )
-    }
-    return (
-      <Card>
-        <ShadcnCardHeader>
-          <CardTitle>Service ID</CardTitle>
-        </ShadcnCardHeader>
-        <CardContent>
-          <span className='font-medium'>
-            {serviceId} ({serviceValue})
-          </span>
-        </CardContent>
-      </Card>
-    )
-  }
+  const LastUpdatedCard = () => (
+    <Card>
+      <ShadcnCardHeader>
+        <CardTitle>Last updated</CardTitle>
+      </ShadcnCardHeader>
+      <CardContent>
+        <span className='font-medium'>{lastUpdated}</span>
+      </CardContent>
+    </Card>
+  )
+
+  const TagCards = () => (
+    <Card>
+      <ShadcnCardHeader>
+        <CardTitle>Available tags</CardTitle>
+      </ShadcnCardHeader>
+      <CardContent>
+        <div className='flex flex-col gap-3'>
+          {tagKey.map((key) => (
+            <div key={key} className='flex justify-between items-start'>
+              <span className='text-sm text-muted-foreground font-medium'>{key}:</span>
+              <span className='text-sm text-right max-w-[60%]'>{tags[key].description || 'Missing..'}</span>
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  )
 
   const InfoCard = () => (
     <Card>
@@ -310,7 +330,7 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
           <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
             <TeamCard />
             <LocationCard />
-            <ServiceIdCard />
+            <LastUpdatedCard />
           </div>
           <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
             <ConfigurationCard />
@@ -324,6 +344,7 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
         <div className='lg:col-span-1 space-y-4'>
           <ControlPanelCard />
           <InfoCard />
+          <TagCards />
         </div>
       </div>
     </div>

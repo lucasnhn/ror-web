@@ -24,7 +24,7 @@ interface VmPageLayoutProps {
   children: ReactNode
 }
 
-const { vm, vmRawData, vmNetworks, vmDisks, vmMetaData, vmBackup } = routes.app
+const { vm, vmRawData, vmNetworks, vmDisks, vmBackup } = routes.app
 
 export interface navigationItemObject {
   label: string
@@ -44,10 +44,6 @@ const createTabNavigationItems = (vmId: string): navigationItemObject[] => {
     {
       label: vmDisks.label,
       href: vmDisks.getHref(vmId),
-    },
-    {
-      label: vmMetaData.label,
-      href: vmMetaData.getHref(vmId),
     },
     {
       label: vmBackup.label,
@@ -72,19 +68,6 @@ const createTabNavigationItems = (vmId: string): navigationItemObject[] => {
 export default function VmPageLayout({ params, children }: VmPageLayoutProps) {
   const { id, vm, isLoading, error } = useVmLayout({ params })
 
-  // const [id, setId] = useState('')
-  // const [vm, setVm] = useState(null)
-
-  // useEffect(() => {
-  //   params.then(async ({ id }) => {
-  //     setId(id)
-  //     const stored = localStorage.getItem('selectedVm')
-  //     setVm(stored ? JSON.parse(stored) : null)
-  //   })
-  // }, [params])
-  // if(!vm){
-  //   return <div>Loading VM data...</div>
-  // }
   if (isLoading) {
     return <div>Loading VM data...</div>
   }

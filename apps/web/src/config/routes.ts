@@ -134,10 +134,6 @@ export const routes = {
       label: 'Disks',
       getHref: (id: string) => `/vms/${id}/disks`,
     },
-    vmMetaData: {
-      label: 'Metadata',
-      getHref: (id: string) => `/vms/${id}/metadata`,
-    },
     vmBackup: {
       label: 'Backup',
       getHref: (id: string) => `/vms/${id}/backup`,
