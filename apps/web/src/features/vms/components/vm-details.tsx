@@ -82,7 +82,7 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
 
   //TODO: fix this card, does not give much value or information as it is now
   const MemoryCard = () => (
-    <Card>
+    <Card className='bg-slate-50 dark:bg-slate-900/50'>
       <ShadcnCardHeader>
         <CardTitle>Memory</CardTitle>
       </ShadcnCardHeader>
@@ -95,7 +95,7 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
   )
 
   const ConfigurationCard = () => (
-    <Card>
+    <Card className='bg-slate-50 dark:bg-slate-900/50'>
       <ShadcnCardHeader>
         <div className='flex justify-between items-center'>
           <CardTitle>CPU configuration</CardTitle>
@@ -124,7 +124,7 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
   }
 
   const DiskCard = () => (
-    <Card>
+    <Card className='bg-slate-50 dark:bg-slate-900/50'>
       <ShadcnCardHeader>
         <CardTitle>Disk Usage</CardTitle>
       </ShadcnCardHeader>
@@ -137,7 +137,7 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
   const TeamCard = () => {
     if (!teamName) {
       return (
-        <Card>
+        <Card className='bg-slate-50 dark:bg-slate-900/50'>
           <ShadcnCardHeader>
             <CardTitle>Team</CardTitle>
           </ShadcnCardHeader>
@@ -148,7 +148,7 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
       )
     }
     return (
-      <Card>
+      <Card className='bg-slate-50 dark:bg-slate-900/50'>
         <ShadcnCardHeader>
           <CardTitle>Team</CardTitle>
         </ShadcnCardHeader>
@@ -162,7 +162,7 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
   }
 
   const LocationCard = () => (
-    <Card>
+    <Card className='bg-slate-50 dark:bg-slate-900/50'>
       <ShadcnCardHeader>
         <CardTitle>Location</CardTitle>
       </ShadcnCardHeader>
@@ -173,7 +173,7 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
   )
 
   const LastUpdatedCard = () => (
-    <Card>
+    <Card className='bg-slate-50 dark:bg-slate-900/50'>
       <ShadcnCardHeader>
         <CardTitle>Last updated</CardTitle>
       </ShadcnCardHeader>
@@ -184,7 +184,7 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
   )
 
   const TagCards = () => (
-    <Card>
+    <Card className='bg-slate-50 dark:bg-slate-900/50'>
       <ShadcnCardHeader>
         <CardTitle>Available tags</CardTitle>
       </ShadcnCardHeader>
@@ -202,7 +202,7 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
   )
 
   const InfoCard = () => (
-    <Card>
+    <Card className='bg-slate-50 dark:bg-slate-900/50'>
       <ShadcnCardHeader>
         <CardTitle>Operating System</CardTitle>
       </ShadcnCardHeader>
@@ -246,13 +246,13 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
   )
 
   const ControlPanelCard = () => (
-    <Card>
+    <Card className='bg-slate-50 dark:bg-slate-900/50'>
       <ShadcnCardHeader>
         <CardTitle>Control Panel</CardTitle>
       </ShadcnCardHeader>
       <CardContent>
-        <div className='flex flex-col gap-4'>
-          <div className='flex justify-between items-center'>
+        <div className='flex flex-col gap-4 '>
+          <div className='flex justify-between items-center '>
             <span className='text-sm text-muted-foreground'>Power State:</span>
             <span className='font-medium'>
               {powerState === 'poweredOn' ? 'On' : powerState === 'poweredOff' ? 'Off' : 'Unknown'}
@@ -324,7 +324,7 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
   )
 
   return (
-    <div className={'space-y-4'}>
+    <div className={'space-y-4 '}>
       <div className='grid grid-cols-1 lg:grid-cols-3 gap-4'>
         <div className='lg:col-span-2 space-y-4'>
           <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>

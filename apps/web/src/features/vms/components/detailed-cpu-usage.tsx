@@ -25,7 +25,7 @@ export const DetailedCPUUsage = () => {
   return (
     <div className='space-y-6'>
       {/* Historical Chart */}
-      <Card>
+      <Card className='bg-slate-50 dark:bg-slate-900/50'>
         <CardContent className='p-4 pt-0'>
           <CpuUsageLineChart vmId={vmId} currentCpuUsage={currentCpuUsage} cpuSize={cpuSize} height={200} />
         </CardContent>

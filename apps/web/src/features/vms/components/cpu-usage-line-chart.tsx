@@ -64,7 +64,7 @@ export const CpuUsageLineChart = ({ vmId, cpuSize = 0, className, height = 400 }
   const hasData = chartData.length > 0
 
   return (
-    <div className={cn('space-y-2', className)}>
+    <div className={cn('space-y-2 ', className)}>
       {/* Header with controls */}
       <div className='flex items-center justify-between'>
         <div className='flex items-center gap-2 mb-2'>
