@@ -38,6 +38,7 @@ import {
   serviceIdDescription,
   serviceIdValue,
   getTeamDescription,
+  getLocation,
 } from '../utils/vms'
 import { Card, CardContent, CardHeader as ShadcnCardHeader, CardTitle } from '@/components/shadcn/card'
 import { DetailedCPUUsage } from './detailed-cpu-usage'
@@ -62,12 +63,13 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
 
   const teamName = getTeamDescription(vm)
   const teamValue = getTeamValue(vm)
-  const AdGroup = getAdGroup(vm)
+  const location = getLocation(vm)
   const serviceId = serviceIdDescription(vm)
   const serviceValue = serviceIdValue(vm)
 
   console.log(user)
 
+  //TODO: fix this card, does not give much value or information as it is now
   const MemoryCard = () => (
     <Card>
       <ShadcnCardHeader>
@@ -114,48 +116,70 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
     </Card>
   )
 
-  const TeamCard = () => (
-    <Card>
-      <ShadcnCardHeader>
-        <CardTitle>Team</CardTitle>
-      </ShadcnCardHeader>
-      <CardContent>
-        <div className='flex flex-col gap-2'>
+  const TeamCard = () => {
+    if (!teamName) {
+      return (
+        <Card>
+          <ShadcnCardHeader>
+            <CardTitle>Team</CardTitle>
+          </ShadcnCardHeader>
+          <CardContent>
+            <span className='font-medium'>No team assigned</span>
+          </CardContent>
+        </Card>
+      )
+    }
+    return (
+      <Card>
+        <ShadcnCardHeader>
+          <CardTitle>Team</CardTitle>
+        </ShadcnCardHeader>
+        <CardContent>
           <span className='font-medium'>
             {teamName} ({teamValue})
           </span>
-        </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  const LocationCard = () => (
+    <Card>
+      <ShadcnCardHeader>
+        <CardTitle>Location</CardTitle>
+      </ShadcnCardHeader>
+      <CardContent>
+        <span className='font-medium'>{location}</span>
       </CardContent>
     </Card>
   )
 
-  const AdGroupsCard = () => (
-    <Card>
-      <ShadcnCardHeader>
-        <CardTitle>AD Group</CardTitle>
-      </ShadcnCardHeader>
-      <CardContent>
-        <div className='flex flex-col gap-2'>
-          <span className='font-medium'>{AdGroup}</span>
-        </div>
-      </CardContent>
-    </Card>
-  )
-
-  const ServiceIdCard = () => (
-    <Card>
-      <ShadcnCardHeader>
-        <CardTitle>Service ID</CardTitle>
-      </ShadcnCardHeader>
-      <CardContent>
-        <div className='flex flex-col gap-2'>
+  const ServiceIdCard = () => {
+    if (!serviceId) {
+      return (
+        <Card>
+          <ShadcnCardHeader>
+            <CardTitle>Service ID</CardTitle>
+          </ShadcnCardHeader>
+          <CardContent>
+            <span className='font-medium'>No Service ID assigned</span>
+          </CardContent>
+        </Card>
+      )
+    }
+    return (
+      <Card>
+        <ShadcnCardHeader>
+          <CardTitle>Service ID</CardTitle>
+        </ShadcnCardHeader>
+        <CardContent>
           <span className='font-medium'>
             {serviceId} ({serviceValue})
           </span>
-        </div>
-      </CardContent>
-    </Card>
-  )
+        </CardContent>
+      </Card>
+    )
+  }
 
   const InfoCard = () => (
     <Card>
@@ -280,34 +304,23 @@ export const VMDetails = ({ user, className }: VMDetailsProps) => {
   )
 
   return (
-    <div className={`space-y-4 p-2 ${className || ''}`}>
-      {/* Main Grid Layout */}
+    <div className={'space-y-4'}>
       <div className='grid grid-cols-1 lg:grid-cols-3 gap-4'>
-        {/* Left Column - Main Info */}
         <div className='lg:col-span-2 space-y-4'>
-          {/* CPU Usage - Full width in left column */}
-
-          {/* Operating System Info - Full width in left column */}
           <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
             <TeamCard />
-            <AdGroupsCard />
+            <LocationCard />
             <ServiceIdCard />
           </div>
-
-          {/* Configuration and Memory - Side by side on large screens */}
           <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
             <ConfigurationCard />
             <MemoryCard />
           </div>
-
           <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
             <CpuCard />
             <DiskCard />
           </div>
-          {/* Team, AD Groups, Service ID - Three columns on large screens */}
         </div>
-
-        {/* Right Column - Control Panel */}
         <div className='lg:col-span-1 space-y-4'>
           <ControlPanelCard />
           <InfoCard />

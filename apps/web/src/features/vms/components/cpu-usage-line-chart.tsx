@@ -1,14 +1,12 @@
 'use client'
 
 import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer, ReferenceLine } from 'recharts'
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/shadcn/chart'
+import { ChartContainer, ChartTooltipContent } from '@/components/shadcn/chart'
 import { cpuUsageHistory, CpuHistoryTimeRange, CPU_HISTORY_CONFIGS } from '../utils/cpu-usage-history'
 import { useEffect, useState } from 'react'
-import { Badge } from '@/components/shadcn/badge'
 import { Button } from '@/components/shadcn/button'
-import { TrendingUp, TrendingDown, Minus, Activity, RotateCcw, Clock, TestTube } from 'lucide-react'
+import { Activity, RotateCcw, Clock } from 'lucide-react'
 import { cn } from '@/utils/clsxm'
-import { generateTestScenarios } from '../utils/mock-cpu-data'
 
 interface CpuUsageLineChartProps {
   vmId: string
@@ -31,13 +29,7 @@ const timeRangeLabels = {
   weekly: { label: 'Last 7 Days', icon: Clock },
 }
 
-export const CpuUsageLineChart = ({
-  vmId,
-  currentCpuUsage,
-  cpuSize = 0,
-  className,
-  height = 400,
-}: CpuUsageLineChartProps) => {
+export const CpuUsageLineChart = ({ vmId, cpuSize = 0, className, height = 400 }: CpuUsageLineChartProps) => {
   const [timeRange, setTimeRange] = useState<CpuHistoryTimeRange>('daily')
   const [chartData, setChartData] = useState<ReturnType<typeof cpuUsageHistory.getChartData>>([])
   const [stats, setStats] = useState<ReturnType<typeof cpuUsageHistory.getStats>>(null)
@@ -61,23 +53,6 @@ export const CpuUsageLineChart = ({
     refreshData()
   }
 
-  const generateTestData = () => {
-    const scenarios = generateTestScenarios(vmId)
-    scenarios.stable() // Generate stable test data
-    refreshData()
-  }
-
-  const getTrendIcon = (trend: 'up' | 'down' | 'stable') => {
-    switch (trend) {
-      case 'up':
-        return <TrendingUp className='h-4 w-4 text-red-500' />
-      case 'down':
-        return <TrendingDown className='h-4 w-4 text-green-500' />
-      default:
-        return <Minus className='h-4 w-4 text-gray-500' />
-    }
-  }
-
   const formatTooltipLabel = (label: string, payload: any[]) => {
     if (payload && payload.length > 0) {
       const dataPoint = payload[0].payload
@@ -94,7 +69,7 @@ export const CpuUsageLineChart = ({
       <div className='flex items-center justify-between'>
         <div className='flex items-center gap-2 mb-2'>
           <Activity className='h-4 w-4 text-blue-600' />
-          <h3 className='text-lg font-medium'>CPU Usage History</h3>
+          <h3 className='text-lg font-medium'>CPU Usage</h3>
           {isRefreshing && (
             <div className='animate-spin h-3 w-3 border-2 border-blue-500 border-t-transparent rounded-full' />
           )}
@@ -102,9 +77,6 @@ export const CpuUsageLineChart = ({
         <div className='flex items-center gap-1'>
           <Button variant='outline' size='sm' onClick={refreshData} disabled={isRefreshing} className='h-7 px-2'>
             <RotateCcw className={cn('h-3 w-3', isRefreshing && 'animate-spin')} />
-          </Button>
-          <Button variant='outline' size='sm' onClick={generateTestData} className='h-7 px-2'>
-            <TestTube className='h-3 w-3' />
           </Button>
           <Button variant='outline' size='sm' onClick={clearHistory} className='h-7 px-2'>
             Clear
@@ -130,6 +102,8 @@ export const CpuUsageLineChart = ({
           )
         })}
       </div>
+      {/* Message to user about short lived data */}
+      <p className='text-xs text-muted-foreground mt-1'>Data is temporarily stored in the browser's web storage</p>
 
       {/* Chart */}
       {hasData ? (

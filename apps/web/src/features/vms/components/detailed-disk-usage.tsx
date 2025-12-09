@@ -1,5 +1,5 @@
 'use client'
-import { BarChart, Bar, YAxis, XAxis, ResponsiveContainer, Tooltip, Legend } from 'recharts'
+import { BarChart, Bar, YAxis, XAxis, ResponsiveContainer, Tooltip } from 'recharts'
 import { useVMContext } from '@/context/vm-context'
 import { getVmDisks } from '../utils/vms'
 

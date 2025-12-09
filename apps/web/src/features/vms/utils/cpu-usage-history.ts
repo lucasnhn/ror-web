@@ -8,26 +8,26 @@ export interface CpuUsageDataPoint {
 
 export interface CpuHistoryConfig {
   maxDataPoints: number
-  timeWindowMs: number // How long to keep data (in milliseconds)
-  granularityMs: number // Minimum time between readings (in milliseconds)
+  timeWindowMs: number
+  granularityMs: number
 }
 
 // Default configurations for different time ranges
 export const CPU_HISTORY_CONFIGS = {
   hourly: {
-    maxDataPoints: 60, // 60 data points
-    timeWindowMs: 60 * 60 * 1000, // 1 hour
-    granularityMs: 60 * 1000, // 1 minute intervals
+    maxDataPoints: 60,
+    timeWindowMs: 60 * 60 * 1000,
+    granularityMs: 60 * 1000,
   },
   daily: {
-    maxDataPoints: 96, // 96 data points
-    timeWindowMs: 24 * 60 * 60 * 1000, // 24 hours
-    granularityMs: 15 * 60 * 1000, // 15 minute intervals
+    maxDataPoints: 96,
+    timeWindowMs: 24 * 60 * 60 * 1000,
+    granularityMs: 15 * 60 * 1000,
   },
   weekly: {
-    maxDataPoints: 168, // 168 data points
-    timeWindowMs: 7 * 24 * 60 * 60 * 1000, // 7 days
-    granularityMs: 60 * 60 * 1000, // 1 hour intervals
+    maxDataPoints: 168,
+    timeWindowMs: 7 * 24 * 60 * 60 * 1000,
+    granularityMs: 60 * 60 * 1000,
   },
 } as const
 
@@ -38,9 +38,6 @@ class CpuUsageHistory {
     return `cpu-usage-history-${vmId}`
   }
 
-  /**
-   * Add a new CPU usage reading for a VM
-   */
   addReading(vmId: string, cpuUsage: number, timeRange: CpuHistoryTimeRange = 'daily'): void {
     const config = CPU_HISTORY_CONFIGS[timeRange]
     const now = new Date()
@@ -48,40 +45,30 @@ class CpuUsageHistory {
     try {
       const existingData = this.getHistory(vmId, timeRange)
 
-      // Check if we should add this reading based on granularity
       if (existingData.length > 0) {
         const lastReading = existingData[existingData.length - 1]
         const timeDiff = now.getTime() - new Date(lastReading.timestamp).getTime()
 
         if (timeDiff < config.granularityMs) {
-          // Too soon since last reading, skip
           return
         }
       }
 
-      // Create new data point
       const newDataPoint: CpuUsageDataPoint = {
         timestamp: now,
         value: cpuUsage,
         vmId,
       }
 
-      // Add to existing data
       const updatedData = [...existingData, newDataPoint]
 
-      // Clean up old data and limit max points
       const cleanedData = this.cleanupData(updatedData, config)
-
-      // Save to localStorage
       localStorage.setItem(this.getStorageKey(vmId), JSON.stringify(cleanedData))
     } catch (error) {
       console.warn('Failed to save CPU usage history:', error)
     }
   }
 
-  /**
-   * Get historical CPU usage data for a VM
-   */
   getHistory(vmId: string, timeRange: CpuHistoryTimeRange = 'daily'): CpuUsageDataPoint[] {
     try {
       const stored = localStorage.getItem(this.getStorageKey(vmId))
@@ -92,7 +79,6 @@ class CpuUsageHistory {
       const data: CpuUsageDataPoint[] = JSON.parse(stored)
       const config = CPU_HISTORY_CONFIGS[timeRange]
 
-      // Convert timestamp strings back to Date objects and filter by time window
       const now = new Date()
       const cutoffTime = now.getTime() - config.timeWindowMs
 
@@ -109,9 +95,6 @@ class CpuUsageHistory {
     }
   }
 
-  /**
-   * Get formatted chart data ready for Recharts
-   */
   getChartData(
     vmId: string,
     timeRange: CpuHistoryTimeRange = 'daily'
@@ -131,24 +114,15 @@ class CpuUsageHistory {
     }))
   }
 
-  /**
-   * Clear all history for a VM
-   */
   clearHistory(vmId: string): void {
     localStorage.removeItem(this.getStorageKey(vmId))
   }
 
-  /**
-   * Get the latest CPU usage value
-   */
   getLatestReading(vmId: string, timeRange: CpuHistoryTimeRange = 'daily'): number | null {
     const history = this.getHistory(vmId, timeRange)
     return history.length > 0 ? history[history.length - 1].value : null
   }
 
-  /**
-   * Get statistics about the CPU usage history
-   */
   getStats(
     vmId: string,
     timeRange: CpuHistoryTimeRange = 'daily'
@@ -157,7 +131,6 @@ class CpuUsageHistory {
     min: number
     max: number
     count: number
-    trend: 'up' | 'down' | 'stable'
   } | null {
     const history = this.getHistory(vmId, timeRange)
 
@@ -170,29 +143,11 @@ class CpuUsageHistory {
     const min = Math.min(...values)
     const max = Math.max(...values)
 
-    // Calculate trend (compare first and last quarter of data)
-    let trend: 'up' | 'down' | 'stable' = 'stable'
-    if (history.length >= 4) {
-      const quarterSize = Math.floor(history.length / 4)
-      const firstQuarter = values.slice(0, quarterSize)
-      const lastQuarter = values.slice(-quarterSize)
-
-      const firstAvg = firstQuarter.reduce((sum, val) => sum + val, 0) / firstQuarter.length
-      const lastAvg = lastQuarter.reduce((sum, val) => sum + val, 0) / lastQuarter.length
-
-      const diff = lastAvg - firstAvg
-      if (Math.abs(diff) > 2) {
-        // 2% threshold
-        trend = diff > 0 ? 'up' : 'down'
-      }
-    }
-
     return {
       average: Math.round(average * 100) / 100,
       min,
       max,
       count: history.length,
-      trend,
     }
   }
 
@@ -200,11 +155,10 @@ class CpuUsageHistory {
     const now = new Date()
     const cutoffTime = now.getTime() - config.timeWindowMs
 
-    // Filter by time window and limit to max data points
     return data
       .filter((point) => new Date(point.timestamp).getTime() > cutoffTime)
       .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
-      .slice(-config.maxDataPoints) // Keep only the most recent entries
+      .slice(-config.maxDataPoints)
   }
 
   private formatTimeLabel(timestamp: Date, timeRange: CpuHistoryTimeRange): string {
@@ -221,5 +175,4 @@ class CpuUsageHistory {
   }
 }
 
-// Export a singleton instance
 export const cpuUsageHistory = new CpuUsageHistory()
