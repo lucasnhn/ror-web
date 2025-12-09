@@ -2,8 +2,10 @@
 
 import { VirtualMachineDisks } from '@ror/js-api-client'
 import { AlertTriangle, AlertCircle, CheckCircle } from 'lucide-react'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/shadcn/tooltip'
 
 export const DiskProgressBars = ({ items }: { items: VirtualMachineDisks[] }) => {
+  const getTooltipContent = () => {}
   const chartData = items.map((disk) => {
     const size = disk.sizeBytes ? Number(disk.sizeBytes) / 1024 ** 3 : 0
     const usage = disk.usageBytes ? Number(disk.usageBytes) / 1024 ** 3 : 0
@@ -115,6 +117,7 @@ export const DiskProgressBars = ({ items }: { items: VirtualMachineDisks[] }) =>
       )}
 
       {/* Individual Disk Progress Bars */}
+
       <div className='space-y-4'>
         {items.map((disk, index) => {
           const size = disk.sizeBytes ? Number(disk.sizeBytes) / 1024 ** 3 : 0
@@ -135,46 +138,55 @@ export const DiskProgressBars = ({ items }: { items: VirtualMachineDisks[] }) =>
           }
 
           return (
-            <div key={disk.id || index} className={`p-4 rounded-lg border ${bgColor}`}>
-              <div className='flex justify-between items-center mb-2'>
-                <h4 className='font-medium text-sm'>{name}</h4>
-                <div className='text-xs text-muted-foreground'>
-                  {usage.toFixed(1)} GB / {size.toFixed(1)} GB
-                </div>
-              </div>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div key={disk.id || index} className={`p-4 rounded-lg border ${bgColor}`}>
+                  <div className='flex justify-between items-center mb-2'>
+                    <h4 className='font-medium text-sm'>{name}</h4>
+                    <div className='text-xs text-muted-foreground'>
+                      {usage.toFixed(1)} GB / {size.toFixed(1)} GB
+                    </div>
+                  </div>
 
-              {/* Progress Bar */}
-              <div className='w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4 mb-2'>
-                <div
-                  className={`h-4 rounded-full ${progressColor} transition-all duration-300 ease-out flex items-center justify-end pr-2`}
-                  style={{ width: `${Math.min(percentUsed, 100)}%` }}
-                >
-                  {percentUsed > 15 && (
-                    <span className='text-xs text-white font-medium'>{percentUsed.toFixed(1)}%</span>
+                  {/* Progress Bar */}
+                  <div className='w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4 mb-2'>
+                    <div
+                      className={`h-4 rounded-full ${progressColor} transition-all duration-300 ease-out flex items-center justify-end pr-2 cursor-pointer`}
+                      style={{ width: `${Math.min(percentUsed, 100)}%` }}
+                    >
+                      {percentUsed > 15 && (
+                        <span className='text-xs text-white font-medium'>{percentUsed.toFixed(1)}%</span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Details */}
+                  <div className='flex justify-between text-xs text-muted-foreground'>
+                    <span>Free: {(size - usage).toFixed(1)} GB</span>
+                    <span>{percentUsed.toFixed(1)}% used</span>
+                  </div>
+
+                  {/* Usage indicator */}
+                  {percentUsed > 95 && (
+                    <div className='mt-2 flex items-center gap-1 text-xs text-red-600 dark:text-red-400'>
+                      <AlertCircle className='h-3 w-3' />
+                      <span>Critical: Less than 5% free space</span>
+                    </div>
+                  )}
+                  {percentUsed > 80 && percentUsed <= 95 && (
+                    <div className='mt-2 flex items-center gap-1 text-xs text-yellow-600 dark:text-yellow-400'>
+                      <AlertTriangle className='h-3 w-3' />
+                      <span>Warning: Low disk space</span>
+                    </div>
                   )}
                 </div>
-              </div>
-
-              {/* Details */}
-              <div className='flex justify-between text-xs text-muted-foreground'>
-                <span>Free: {(size - usage).toFixed(1)} GB</span>
-                <span>{percentUsed.toFixed(1)}% used</span>
-              </div>
-
-              {/* Usage indicator */}
-              {percentUsed > 95 && (
-                <div className='mt-2 flex items-center gap-1 text-xs text-red-600 dark:text-red-400'>
-                  <AlertCircle className='h-3 w-3' />
-                  <span>Critical: Less than 5% free space</span>
-                </div>
-              )}
-              {percentUsed > 80 && percentUsed <= 95 && (
-                <div className='mt-2 flex items-center gap-1 text-xs text-yellow-600 dark:text-yellow-400'>
-                  <AlertTriangle className='h-3 w-3' />
-                  <span>Warning: Low disk space</span>
-                </div>
-              )}
-            </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>
+                  Used: {usage.toFixed(2)} GB / {size.toFixed(2)} GB ({percentUsed.toFixed(2)}%)
+                </p>
+              </TooltipContent>
+            </Tooltip>
           )
         })}
       </div>
