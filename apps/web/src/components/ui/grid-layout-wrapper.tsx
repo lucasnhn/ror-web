@@ -164,7 +164,7 @@ export const GridLayoutWrapper = ({
       grid.destroy(false)
       gridRef.current = null
     }
-  }, [layoutKey, currentBreakpoint, getCurrentLayouts, preferenceKey, standardLayouts, contentMap, onLayoutChange])
+  }, [layoutKey, currentBreakpoint])
 
   useEffect(() => {
     handleResize()
@@ -176,7 +176,11 @@ export const GridLayoutWrapper = ({
     <div className='flex sm:flex-row flex-col gap-2 mb-3'>
       <Button
         onClick={() => {
+          const prefs = getCurrentLayouts()
+          const existing = prefs?.[preferenceKey]?.layouts ?? {}
+
           const layoutMap = {
+            ...existing,
             [currentBreakpoint]: layout.map((l) => ({
               i: l.id,
               x: l.x,

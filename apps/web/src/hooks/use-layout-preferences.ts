@@ -118,17 +118,18 @@ export function useLayoutPreferences(key: LayoutKey, defaultLayoutsInput: Layout
 
   const saveLayouts = (newLayoutsInput: Layouts | GridStackLayoutItem[]) => {
     try {
-      const newLayouts = normalizeToLayouts(newLayoutsInput)
-      console.info(`${LOG_NS} saveLayouts`, {
-        key,
-        currentBreakpoint,
-        newKeys: Object.keys(newLayouts || {}),
-        bpCount: (newLayouts?.[currentBreakpoint] || []).length,
-      })
-      setLayouts(newLayouts)
-      setSavedLayouts(clone(newLayouts))
+      const normalized = normalizeToLayouts(newLayoutsInput)
+
+      const merged: Layouts = {
+        ...layouts,
+        ...normalized,
+      }
+
+      setLayouts(merged)
+      setSavedLayouts(clone(merged))
+
       updateUserPreferenceObject(PREFERENCES_KEY, {
-        [key]: { layouts: newLayouts },
+        [key]: { layouts: merged },
       })
     } catch (e) {
       console.error(`${LOG_NS} saveLayouts error`, e)
