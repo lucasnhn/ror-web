@@ -6,10 +6,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/s
 import { routes } from '@/config/routes'
 import { cn } from '@/utils/clsxm'
 import { CodeSnippet } from '@ror/react'
-import { MoveLeft, PlusIcon, Trash, X } from 'lucide-react'
+import { MoveLeft, PlusIcon, Trash } from 'lucide-react'
 import Link from 'next/link'
 import { Fragment, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 
 /**
  * Props for the PageView component.
@@ -34,7 +35,7 @@ interface CreateClusterForm {
   network: string
   tags: Record<string, string>
   provider: 'talos' | 'tanzu' | 'azure' | ''
-  region: 'no-north' | 'no-east' | 'no-west' | 'no-central' | 'test-south-az-1' | ''
+  region: 'north' | 'east' | 'west' | 'central' | 'south' | ''
 }
 
 /**
@@ -74,7 +75,6 @@ export const PageView = ({ className }: PageViewProps) => {
   })
 
   const form = watch()
-  const provider = watch('provider')
 
   const onSubmit = (data: CreateClusterForm) => {
     console.log(data)
@@ -106,7 +106,7 @@ export const PageView = ({ className }: PageViewProps) => {
       cpu: 2,
       memory: 4,
       memoryBytes: 4017246208,
-      price: 1038,
+      price: 330 * 2,
       from: '2024-12-31T23:00:00Z',
       to: '2025-12-30T23:00:00Z',
     },
@@ -117,7 +117,7 @@ export const PageView = ({ className }: PageViewProps) => {
       cpu: 2,
       memory: 8,
       memoryBytes: 8238813184,
-      price: 1199,
+      price: 491 * 2,
       from: '2024-12-31T23:00:00Z',
       to: '2025-12-30T23:00:00Z',
     },
@@ -128,7 +128,7 @@ export const PageView = ({ className }: PageViewProps) => {
       cpu: 4,
       memory: 16,
       memoryBytes: 16681451520,
-      price: 2308,
+      price: 1600 * 2,
       from: '2024-12-31T23:00:00Z',
       to: '2025-12-30T23:00:00Z',
     },
@@ -165,13 +165,54 @@ export const PageView = ({ className }: PageViewProps) => {
       from: '2024-12-03T14:07:07.469Z',
       to: '2026-12-30T23:00:00Z',
     },
+    {
+      id: '67a5feca61bd5d7df1934fde',
+      provider: 'azure',
+      machineClass: 'best-effort-small',
+      cpu: 4,
+      memory: 14,
+      memoryBytes: 0,
+      price: 330 * 3,
+      from: '2024-12-03T14:07:07.469Z',
+      to: '2026-12-30T23:00:00Z',
+    },
+    {
+      id: '67a5feca61bd5d7df1934fdf',
+      provider: 'azure',
+      machineClass: 'best-effort-medium',
+      cpu: 4,
+      memory: 14,
+      memoryBytes: 0,
+      price: 491 * 3,
+      from: '2024-12-03T14:07:07.469Z',
+      to: '2026-12-30T23:00:00Z',
+    },
+    {
+      id: '67a5feca61bd5d7df1934fe0',
+      provider: 'azure',
+      machineClass: 'best-effort-large',
+      cpu: 4,
+      memory: 14,
+      memoryBytes: 0,
+      price: 1600 * 3,
+      from: '2024-12-03T14:07:07.469Z',
+      to: '2026-12-30T23:00:00Z',
+    },
   ]
+
+  const renderTagsYaml = (tags: Record<string, string>) => {
+    return Object.entries(tags)
+      .map(([key, value]) => `  ${key}: ${value}`)
+      .join('\n')
+  }
 
   const generateYaml = () => `
 apiVersion: vitistack.io/v1alpha1
 kind: KubernetesCluster
 metadata:
   name: ${form.name || ''}
+  vitistack.io/networknamespace: ${form.network}
+${renderTagsYaml(form.tags)}
 spec:
   data:
     clusterUid: 5d6da5d8-9a10-4a65-8db9-6aa1027d4b4d
@@ -181,9 +222,9 @@ spec:
     datacenter: ${form.region || ''}
     project: ${form.project || ''}
     region: ${form.region || ''}
-    workorder: "simple-workorder" // TODO: Fix workorder
-    zone: "az1" // TODO: Fix zone 
-    workspace: "simple-workspace" // TODO: Fix workspace
+    workorder: "simple-workorder" 
+    zone: "az1" 
+    workspace: ${form.network} 
   # Empty spec will use defaults:
   # - 1 control plane node
   # - 1 worker nodes
@@ -237,12 +278,11 @@ spec:
 
   const [tagKey, setTagKey] = useState('')
   const [tagValue, setTagValue] = useState('')
+  const [yamlOpen, setYamlOpen] = useState(false)
 
   const tags = watch('tags')
 
   const getPrice = (provider: string): number | null => {
-    console.log('provider', provider)
-
     const match = prices.find(
       (p) =>
         p.provider.toLowerCase() === provider.toLowerCase() &&
@@ -279,11 +319,7 @@ spec:
       formattedPrice += '.'
     }
 
-    formattedPrice.slice(0, -1)
-
-    formattedPrice += ' NOK'
-
-    return formattedPrice
+    return formattedPrice.slice(0, -1) + ' NOK'
   }
 
   const priceForCluster = (provider: string): string => {
@@ -294,162 +330,169 @@ spec:
     return formatPrice(price)
   }
 
-  const providerButtonClass = (value: string) => {
-    return provider === value ? 'bg-green-600 text-white' : ''
-  }
-
   return (
     <div className={cn(className, 'px-12 my-8')}>
-      <Link href={routes.app.createCluster.getHref()} className='flex flex-row gap-2 hover:underline mb-2'>
+      <Link href={routes.app.clusters.getHref()} className='flex flex-row gap-2 hover:underline mb-2'>
         <MoveLeft /> Clusters
       </Link>
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className='flex flex-row gap-32'>
-          <div className='flex flex-col gap-4'>
-            <section>
-              <h3>Cluster name</h3>
-              <Input {...register('name', { required: 'Name is required' })} placeholder='Enter name...' />
-              {errors.name && <span className='text-red-600'>{errors.name.message}</span>}
-            </section>
+          {form.provider != '' && (
+            <div className='flex flex-col gap-4'>
+              <section>
+                <h3>Cluster name</h3>
+                <Input {...register('name', { required: 'Name is required' })} placeholder='Enter name...' />
+                {errors.name && <span className='text-red-600'>{errors.name.message}</span>}
+              </section>
 
+              <section>
+                <h3>Region</h3>
+                <Controller
+                  name='region'
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger className='w-52'>{field.value || 'Select region'}</SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value='north'>north</SelectItem>
+                        <SelectItem value='east'>east</SelectItem>
+                        <SelectItem value='west'>west</SelectItem>
+                        <SelectItem value='central'>central</SelectItem>
+                        <SelectItem value='south'>south</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+              </section>
+
+              <section>
+                <h3>Environment</h3>
+                <Controller
+                  name='environment'
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger className='w-52'>{field.value || 'Select environment'}</SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value='prod'>prod</SelectItem>
+                        <SelectItem value='test'>test</SelectItem>
+                        <SelectItem value='qa'>qa</SelectItem>
+                        <SelectItem value='dev'>dev</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+              </section>
+
+              <section>
+                <h3>Control plane</h3>
+                <Input
+                  type='number'
+                  min={1}
+                  max={10}
+                  {...register('cp', {
+                    required: 'Amount of control planes is required',
+                    min: { value: 1, message: 'Need at least one control plane' },
+                    max: { value: 10, message: 'Cannot have more than ten control planes' },
+                  })}
+                  placeholder='Enter control plane num'
+                />
+                {errors.cp && <span className='text-red-600'>{errors.cp.message}</span>}
+              </section>
+
+              <section>
+                <h3>Worker pools</h3>
+                <h4>Name</h4>
+                <Input
+                  {...register('wpName', { required: 'Workerpool name is required' })}
+                  placeholder='Enter name...'
+                />
+                {errors.wpName && <span className='text-red-600'>{errors.wpName.message}</span>}
+                <h4>Number</h4>
+                <Input
+                  type='number'
+                  min={1}
+                  max={10}
+                  {...register('wpNumber', {
+                    required: 'Amount of workerpools is required',
+                    min: { value: 1, message: 'Need at least one workerpool' },
+                    max: { value: 10, message: 'Cannot have more than workerpools' },
+                  })}
+                  placeholder='Enter workerpools num'
+                />
+                {errors.cp && <span className='text-red-600'>{errors.cp.message}</span>}
+                <h4>Class</h4>
+                <Controller
+                  name='wpClass'
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger className='w-52'>{field.value || 'Select class'}</SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value='best-effort-small'>best-effort-small</SelectItem>
+                        <SelectItem value='best-effort-medium'>best-effort-medium</SelectItem>
+                        <SelectItem value='best-effort-large'>best-effort-large</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+              </section>
+
+              <section>
+                <h3>Network</h3>
+                <Controller
+                  name='network'
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger className='w-52'>{field.value || 'Select network'}</SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value='t-test01'>t-test01</SelectItem>
+                        <SelectItem value='t-test02'>t-test02</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+              </section>
+
+              <section>
+                <h3>Tags</h3>
+                <div className='grid [grid-template-columns:15rem_15rem_auto] gap-y-4 items-center'>
+                  <b>Key</b>
+                  <b>Value</b>
+                  <b></b>
+                  {Object.entries(tags).map(([key, value]) => (
+                    <Fragment key={key}>
+                      <span>{key}</span>
+                      <span>{value}</span>
+                      <Button size='icon' variant='destructive' onClick={() => removeTag(key)}>
+                        <Trash />
+                      </Button>
+                    </Fragment>
+                  ))}
+                  <Input placeholder='Enter key...' value={tagKey} onChange={(e) => setTagKey(e.target.value)} />
+                  <Input placeholder='Enter value...' value={tagValue} onChange={(e) => setTagValue(e.target.value)} />
+                  <Button onClick={addTag} disabled={!tagKey.trim() || !tagValue.trim()}>
+                    <PlusIcon /> Add
+                  </Button>
+                </div>
+              </section>
+            </div>
+          )}
+
+          <div className='flex flex-col gap-4'>
             <section>
               <h3>Project</h3>
               <Input {...register('project', { required: 'Name is required' })} placeholder='Enter project...' />
               {errors.project && <span className='text-red-600'>{errors.project.message}</span>}
             </section>
 
-            <section>
-              <h3>Region</h3>
-              <Controller
-                name='region'
-                control={control}
-                rules={{ required: true }}
-                render={({ field }) => (
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger>{field.value || 'Select region'}</SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value='no-north'>no-north</SelectItem>
-                      <SelectItem value='no-east'>no-east</SelectItem>
-                      <SelectItem value='no-west'>no-west</SelectItem>
-                      <SelectItem value='no-central'>no-central</SelectItem>
-                      <SelectItem value='test-south-az-1'>test-south-az-1</SelectItem>
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-            </section>
-
-            <section>
-              <h3>Environment</h3>
-              <Controller
-                name='environment'
-                control={control}
-                rules={{ required: true }}
-                render={({ field }) => (
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger>{field.value || 'Select environment'}</SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value='prod'>prod</SelectItem>
-                      <SelectItem value='test'>test</SelectItem>
-                      <SelectItem value='qa'>qa</SelectItem>
-                      <SelectItem value='dev'>dev</SelectItem>
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-            </section>
-
-            <section>
-              <h3>Control plane</h3>
-              <Input
-                type='number'
-                {...register('cp', {
-                  required: 'Amount of control planes is required',
-                  min: { value: 0, message: 'Need at least one control plane' },
-                })}
-                placeholder='Enter control plane num'
-              />
-              {errors.cp && <span className='text-red-600'>{errors.cp.message}</span>}
-            </section>
-
-            <section>
-              <h3>Worker pools</h3>
-              <h4>Name</h4>
-              <Input {...register('wpName', { required: 'Workerpool name is required' })} placeholder='Enter name...' />
-              {errors.wpName && <span className='text-red-600'>{errors.wpName.message}</span>}
-              <h4>Number</h4>
-              <Input
-                type='number'
-                {...register('wpNumber', {
-                  required: 'Amount of workerpools is required',
-                  min: { value: 0, message: 'Need at least one workerpool' },
-                })}
-                placeholder='Enter workerpools num'
-              />
-              {errors.cp && <span className='text-red-600'>{errors.cp.message}</span>}
-              <h4>Class</h4>
-              <Controller
-                name='wpClass'
-                control={control}
-                rules={{ required: true }}
-                render={({ field }) => (
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger>{field.value || 'Select class'}</SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value='best-effort-small'>best-effort-small</SelectItem>
-                      <SelectItem value='best-effort-medium'>best-effort-medium</SelectItem>
-                      <SelectItem value='best-effort-large'>best-effort-large</SelectItem>
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-            </section>
-
-            <section>
-              <h3>Network</h3>
-              <Controller
-                name='network'
-                control={control}
-                rules={{ required: true }}
-                render={({ field }) => (
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger>{field.value || 'Select network'}</SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value='t-test01'>t-test01</SelectItem>
-                      <SelectItem value='t-test02'>t-test02</SelectItem>
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-            </section>
-
-            <section>
-              <h3>Tags</h3>
-              <div className='grid [grid-template-columns:15rem_15rem_auto] gap-y-4 items-center'>
-                <b>Key</b>
-                <b>Value</b>
-                <b></b>
-                {Object.entries(tags).map(([key, value]) => (
-                  <Fragment key={key}>
-                    <span>{key}</span>
-                    <span>{value}</span>
-                    <Button size='icon' variant='destructive' onClick={() => removeTag(key)}>
-                      <Trash />
-                    </Button>
-                  </Fragment>
-                ))}
-                <Input placeholder='Enter key...' value={tagKey} onChange={(e) => setTagKey(e.target.value)} />
-                <Input placeholder='Enter value...' value={tagValue} onChange={(e) => setTagValue(e.target.value)} />
-                <Button onClick={addTag} disabled={!tagKey.trim() || !tagValue.trim()}>
-                  <PlusIcon /> Add
-                </Button>
-              </div>
-            </section>
-          </div>
-
-          <div className='flex flex-col gap-4'>
-            <section>
+            {/* <section>
               <h3>Region & Provider</h3>
               <table className='border border-gray-400 border-collapse w-full'>
                 <tbody>
@@ -459,7 +502,7 @@ spec:
                     <th className='border border-gray-300 p-2'>no-east</th>
                     <th className='border border-gray-300 p-2'>no-west</th>
                     <th className='border border-gray-300 p-2'>no-central</th>
-                    <th className='border border-gray-300 p-2'>test-south-az-1</th>
+                    <th className='border border-gray-300 p-2'>test-south</th>
                   </tr>
                   <tr>
                     <th className='border border-gray-300 p-2'>Talos</th>
@@ -503,15 +546,17 @@ spec:
                   </tr>
                 </tbody>
               </table>
-            </section>
+            </section> */}
 
             <section>
-              <h3>Prices</h3>
+              <h3>Provider & Prices</h3>
               <table className='border rounded-md border-gray-400 border-collapse w-full'>
                 <tbody>
                   <tr>
-                    <td className='border border-gray-300 p-2 font-semibold'>no.central.west.az1.talos.kubevirt</td>
+                    <td className='border border-gray-300 p-2 font-semibold'>Talos: no-west, no-central, test-south</td>
                     <td rowSpan={2} className='border border-gray-300 text-right p-2'>
+                      {form.wpClass || 'best-effort-medium'}
+                      <br />
                       {priceForCluster('talos')}
                     </td>
                     <td rowSpan={2} className='border border-gray-300 text-center p-2'>
@@ -528,13 +573,15 @@ spec:
                   </tr>
                   <tr>
                     <td className='border border-gray-300 p-2'>
-                      Cluster ({form.cp || '3'} cp, {form.wpNumber || '3'} worker {form.wpClass || 'best-effort-medium'}
-                      )
+                      Cluster ({form.cp || '3'} cp{form.cp > 1 ? 's' : ''}, {form.wpNumber || '3'} worker
+                      {form.wpNumber > 1 ? 's' : ''})
                     </td>
                   </tr>
                   <tr>
-                    <td className='border border-gray-300 p-2 font-semibold'>no.east.central.az1.tanzu.kubervirt</td>
+                    <td className='border border-gray-300 p-2 font-semibold'>Tanzu: no-east, no-central, test-south</td>
                     <td rowSpan={2} className='border border-gray-300 text-right p-2'>
+                      {form.wpClass || 'best-effort-medium'}
+                      <br />
                       {priceForCluster('tanzu')}
                     </td>
                     <td rowSpan={2} className='border border-gray-300 text-center p-2'>
@@ -551,42 +598,91 @@ spec:
                   </tr>
                   <tr>
                     <td className='border border-gray-300 p-2'>
-                      Cluster ({form.cp || '3'} cp, {form.wpNumber || '3'} worker {form.wpClass || 'best-effort-medium'}
-                      )
+                      Cluster ({form.cp || '3'} cp{form.cp > 1 ? 's' : ''}, {form.wpNumber || '3'} worker
+                      {form.wpNumber > 1 ? 's' : ''})
                     </td>
                   </tr>
                   <tr>
-                    <td className='border border-gray-300 p-2 font-semibold'>no.east.west.azure</td>
+                    <td className='border border-gray-300 p-2 font-semibold'>Azure: no-east, no-west</td>
                     <td rowSpan={2} className='border border-gray-300 text-right p-2'>
+                      {form.wpClass || 'best-effort-medium'}
+                      <br />
                       {priceForCluster('azure')}
                     </td>
                     <td rowSpan={2} className='border border-gray-300 text-center p-2'>
-                      <Button type='button' disabled>
-                        Choose
-                      </Button>
+                      {form.provider === 'azure' ? (
+                        <span className='px-3 py-2 border rounded-md border-emerald-500 dark:border-emerald-600 text-sm'>
+                          Chosen
+                        </span>
+                      ) : (
+                        <Button type='button' onClick={() => setValue('provider', 'azure')}>
+                          Choose
+                        </Button>
+                      )}
                     </td>
                   </tr>
                   <tr>
                     <td className='border border-gray-300 p-2'>
-                      Cluster ({form.cp || '3'} cp, {form.wpNumber || '3'} worker {form.wpClass || 'best-effort-medium'}
-                      )
+                      Cluster ({form.cp || '3'} cp{form.cp > 1 ? 's' : ''}, {form.wpNumber || '3'} worker
+                      {form.wpNumber > 1 ? 's' : ''})
                     </td>
                   </tr>
                 </tbody>
               </table>
             </section>
 
-            <section>
-              <h3>Cluster YAML</h3>
-              <CodeSnippet type='multi' className='rounded-lg' style={{ '--code-snippet-multi-max-height': '27rem' }}>
-                {generateYaml()}
-              </CodeSnippet>
-            </section>
+            {form.provider && (
+              <section>
+                <h3>Cluster YAML</h3>
+                <Button type='button' className='mr-1' onClick={() => setYamlOpen(!yamlOpen)}>
+                  {yamlOpen ? 'Close YAML' : 'Open YAML'}
+                </Button>
+                <Button
+                  type='button'
+                  className='ml-1'
+                  onClick={async () => {
+                    try {
+                      await navigator.clipboard.writeText(generateYaml())
+                      toast.info('YAML copied to clipboard')
+                    } catch {
+                      toast.error('Failed to copy YAML')
+                    }
+                  }}
+                >
+                  Copy YAML
+                </Button>
+                {yamlOpen && (
+                  <CodeSnippet
+                    type='multi'
+                    className='rounded-lg mt-2'
+                    style={{ '--code-snippet-multi-max-height': '27rem' }}
+                  >
+                    {generateYaml()}
+                  </CodeSnippet>
+                )}
+              </section>
+            )}
           </div>
         </div>
-        <Button type='submit' className='mt-4'>
-          Create cluster
-        </Button>
+
+        {form.provider != '' && (
+          <Link href={`${routes.app.clusters.getHref()}?creating-cluster=true`}>
+            <Button
+              type='submit'
+              className='mt-4'
+              onClick={async () => {
+                try {
+                  await navigator.clipboard.writeText(generateYaml())
+                  toast.info('YAML copied to clipboard')
+                } catch {
+                  toast.error('Failed to copy YAML')
+                }
+              }}
+            >
+              Create cluster
+            </Button>
+          </Link>
+        )}
       </form>
     </div>
   )
