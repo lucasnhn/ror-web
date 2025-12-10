@@ -1,0 +1,593 @@
+'use client'
+
+import { Button } from '@/components/shadcn/button'
+import { Input } from '@/components/shadcn/input'
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/shadcn/select'
+import { routes } from '@/config/routes'
+import { cn } from '@/utils/clsxm'
+import { CodeSnippet } from '@ror/react'
+import { MoveLeft, PlusIcon, Trash, X } from 'lucide-react'
+import Link from 'next/link'
+import { Fragment, useState } from 'react'
+import { Controller, useForm } from 'react-hook-form'
+
+/**
+ * Props for the PageView component.
+ *
+ * @property {string} [className] - Optional CSS class name for custom styling.
+ * @property {User} user - The current user object.
+ * @property {KubernetesCluster[]} clusters - Array of Kubernetes clusters to display.
+ * @property {Params} params - Route or query parameters relevant to the page view.
+ */
+interface PageViewProps {
+  className?: string
+}
+
+interface CreateClusterForm {
+  name: string
+  project: string
+  environment: string
+  cp: number
+  wpName: string
+  wpNumber: number
+  wpClass: string
+  network: string
+  tags: Record<string, string>
+  provider: 'talos' | 'tanzu' | 'azure' | ''
+  region: 'no-north' | 'no-east' | 'no-west' | 'no-central' | 'test-south-az-1' | ''
+}
+
+/**
+ * Renders the main page view for displaying Kubernetes clusters, including filtering, sorting, searching,
+ * infinite loading, and display options (grid or table view).
+ *
+ * @param className - Optional CSS class name for the root container.
+ * @param user - The current user object, used for permissions and display.
+ * @param clusters - Initial list of Kubernetes clusters to display.
+ * @param params - URL/query parameters controlling filters, sorting, and view mode.
+ *
+ * Features:
+ * - Infinite loading of clusters with pagination.
+ * - Filtering by environment, datacenter, and workspace.
+ * - Sorting by various cluster properties (name, CPU, memory, nodes, price, etc.).
+ * - Search functionality across clusters.
+ * - Toggle between grid and table views.
+ * - Export clusters as CSV or Excel.
+ * - Displays a development notice message.
+ *
+ * @returns The rendered page view component.
+ */
+export const PageView = ({ className }: PageViewProps) => {
+  const {
+    register,
+    control,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm<CreateClusterForm>({
+    defaultValues: {
+      tags: {},
+      provider: '',
+      region: '',
+    },
+  })
+
+  const form = watch()
+  const provider = watch('provider')
+
+  const onSubmit = (data: CreateClusterForm) => {
+    console.log(data)
+  }
+
+  const addTag = () => {
+    if (!tagKey.trim() || !tagValue.trim()) return
+
+    setValue('tags', {
+      ...tags,
+      [tagKey]: tagValue,
+    })
+
+    setTagKey('')
+    setTagValue('')
+  }
+
+  const removeTag = (key: string) => {
+    const copy = { ...tags }
+    delete copy[key]
+    setValue('tags', copy)
+  }
+
+  const prices = [
+    {
+      id: '62b1ad7161ecad60301b45ab',
+      provider: 'tanzu',
+      machineClass: 'best-effort-small',
+      cpu: 2,
+      memory: 4,
+      memoryBytes: 4017246208,
+      price: 1038,
+      from: '2024-12-31T23:00:00Z',
+      to: '2025-12-30T23:00:00Z',
+    },
+    {
+      id: '62b1ad7161ecad60301b45ac',
+      provider: 'tanzu',
+      machineClass: 'best-effort-medium',
+      cpu: 2,
+      memory: 8,
+      memoryBytes: 8238813184,
+      price: 1199,
+      from: '2024-12-31T23:00:00Z',
+      to: '2025-12-30T23:00:00Z',
+    },
+    {
+      id: '62b1ad7161ecad60301b45ad',
+      provider: 'tanzu',
+      machineClass: 'best-effort-large',
+      cpu: 4,
+      memory: 16,
+      memoryBytes: 16681451520,
+      price: 2308,
+      from: '2024-12-31T23:00:00Z',
+      to: '2025-12-30T23:00:00Z',
+    },
+    {
+      id: '67a5feca61bd5d8df1934fde',
+      provider: 'talos',
+      machineClass: 'best-effort-small',
+      cpu: 4,
+      memory: 14,
+      memoryBytes: 0,
+      price: 330,
+      from: '2024-12-03T14:07:07.469Z',
+      to: '2026-12-30T23:00:00Z',
+    },
+    {
+      id: '67a5feca61bd5d8df1934fdf',
+      provider: 'talos',
+      machineClass: 'best-effort-medium',
+      cpu: 4,
+      memory: 14,
+      memoryBytes: 0,
+      price: 491,
+      from: '2024-12-03T14:07:07.469Z',
+      to: '2026-12-30T23:00:00Z',
+    },
+    {
+      id: '67a5feca61bd5d8df1934fe0',
+      provider: 'talos',
+      machineClass: 'best-effort-large',
+      cpu: 4,
+      memory: 14,
+      memoryBytes: 0,
+      price: 1600,
+      from: '2024-12-03T14:07:07.469Z',
+      to: '2026-12-30T23:00:00Z',
+    },
+  ]
+
+  const generateYaml = () => `
+apiVersion: vitistack.io/v1alpha1
+kind: KubernetesCluster
+metadata:
+  name: ${form.name || ''}
+spec:
+  data:
+    clusterUid: 5d6da5d8-9a10-4a65-8db9-6aa1027d4b4d
+    clusterId: ${form.name || ''}
+    provider: ${form.provider || ''}
+    environment: ${form.environment || ''}
+    datacenter: ${form.region || ''}
+    project: ${form.project || ''}
+    region: ${form.region || ''}
+    workorder: "simple-workorder" // TODO: Fix workorder
+    zone: "az1" // TODO: Fix zone 
+    workspace: "simple-workspace" // TODO: Fix workspace
+  # Empty spec will use defaults:
+  # - 1 control plane node
+  # - 1 worker nodes
+  topology:
+    version: "1.34.1"
+    controlplane:
+      # Defaults to 1 replica
+      replicas: ${form.cp || 1}
+      version: "1.34.1"
+      machineClass: small // TODO: Fix machineClass
+      provider: proxmox // TODO: Ask if there is a reason this is not talos/tanzu/azure
+      storage: // TODO: Fix storage
+        - class: "standard"
+          path: "/var/lib/vitistack/kubevirt"
+          size: "20Gi"
+      metadata:
+        annotations:
+          environment: ${form.environment || ''}
+          region: ${form.region || ''}
+        labels:
+          environment: ${form.environment || ''}
+          region: ${form.region || ''}
+    workers:
+      nodePools:
+        - name: ${form.wpName || ''}
+          taint: []
+          version: "1.34.1"
+          # Defaults to 1 replica
+          replicas: ${form.wpNumber || '1'}
+          # Defaults to "standard" machine class
+          machineClass: ${form.wpClass || ''}
+          autoscaling:
+            enabled: false
+            minReplicas: 1
+            maxReplicas: 5
+            scalingRules:
+              - "cpu"
+          metadata:
+            annotations:
+              environment: ${form.environment || ''}
+              region: ${form.region || ''}
+            labels:
+              environment: ${form.environment || ''}
+              region: ${form.region || ''}
+          provider: kubevirt
+          storage:
+            - class: "standard"
+              path: "/var/lib/vitistack/kubevirt"
+              size: "20Gi"
+    `
+
+  const [tagKey, setTagKey] = useState('')
+  const [tagValue, setTagValue] = useState('')
+
+  const tags = watch('tags')
+
+  const getPrice = (provider: string): number | null => {
+    console.log('provider', provider)
+
+    const match = prices.find(
+      (p) =>
+        p.provider.toLowerCase() === provider.toLowerCase() &&
+        p.machineClass.toLowerCase() === (form.wpClass || 'best-effort-medium').toLowerCase()
+    )
+
+    console.log('match', match)
+
+    if (!match || typeof match.price !== 'number') {
+      return null
+    }
+
+    const wp = form.wpNumber || 3
+    const cp = form.cp || 3
+
+    return match.price * wp * cp
+  }
+
+  const formatPrice = (price: number) => {
+    const splitUp: string[] = []
+    let i = price.toString().length
+
+    while (i > 0) {
+      const start = Math.max(i - 3, 0)
+      const chunk = price.toString().slice(start, i)
+      splitUp.unshift(chunk)
+      i = start
+    }
+
+    let formattedPrice = ''
+
+    for (const piece of splitUp) {
+      formattedPrice += piece
+      formattedPrice += '.'
+    }
+
+    formattedPrice.slice(0, -1)
+
+    formattedPrice += ' NOK'
+
+    return formattedPrice
+  }
+
+  const priceForCluster = (provider: string): string => {
+    const price = getPrice(provider)
+    if (price == null) {
+      return 'Cannot fetch price'
+    }
+    return formatPrice(price)
+  }
+
+  const providerButtonClass = (value: string) => {
+    return provider === value ? 'bg-green-600 text-white' : ''
+  }
+
+  return (
+    <div className={cn(className, 'px-12 my-8')}>
+      <Link href={routes.app.createCluster.getHref()} className='flex flex-row gap-2 hover:underline mb-2'>
+        <MoveLeft /> Clusters
+      </Link>
+
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className='flex flex-row gap-32'>
+          <div className='flex flex-col gap-4'>
+            <section>
+              <h3>Cluster name</h3>
+              <Input {...register('name', { required: 'Name is required' })} placeholder='Enter name...' />
+              {errors.name && <span className='text-red-600'>{errors.name.message}</span>}
+            </section>
+
+            <section>
+              <h3>Project</h3>
+              <Input {...register('project', { required: 'Name is required' })} placeholder='Enter project...' />
+              {errors.project && <span className='text-red-600'>{errors.project.message}</span>}
+            </section>
+
+            <section>
+              <h3>Region</h3>
+              <Controller
+                name='region'
+                control={control}
+                rules={{ required: true }}
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger>{field.value || 'Select region'}</SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value='no-north'>no-north</SelectItem>
+                      <SelectItem value='no-east'>no-east</SelectItem>
+                      <SelectItem value='no-west'>no-west</SelectItem>
+                      <SelectItem value='no-central'>no-central</SelectItem>
+                      <SelectItem value='test-south-az-1'>test-south-az-1</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            </section>
+
+            <section>
+              <h3>Environment</h3>
+              <Controller
+                name='environment'
+                control={control}
+                rules={{ required: true }}
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger>{field.value || 'Select environment'}</SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value='prod'>prod</SelectItem>
+                      <SelectItem value='test'>test</SelectItem>
+                      <SelectItem value='qa'>qa</SelectItem>
+                      <SelectItem value='dev'>dev</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            </section>
+
+            <section>
+              <h3>Control plane</h3>
+              <Input
+                type='number'
+                {...register('cp', {
+                  required: 'Amount of control planes is required',
+                  min: { value: 0, message: 'Need at least one control plane' },
+                })}
+                placeholder='Enter control plane num'
+              />
+              {errors.cp && <span className='text-red-600'>{errors.cp.message}</span>}
+            </section>
+
+            <section>
+              <h3>Worker pools</h3>
+              <h4>Name</h4>
+              <Input {...register('wpName', { required: 'Workerpool name is required' })} placeholder='Enter name...' />
+              {errors.wpName && <span className='text-red-600'>{errors.wpName.message}</span>}
+              <h4>Number</h4>
+              <Input
+                type='number'
+                {...register('wpNumber', {
+                  required: 'Amount of workerpools is required',
+                  min: { value: 0, message: 'Need at least one workerpool' },
+                })}
+                placeholder='Enter workerpools num'
+              />
+              {errors.cp && <span className='text-red-600'>{errors.cp.message}</span>}
+              <h4>Class</h4>
+              <Controller
+                name='wpClass'
+                control={control}
+                rules={{ required: true }}
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger>{field.value || 'Select class'}</SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value='best-effort-small'>best-effort-small</SelectItem>
+                      <SelectItem value='best-effort-medium'>best-effort-medium</SelectItem>
+                      <SelectItem value='best-effort-large'>best-effort-large</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            </section>
+
+            <section>
+              <h3>Network</h3>
+              <Controller
+                name='network'
+                control={control}
+                rules={{ required: true }}
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger>{field.value || 'Select network'}</SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value='t-test01'>t-test01</SelectItem>
+                      <SelectItem value='t-test02'>t-test02</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            </section>
+
+            <section>
+              <h3>Tags</h3>
+              <div className='grid [grid-template-columns:15rem_15rem_auto] gap-y-4 items-center'>
+                <b>Key</b>
+                <b>Value</b>
+                <b></b>
+                {Object.entries(tags).map(([key, value]) => (
+                  <Fragment key={key}>
+                    <span>{key}</span>
+                    <span>{value}</span>
+                    <Button size='icon' variant='destructive' onClick={() => removeTag(key)}>
+                      <Trash />
+                    </Button>
+                  </Fragment>
+                ))}
+                <Input placeholder='Enter key...' value={tagKey} onChange={(e) => setTagKey(e.target.value)} />
+                <Input placeholder='Enter value...' value={tagValue} onChange={(e) => setTagValue(e.target.value)} />
+                <Button onClick={addTag} disabled={!tagKey.trim() || !tagValue.trim()}>
+                  <PlusIcon /> Add
+                </Button>
+              </div>
+            </section>
+          </div>
+
+          <div className='flex flex-col gap-4'>
+            <section>
+              <h3>Region & Provider</h3>
+              <table className='border border-gray-400 border-collapse w-full'>
+                <tbody>
+                  <tr>
+                    <th className='border border-gray-300'></th>
+                    <th className='border border-gray-300 p-2'>no-north</th>
+                    <th className='border border-gray-300 p-2'>no-east</th>
+                    <th className='border border-gray-300 p-2'>no-west</th>
+                    <th className='border border-gray-300 p-2'>no-central</th>
+                    <th className='border border-gray-300 p-2'>test-south-az-1</th>
+                  </tr>
+                  <tr>
+                    <th className='border border-gray-300 p-2'>Talos</th>
+                    <td className='border border-gray-300'></td>
+                    <td className='border border-gray-300'></td>
+                    <td className='border border-gray-300'>
+                      <X className='mx-auto my-2' />
+                    </td>
+                    <td className='border border-gray-300'>
+                      <X className='mx-auto my-2' />
+                    </td>
+                    <td className='border border-gray-300'>
+                      <X className='mx-auto my-2' />
+                    </td>
+                  </tr>
+                  <tr>
+                    <th className='border border-gray-300 p-2'>Tanzu</th>
+                    <td className='border border-gray-300'></td>
+                    <td className='border border-gray-300'>
+                      <X className='mx-auto my-2' />
+                    </td>
+                    <td className='border border-gray-300'></td>
+                    <td className='border border-gray-300'>
+                      <X className='mx-auto my-2' />
+                    </td>
+                    <td className='border border-gray-300'>
+                      <X className='mx-auto my-2' />
+                    </td>
+                  </tr>
+                  <tr>
+                    <th className='border border-gray-300 p-2'>Azure</th>
+                    <td className='border border-gray-300'></td>
+                    <td className='border border-gray-300'>
+                      <X className='mx-auto my-2' />
+                    </td>
+                    <td className='border border-gray-300'>
+                      <X className='mx-auto my-2' />
+                    </td>
+                    <td className='border border-gray-300'></td>
+                    <td className='border border-gray-300'></td>
+                  </tr>
+                </tbody>
+              </table>
+            </section>
+
+            <section>
+              <h3>Prices</h3>
+              <table className='border rounded-md border-gray-400 border-collapse w-full'>
+                <tbody>
+                  <tr>
+                    <td className='border border-gray-300 p-2 font-semibold'>no.central.west.az1.talos.kubevirt</td>
+                    <td rowSpan={2} className='border border-gray-300 text-right p-2'>
+                      {priceForCluster('talos')}
+                    </td>
+                    <td rowSpan={2} className='border border-gray-300 text-center p-2'>
+                      {form.provider === 'talos' ? (
+                        <span className='px-3 py-2 border rounded-md border-emerald-500 dark:border-emerald-600 text-sm'>
+                          Chosen
+                        </span>
+                      ) : (
+                        <Button type='button' onClick={() => setValue('provider', 'talos')}>
+                          Choose
+                        </Button>
+                      )}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className='border border-gray-300 p-2'>
+                      Cluster ({form.cp || '3'} cp, {form.wpNumber || '3'} worker {form.wpClass || 'best-effort-medium'}
+                      )
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className='border border-gray-300 p-2 font-semibold'>no.east.central.az1.tanzu.kubervirt</td>
+                    <td rowSpan={2} className='border border-gray-300 text-right p-2'>
+                      {priceForCluster('tanzu')}
+                    </td>
+                    <td rowSpan={2} className='border border-gray-300 text-center p-2'>
+                      {form.provider === 'tanzu' ? (
+                        <span className='px-3 py-2 border rounded-md border-emerald-500 dark:border-emerald-600 text-sm'>
+                          Chosen
+                        </span>
+                      ) : (
+                        <Button type='button' onClick={() => setValue('provider', 'tanzu')}>
+                          Choose
+                        </Button>
+                      )}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className='border border-gray-300 p-2'>
+                      Cluster ({form.cp || '3'} cp, {form.wpNumber || '3'} worker {form.wpClass || 'best-effort-medium'}
+                      )
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className='border border-gray-300 p-2 font-semibold'>no.east.west.azure</td>
+                    <td rowSpan={2} className='border border-gray-300 text-right p-2'>
+                      {priceForCluster('azure')}
+                    </td>
+                    <td rowSpan={2} className='border border-gray-300 text-center p-2'>
+                      <Button type='button' disabled>
+                        Choose
+                      </Button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className='border border-gray-300 p-2'>
+                      Cluster ({form.cp || '3'} cp, {form.wpNumber || '3'} worker {form.wpClass || 'best-effort-medium'}
+                      )
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </section>
+
+            <section>
+              <h3>Cluster YAML</h3>
+              <CodeSnippet type='multi' className='rounded-lg' style={{ '--code-snippet-multi-max-height': '27rem' }}>
+                {generateYaml()}
+              </CodeSnippet>
+            </section>
+          </div>
+        </div>
+        <Button type='submit' className='mt-4'>
+          Create cluster
+        </Button>
+      </form>
+    </div>
+  )
+}

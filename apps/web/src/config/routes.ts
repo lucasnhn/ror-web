@@ -22,6 +22,10 @@ export const routes = {
       label: 'Cluster',
       getHref: (id: string) => `/clusters/${id}`,
     },
+    createCluster: {
+      label: 'Create cluster',
+      getHref: () => '/clusters/create-cluster',
+    },
     clusterIngresses: {
       label: 'Ingresses',
       getHref: (id: string) => `/clusters/${id}/ingresses`,
