@@ -218,8 +218,9 @@ apiVersion: vitistack.io/v1alpha1
 kind: KubernetesCluster
 metadata:
   name: ${form.name || ''}
-  vitistack.io/networknamespace: ${form.network}
-${renderTagsYaml(form.tags)}
+  annotations:
+    vitistack.io/networknamespace: ${form.network}
+  ${renderTagsYaml(form.tags)}
 spec:
   data:
     clusterUid: 5d6da5d8-9a10-4a65-8db9-6aa1027d4b4d
@@ -241,9 +242,9 @@ spec:
       # Defaults to 1 replica
       replicas: ${form.cp || 1}
       version: "1.34.1"
-      machineClass: small // TODO: Fix machineClass
-      provider: proxmox // TODO: Ask if there is a reason this is not talos/tanzu/azure
-      storage: // TODO: Fix storage
+      machineClass: small
+      provider: proxmox 
+      storage: 
         - class: "standard"
           path: "/var/lib/vitistack/kubevirt"
           size: "20Gi"
@@ -296,8 +297,6 @@ spec:
         p.machineClass.toLowerCase() === (form.wpClass || 'best-effort-medium').toLowerCase()
     )
 
-    console.log('match', match)
-
     if (!match || typeof match.price !== 'number') {
       return null
     }
@@ -349,9 +348,7 @@ spec:
 
   const isTempRegion = (r: string) => form.tempRegion === r
   const isTempProvider = (p: string) => form.tempProvider === p
-  const isOption = (option: string) => {
-    return optionMap.includes(option)
-  }
+  const isOption = (option: string) => optionMap.includes(option)
 
   return (
     <div className={cn(className, 'px-12 my-8')}>
@@ -407,12 +404,14 @@ spec:
 
               <section>
                 <h3>Worker pools</h3>
+
                 <h4>Name</h4>
                 <Input
                   {...register('wpName', { required: 'Workerpool name is required' })}
                   placeholder='Enter name...'
                 />
                 {errors.wpName && <span className='text-red-600'>{errors.wpName.message}</span>}
+
                 <h4>Number</h4>
                 <Input
                   type='number'
@@ -426,6 +425,7 @@ spec:
                   placeholder='Enter workerpools num'
                 />
                 {errors.cp && <span className='text-red-600'>{errors.cp.message}</span>}
+
                 <h4>Class</h4>
                 <Controller
                   name='wpClass'
@@ -530,6 +530,7 @@ spec:
                   )}
                 />
               </div>
+
               <table className='border border-gray-400 border-collapse w-full'>
                 <tbody>
                   <tr>
@@ -575,6 +576,7 @@ spec:
                       south
                     </th>
                   </tr>
+
                   <tr>
                     <th
                       className={cn(
@@ -1295,85 +1297,6 @@ spec:
                     )}
                 </tbody>
               </table>
-              {/* <table className='border rounded-md border-gray-400 border-collapse w-full'>
-                <tbody>
-                  <tr>
-                    <td className='border border-gray-300 p-2 font-semibold'>Talos: no-west, no-central, test-south</td>
-                    <td rowSpan={2} className='border border-gray-300 text-right p-2'>
-                      {form.wpClass || 'best-effort-medium'}
-                      <br />
-                      {priceForCluster('talos')}
-                    </td>
-                    <td rowSpan={2} className='border border-gray-300 text-center p-2'>
-                      {form.provider === 'talos' ? (
-                        <span className='px-3 py-2 border rounded-md border-emerald-500 dark:border-emerald-600 text-sm'>
-                          Chosen
-                        </span>
-                      ) : (
-                        <Button type='button' onClick={() => setValue('provider', 'talos')}>
-                          Choose
-                        </Button>
-                      )}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className='border border-gray-300 p-2'>
-                      Cluster ({form.cp || '3'} cp{form.cp > 1 ? 's' : ''}, {form.wpNumber || '3'} worker
-                      {form.wpNumber > 1 ? 's' : ''})
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className='border border-gray-300 p-2 font-semibold'>Tanzu: no-east, no-central, test-south</td>
-                    <td rowSpan={2} className='border border-gray-300 text-right p-2'>
-                      {form.wpClass || 'best-effort-medium'}
-                      <br />
-                      {priceForCluster('tanzu')}
-                    </td>
-                    <td rowSpan={2} className='border border-gray-300 text-center p-2'>
-                      {form.provider === 'tanzu' ? (
-                        <span className='px-3 py-2 border rounded-md border-emerald-500 dark:border-emerald-600 text-sm'>
-                          Chosen
-                        </span>
-                      ) : (
-                        <Button type='button' onClick={() => setValue('provider', 'tanzu')}>
-                          Choose
-                        </Button>
-                      )}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className='border border-gray-300 p-2'>
-                      Cluster ({form.cp || '3'} cp{form.cp > 1 ? 's' : ''}, {form.wpNumber || '3'} worker
-                      {form.wpNumber > 1 ? 's' : ''})
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className='border border-gray-300 p-2 font-semibold'>Azure: no-east, no-west</td>
-                    <td rowSpan={2} className='border border-gray-300 text-right p-2'>
-                      {form.wpClass || 'best-effort-medium'}
-                      <br />
-                      {priceForCluster('azure')}
-                    </td>
-                    <td rowSpan={2} className='border border-gray-300 text-center p-2'>
-                      {form.provider === 'azure' ? (
-                        <span className='px-3 py-2 border rounded-md border-emerald-500 dark:border-emerald-600 text-sm'>
-                          Chosen
-                        </span>
-                      ) : (
-                        <Button type='button' onClick={() => setValue('provider', 'azure')}>
-                          Choose
-                        </Button>
-                      )}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className='border border-gray-300 p-2'>
-                      Cluster ({form.cp || '3'} cp{form.cp > 1 ? 's' : ''}, {form.wpNumber || '3'} worker
-                      {form.wpNumber > 1 ? 's' : ''})
-                    </td>
-                  </tr>
-                </tbody>
-              </table> */}
             </section>
 
             {form.provider && (
