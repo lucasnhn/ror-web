@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/s
 import { routes } from '@/config/routes'
 import { cn } from '@/utils/clsxm'
 import { CodeSnippet } from '@ror/react'
-import { MoveLeft, PlusIcon, Trash } from 'lucide-react'
+import { MoveLeft, PlusIcon, Trash, X } from 'lucide-react'
 import Link from 'next/link'
 import { Fragment, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
@@ -34,6 +34,8 @@ interface CreateClusterForm {
   wpClass: string
   network: string
   tags: Record<string, string>
+  tempProvider: 'talos' | 'tanzu' | 'azure' | ''
+  tempRegion: 'north' | 'east' | 'west' | 'central' | 'south' | ''
   provider: 'talos' | 'tanzu' | 'azure' | ''
   region: 'north' | 'east' | 'west' | 'central' | 'south' | ''
 }
@@ -69,8 +71,13 @@ export const PageView = ({ className }: PageViewProps) => {
   } = useForm<CreateClusterForm>({
     defaultValues: {
       tags: {},
+      tempProvider: '',
+      tempRegion: '',
       provider: '',
       region: '',
+      wpClass: 'best-effort-medium',
+      cp: 3,
+      wpNumber: 3,
     },
   })
 
@@ -330,6 +337,22 @@ spec:
     return formatPrice(price)
   }
 
+  const optionMap = [
+    'talos-west',
+    'talos-central',
+    'talos-south',
+    'tanzu-east',
+    'tanzu-central',
+    'azure-east',
+    'azure-west',
+  ]
+
+  const isTempRegion = (r: string) => form.tempRegion === r
+  const isTempProvider = (p: string) => form.tempProvider === p
+  const isOption = (option: string) => {
+    return optionMap.includes(option)
+  }
+
   return (
     <div className={cn(className, 'px-12 my-8')}>
       <Link href={routes.app.clusters.getHref()} className='flex flex-row gap-2 hover:underline mb-2'>
@@ -344,27 +367,6 @@ spec:
                 <h3>Cluster name</h3>
                 <Input {...register('name', { required: 'Name is required' })} placeholder='Enter name...' />
                 {errors.name && <span className='text-red-600'>{errors.name.message}</span>}
-              </section>
-
-              <section>
-                <h3>Region</h3>
-                <Controller
-                  name='region'
-                  control={control}
-                  rules={{ required: true }}
-                  render={({ field }) => (
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger className='w-52'>{field.value || 'Select region'}</SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value='north'>north</SelectItem>
-                        <SelectItem value='east'>east</SelectItem>
-                        <SelectItem value='west'>west</SelectItem>
-                        <SelectItem value='central'>central</SelectItem>
-                        <SelectItem value='south'>south</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
               </section>
 
               <section>
@@ -492,65 +494,808 @@ spec:
               {errors.project && <span className='text-red-600'>{errors.project.message}</span>}
             </section>
 
-            {/* <section>
+            <section>
               <h3>Region & Provider</h3>
+              <div className='mb-2 flex gap-2'>
+                <Controller
+                  name='tempRegion'
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger className='w-52'>{field.value || 'Select region'}</SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value='north'>north</SelectItem>
+                        <SelectItem value='east'>east</SelectItem>
+                        <SelectItem value='west'>west</SelectItem>
+                        <SelectItem value='central'>central</SelectItem>
+                        <SelectItem value='south'>south</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+                <Controller
+                  name='tempProvider'
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger className='w-52'>{field.value || 'Select provider'}</SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value='talos'>talos</SelectItem>
+                        <SelectItem value='tanzu'>tanzu</SelectItem>
+                        <SelectItem value='azure'>azure</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+              </div>
               <table className='border border-gray-400 border-collapse w-full'>
                 <tbody>
                   <tr>
                     <th className='border border-gray-300'></th>
-                    <th className='border border-gray-300 p-2'>no-north</th>
-                    <th className='border border-gray-300 p-2'>no-east</th>
-                    <th className='border border-gray-300 p-2'>no-west</th>
-                    <th className='border border-gray-300 p-2'>no-central</th>
-                    <th className='border border-gray-300 p-2'>test-south</th>
+                    <th
+                      className={cn(
+                        'border border-gray-300 p-2 transition-colors',
+                        isTempRegion('north') && 'bg-blue-100 dark:bg-blue-800 font-semibold'
+                      )}
+                    >
+                      north
+                    </th>
+                    <th
+                      className={cn(
+                        'border border-gray-300 p-2 transition-colors',
+                        isTempRegion('east') && 'bg-blue-100 dark:bg-blue-800 font-semibold'
+                      )}
+                    >
+                      east
+                    </th>
+                    <th
+                      className={cn(
+                        'border border-gray-300 p-2 transition-colors',
+                        isTempRegion('west') && 'bg-blue-100 dark:bg-blue-800 font-semibold'
+                      )}
+                    >
+                      west
+                    </th>
+                    <th
+                      className={cn(
+                        'border border-gray-300 p-2 transition-colors',
+                        isTempRegion('central') && 'bg-blue-100 dark:bg-blue-800 font-semibold'
+                      )}
+                    >
+                      central
+                    </th>
+                    <th
+                      className={cn(
+                        'border border-gray-300 p-2 transition-colors',
+                        isTempRegion('south') && 'bg-blue-100 dark:bg-blue-800 font-semibold'
+                      )}
+                    >
+                      south
+                    </th>
                   </tr>
                   <tr>
-                    <th className='border border-gray-300 p-2'>Talos</th>
-                    <td className='border border-gray-300'></td>
-                    <td className='border border-gray-300'></td>
-                    <td className='border border-gray-300'>
+                    <th
+                      className={cn(
+                        'border border-gray-300 p-2',
+                        isTempProvider('talos') && 'bg-blue-100 dark:bg-blue-800 font-semibold'
+                      )}
+                    >
+                      Talos
+                    </th>
+                    <td
+                      className={cn(
+                        'border border-gray-300',
+                        isTempRegion('north') && 'bg-blue-100 dark:bg-blue-800 font-semibold',
+                        isTempProvider('talos') && 'bg-blue-100 dark:bg-blue-800 font-semibold',
+                        isTempRegion('north') && isTempProvider('talos') && 'bg-blue-200 dark:bg-blue-900 font-semibold'
+                      )}
+                    ></td>
+                    <td
+                      className={cn(
+                        'border border-gray-300',
+                        isTempRegion('east') && 'bg-blue-100 dark:bg-blue-800 font-semibold',
+                        isTempProvider('talos') && 'bg-blue-100 dark:bg-blue-800 font-semibold',
+                        isTempRegion('east') && isTempProvider('talos') && 'bg-blue-200 dark:bg-blue-900 font-semibold'
+                      )}
+                    ></td>
+                    <td
+                      className={cn(
+                        'border border-gray-300',
+                        isTempRegion('west') && 'bg-blue-100 dark:bg-blue-800 font-semibold',
+                        isTempProvider('talos') && 'bg-blue-100 dark:bg-blue-800 font-semibold',
+                        isTempRegion('west') && isTempProvider('talos') && 'bg-blue-200 dark:bg-blue-900 font-semibold'
+                      )}
+                    >
                       <X className='mx-auto my-2' />
                     </td>
-                    <td className='border border-gray-300'>
+                    <td
+                      className={cn(
+                        'border border-gray-300',
+                        isTempRegion('central') && 'bg-blue-100 dark:bg-blue-800 font-semibold',
+                        isTempProvider('talos') && 'bg-blue-100 dark:bg-blue-800 font-semibold',
+                        isTempRegion('central') &&
+                          isTempProvider('talos') &&
+                          'bg-blue-200 dark:bg-blue-900 font-semibold'
+                      )}
+                    >
                       <X className='mx-auto my-2' />
                     </td>
-                    <td className='border border-gray-300'>
+                    <td
+                      className={cn(
+                        'border border-gray-300',
+                        isTempRegion('south') && 'bg-blue-100 dark:bg-blue-800 font-semibold',
+                        isTempProvider('talos') && 'bg-blue-100 dark:bg-blue-800 font-semibold',
+                        isTempRegion('south') && isTempProvider('talos') && 'bg-blue-200 dark:bg-blue-900 font-semibold'
+                      )}
+                    >
                       <X className='mx-auto my-2' />
                     </td>
                   </tr>
                   <tr>
-                    <th className='border border-gray-300 p-2'>Tanzu</th>
-                    <td className='border border-gray-300'></td>
-                    <td className='border border-gray-300'>
+                    <th
+                      className={cn(
+                        'border border-gray-300 p-2',
+                        isTempProvider('tanzu') && 'bg-blue-100 dark:bg-blue-800 font-semibold'
+                      )}
+                    >
+                      Tanzu
+                    </th>
+                    <td
+                      className={cn(
+                        'border border-gray-300',
+                        isTempRegion('north') && 'bg-blue-100 dark:bg-blue-800 font-semibold',
+                        isTempProvider('tanzu') && 'bg-blue-100 dark:bg-blue-800 font-semibold',
+                        isTempRegion('north') && isTempProvider('tanzu') && 'bg-blue-200 dark:bg-blue-900 font-semibold'
+                      )}
+                    ></td>
+                    <td
+                      className={cn(
+                        'border border-gray-300',
+                        isTempRegion('east') && 'bg-blue-100 dark:bg-blue-800 font-semibold',
+                        isTempProvider('tanzu') && 'bg-blue-100 dark:bg-blue-800 font-semibold',
+                        isTempRegion('east') && isTempProvider('tanzu') && 'bg-blue-200 dark:bg-blue-900 font-semibold'
+                      )}
+                    >
                       <X className='mx-auto my-2' />
                     </td>
-                    <td className='border border-gray-300'></td>
-                    <td className='border border-gray-300'>
+                    <td
+                      className={cn(
+                        'border border-gray-300',
+                        isTempRegion('west') && 'bg-blue-100 dark:bg-blue-800 font-semibold',
+                        isTempProvider('tanzu') && 'bg-blue-100 dark:bg-blue-800 font-semibold',
+                        isTempRegion('west') && isTempProvider('tanzu') && 'bg-blue-200 dark:bg-blue-900 font-semibold'
+                      )}
+                    ></td>
+                    <td
+                      className={cn(
+                        'border border-gray-300',
+                        isTempRegion('central') && 'bg-blue-100 dark:bg-blue-800 font-semibold',
+                        isTempProvider('tanzu') && 'bg-blue-100 dark:bg-blue-800 font-semibold',
+                        isTempRegion('central') &&
+                          isTempProvider('tanzu') &&
+                          'bg-blue-200 dark:bg-blue-900 font-semibold'
+                      )}
+                    >
                       <X className='mx-auto my-2' />
                     </td>
-                    <td className='border border-gray-300'>
-                      <X className='mx-auto my-2' />
-                    </td>
+                    <td
+                      className={cn(
+                        'border border-gray-300',
+                        isTempRegion('south') && 'bg-blue-100 dark:bg-blue-800 font-semibold',
+                        isTempProvider('tanzu') && 'bg-blue-100 dark:bg-blue-800 font-semibold',
+                        isTempRegion('south') && isTempProvider('tanzu') && 'bg-blue-200 dark:bg-blue-900 font-semibold'
+                      )}
+                    ></td>
                   </tr>
                   <tr>
-                    <th className='border border-gray-300 p-2'>Azure</th>
-                    <td className='border border-gray-300'></td>
-                    <td className='border border-gray-300'>
+                    <th
+                      className={cn(
+                        'border border-gray-300 p-2',
+                        isTempProvider('azure') && 'bg-blue-100 dark:bg-blue-800 font-semibold'
+                      )}
+                    >
+                      Azure
+                    </th>
+                    <td
+                      className={cn(
+                        'border border-gray-300',
+                        isTempRegion('north') && 'bg-blue-100 dark:bg-blue-800 font-semibold',
+                        isTempProvider('azure') && 'bg-blue-100 dark:bg-blue-800 font-semibold',
+                        isTempRegion('north') && isTempProvider('azure') && 'bg-blue-200 dark:bg-blue-900 font-semibold'
+                      )}
+                    ></td>
+                    <td
+                      className={cn(
+                        'border border-gray-300',
+                        isTempRegion('east') && 'bg-blue-100 dark:bg-blue-800 font-semibold',
+                        isTempProvider('azure') && 'bg-blue-100 dark:bg-blue-800 font-semibold',
+                        isTempRegion('east') && isTempProvider('azure') && 'bg-blue-200 dark:bg-blue-900 font-semibold'
+                      )}
+                    >
                       <X className='mx-auto my-2' />
                     </td>
-                    <td className='border border-gray-300'>
+                    <td
+                      className={cn(
+                        'border border-gray-300',
+                        isTempRegion('west') && 'bg-blue-100 dark:bg-blue-800 font-semibold',
+                        isTempProvider('azure') && 'bg-blue-100 dark:bg-blue-800 font-semibold',
+                        isTempRegion('west') && isTempProvider('azure') && 'bg-blue-200 dark:bg-blue-900 font-semibold'
+                      )}
+                    >
                       <X className='mx-auto my-2' />
                     </td>
-                    <td className='border border-gray-300'></td>
-                    <td className='border border-gray-300'></td>
+                    <td
+                      className={cn(
+                        'border border-gray-300',
+                        isTempRegion('central') && 'bg-blue-100 dark:bg-blue-800 font-semibold',
+                        isTempProvider('azure') && 'bg-blue-100 dark:bg-blue-800 font-semibold',
+                        isTempRegion('central') &&
+                          isTempProvider('azure') &&
+                          'bg-blue-200 dark:bg-blue-900 font-semibold'
+                      )}
+                    ></td>
+                    <td
+                      className={cn(
+                        'border border-gray-300',
+                        isTempRegion('south') && 'bg-blue-100 dark:bg-blue-800 font-semibold',
+                        isTempProvider('azure') && 'bg-blue-100 dark:bg-blue-800 font-semibold',
+                        isTempRegion('south') && isTempProvider('azure') && 'bg-blue-200 dark:bg-blue-900 font-semibold'
+                      )}
+                    ></td>
                   </tr>
                 </tbody>
               </table>
-            </section> */}
+            </section>
 
             <section>
               <h3>Provider & Prices</h3>
-              <table className='border rounded-md border-gray-400 border-collapse w-full'>
+              <table className='border border-gray-400 border-collapse w-full'>
+                <tbody>
+                  {(isTempProvider('talos') || isTempProvider('')) &&
+                    (isTempRegion('north') || isTempRegion('')) &&
+                    isOption('talos-north') && (
+                      <>
+                        <tr>
+                          <td className='border border-gray-300 p-2 font-semibold'>Talos - north</td>
+                          <td rowSpan={2} className='border border-gray-300 text-right p-2'>
+                            {form.wpClass}
+                            <br />
+                            {priceForCluster('talos')}
+                          </td>
+                          <td rowSpan={2} className='border border-gray-300 text-center p-2'>
+                            {form.provider === 'talos' && form.region === 'north' ? (
+                              <span className='px-3 py-2 border rounded-md border-emerald-500 dark:border-emerald-600 text-sm'>
+                                Chosen
+                              </span>
+                            ) : (
+                              <Button
+                                type='button'
+                                onClick={() => {
+                                  setValue('region', 'north')
+                                  setValue('provider', 'talos')
+                                }}
+                              >
+                                Choose
+                              </Button>
+                            )}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className='p-2'>
+                            Cluster (3 cp{form.cp > 1 ? 's' : ''}, 3 worker{form.wpNumber > 1 ? 's' : ''})
+                          </td>
+                        </tr>
+                      </>
+                    )}
+                  {(isTempProvider('talos') || isTempProvider('')) &&
+                    (isTempRegion('east') || isTempRegion('')) &&
+                    isOption('talos-east') && (
+                      <>
+                        <tr>
+                          <td className='border border-gray-300 p-2 font-semibold'>Talos - east</td>
+                          <td rowSpan={2} className='border border-gray-300 text-right p-2'>
+                            {form.wpClass}
+                            <br />
+                            {priceForCluster('talos')}
+                          </td>
+                          <td rowSpan={2} className='border border-gray-300 text-center p-2'>
+                            {form.provider === 'talos' && form.region === 'east' ? (
+                              <span className='px-3 py-2 border rounded-md border-emerald-500 dark:border-emerald-600 text-sm'>
+                                Chosen
+                              </span>
+                            ) : (
+                              <Button
+                                type='button'
+                                onClick={() => {
+                                  setValue('region', 'east')
+                                  setValue('provider', 'talos')
+                                }}
+                              >
+                                Choose
+                              </Button>
+                            )}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className='p-2'>
+                            Cluster (3 cp{form.cp > 1 ? 's' : ''}, 3 worker{form.wpNumber > 1 ? 's' : ''})
+                          </td>
+                        </tr>
+                      </>
+                    )}
+                  {(isTempProvider('talos') || isTempProvider('')) &&
+                    (isTempRegion('west') || isTempRegion('')) &&
+                    isOption('talos-west') && (
+                      <>
+                        <tr>
+                          <td className='border border-gray-300 p-2 font-semibold'>Talos - west</td>
+                          <td rowSpan={2} className='border border-gray-300 text-right p-2'>
+                            {form.wpClass}
+                            <br />
+                            {priceForCluster('talos')}
+                          </td>
+                          <td rowSpan={2} className='border border-gray-300 text-center p-2'>
+                            {form.provider === 'talos' && form.region === 'west' ? (
+                              <span className='px-3 py-2 border rounded-md border-emerald-500 dark:border-emerald-600 text-sm'>
+                                Chosen
+                              </span>
+                            ) : (
+                              <Button
+                                type='button'
+                                onClick={() => {
+                                  setValue('region', 'west')
+                                  setValue('provider', 'talos')
+                                }}
+                              >
+                                Choose
+                              </Button>
+                            )}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className='p-2'>
+                            Cluster (3 cp{form.cp > 1 ? 's' : ''}, 3 worker{form.wpNumber > 1 ? 's' : ''})
+                          </td>
+                        </tr>
+                      </>
+                    )}
+                  {(isTempProvider('talos') || isTempProvider('')) &&
+                    (isTempRegion('central') || isTempRegion('')) &&
+                    isOption('talos-central') && (
+                      <>
+                        <tr>
+                          <td className='border border-gray-300 p-2 font-semibold'>Talos - central</td>
+                          <td rowSpan={2} className='border border-gray-300 text-right p-2'>
+                            {form.wpClass}
+                            <br />
+                            {priceForCluster('talos')}
+                          </td>
+                          <td rowSpan={2} className='border border-gray-300 text-center p-2'>
+                            {form.provider === 'talos' && form.region === 'central' ? (
+                              <span className='px-3 py-2 border rounded-md border-emerald-500 dark:border-emerald-600 text-sm'>
+                                Chosen
+                              </span>
+                            ) : (
+                              <Button
+                                type='button'
+                                onClick={() => {
+                                  setValue('region', 'central')
+                                  setValue('provider', 'talos')
+                                }}
+                              >
+                                Choose
+                              </Button>
+                            )}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className='p-2'>
+                            Cluster (3 cp{form.cp > 1 ? 's' : ''}, 3 worker{form.wpNumber > 1 ? 's' : ''})
+                          </td>
+                        </tr>
+                      </>
+                    )}
+                  {(isTempProvider('talos') || isTempProvider('')) &&
+                    (isTempRegion('south') || isTempRegion('')) &&
+                    isOption('talos-south') && (
+                      <>
+                        <tr>
+                          <td className='border border-gray-300 p-2 font-semibold'>Talos - south</td>
+                          <td rowSpan={2} className='border border-gray-300 text-right p-2'>
+                            {form.wpClass}
+                            <br />
+                            {priceForCluster('talos')}
+                          </td>
+                          <td rowSpan={2} className='border border-gray-300 text-center p-2'>
+                            {form.provider === 'talos' && form.region === 'south' ? (
+                              <span className='px-3 py-2 border rounded-md border-emerald-500 dark:border-emerald-600 text-sm'>
+                                Chosen
+                              </span>
+                            ) : (
+                              <Button
+                                type='button'
+                                onClick={() => {
+                                  setValue('region', 'south')
+                                  setValue('provider', 'talos')
+                                }}
+                              >
+                                Choose
+                              </Button>
+                            )}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className='p-2'>
+                            Cluster (3 cp{form.cp > 1 ? 's' : ''}, 3 worker{form.wpNumber > 1 ? 's' : ''})
+                          </td>
+                        </tr>
+                      </>
+                    )}
+                  {(isTempProvider('tanzu') || isTempProvider('')) &&
+                    (isTempRegion('north') || isTempRegion('')) &&
+                    isOption('tanzu-north') && (
+                      <>
+                        <tr>
+                          <td className='border border-gray-300 p-2 font-semibold'>Tanzu - north</td>
+                          <td rowSpan={2} className='border border-gray-300 text-right p-2'>
+                            {form.wpClass}
+                            <br />
+                            {priceForCluster('tanzu')}
+                          </td>
+                          <td rowSpan={2} className='border border-gray-300 text-center p-2'>
+                            {form.provider === 'tanzu' && form.region === 'north' ? (
+                              <span className='px-3 py-2 border rounded-md border-emerald-500 dark:border-emerald-600 text-sm'>
+                                Chosen
+                              </span>
+                            ) : (
+                              <Button
+                                type='button'
+                                onClick={() => {
+                                  setValue('region', 'north')
+                                  setValue('provider', 'tanzu')
+                                }}
+                              >
+                                Choose
+                              </Button>
+                            )}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className='p-2'>
+                            Cluster (3 cp{form.cp > 1 ? 's' : ''}, 3 worker{form.wpNumber > 1 ? 's' : ''})
+                          </td>
+                        </tr>
+                      </>
+                    )}
+                  {(isTempProvider('tanzu') || isTempProvider('')) &&
+                    (isTempRegion('east') || isTempRegion('')) &&
+                    isOption('tanzu-east') && (
+                      <>
+                        <tr>
+                          <td className='border border-gray-300 p-2 font-semibold'>Tanzu - east</td>
+                          <td rowSpan={2} className='border border-gray-300 text-right p-2'>
+                            {form.wpClass}
+                            <br />
+                            {priceForCluster('tanzu')}
+                          </td>
+                          <td rowSpan={2} className='border border-gray-300 text-center p-2'>
+                            {form.provider === 'tanzu' && form.region === 'east' ? (
+                              <span className='px-3 py-2 border rounded-md border-emerald-500 dark:border-emerald-600 text-sm'>
+                                Chosen
+                              </span>
+                            ) : (
+                              <Button
+                                type='button'
+                                onClick={() => {
+                                  setValue('region', 'east')
+                                  setValue('provider', 'tanzu')
+                                }}
+                              >
+                                Choose
+                              </Button>
+                            )}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className='p-2'>
+                            Cluster (3 cp{form.cp > 1 ? 's' : ''}, 3 worker{form.wpNumber > 1 ? 's' : ''})
+                          </td>
+                        </tr>
+                      </>
+                    )}
+                  {(isTempProvider('tanzu') || isTempProvider('')) &&
+                    (isTempRegion('west') || isTempRegion('')) &&
+                    isOption('tanzu-west') && (
+                      <>
+                        <tr>
+                          <td className='border border-gray-300 p-2 font-semibold'>Tanzu - west</td>
+                          <td rowSpan={2} className='border border-gray-300 text-right p-2'>
+                            {form.wpClass}
+                            <br />
+                            {priceForCluster('tanzu')}
+                          </td>
+                          <td rowSpan={2} className='border border-gray-300 text-center p-2'>
+                            {form.provider === 'tanzu' && form.region === 'west' ? (
+                              <span className='px-3 py-2 border rounded-md border-emerald-500 dark:border-emerald-600 text-sm'>
+                                Chosen
+                              </span>
+                            ) : (
+                              <Button
+                                type='button'
+                                onClick={() => {
+                                  setValue('region', 'west')
+                                  setValue('provider', 'tanzu')
+                                }}
+                              >
+                                Choose
+                              </Button>
+                            )}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className='p-2'>
+                            Cluster (3 cp{form.cp > 1 ? 's' : ''}, 3 worker{form.wpNumber > 1 ? 's' : ''})
+                          </td>
+                        </tr>
+                      </>
+                    )}
+                  {(isTempProvider('tanzu') || isTempProvider('')) &&
+                    (isTempRegion('central') || isTempRegion('')) &&
+                    isOption('tanzu-central') && (
+                      <>
+                        <tr>
+                          <td className='border border-gray-300 p-2 font-semibold'>Tanzu - central</td>
+                          <td rowSpan={2} className='border border-gray-300 text-right p-2'>
+                            {form.wpClass}
+                            <br />
+                            {priceForCluster('tanzu')}
+                          </td>
+                          <td rowSpan={2} className='border border-gray-300 text-center p-2'>
+                            {form.provider === 'tanzu' && form.region === 'central' ? (
+                              <span className='px-3 py-2 border rounded-md border-emerald-500 dark:border-emerald-600 text-sm'>
+                                Chosen
+                              </span>
+                            ) : (
+                              <Button
+                                type='button'
+                                onClick={() => {
+                                  setValue('region', 'central')
+                                  setValue('provider', 'tanzu')
+                                }}
+                              >
+                                Choose
+                              </Button>
+                            )}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className='p-2'>
+                            Cluster (3 cp{form.cp > 1 ? 's' : ''}, 3 worker{form.wpNumber > 1 ? 's' : ''})
+                          </td>
+                        </tr>
+                      </>
+                    )}
+                  {(isTempProvider('tanzu') || isTempProvider('')) &&
+                    (isTempRegion('south') || isTempRegion('')) &&
+                    isOption('tanzu-south') && (
+                      <>
+                        <tr>
+                          <td className='border border-gray-300 p-2 font-semibold'>Tanzu - south</td>
+                          <td rowSpan={2} className='border border-gray-300 text-right p-2'>
+                            {form.wpClass}
+                            <br />
+                            {priceForCluster('tanzu')}
+                          </td>
+                          <td rowSpan={2} className='border border-gray-300 text-center p-2'>
+                            {form.provider === 'tanzu' && form.region === 'south' ? (
+                              <span className='px-3 py-2 border rounded-md border-emerald-500 dark:border-emerald-600 text-sm'>
+                                Chosen
+                              </span>
+                            ) : (
+                              <Button
+                                type='button'
+                                onClick={() => {
+                                  setValue('region', 'south')
+                                  setValue('provider', 'tanzu')
+                                }}
+                              >
+                                Choose
+                              </Button>
+                            )}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className='p-2'>
+                            Cluster (3 cp{form.cp > 1 ? 's' : ''}, 3 worker{form.wpNumber > 1 ? 's' : ''})
+                          </td>
+                        </tr>
+                      </>
+                    )}
+                  {(isTempProvider('azure') || isTempProvider('')) &&
+                    (isTempRegion('north') || isTempRegion('')) &&
+                    isOption('azure-north') && (
+                      <>
+                        <tr>
+                          <td className='border border-gray-300 p-2 font-semibold'>Azure - north</td>
+                          <td rowSpan={2} className='border border-gray-300 text-right p-2'>
+                            {form.wpClass}
+                            <br />
+                            {priceForCluster('azure')}
+                          </td>
+                          <td rowSpan={2} className='border border-gray-300 text-center p-2'>
+                            {form.provider === 'azure' && form.region === 'north' ? (
+                              <span className='px-3 py-2 border rounded-md border-emerald-500 dark:border-emerald-600 text-sm'>
+                                Chosen
+                              </span>
+                            ) : (
+                              <Button
+                                type='button'
+                                onClick={() => {
+                                  setValue('region', 'north')
+                                  setValue('provider', 'azure')
+                                }}
+                              >
+                                Choose
+                              </Button>
+                            )}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className='p-2'>
+                            Cluster (3 cp{form.cp > 1 ? 's' : ''}, 3 worker{form.wpNumber > 1 ? 's' : ''})
+                          </td>
+                        </tr>
+                      </>
+                    )}
+                  {(isTempProvider('azure') || isTempProvider('')) &&
+                    (isTempRegion('east') || isTempRegion('')) &&
+                    isOption('azure-east') && (
+                      <>
+                        <tr>
+                          <td className='border border-gray-300 p-2 font-semibold'>Azure - east</td>
+                          <td rowSpan={2} className='border border-gray-300 text-right p-2'>
+                            {form.wpClass}
+                            <br />
+                            {priceForCluster('azure')}
+                          </td>
+                          <td rowSpan={2} className='border border-gray-300 text-center p-2'>
+                            {form.provider === 'azure' && form.region === 'east' ? (
+                              <span className='px-3 py-2 border rounded-md border-emerald-500 dark:border-emerald-600 text-sm'>
+                                Chosen
+                              </span>
+                            ) : (
+                              <Button
+                                type='button'
+                                onClick={() => {
+                                  setValue('region', 'east')
+                                  setValue('provider', 'azure')
+                                }}
+                              >
+                                Choose
+                              </Button>
+                            )}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className='p-2'>
+                            Cluster (3 cp{form.cp > 1 ? 's' : ''}, 3 worker{form.wpNumber > 1 ? 's' : ''})
+                          </td>
+                        </tr>
+                      </>
+                    )}
+                  {(isTempProvider('azure') || isTempProvider('')) &&
+                    (isTempRegion('west') || isTempRegion('')) &&
+                    isOption('azure-west') && (
+                      <>
+                        <tr>
+                          <td className='border border-gray-300 p-2 font-semibold'>Azure - west</td>
+                          <td rowSpan={2} className='border border-gray-300 text-right p-2'>
+                            {form.wpClass}
+                            <br />
+                            {priceForCluster('azure')}
+                          </td>
+                          <td rowSpan={2} className='border border-gray-300 text-center p-2'>
+                            {form.provider === 'azure' && form.region === 'west' ? (
+                              <span className='px-3 py-2 border rounded-md border-emerald-500 dark:border-emerald-600 text-sm'>
+                                Chosen
+                              </span>
+                            ) : (
+                              <Button
+                                type='button'
+                                onClick={() => {
+                                  setValue('region', 'west')
+                                  setValue('provider', 'azure')
+                                }}
+                              >
+                                Choose
+                              </Button>
+                            )}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className='p-2'>
+                            Cluster (3 cp{form.cp > 1 ? 's' : ''}, 3 worker{form.wpNumber > 1 ? 's' : ''})
+                          </td>
+                        </tr>
+                      </>
+                    )}
+                  {(isTempProvider('azure') || isTempProvider('')) &&
+                    (isTempRegion('central') || isTempRegion('')) &&
+                    isOption('azure-central') && (
+                      <>
+                        <tr>
+                          <td className='border border-gray-300 p-2 font-semibold'>Azure - central</td>
+                          <td rowSpan={2} className='border border-gray-300 text-right p-2'>
+                            {form.wpClass}
+                            <br />
+                            {priceForCluster('azure')}
+                          </td>
+                          <td rowSpan={2} className='border border-gray-300 text-center p-2'>
+                            {form.provider === 'azure' && form.region === 'central' ? (
+                              <span className='px-3 py-2 border rounded-md border-emerald-500 dark:border-emerald-600 text-sm'>
+                                Chosen
+                              </span>
+                            ) : (
+                              <Button
+                                type='button'
+                                onClick={() => {
+                                  setValue('region', 'central')
+                                  setValue('provider', 'azure')
+                                }}
+                              >
+                                Choose
+                              </Button>
+                            )}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className='p-2'>
+                            Cluster (3 cp{form.cp > 1 ? 's' : ''}, 3 worker{form.wpNumber > 1 ? 's' : ''})
+                          </td>
+                        </tr>
+                      </>
+                    )}
+                  {(isTempProvider('azure') || isTempProvider('')) &&
+                    (isTempRegion('south') || isTempRegion('')) &&
+                    isOption('azure-south') && (
+                      <>
+                        <tr>
+                          <td className='border border-gray-300 p-2 font-semibold'>Azure - south</td>
+                          <td rowSpan={2} className='border border-gray-300 text-right p-2'>
+                            {form.wpClass}
+                            <br />
+                            {priceForCluster('azure')}
+                          </td>
+                          <td rowSpan={2} className='border border-gray-300 text-center p-2'>
+                            {form.provider === 'azure' && form.region === 'south' ? (
+                              <span className='px-3 py-2 border rounded-md border-emerald-500 dark:border-emerald-600 text-sm'>
+                                Chosen
+                              </span>
+                            ) : (
+                              <Button
+                                type='button'
+                                onClick={() => {
+                                  setValue('region', 'south')
+                                  setValue('provider', 'azure')
+                                }}
+                              >
+                                Choose
+                              </Button>
+                            )}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className='p-2'>
+                            Cluster (3 cp{form.cp > 1 ? 's' : ''}, 3 worker{form.wpNumber > 1 ? 's' : ''})
+                          </td>
+                        </tr>
+                      </>
+                    )}
+                </tbody>
+              </table>
+              {/* <table className='border rounded-md border-gray-400 border-collapse w-full'>
                 <tbody>
                   <tr>
                     <td className='border border-gray-300 p-2 font-semibold'>Talos: no-west, no-central, test-south</td>
@@ -628,7 +1373,7 @@ spec:
                     </td>
                   </tr>
                 </tbody>
-              </table>
+              </table> */}
             </section>
 
             {form.provider && (
