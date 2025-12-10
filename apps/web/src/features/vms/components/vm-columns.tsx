@@ -125,27 +125,6 @@ export const getVMTableColumns = (selectedDisplayData?: VMColumnsData[]): DataTa
         },
       }),
 
-    // isVisible('disk-usage') &&
-    //   columnHelper.accessor((row) => getVmDiskSizes(row), {
-    //     id: 'disk-usage',
-    //     header: 'Disk usage',
-    //     enableSorting: false,
-    //     cell: (info) => {
-    //       const diskSizes = info.getValue()
-    //       const diskSizesInGB = diskSizes.map((size) => ((size ?? 0) / 1024 ** 3).toFixed(2) + ' GB')
-    //       const diskUsage = getVmDiskUsages(info.row.original)
-    //       const diskUsageInGB = diskUsage.map((usage) => ((usage ?? 0) / 1024 ** 3).toFixed(2) + ' GB')
-    //       return (
-    //         <div className='flex flex-wrap gap-2'>
-    //           {diskSizesInGB.map((size, idx) => (
-    //             <span key={idx} className='whitespace-nowrap'>
-    //               {size} <span className='text-xs text-gray-500'>({diskUsageInGB[idx] ?? '0 GB'})</span>
-    //             </span>
-    //           ))}
-    //         </div>
-    //       )
-    //     },
-    //   }),
     isVisible('disk-usage') &&
       columnHelper.accessor((row) => getVmDisks(row), {
         id: 'disk-usage',
@@ -191,27 +170,6 @@ export const getVMTableColumns = (selectedDisplayData?: VMColumnsData[]): DataTa
           )
         },
       }),
-    // isVisible('memory') &&
-    //   columnHelper.accessor((row) => getSpecMemory(row), {
-    //     id: 'memory',
-    //     header: 'Memory',
-    //     enableSorting: false,
-    //     cell: (info) => {
-    //       const memory = info.getValue()
-    //       const memoryInGB = ((memory ?? 0) / 1024 ** 3).toFixed(2)
-    //       return <span>{memoryInGB} GB</span>
-    //     },
-    // }),
-    // isVisible('cpu') &&
-    //   columnHelper.accessor((row) => getStatusCpuUsage(row), {
-    //     id: 'cpu',
-    //     header: 'CPU usage',
-    //     enableSorting: false,
-    //     cell: (info) => {
-    //       const cpuUsage = info.getValue()
-    //       return <span>{cpuUsage} %</span>
-    //     },
-    //   }),
     isVisible('cpu') &&
       columnHelper.accessor((row) => getStatusCpuUsage(row), {
         id: 'cpu',

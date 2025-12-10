@@ -230,7 +230,9 @@ export const PageView = ({ className, vms, params }: PageViewProps) => {
                 vmDisplayData={
                   selectedDisplayData.length > 0
                     ? selectedDisplayData
-                    : displayDataOptions.map((opt) => opt.value as VMCardData) || []
+                    : displayDataOptions
+                        .filter((opt) => !['version'].includes(opt.value))
+                        .map((opt) => opt.value as VMCardData) || []
                 }
               />
             </div>
