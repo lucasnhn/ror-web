@@ -8,7 +8,6 @@ export default function VMBackupPage() {
   const { vm } = useVMContext()
   const enhancedVM = vm as VMWithBackupStatus
   const hasBackupDataArrays = 'backupStatus' in enhancedVM && enhancedVM.backupStatus?.relatedBackupJobs !== undefined
-
   const relatedBackupJobs = enhancedVM.backupStatus?.relatedBackupJobs || []
   const relatedBackupRuns = enhancedVM.backupStatus?.relatedBackupRuns || []
 

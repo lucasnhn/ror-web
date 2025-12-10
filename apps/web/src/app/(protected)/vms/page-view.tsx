@@ -38,6 +38,7 @@ import {
   getVmDiskSizes,
   getSpecMemory,
   getSpecCpuTotal,
+  getTeamDescription,
 } from '@/features/vms/utils/vms'
 import { NotReadyMessage } from '@/components/ui/not-ready-message'
 import { cn } from '@/utils/clsxm'
@@ -110,7 +111,7 @@ export const PageView = ({ className, vms, params }: PageViewProps) => {
     { key: 'version', extractor: (vm) => getVmVersion(vm) },
     { key: 'toolVersion', extractor: (vm) => getVmToolVersion(vm) },
     { key: 'powerState', extractor: getVmPowerState, compareFn: comparePowerState },
-    { key: 'team', extractor: (vm) => getTeamValue(vm) },
+    { key: 'team', extractor: (vm) => getTeamIdentifier(vm) },
     { key: 'disk-usage', extractor: (vm) => getVmDiskSizes(vm).reduce((a, b) => a + b, 0) },
     { key: 'memory', extractor: (vm) => getSpecMemory(vm) },
     { key: 'cpu', extractor: (vm) => getSpecCpuTotal(vm) },

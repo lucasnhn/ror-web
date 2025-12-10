@@ -68,7 +68,7 @@ export const DiskProgressBars = ({ items }: { items: VirtualMachineDisks[] }) =>
               </p>
               <ul className='mt-2 space-y-1'>
                 {criticalSpaceDisks.map((disk, index) => (
-                  <li key={index} className='text-red-700 dark:text-red-300 text-xs'>
+                  <li key={`critical-${disk.name}-${index}`} className='text-red-700 dark:text-red-300 text-xs'>
                     • <strong>{disk.name}</strong>: {disk.percentUsed.toFixed(1)}% used ({disk.freeSpace.toFixed(1)} GB
                     free)
                   </li>
@@ -91,7 +91,7 @@ export const DiskProgressBars = ({ items }: { items: VirtualMachineDisks[] }) =>
               </p>
               <ul className='mt-2 space-y-1'>
                 {lowSpaceDisks.map((disk, index) => (
-                  <li key={index} className='text-yellow-700 dark:text-yellow-300 text-xs'>
+                  <li key={`warning-${disk.name}-${index}`} className='text-yellow-700 dark:text-yellow-300 text-xs'>
                     • <strong>{disk.name}</strong>: {disk.percentUsed.toFixed(1)}% used
                   </li>
                 ))}
@@ -138,9 +138,9 @@ export const DiskProgressBars = ({ items }: { items: VirtualMachineDisks[] }) =>
           }
 
           return (
-            <Tooltip>
+            <Tooltip key={disk.id || `disk-${index}`}>
               <TooltipTrigger asChild>
-                <div key={disk.id || index} className={`p-4 rounded-lg border ${bgColor}`}>
+                <div className={`p-4 rounded-lg border ${bgColor}`}>
                   <div className='flex justify-between items-center mb-2'>
                     <h4 className='font-medium text-sm'>{name}</h4>
                     <div className='text-xs text-muted-foreground'>
