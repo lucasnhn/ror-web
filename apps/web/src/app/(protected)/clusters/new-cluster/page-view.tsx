@@ -380,7 +380,6 @@ spec:
             <Controller
               name='tempRegion'
               control={control}
-              rules={{ required: true }}
               render={({ field }) => (
                 <Select value={field.value} onValueChange={field.onChange}>
                   <SelectTrigger className='w-52'>{field.value || 'Select region'}</SelectTrigger>
@@ -397,7 +396,6 @@ spec:
             <Controller
               name='tempProvider'
               control={control}
-              rules={{ required: true }}
               render={({ field }) => (
                 <Select value={field.value} onValueChange={field.onChange}>
                   <SelectTrigger className='w-52'>{field.value || 'Select provider'}</SelectTrigger>
@@ -1184,8 +1182,9 @@ spec:
       <Link href={routes.app.clusters.getHref()} className='flex flex-row gap-2 hover:underline mb-2'>
         <MoveLeft /> Clusters
       </Link>
+      {Object.keys(errors).length > 0 && <pre className='text-red-500 text-sm'>{JSON.stringify(errors, null, 2)}</pre>}
 
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)} noValidate>
         <div className='flex flex-row gap-32'>
           {form.provider != '' ? (
             <>
@@ -1341,6 +1340,7 @@ spec:
                   </div>
                 </section>
               </div>
+
               {changeRPP ? (
                 <div className='flex flex-col gap-4'>
                   <RegionProviderPrice />
@@ -1382,9 +1382,15 @@ spec:
                   <h3>Region, Provider & Price</h3>
                   <div>
                     <p>The price will automatically adjust based on your amount of control planes and worker pools.</p>
-                    <p className='hover:underline italic' onClick={() => setChangeRPP(!changeRPP)}>
+                    <button
+                      type='button'
+                      className='hover:underline italic text-left'
+                      onClick={() => {
+                        setChangeRPP((old) => !old)
+                      }}
+                    >
                       Need to change the data? Click here.
-                    </p>
+                    </button>
                   </div>
                   <div>
                     <p>Control planes: {form.cp}</p>
@@ -1485,39 +1491,12 @@ spec:
               </div>
 
               <RegionProviderPrice />
-
-              {/* <div className='flex flex-col gap-4 mt-[-110px]'>
-                    <h3>Summary</h3>
-                    <p>The price will change based on the amount of control planes and worker pools, which you can in the next step</p>
-                  <div>
-                    <p>Control planes: {form.cp}</p>
-                    <p>Worker pools: {form.wpNumber}</p>
-                  </div>
-                  <div className='border border-white rounded-md py-2 px-3 w-72'>
-                    <table className='w-full border-collapse'>
-                      <tbody>
-                        <tr>
-                          <th className='text-left w-16 py-1'>Region:</th>
-                          <td className='text-left w-24 py-1'>{form.region}</td>
-                        </tr>
-                        <tr>
-                          <th className='text-left w-16 py-1'>Provider:</th>
-                          <td className='text-left w-24 py-1'>{form.provider}</td>
-                        </tr>
-                        <tr>
-                          <th className='text-left w-16 py-1'>Price:</th>
-                          <td className='text-left w-24 py-1'>{priceForCluster(form.provider)}</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                  </div> */}
             </>
           )}
         </div>
 
         {form.provider != '' && (
-          <Button type='submit' className='mt-4'>
+          <Button type='submit' className='mt-4' onClick={() => console.log('button was clicked')}>
             Create cluster
           </Button>
         )}
