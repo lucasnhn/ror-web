@@ -222,18 +222,24 @@ export const PageView = ({ className }: PageViewProps) => {
       .join('\n')
   }
 
+  const convertToVitiMachineClass = () => {
+    if (!form.wpClass) return null
+    const splitText = form.wpClass.split('-')
+    return splitText[2]
+  }
+
   const generateYaml = () => `
 apiVersion: vitistack.io/v1alpha1
 kind: KubernetesCluster
 metadata:
-  name: ${form.name || ''}
+  name: ${form.name || ''}-4y8e
   annotations:
     vitistack.io/networknamespace: ${form.network || ''}
 ${renderTagsYaml(form.tags)}
 spec:
   data:
     clusterUid: 5d6da5d8-9a10-4a65-8db9-6aa1027d4b4d
-    clusterId: ${form.name || ''}
+    clusterId: ${form.name || ''}-4y8e
     provider: ${form.provider || ''}
     environment: ${form.environment || ''}
     datacenter: ${form.region || ''}
@@ -242,13 +248,9 @@ spec:
     workorder: "simple-workorder" 
     zone: "az1" 
     workspace: ${form.network || ''} 
-  # Empty spec will use defaults:
-  # - 1 control plane node
-  # - 1 worker nodes
   topology:
     version: "1.34.1"
     controlplane:
-      # Defaults to 1 replica
       replicas: ${form.cp || 1}
       version: "1.34.1"
       machineClass: small
@@ -269,10 +271,8 @@ spec:
         - name: ${form.wpName || ''}
           taint: []
           version: "1.34.1"
-          # Defaults to 1 replica
           replicas: ${form.wpNumber || '1'}
-          # Defaults to "standard" machine class
-          machineClass: ${form.wpClass || ''}
+          machineClass: ${convertToVitiMachineClass() || 'medium'}
           autoscaling:
             enabled: false
             minReplicas: 1
@@ -304,7 +304,7 @@ spec:
     const match = prices.find(
       (p) =>
         p.provider.toLowerCase() === provider.toLowerCase() &&
-        p.machineClass.toLowerCase() === (form.wpClass || 'best-effort-medium').toLowerCase()
+        p.machineClass.toLowerCase() === (form.wpClass || 'medium').toLowerCase()
     )
 
     if (!match || typeof match.price !== 'number') {
@@ -374,12 +374,6 @@ spec:
   const RegionProviderPrice = () => {
     return (
       <div className='flex flex-col gap-4'>
-        <section>
-          <h3>Project</h3>
-          <Input {...register('project', { required: 'Name is required' })} placeholder='Enter project...' />
-          {errors.project && <span className='text-red-600 text-sm'>{errors.project.message}</span>}
-        </section>
-
         <section>
           <h3>Region, Provider & Prices</h3>
           <div className='mb-2 flex gap-2'>
@@ -1192,6 +1186,11 @@ spec:
       </Link>
 
       <form onSubmit={handleSubmit(onSubmit)}>
+        <section className='mb-4'>
+          <h3>Project</h3>
+          <Input {...register('project', { required: 'Name is required' })} placeholder='Enter project...' />
+          {errors.project && <span className='text-red-600 text-sm'>{errors.project.message}</span>}
+        </section>
         <div className='flex flex-row gap-32'>
           {form.provider != '' ? (
             <>
@@ -1286,9 +1285,9 @@ spec:
                       <Select value={field.value} onValueChange={field.onChange}>
                         <SelectTrigger className='w-52'>{field.value || 'Select class'}</SelectTrigger>
                         <SelectContent>
-                          <SelectItem value='small'>best-effort-small</SelectItem>
-                          <SelectItem value='medium'>best-effort-medium</SelectItem>
-                          <SelectItem value='large'>best-effort-large</SelectItem>
+                          <SelectItem value='best-effort-small'>best-effort-small</SelectItem>
+                          <SelectItem value='best-effort-medium'>best-effort-medium</SelectItem>
+                          <SelectItem value='best-effort-large'>best-effort-large</SelectItem>
                         </SelectContent>
                       </Select>
                     )}
@@ -1336,14 +1335,14 @@ spec:
                       value={tagValue}
                       onChange={(e) => setTagValue(e.target.value)}
                     />
-                    <Button onClick={addTag} disabled={!tagKey.trim() || !tagValue.trim()}>
+                    <Button className='w-20' onClick={addTag} disabled={!tagKey.trim() || !tagValue.trim()}>
                       <PlusIcon /> Add
                     </Button>
                   </div>
                 </section>
               </div>
               {changeRPP ? (
-                <div className='flex flex-col gap-4'>
+                <div className='flex flex-col gap-4 mt-[-110px]'>
                   <RegionProviderPrice />
 
                   {form.provider && (
@@ -1379,11 +1378,11 @@ spec:
                   )}
                 </div>
               ) : (
-                <div className='flex flex-col gap-4'>
+                <div className='flex flex-col gap-4 mt-[-110px]'>
                   <h3>Region, Provider & Price</h3>
                   <div>
                     <p>The price will automatically adjust based on your amount of control planes and worker pools.</p>
-                    <p className='hover:underline' onClick={() => setChangeRPP(!changeRPP)}>
+                    <p className='hover:underline italic' onClick={() => setChangeRPP(!changeRPP)}>
                       Need to change the data? Click here.
                     </p>
                   </div>
@@ -1445,7 +1444,36 @@ spec:
               )}
             </>
           ) : (
-            <RegionProviderPrice />
+            <>
+              <RegionProviderPrice />
+
+              {/* <div className='flex flex-col gap-4 mt-[-110px]'>
+                    <h3>Summary</h3>
+                    <p>The price will change based on the amount of control planes and worker pools, which you can in the next step</p>
+                  <div>
+                    <p>Control planes: {form.cp}</p>
+                    <p>Worker pools: {form.wpNumber}</p>
+                  </div>
+                  <div className='border border-white rounded-md py-2 px-3 w-72'>
+                    <table className='w-full border-collapse'>
+                      <tbody>
+                        <tr>
+                          <th className='text-left w-16 py-1'>Region:</th>
+                          <td className='text-left w-24 py-1'>{form.region}</td>
+                        </tr>
+                        <tr>
+                          <th className='text-left w-16 py-1'>Provider:</th>
+                          <td className='text-left w-24 py-1'>{form.provider}</td>
+                        </tr>
+                        <tr>
+                          <th className='text-left w-16 py-1'>Price:</th>
+                          <td className='text-left w-24 py-1'>{priceForCluster(form.provider)}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  </div> */}
+            </>
           )}
         </div>
 
