@@ -375,8 +375,8 @@ spec:
     return (
       <div className='flex flex-col gap-4'>
         <section>
-          <h3>Region, Provider & Prices</h3>
-          <div className='mb-2 flex gap-2'>
+          <h3>Region, Provider & Price</h3>
+          <div className='mb-2 mt-4 flex gap-2'>
             <Controller
               name='tempRegion'
               control={control}
@@ -1186,15 +1186,15 @@ spec:
       </Link>
 
       <form onSubmit={handleSubmit(onSubmit)}>
-        <section className='mb-4'>
-          <h3>Project</h3>
-          <Input {...register('project', { required: 'Name is required' })} placeholder='Enter project...' />
-          {errors.project && <span className='text-red-600 text-sm'>{errors.project.message}</span>}
-        </section>
         <div className='flex flex-row gap-32'>
           {form.provider != '' ? (
             <>
               <div className='flex flex-col gap-4'>
+                <section>
+                  <h3>Project</h3>
+                  <Input {...register('project', { required: 'Name is required' })} placeholder='Enter project...' />
+                  {errors.project && <span className='text-red-600 text-sm'>{errors.project.message}</span>}
+                </section>
                 <section>
                   <h3>Cluster name</h3>
                   <Input {...register('name', { required: 'Name is required' })} placeholder='Enter name...' />
@@ -1342,7 +1342,7 @@ spec:
                 </section>
               </div>
               {changeRPP ? (
-                <div className='flex flex-col gap-4 mt-[-110px]'>
+                <div className='flex flex-col gap-4'>
                   <RegionProviderPrice />
 
                   {form.provider && (
@@ -1378,7 +1378,7 @@ spec:
                   )}
                 </div>
               ) : (
-                <div className='flex flex-col gap-4 mt-[-110px]'>
+                <div className='flex flex-col gap-4'>
                   <h3>Region, Provider & Price</h3>
                   <div>
                     <p>The price will automatically adjust based on your amount of control planes and worker pools.</p>
@@ -1445,6 +1445,45 @@ spec:
             </>
           ) : (
             <>
+              <div className='flex flex-col gap-4'>
+                <section>
+                  <h3>Project</h3>
+                  <Input {...register('project', { required: 'Name is required' })} placeholder='Enter project...' />
+                  {errors.project && <span className='text-red-600 text-sm'>{errors.project.message}</span>}
+                </section>
+                <section>
+                  <h3>Cluster name</h3>
+                  <Input {...register('name', { required: 'Name is required' })} placeholder='Enter name...' />
+                  {errors.name && <span className='text-red-600 text-sm'>{errors.name.message}</span>}
+                </section>
+                <section className='invisible'>
+                  <h3>Tags</h3>
+                  <div className='grid [grid-template-columns:15rem_15rem_auto] gap-y-4 items-center'>
+                    <b>Key</b>
+                    <b>Value</b>
+                    <b></b>
+                    {Object.entries(tags).map(([key, value]) => (
+                      <Fragment key={key}>
+                        <span>{key}</span>
+                        <span>{value}</span>
+                        <Button size='icon' variant='destructive' onClick={() => removeTag(key)}>
+                          <Trash />
+                        </Button>
+                      </Fragment>
+                    ))}
+                    <Input placeholder='Enter key...' value={tagKey} onChange={(e) => setTagKey(e.target.value)} />
+                    <Input
+                      placeholder='Enter value...'
+                      value={tagValue}
+                      onChange={(e) => setTagValue(e.target.value)}
+                    />
+                    <Button className='w-20' onClick={addTag} disabled={!tagKey.trim() || !tagValue.trim()}>
+                      <PlusIcon /> Add
+                    </Button>
+                  </div>
+                </section>
+              </div>
+
               <RegionProviderPrice />
 
               {/* <div className='flex flex-col gap-4 mt-[-110px]'>
