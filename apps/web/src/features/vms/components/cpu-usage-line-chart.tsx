@@ -29,7 +29,13 @@ const timeRangeLabels = {
   weekly: { label: 'Last 7 Days', icon: Clock },
 }
 
-export const CpuUsageLineChart = ({ vmId, cpuSize = 0, className, height = 400 }: CpuUsageLineChartProps) => {
+export const CpuUsageLineChart = ({
+  vmId,
+  currentCpuUsage,
+  cpuSize = 0,
+  className,
+  height = 400,
+}: CpuUsageLineChartProps) => {
   const [timeRange, setTimeRange] = useState<CpuHistoryTimeRange>('daily')
   const [chartData, setChartData] = useState<ReturnType<typeof cpuUsageHistory.getChartData>>([])
   const [stats, setStats] = useState<ReturnType<typeof cpuUsageHistory.getStats>>(null)
@@ -37,6 +43,7 @@ export const CpuUsageLineChart = ({ vmId, cpuSize = 0, className, height = 400 }
 
   const refreshData = () => {
     setIsRefreshing(true)
+
     const data = cpuUsageHistory.getChartData(vmId, timeRange)
     const statistics = cpuUsageHistory.getStats(vmId, timeRange)
     setChartData(data)
@@ -47,6 +54,17 @@ export const CpuUsageLineChart = ({ vmId, cpuSize = 0, className, height = 400 }
   useEffect(() => {
     refreshData()
   }, [vmId, timeRange])
+
+  // Add current CPU usage whenever it changes
+  useEffect(() => {
+    if (currentCpuUsage !== undefined && currentCpuUsage !== null && vmId) {
+      cpuUsageHistory.addCurrentReading(vmId, currentCpuUsage, timeRange)
+      const data = cpuUsageHistory.getChartData(vmId, timeRange)
+      const statistics = cpuUsageHistory.getStats(vmId, timeRange)
+      setChartData(data)
+      setStats(statistics)
+    }
+  }, [currentCpuUsage, vmId, timeRange])
 
   const clearHistory = () => {
     cpuUsageHistory.clearHistory(vmId)

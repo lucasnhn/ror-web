@@ -78,7 +78,7 @@ export const mockVms = {
             coresPerSocket: CoresPerSocket,
             sockets: 4,
             unit: '',
-            usage: 0,
+            usage: cpuUsage,
           },
           disks: disks,
           memory: {

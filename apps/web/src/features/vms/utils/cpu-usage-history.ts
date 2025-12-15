@@ -69,6 +69,42 @@ class CpuUsageHistory {
     }
   }
 
+  addCurrentReading(vmId: string, cpuUsage: number, timeRange: CpuHistoryTimeRange = 'daily'): void {
+    const config = CPU_HISTORY_CONFIGS[timeRange]
+    const now = new Date()
+
+    try {
+      let existingData = this.getHistory(vmId, timeRange)
+      if (existingData.length > 0) {
+        const lastReading = existingData[existingData.length - 1]
+        const timeDiff = now.getTime() - new Date(lastReading.timestamp).getTime()
+
+        if (timeDiff < config.granularityMs) {
+          existingData[existingData.length - 1] = {
+            timestamp: now,
+            value: cpuUsage,
+            vmId,
+          }
+          const cleanedData = this.cleanupData(existingData, config)
+          localStorage.setItem(this.getStorageKey(vmId), JSON.stringify(cleanedData))
+          return
+        }
+      }
+
+      const newDataPoint: CpuUsageDataPoint = {
+        timestamp: now,
+        value: cpuUsage,
+        vmId,
+      }
+
+      const updatedData = [...existingData, newDataPoint]
+      const cleanedData = this.cleanupData(updatedData, config)
+      localStorage.setItem(this.getStorageKey(vmId), JSON.stringify(cleanedData))
+    } catch (error) {
+      console.warn('Failed to save current CPU usage:', error)
+    }
+  }
+
   getHistory(vmId: string, timeRange: CpuHistoryTimeRange = 'daily'): CpuUsageDataPoint[] {
     try {
       const stored = localStorage.getItem(this.getStorageKey(vmId))
