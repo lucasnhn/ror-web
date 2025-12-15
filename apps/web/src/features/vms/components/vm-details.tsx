@@ -80,11 +80,10 @@ export const VMDetails = ({ user }: VMDetailsProps) => {
 
   console.log(user)
 
-  //TODO: fix this card, does not give much value or information as it is now
   const MemoryCard = () => (
     <Card className='bg-slate-50 dark:bg-slate-900/50'>
       <ShadcnCardHeader>
-        <CardTitle>Memory (TODO: FIX!)</CardTitle>
+        <CardTitle>Memory</CardTitle>
       </ShadcnCardHeader>
       <CardContent>
         <div className='flex flex-col gap-2'>
