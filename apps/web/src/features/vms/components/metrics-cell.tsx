@@ -254,13 +254,11 @@ export function MetricCell({
                   <div className='flex h-full'>
                     {(() => {
                       const colors = getDiskColors(diskData.length)
-                      let cumulativeWidth = 0
-
                       return diskData.map((disk, idx) => {
                         const diskUsagePercentage = metricLimit > 0 ? ((disk.diskUsage || 0) / metricLimit) * 100 : 0
                         const segmentWidth = Math.max(diskUsagePercentage, diskUsagePercentage > 0 ? 0.5 : 0)
 
-                        const segment = (
+                        return (
                           <div
                             key={idx}
                             className={`h-full transition-all duration-300 ${colors[idx]}`}
@@ -270,9 +268,6 @@ export function MetricCell({
                             }}
                           />
                         )
-
-                        cumulativeWidth += segmentWidth
-                        return segment
                       })
                     })()}
                   </div>

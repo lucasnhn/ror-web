@@ -1,6 +1,7 @@
 'use client'
 
 import { DataTableColumnDef } from '@/components/ui/data-table'
+import { BackupActiveTarget } from '@/features/vms/backup/utils/backup-job'
 import {
   getBackupRunActiveTargets,
   getBackupRunEndTime,
@@ -126,7 +127,7 @@ export const getBackupRunTableColumns = (): DataTableColumnDef<BackupRun>[] => {
             return 'No active targets'
           }
           return React.createElement(ActiveTargetsTooltip, {
-            ids: activeTargets.map((t: any) => ({
+            ids: activeTargets.map((t: BackupActiveTarget) => ({
               id: t.name || 'Unnamed target',
               //href: routes.app.vmBackup.getHref(t.name?.toLowerCase()),
             })),

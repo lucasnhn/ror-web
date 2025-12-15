@@ -10,6 +10,7 @@ import {
   getBackupJobSchedules,
   getBackupJobAllRunIds,
   getBackupJobActiveTargets,
+  BackupActiveTarget,
 } from '@/features/vms/backup/utils/backup-job'
 import Link from 'next/link'
 import React from 'react'
@@ -108,7 +109,7 @@ export const getBackupJobTableColumns = (): DataTableColumnDef<BackupJob>[] => {
             return 'No active targets'
           }
           return React.createElement(ActiveTargetsTooltip, {
-            ids: activeTargets.map((t: any) => ({
+            ids: activeTargets.map((t: BackupActiveTarget) => ({
               id: t.name || 'Unnamed target',
               //href: routes.app.vmBackup.getHref(t.name?.toLowerCase()),
             })),

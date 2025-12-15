@@ -76,6 +76,241 @@ const getBackupStatusColor = (isActive: boolean, hasRuns: boolean, latestStatus:
   }
 }
 
+const BackupJobCard: React.FC<{ job: BackupJob; index: number; backupRuns: BackupRun[] }> = ({
+  job,
+  index,
+  backupRuns,
+}) => {
+  const backupJobId = getBackupJobId(job)
+  const relatedBackupRuns = backupRuns.filter((run) => getBackupRunMappedBackupJobId(run) === backupJobId)
+
+  return (
+    <Card key={getBackupJobId(job) || index}>
+      <CardHeader>
+        <CardTitle className='text-lg flex items-center justify-between'>
+          <span>Backup Job</span>
+          <Badge variant='outline' className='font-mono text-sm'>
+            {getBackupJobId(job) || 'N/A'}
+          </Badge>
+        </CardTitle>
+      </CardHeader>
+      <CardContent className='space-y-4'>
+        <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+          <div>
+            <label className='text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400'>
+              Location
+            </label>
+            <p className='text-sm font-medium'>{getBackupJobLocation(job) || 'N/A'}</p>
+          </div>
+          <div>
+            <label className='text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400'>
+              Retention
+            </label>
+            <p className='text-sm font-medium'>
+              {getBackupJobRetentionDuration(job)} {getBackupJobRetentionUnit(job)}
+            </p>
+          </div>
+        </div>
+
+        {getBackupJobStartTime(job) && (
+          <div>
+            <label className='text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400'>
+              Scheduled start time
+            </label>
+            <p className='text-sm font-medium'>{getBackupJobStartTime(job)}</p>
+          </div>
+        )}
+
+        <div className='pt-2 border-t'>
+          <div className='flex items-center justify-between text-sm'>
+            <span className='font-medium text-gray-600 dark:text-gray-400'>Recent Runs</span>
+            <span className='text-gray-500'>{relatedBackupRuns.length} total</span>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
+const BackupRunCard: React.FC<{ run: BackupRun; isLatest: boolean }> = ({ run, isLatest }) => {
+  const [isExpanded, setIsExpanded] = React.useState(false)
+  const runInfo = getBackupRunInfo(run)
+  const startTime = getBackupRunStartTime(run)
+  const endTime = getBackupRunEndTime(run)
+  const expiryTime = getBackupRunExpiryTime(run)
+  const status = runInfo?.backupDestinations?.[0]?.status || 'Unknown'
+  const isExpired = expiryTime ? isAfter(new Date(), new Date(expiryTime)) : false
+  const backupJobId = getBackupRunMappedBackupJobId(run)
+
+  return (
+    <Card className={isLatest ? 'ring-2 ring-blue-200 dark:ring-blue-800' : ''}>
+      <CardHeader>
+        <CardTitle className='text-lg flex items-center justify-between'>
+          <div className='flex items-center space-x-2'>
+            {getStatusIcon(status)}
+            <span>Backup Run</span>
+            {isLatest && (
+              <Badge className='bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300 text-sm'>Latest</Badge>
+            )}
+          </div>
+          <div className='flex items-center space-x-2'>
+            <Badge variant='outline' className='font-mono text-sm'>
+              {getBackupRunId(run) || 'N/A'}
+            </Badge>
+          </div>
+        </CardTitle>
+      </CardHeader>
+      <CardContent className='space-y-4'>
+        {/* Always visible: Status and basic timing */}
+        <div className='flex items-center justify-between'>
+          <span className='text-sm font-medium text-gray-600 dark:text-gray-400'>Status</span>
+          <Badge className={getStatusColor(status)}>{status}</Badge>
+        </div>
+        {backupJobId && (
+          <div className='space-y-1'>
+            <label className='text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 flex items-center space-x-1'>
+              Backup job ID
+            </label>
+            <span className='text-sm font-medium'>{backupJobId}</span>
+          </div>
+        )}
+        {startTime && (
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+            <div>
+              <label className='text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 flex items-center space-x-1'>
+                <Calendar className='w-3 h-3' />
+                <span>Started</span>
+              </label>
+              <p className='text-sm font-medium'>{formatDateTime(startTime)}</p>
+            </div>
+            {endTime && (
+              <div>
+                <label className='text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 flex items-center space-x-1'>
+                  <Calendar className='w-3 h-3' />
+                  <span>Completed</span>
+                </label>
+                <p className='text-sm font-medium'>{formatDateTime(endTime)}</p>
+              </div>
+            )}
+          </div>
+        )}
+        {expiryTime && (
+          <div
+            className={`p-3 rounded-lg border ${isExpired ? 'bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800' : 'bg-gray-50 border-gray-200 dark:bg-gray-800/50 dark:border-gray-700'}`}
+          >
+            <div className='flex items-center space-x-2'>
+              <AlertTriangle className={`w-4 h-4 ${isExpired ? 'text-red-500' : 'text-gray-400'}`} />
+              <span
+                className={`text-sm font-medium ${isExpired ? 'text-red-700 dark:text-red-300' : 'text-gray-600 dark:text-gray-400'}`}
+              >
+                {isExpired ? 'Expired' : 'Expires'}: {formatDateTime(expiryTime)}
+              </span>
+            </div>
+          </div>
+        )}
+
+        <div className='flex items-center justify-between pt-2 text-sm text-gray-500 dark:text-gray-400'>
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className='flex items-center p-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors'
+            aria-label={isExpanded ? 'Collapse details' : 'Expand details'}
+          >
+            <svg
+              className={`mr-1 w-4 h-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+              fill='none'
+              stroke='currentColor'
+              viewBox='0 0 24 24'
+            >
+              <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M19 9l-7 7-7-7' />
+            </svg>
+            <span>{isExpanded ? 'Hide backup details' : 'Show backup details'}</span>
+          </button>
+
+          {!isExpanded && runInfo?.backupDestinations && (
+            <span>
+              {runInfo.backupDestinations.length} destination{runInfo.backupDestinations.length !== 1 ? 's' : ''}
+            </span>
+          )}
+        </div>
+
+        {isExpanded && (
+          <div className='space-y-4 pt-2 border-t'>
+            {runInfo?.size && (
+              <div className='pt-2 '>
+                <label className='text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-2 block'>
+                  Backup Size
+                </label>
+                <div className='grid grid-cols-3 gap-2 text-center'>
+                  {runInfo.size.sourceSize && (
+                    <div>
+                      <div className='text-sm font-bold text-blue-600 dark:text-blue-400'>
+                        {formatBytes(runInfo.size.sourceSize)}
+                      </div>
+                      <div className='text-xs text-gray-500'>Source</div>
+                    </div>
+                  )}
+                  {runInfo.size.logicalSize && (
+                    <div>
+                      <div className='text-sm font-bold text-green-600 dark:text-green-400'>
+                        {formatBytes(runInfo.size.logicalSize)}
+                      </div>
+                      <div className='text-xs text-gray-500'>Logical</div>
+                    </div>
+                  )}
+                  {runInfo.size.physicalSize && (
+                    <div>
+                      <div className='text-sm font-bold text-purple-600 dark:text-purple-400'>
+                        {formatBytes(runInfo.size.physicalSize)}
+                      </div>
+                      <div className='text-xs text-gray-500'>Physical</div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {runInfo?.backupDestinations && runInfo.backupDestinations.length > 0 && (
+              <div className='pt-2 border-t'>
+                <label className='text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-3 block'>
+                  Backup Destinations
+                </label>
+                <div className='space-y-3'>
+                  {runInfo.backupDestinations.map((destination, index) => (
+                    <div
+                      key={index}
+                      className='flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700'
+                    >
+                      <div className='flex-1'>
+                        <div className='flex items-center space-x-2 mb-1'>
+                          <span className='text-sm font-medium text-gray-900 dark:text-gray-100'>
+                            {destination.name || 'Unnamed Destination'}
+                          </span>
+                          <Badge variant='outline' className='text-xs'>
+                            {destination.type || 'Unknown'}
+                          </Badge>
+                        </div>
+                        {destination.id && (
+                          <div className='text-xs text-gray-500 dark:text-gray-400 font-mono'>ID: {destination.id}</div>
+                        )}
+                      </div>
+                      <div className='flex items-center space-x-2'>
+                        {getStatusIcon(destination.status || 'Unknown')}
+                        <Badge className={`text-xs ${getStatusColor(destination.status || 'Unknown')}`}>
+                          {destination.status || 'Unknown'}
+                        </Badge>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  )
+}
+
 export const BackupOverview: React.FC<BackupOverviewProps> = ({ backupJobs, backupRuns }) => {
   const latestRun = React.useMemo(() => {
     if (backupRuns.length === 0) return null
@@ -163,241 +398,6 @@ export const BackupOverview: React.FC<BackupOverviewProps> = ({ backupJobs, back
     </Card>
   )
 
-  const BackupJobCard = ({ job, index }: { job: BackupJob; index: number }) => {
-    const backupJobId = getBackupJobId(job)
-    const relatedBackupRuns = backupRuns.filter((run) => getBackupRunMappedBackupJobId(run) === backupJobId)
-
-    return (
-      <Card key={getBackupJobId(job) || index}>
-        <CardHeader>
-          <CardTitle className='text-lg flex items-center justify-between'>
-            <span>Backup Job</span>
-            <Badge variant='outline' className='font-mono text-sm'>
-              {getBackupJobId(job) || 'N/A'}
-            </Badge>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className='space-y-4'>
-          <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-            <div>
-              <label className='text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400'>
-                Location
-              </label>
-              <p className='text-sm font-medium'>{getBackupJobLocation(job) || 'N/A'}</p>
-            </div>
-            <div>
-              <label className='text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400'>
-                Retention
-              </label>
-              <p className='text-sm font-medium'>
-                {getBackupJobRetentionDuration(job)} {getBackupJobRetentionUnit(job)}
-              </p>
-            </div>
-          </div>
-
-          {getBackupJobStartTime(job) && (
-            <div>
-              <label className='text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400'>
-                Scheduled start time
-              </label>
-              <p className='text-sm font-medium'>{getBackupJobStartTime(job)}</p>
-            </div>
-          )}
-
-          <div className='pt-2 border-t'>
-            <div className='flex items-center justify-between text-sm'>
-              <span className='font-medium text-gray-600 dark:text-gray-400'>Recent Runs</span>
-              <span className='text-gray-500'>{relatedBackupRuns.length} total</span>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    )
-  }
-
-  const BackupRunCard = ({ run, isLatest }: { run: BackupRun; isLatest: boolean }) => {
-    const [isExpanded, setIsExpanded] = React.useState(false)
-    const runInfo = getBackupRunInfo(run)
-    const startTime = getBackupRunStartTime(run)
-    const endTime = getBackupRunEndTime(run)
-    const expiryTime = getBackupRunExpiryTime(run)
-    const status = runInfo?.backupDestinations?.[0]?.status || 'Unknown'
-    const isExpired = expiryTime ? isAfter(new Date(), new Date(expiryTime)) : false
-    const backupJobId = getBackupRunMappedBackupJobId(run)
-
-    return (
-      <Card className={isLatest ? 'ring-2 ring-blue-200 dark:ring-blue-800' : ''}>
-        <CardHeader>
-          <CardTitle className='text-lg flex items-center justify-between'>
-            <div className='flex items-center space-x-2'>
-              {getStatusIcon(status)}
-              <span>Backup Run</span>
-              {isLatest && (
-                <Badge className='bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300 text-sm'>
-                  Latest
-                </Badge>
-              )}
-            </div>
-            <div className='flex items-center space-x-2'>
-              <Badge variant='outline' className='font-mono text-sm'>
-                {getBackupRunId(run) || 'N/A'}
-              </Badge>
-            </div>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className='space-y-4'>
-          {/* Always visible: Status and basic timing */}
-          <div className='flex items-center justify-between'>
-            <span className='text-sm font-medium text-gray-600 dark:text-gray-400'>Status</span>
-            <Badge className={getStatusColor(status)}>{status}</Badge>
-          </div>
-          {backupJobId && (
-            <div className='space-y-1'>
-              <label className='text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 flex items-center space-x-1'>
-                Backup job ID
-              </label>
-              <span className='text-sm font-medium'>{backupJobId}</span>
-            </div>
-          )}
-          {startTime && (
-            <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-              <div>
-                <label className='text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 flex items-center space-x-1'>
-                  <Calendar className='w-3 h-3' />
-                  <span>Started</span>
-                </label>
-                <p className='text-sm font-medium'>{formatDateTime(startTime)}</p>
-              </div>
-              {endTime && (
-                <div>
-                  <label className='text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 flex items-center space-x-1'>
-                    <Calendar className='w-3 h-3' />
-                    <span>Completed</span>
-                  </label>
-                  <p className='text-sm font-medium'>{formatDateTime(endTime)}</p>
-                </div>
-              )}
-            </div>
-          )}
-          {expiryTime && (
-            <div
-              className={`p-3 rounded-lg border ${isExpired ? 'bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800' : 'bg-gray-50 border-gray-200 dark:bg-gray-800/50 dark:border-gray-700'}`}
-            >
-              <div className='flex items-center space-x-2'>
-                <AlertTriangle className={`w-4 h-4 ${isExpired ? 'text-red-500' : 'text-gray-400'}`} />
-                <span
-                  className={`text-sm font-medium ${isExpired ? 'text-red-700 dark:text-red-300' : 'text-gray-600 dark:text-gray-400'}`}
-                >
-                  {isExpired ? 'Expired' : 'Expires'}: {formatDateTime(expiryTime)}
-                </span>
-              </div>
-            </div>
-          )}
-
-          <div className='flex items-center justify-between pt-2 text-sm text-gray-500 dark:text-gray-400'>
-            <button
-              onClick={() => setIsExpanded(!isExpanded)}
-              className='flex items-center p-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors'
-              aria-label={isExpanded ? 'Collapse details' : 'Expand details'}
-            >
-              <svg
-                className={`mr-1 w-4 h-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
-                fill='none'
-                stroke='currentColor'
-                viewBox='0 0 24 24'
-              >
-                <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M19 9l-7 7-7-7' />
-              </svg>
-              <span>{isExpanded ? 'Hide backup details' : 'Show backup details'}</span>
-            </button>
-
-            {!isExpanded && runInfo?.backupDestinations && (
-              <span>
-                {runInfo.backupDestinations.length} destination{runInfo.backupDestinations.length !== 1 ? 's' : ''}
-              </span>
-            )}
-          </div>
-
-          {isExpanded && (
-            <div className='space-y-4 pt-2 border-t'>
-              {runInfo?.size && (
-                <div className='pt-2 '>
-                  <label className='text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-2 block'>
-                    Backup Size
-                  </label>
-                  <div className='grid grid-cols-3 gap-2 text-center'>
-                    {runInfo.size.sourceSize && (
-                      <div>
-                        <div className='text-sm font-bold text-blue-600 dark:text-blue-400'>
-                          {formatBytes(runInfo.size.sourceSize)}
-                        </div>
-                        <div className='text-xs text-gray-500'>Source</div>
-                      </div>
-                    )}
-                    {runInfo.size.logicalSize && (
-                      <div>
-                        <div className='text-sm font-bold text-green-600 dark:text-green-400'>
-                          {formatBytes(runInfo.size.logicalSize)}
-                        </div>
-                        <div className='text-xs text-gray-500'>Logical</div>
-                      </div>
-                    )}
-                    {runInfo.size.physicalSize && (
-                      <div>
-                        <div className='text-sm font-bold text-purple-600 dark:text-purple-400'>
-                          {formatBytes(runInfo.size.physicalSize)}
-                        </div>
-                        <div className='text-xs text-gray-500'>Physical</div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {runInfo?.backupDestinations && runInfo.backupDestinations.length > 0 && (
-                <div className='pt-2 border-t'>
-                  <label className='text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-3 block'>
-                    Backup Destinations
-                  </label>
-                  <div className='space-y-3'>
-                    {runInfo.backupDestinations.map((destination, index) => (
-                      <div
-                        key={index}
-                        className='flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700'
-                      >
-                        <div className='flex-1'>
-                          <div className='flex items-center space-x-2 mb-1'>
-                            <span className='text-sm font-medium text-gray-900 dark:text-gray-100'>
-                              {destination.name || 'Unnamed Destination'}
-                            </span>
-                            <Badge variant='outline' className='text-xs'>
-                              {destination.type || 'Unknown'}
-                            </Badge>
-                          </div>
-                          {destination.id && (
-                            <div className='text-xs text-gray-500 dark:text-gray-400 font-mono'>
-                              ID: {destination.id}
-                            </div>
-                          )}
-                        </div>
-                        <div className='flex items-center space-x-2'>
-                          {getStatusIcon(destination.status || 'Unknown')}
-                          <Badge className={`text-xs ${getStatusColor(destination.status || 'Unknown')}`}>
-                            {destination.status || 'Unknown'}
-                          </Badge>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-        </CardContent>
-      </Card>
-    )
-  }
-
   if (backupJobs.length === 0 && backupRuns.length === 0) {
     return (
       <div className='flex items-center justify-center p-12 bg-gray-50 dark:bg-gray-900/20 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-700'>
@@ -429,7 +429,7 @@ export const BackupOverview: React.FC<BackupOverviewProps> = ({ backupJobs, back
           {backupJobs.length > 0 ? (
             <div className='grid grid-cols-1 lg:grid-cols-2 gap-4'>
               {backupJobs.map((job, index) => (
-                <BackupJobCard key={getBackupJobId(job) || index} job={job} index={index} />
+                <BackupJobCard key={getBackupJobId(job) || index} job={job} index={index} backupRuns={backupRuns} />
               ))}
             </div>
           ) : (

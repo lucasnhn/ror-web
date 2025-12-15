@@ -38,12 +38,11 @@ export const CpuUsageLineChart = ({
 }: CpuUsageLineChartProps) => {
   const [timeRange, setTimeRange] = useState<CpuHistoryTimeRange>('daily')
   const [chartData, setChartData] = useState<ReturnType<typeof cpuUsageHistory.getChartData>>([])
-  const [stats, setStats] = useState<ReturnType<typeof cpuUsageHistory.getStats>>(null)
+  const [, setStats] = useState<ReturnType<typeof cpuUsageHistory.getStats>>(null)
   const [isRefreshing, setIsRefreshing] = useState(false)
 
   const refreshData = () => {
     setIsRefreshing(true)
-
     const data = cpuUsageHistory.getChartData(vmId, timeRange)
     const statistics = cpuUsageHistory.getStats(vmId, timeRange)
     setChartData(data)
@@ -71,8 +70,8 @@ export const CpuUsageLineChart = ({
     refreshData()
   }
 
-  const formatTooltipLabel = (label: string, payload: any[]) => {
-    if (payload && payload.length > 0) {
+  const formatTooltipLabel = (label: string, payload: Array<{ payload?: { timestamp: string } }>) => {
+    if (payload && payload.length > 0 && payload[0].payload) {
       const dataPoint = payload[0].payload
       return `${new Date(dataPoint.timestamp).toLocaleString('en-GB', { timeZone: 'Europe/Oslo' })}`
     }
@@ -121,7 +120,7 @@ export const CpuUsageLineChart = ({
         })}
       </div>
       {/* Message to user about short lived data */}
-      <p className='text-xs text-muted-foreground mt-1'>Data is temporarily stored in the browser's web storage</p>
+      <p className='text-xs text-muted-foreground mt-1'>Data is temporarily stored in the browser web storage</p>
 
       {/* Chart */}
       {hasData ? (
@@ -160,7 +159,7 @@ export const CpuUsageLineChart = ({
               <Tooltip
                 content={
                   <ChartTooltipContent
-                    formatter={(value, name) => [`${value}`, ' cores']}
+                    formatter={(value) => [`${value}`, ' cores']}
                     labelFormatter={formatTooltipLabel}
                   />
                 }

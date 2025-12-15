@@ -10,7 +10,7 @@
  */
 'use client'
 
-import { Fragment, ReactNode, useEffect, useState } from 'react'
+import { Fragment, ReactNode } from 'react'
 import { routes } from '@/config/routes'
 import { NotReadyMessage } from '@/components/ui/not-ready-message'
 import { VMProvider } from '@/context/vm-context'

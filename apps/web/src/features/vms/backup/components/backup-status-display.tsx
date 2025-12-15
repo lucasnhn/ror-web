@@ -85,7 +85,7 @@ const NoBackupTableDisplay = () => (
   </div>
 )
 
-export const BackupStatusTableDisplay = ({ vm, className }: BackupStatusDisplayProps) => {
+export const BackupStatusTableDisplay = ({ vm }: BackupStatusDisplayProps) => {
   const backupStatus = useBackupStatus(vm)
   const activeBackupStatus = useActiveBackupStatus(vm)
   const isActive = activeBackupStatus.hasActiveBackup

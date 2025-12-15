@@ -43,7 +43,7 @@ import { DetailedCPUUsage } from './detailed-cpu-usage'
 import { DetailedDiskUsage } from './detailed-disk-usage'
 import { Badge } from '@/components/shadcn/badge'
 
-export const VMDetails = ({ user, className }: VMDetailsProps) => {
+export const VMDetails = ({ user }: VMDetailsProps) => {
   const { vm } = useVMContext()
   const cpuSockets = getSpecSockets(vm) || 0
   const cpuCoresPerSocket = getSpecCoresPerSocket(vm) || 0

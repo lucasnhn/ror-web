@@ -5,20 +5,6 @@ import { AlertTriangle, AlertCircle, CheckCircle } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/shadcn/tooltip'
 
 export const DiskProgressBars = ({ items }: { items: VirtualMachineDisks[] }) => {
-  const getTooltipContent = () => {}
-  const chartData = items.map((disk) => {
-    const size = disk.sizeBytes ? Number(disk.sizeBytes) / 1024 ** 3 : 0
-    const usage = disk.usageBytes ? Number(disk.usageBytes) / 1024 ** 3 : 0
-    const name = disk.name || disk.id || 'Unknown Disk'
-
-    return {
-      name,
-      'Size (GB)': Number(size.toFixed(2)),
-      'Usage (GB)': Number(usage.toFixed(2)),
-      'Free (GB)': Number((size - usage).toFixed(2)),
-    }
-  })
-
   // Check for disks with less than 20% available space
   const lowSpaceDisks = items
     .filter((disk) => {

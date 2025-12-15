@@ -74,7 +74,7 @@ class CpuUsageHistory {
     const now = new Date()
 
     try {
-      let existingData = this.getHistory(vmId, timeRange)
+      const existingData = this.getHistory(vmId, timeRange)
       if (existingData.length > 0) {
         const lastReading = existingData[existingData.length - 1]
         const timeDiff = now.getTime() - new Date(lastReading.timestamp).getTime()

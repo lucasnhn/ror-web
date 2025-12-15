@@ -32,13 +32,11 @@ import {
   getVmArchitecture,
   getVmToolVersion,
   getVmsKey,
-  getTeamValue,
   getTeamIdentifier,
   comparePowerState,
   getVmDiskSizes,
   getSpecMemory,
   getSpecCpuTotal,
-  getTeamDescription,
 } from '@/features/vms/utils/vms'
 import { NotReadyMessage } from '@/components/ui/not-ready-message'
 import { cn } from '@/utils/clsxm'

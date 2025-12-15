@@ -3,8 +3,6 @@
 import type { VirtualMachine } from '@ror/js-api-client'
 import type { DataTableColumnDef } from '@/components/ui/data-table'
 import Link from 'next/link'
-import { Pill } from '@/components/shadcn/pill'
-import { pillPowerStatusColors } from '@/features/vms/utils/env-colors'
 import { VMColumnsData } from '@/features/vms/types/vm-types'
 import { createColumnHelper } from '@tanstack/react-table'
 import type { VMWithBackupStatus } from '@/features/vms/backup/utils/map-backup-to-vm'
@@ -16,16 +14,11 @@ import {
   getSpecSockets,
   getStatusCpuUsage,
   getStatusMemoryUsage,
-  getTeamValue,
-  getTeamDescription,
   getTeamIdentifier,
   getVmArchitecture,
   getVmDisks,
-  getVmDiskSizes,
-  getVmDiskUsages,
   getVmHostName,
   getVmOperatingSystemId,
-  getVmName,
   getVmPowerState,
   getVmToolVersion,
   getVmVersion,
