@@ -413,7 +413,6 @@ spec:
           })}
           placeholder='Enter control plane num'
         />
-        {errors.cp && <span className={errorTextStyling}>{errors.cp.message}</span>}
       </FormSection>
     )
   }, [errors.cp])
@@ -491,7 +490,6 @@ spec:
             </Select>
           )}
         />
-        {errors.network && <span className={errorTextStyling}>{errors.network.message}</span>}
       </FormSection>
     )
   }, [errors.network])
