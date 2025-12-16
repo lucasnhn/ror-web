@@ -4,69 +4,49 @@
  * FILE OVERVIEW:
  * ------------------------
  * This file defines a React component that displays detailed information about a Virtual Machine (VM).
- * It uses a responsive grid layout to organize various attributes and actions related to the VM.
- * The component is designed to be interactive, allowing users to resize and rearrange the layout.
+ * It uses a clean, responsive CSS grid layout to organize various attributes and actions related to the VM.
+ *
+ * LAYOUT STRUCTURE:
+ * - Left Column (2/3 width): CPU usage, OS info, configuration details, team info
+ * - Right Column (1/3 width): Control panel with VM power actions
+ * - Responsive design that stacks on smaller screens
+ * - Uses shadcn/ui Card components for consistent styling
  *
  */
 'use client'
 
-import { Button } from '@/components/shadcn/button'
-import { Pill } from '@/components/shadcn/pill'
-import { CardHeader } from '@/components/ui/grid-layout-card'
 import { useVMContext } from '@/context/vm-context'
-import { standardLayouts } from '@/features/vms/config/vm-details-layout'
-import { useLayoutPreferences } from '@/hooks/use-layout-preferences'
-import { StoredLayoutItem } from '@/utils/layout-item'
-import { GridStack, GridStackNode } from 'gridstack'
-import 'gridstack/dist/gridstack.min.css'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { createRoot } from 'react-dom/client'
-import { toast } from 'sonner'
+import { Pill } from '@/components/shadcn/pill'
 import { vmActionsColors } from '../utils/env-colors'
+
 import {
-  getAdGroup,
-  getSpecCoresPerSocket,
-  getSpecMemory,
-  getSpecSockets,
-  getStatusCpuUsage,
-  getTeamName,
-  getTeamValue,
   getVmArchitecture,
   getVmFamily,
   getVmHostName,
-  getVmName,
   getVmOperatingSystemId,
+  getVmName,
   getVmPowerState,
-  getVmToolVersion,
   getVmVersion,
-  serviceIdDescription,
-  serviceIdValue,
+  getSpecSockets,
+  getSpecCoresPerSocket,
+  getVmToolVersion,
+  getSpecMemory,
+  getTeamValue,
   VMDetailsProps,
+  getTeamDescription,
+  getLocation,
+  getTags,
+  getLastUpdated,
 } from '../utils/vms'
-import { breakpoints } from '@/components/ui/grid-layout-wrapper'
-
-type WidgetItem = {
-  id: string
-  x: number
-  y: number
-  w: number
-  h: number
-  minW?: number
-  minH?: number
-  content: React.ReactNode
-}
-
-const reactRoots = new WeakMap<Element, ReturnType<typeof createRoot>>()
+import { Card, CardContent, CardHeader as ShadcnCardHeader, CardTitle } from '@/components/shadcn/card'
+import { DetailedCPUUsage } from './detailed-cpu-usage'
+import { DetailedDiskUsage } from './detailed-disk-usage'
+import { Badge } from '@/components/shadcn/badge'
 
 export const VMDetails = ({ user }: VMDetailsProps) => {
   const { vm } = useVMContext()
-  const gridRef = useRef<GridStack | null>(null)
-  const gridContainerRef = useRef<HTMLDivElement | null>(null)
-  const [layout, setLayout] = useState<{ id: string; x: number; y: number; w: number; h: number }[]>([])
-
-  const cpuUsage = getStatusCpuUsage(vm)
-  const cpuSockets = getSpecSockets(vm)
-  const cpuCoresPerSocket = getSpecCoresPerSocket(vm)
+  const cpuSockets = getSpecSockets(vm) || 0
+  const cpuCoresPerSocket = getSpecCoresPerSocket(vm) || 0
   const memory = getSpecMemory(vm)
   const memoryInGB = ((memory ?? 0) / 1024 ** 3).toFixed(2)
 
@@ -79,178 +59,213 @@ export const VMDetails = ({ user }: VMDetailsProps) => {
   const powerState = getVmPowerState(vm)
   const toolVersion = getVmToolVersion(vm)
 
-  const teamName = getTeamName(vm)
+  const teamName = getTeamDescription(vm)
   const teamValue = getTeamValue(vm)
-  const AdGroup = getAdGroup(vm)
-  const serviceId = serviceIdDescription(vm)
-  const serviceValue = serviceIdValue(vm)
+  const location = getLocation(vm)
+  const lastUpdatedRaw = getLastUpdated(vm)
+  const lastUpdated = lastUpdatedRaw
+    ? new Date(lastUpdatedRaw).toLocaleString('nb-NO', {
+        year: 'numeric',
+        month: 'short',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+      })
+    : 'Ukjent'
+
+  const tags = getTags(vm)
+  const tagKey = Object.keys(tags)
 
   console.log(user)
 
-  const MemoryCard = useCallback(
-    () => (
-      <div className='h-full w-full flex flex-col bg-(--r-layer) p-4 rounded-md'>
-        <CardHeader title='Memory' />
-        <div className='flex gap-2'>
-          <div className='flex flex-1 flex-col gap-2'>
-            <div className='flex flex-col'>
-              <span>{memoryInGB} GB</span>
+  const MemoryCard = () => (
+    <Card className='bg-slate-50 dark:bg-slate-900/50'>
+      <ShadcnCardHeader>
+        <CardTitle>Memory</CardTitle>
+      </ShadcnCardHeader>
+      <CardContent>
+        <div className='flex flex-col gap-2'>
+          <span className='text-2xl font-semibold'>{memoryInGB} GB</span>
+        </div>
+      </CardContent>
+    </Card>
+  )
+
+  const ConfigurationCard = () => (
+    <Card className='bg-slate-50 dark:bg-slate-900/50'>
+      <ShadcnCardHeader>
+        <div className='flex justify-between items-center'>
+          <CardTitle>CPU configuration</CardTitle>
+          <Badge variant='secondary' className='text-xs'>
+            {cpuSockets * cpuCoresPerSocket} cores in total
+          </Badge>
+        </div>
+      </ShadcnCardHeader>
+      <CardContent>
+        <div className='flex flex-col gap-3'>
+          <div className='flex justify-between items-center'>
+            <span className='text-sm text-muted-foreground'>CPU Sockets:</span>
+            <span className='font-medium'>{cpuSockets}</span>
+          </div>
+          <div className='flex justify-between items-center'>
+            <span className='text-sm text-muted-foreground'>CPU Cores per Socket:</span>
+            <span className='font-medium'>{cpuCoresPerSocket}</span>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  )
+
+  const CpuCard = () => {
+    return <DetailedCPUUsage />
+  }
+
+  const DiskCard = () => (
+    <Card className='bg-slate-50 dark:bg-slate-900/50'>
+      <ShadcnCardHeader>
+        <CardTitle>Disk Usage</CardTitle>
+      </ShadcnCardHeader>
+      <CardContent>
+        <DetailedDiskUsage />
+      </CardContent>
+    </Card>
+  )
+
+  const TeamCard = () => {
+    if (!teamName) {
+      return (
+        <Card className='bg-slate-50 dark:bg-slate-900/50'>
+          <ShadcnCardHeader>
+            <CardTitle>Team</CardTitle>
+          </ShadcnCardHeader>
+          <CardContent>
+            <span className='font-medium'>No team assigned</span>
+          </CardContent>
+        </Card>
+      )
+    }
+    return (
+      <Card className='bg-slate-50 dark:bg-slate-900/50'>
+        <ShadcnCardHeader>
+          <CardTitle>Team</CardTitle>
+        </ShadcnCardHeader>
+        <CardContent>
+          <span className='font-medium'>
+            {teamName} ({teamValue})
+          </span>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  const LocationCard = () => (
+    <Card className='bg-slate-50 dark:bg-slate-900/50'>
+      <ShadcnCardHeader>
+        <CardTitle>Location</CardTitle>
+      </ShadcnCardHeader>
+      <CardContent>
+        <span className='font-medium'>{location}</span>
+      </CardContent>
+    </Card>
+  )
+
+  const LastUpdatedCard = () => (
+    <Card className='bg-slate-50 dark:bg-slate-900/50'>
+      <ShadcnCardHeader>
+        <CardTitle>Last updated</CardTitle>
+      </ShadcnCardHeader>
+      <CardContent>
+        <span className='font-medium'>{lastUpdated}</span>
+      </CardContent>
+    </Card>
+  )
+
+  const TagCards = () => (
+    <Card className='bg-slate-50 dark:bg-slate-900/50'>
+      <ShadcnCardHeader>
+        <CardTitle>Available tags</CardTitle>
+      </ShadcnCardHeader>
+      <CardContent>
+        <div className='flex flex-col gap-3'>
+          {tagKey.map((key) => (
+            <div key={key} className='flex justify-between items-start'>
+              <span className='text-sm text-muted-foreground font-medium'>{key}:</span>
+              <span className='text-sm text-right max-w-[60%]'>{tags[key].description || 'Missing..'}</span>
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  )
+
+  const InfoCard = () => (
+    <Card className='bg-slate-50 dark:bg-slate-900/50'>
+      <ShadcnCardHeader>
+        <CardTitle>Operating System</CardTitle>
+      </ShadcnCardHeader>
+      <CardContent>
+        <div className='grid grid-cols-1 gap-4'>
+          <div className='flex flex-col gap-3'>
+            <div className='flex justify-between items-center'>
+              <span className='text-sm text-muted-foreground'>ID:</span>
+              <span className='font-xs'>{id}</span>
+            </div>
+            <div className='flex justify-between items-center'>
+              <span className='text-sm text-muted-foreground'>OS Version:</span>
+              <span className='font-xs'>{name}</span>
+            </div>
+            <div className='flex justify-between items-center'>
+              <span className='text-sm text-muted-foreground'>Version:</span>
+              <span className='font-xs'>{version}</span>
+            </div>
+            <div className='flex justify-between items-center'>
+              <span className='text-sm text-muted-foreground'>Hostname:</span>
+              <span className='font-xs'>{hostName}</span>
+            </div>
+          </div>
+          <div className='flex flex-col gap-3'>
+            <div className='flex justify-between items-center'>
+              <span className='text-sm text-muted-foreground'>VMware Tools:</span>
+              <span className='font-xs'>{toolVersion}</span>
+            </div>
+            <div className='flex justify-between items-center'>
+              <span className='text-sm text-muted-foreground'>Architecture:</span>
+              <span className='font-xs'>{architecture}</span>
+            </div>
+            <div className='flex justify-between items-center'>
+              <span className='text-sm text-muted-foreground'>Family:</span>
+              <span className='font-xs'>{family}</span>
             </div>
           </div>
         </div>
-      </div>
-    ),
-    [memoryInGB]
+      </CardContent>
+    </Card>
   )
 
-  const ConfigurationCard = useCallback(
-    () => (
-      <div className='h-full w-full flex flex-col bg-(--r-layer) p-4 rounded-md'>
-        <CardHeader title='Configuration' />
-        <div className='flex gap-2'>
-          <div className='flex flex-1 flex-col gap-2'>
-            <div className='flex flex-col'>
-              <b>CPU Sockets: </b>
-              <span>{cpuSockets}</span>
-            </div>
-            <div className='flex flex-col'>
-              <b>CPU Cores per Socket: </b>
-              <span>{cpuCoresPerSocket}</span>
-            </div>
+  const ControlPanelCard = () => (
+    <Card className='bg-slate-50 dark:bg-slate-900/50'>
+      <ShadcnCardHeader>
+        <CardTitle>Control Panel</CardTitle>
+      </ShadcnCardHeader>
+      <CardContent>
+        <div className='flex flex-col gap-4 '>
+          <div className='flex justify-between items-center '>
+            <span className='text-sm text-muted-foreground'>Power State:</span>
+            <span className='font-medium'>
+              {powerState === 'poweredOn' ? 'On' : powerState === 'poweredOff' ? 'Off' : 'Unknown'}
+            </span>
           </div>
-        </div>
-      </div>
-    ),
-    [cpuCoresPerSocket, cpuSockets]
-  )
 
-  const CpuCard = useCallback(
-    () => (
-      <div className='h-full w-full flex flex-col bg-(--r-layer) p-4 rounded-md'>
-        <CardHeader title='CPU' />
-        <div className='flex gap-2'>
-          <div className='flex flex-1 flex-col gap-2'>
-            <div className='flex flex-col'>
-              <b>CPU Usage: </b>
-              <span>{cpuUsage}%</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    ),
-    [cpuUsage]
-  )
-
-  const TeamCard = useCallback(
-    () => (
-      <div className='h-full w-full flex flex-col bg-(--r-layer) p-4 rounded-md'>
-        <CardHeader title='Team' />
-        <div className='flex gap-2'>
-          <div className='flex flex-1 flex-col gap-2'>
-            <div className='flex flex-col'>
-              <span>
-                {teamValue} ({teamName})
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-    ),
-    [teamName, teamValue]
-  )
-
-  const AdGroupsCard = useCallback(
-    () => (
-      <div className='h-full w-full flex flex-col bg-(--r-layer) p-4 rounded-md'>
-        <CardHeader title='AD Group' />
-        <div className='flex gap-2'>
-          <div className='flex flex-1 flex-col gap-2'>
-            <div className='flex flex-col'>
-              <span>{AdGroup}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    ),
-    [AdGroup]
-  )
-
-  const ServiceIdCard = useCallback(
-    () => (
-      <div className='h-full w-full flex flex-col bg-(--r-layer) p-4 rounded-md'>
-        <CardHeader title='Service ID' />
-        <div className='flex gap-2'>
-          <div className='flex flex-1 flex-col gap-2'>
-            <div className='flex flex-col'>
-              <span>
-                {serviceId} ({serviceValue})
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-    ),
-    [serviceId, serviceValue]
-  )
-
-  const InfoCard = useCallback(
-    () => (
-      <div className='h-full w-full flex flex-col bg-(--r-layer) p-4 rounded-md'>
-        <CardHeader title='Operating System' />
-        <div className='flex gap-2'>
-          <div className='flex flex-1 flex-col gap-2'>
-            <div className='flex flex-col'>
-              <b>Id: </b>
-              <span>{id}</span>
-            </div>
-            <div className='flex flex-col'>
-              <b>OS-version: </b>
-              <span>{name}</span>
-            </div>
-            <div className='flex flex-col'>
-              <b>Version: </b>
-              <span>{version}</span>
-            </div>
-            <div className='flex flex-col'>
-              <b>Hostname: </b>
-              <span>{hostName}</span>
-            </div>
-          </div>
-          <div className='flex flex-1 flex-col gap-2'>
-            <div className='flex flex-col'>
-              <b>VMware Tools version: </b>
-              <span>{toolVersion}</span>
-            </div>
-            <div className='flex flex-col'>
-              <b>Architecture: </b>
-              <span>{architecture}</span>
-            </div>
-            <div className='flex flex-col'>
-              <b>OS-type: </b>
-              <span>{family}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    ),
-    [architecture, family, hostName, id, name, toolVersion, version]
-  )
-
-  const ControlPanelCard = useCallback(
-    () => (
-      <div className='h-full w-full flex flex-col bg-(--r-layer) p-4 rounded-md'>
-        <CardHeader title='Control Panel' />
-        <div className='flex gap-2'>
-          <div className='flex flex-1 flex-col gap-2'>
-            <div className='flex flex-col'>
-              <b>Power: </b>
-              <span>{powerState === 'poweredOn' ? 'On' : powerState === 'poweredOff' ? 'Off' : 'Unknown'}</span>
-              <b>Actions:</b>
-              {powerState === 'poweredOn' ? null : (
+          <div className='flex flex-col gap-2'>
+            <span className='text-sm font-medium text-muted-foreground'>Actions:</span>
+            <div className='flex flex-wrap gap-2'>
+              {powerState === 'poweredOff' && (
                 <Pill
                   asChild
                   variant={vmActionsColors['powerOn']}
-                  className='mt-2 px-3 cursor-pointer'
+                  className='px-3 cursor-pointer'
                   onClick={() => {
                     // TODO: Implement turn on functionality
                   }}
@@ -258,11 +273,11 @@ export const VMDetails = ({ user }: VMDetailsProps) => {
                   <button type='button'>Turn on</button>
                 </Pill>
               )}
-              {powerState === 'poweredOff' ? null : (
+              {powerState === 'poweredOn' && (
                 <Pill
                   asChild
                   variant={vmActionsColors['powerOff']}
-                  className='mt-2 px-3 cursor-pointer'
+                  className='px-3 cursor-pointer'
                   onClick={() => {
                     // TODO: Implement turn off functionality
                   }}
@@ -273,7 +288,7 @@ export const VMDetails = ({ user }: VMDetailsProps) => {
               <Pill
                 asChild
                 variant={vmActionsColors['restart']}
-                className='mt-2 px-3 cursor-pointer'
+                className='px-3 cursor-pointer'
                 onClick={() => {
                   // TODO: Implement restart functionality
                 }}
@@ -283,7 +298,7 @@ export const VMDetails = ({ user }: VMDetailsProps) => {
               <Pill
                 asChild
                 variant={vmActionsColors['suspend']}
-                className='mt-2 px-3 cursor-pointer'
+                className='px-3 cursor-pointer'
                 onClick={() => {
                   // TODO: Implement suspend functionality
                 }}
@@ -293,7 +308,7 @@ export const VMDetails = ({ user }: VMDetailsProps) => {
               <Pill
                 asChild
                 variant={vmActionsColors['delete']}
-                className='mt-2 px-3 cursor-pointer'
+                className='px-3 cursor-pointer'
                 onClick={() => {
                   // TODO: Implement delete functionality
                 }}
@@ -303,236 +318,34 @@ export const VMDetails = ({ user }: VMDetailsProps) => {
             </div>
           </div>
         </div>
-      </div>
-    ),
-    [powerState]
-  )
-
-  const {
-    layoutKey,
-    currentBreakpoint,
-    setCurrentBreakpoint,
-    saveLayouts,
-    resetToSaved,
-    resetToDefault,
-    getCurrentLayouts,
-  } = useLayoutPreferences('vmDetails', layout)
-
-  const handleResize = () => {
-    const width = window.innerWidth
-    if (width >= breakpoints.xl) {
-      setCurrentBreakpoint('xl')
-    } else if (width >= breakpoints.lg) {
-      setCurrentBreakpoint('lg')
-    } else if (width >= breakpoints.md) {
-      setCurrentBreakpoint('md')
-    } else if (width >= breakpoints.sm) {
-      setCurrentBreakpoint('sm')
-    } else {
-      setCurrentBreakpoint('xs')
-    }
-  }
-
-  const items: WidgetItem[] = useMemo(() => {
-    const baseLayout = standardLayouts[currentBreakpoint] || []
-
-    const layoutMap = baseLayout.reduce(
-      (acc, l) => {
-        acc[l.i] = l
-        return acc
-      },
-      {} as Record<string, StoredLayoutItem>
-    )
-
-    return [
-      { id: 'cpu', ...layoutMap['cpu'], content: <CpuCard /> },
-      { id: 'memory', ...layoutMap['memory'], content: <MemoryCard /> },
-      { id: 'configuration', ...layoutMap['configuration'], content: <ConfigurationCard /> },
-      { id: 'team', ...layoutMap['team'], content: <TeamCard /> },
-      { id: 'ad-groups', ...layoutMap['ad-groups'], content: <AdGroupsCard /> },
-      { id: 'service-id', ...layoutMap['service-id'], content: <ServiceIdCard /> },
-      { id: 'info', ...layoutMap['info'], content: <InfoCard /> },
-      { id: 'control-panel', ...layoutMap['control-panel'], content: <ControlPanelCard /> },
-    ]
-  }, [
-    currentBreakpoint,
-    CpuCard,
-    MemoryCard,
-    ConfigurationCard,
-    TeamCard,
-    AdGroupsCard,
-    ServiceIdCard,
-    InfoCard,
-    ControlPanelCard,
-  ])
-
-  useEffect(() => {
-    const container = gridContainerRef.current
-    if (!container) return
-
-    container.innerHTML = '' // Clear existing DOM
-
-    const prefs = getCurrentLayouts()
-    const savedLayouts = prefs.vmDetails?.layouts as Record<
-      string,
-      { i: string; x: number; y: number; w: number; h: number }[]
-    >
-    const savedMap: Record<string, { x: number; y: number; w: number; h: number }> = {}
-
-    const layoutForBreakpoint =
-      savedLayouts?.[currentBreakpoint] ?? standardLayouts[currentBreakpoint] ?? standardLayouts.lg
-
-    console.log('Loading layout for:', currentBreakpoint, layoutForBreakpoint)
-
-    if (Array.isArray(layoutForBreakpoint)) {
-      for (const l of layoutForBreakpoint) {
-        if (!l) continue
-        savedMap[String(l.i)] = { x: l.x, y: l.y, w: l.w, h: l.h }
-      }
-    }
-
-    const grid = GridStack.init(
-      {
-        column: 12,
-        float: true,
-        cellHeight: '30px',
-        minRow: 1,
-        margin: 5,
-        staticGrid: false,
-        disableDrag: false,
-        disableResize: false,
-      },
-      container
-    )
-
-    gridRef.current = grid
-
-    items.forEach((item) => {
-      const fromSaved = savedMap[item.id]
-
-      const node: GridStackNode = {
-        x: fromSaved?.x ?? item.x,
-        y: fromSaved?.y ?? item.y,
-        w: fromSaved?.w ?? item.w,
-        h: fromSaved?.h ?? item.h,
-        minW: item.minW,
-        minH: item.minH,
-        id: item.id,
-      }
-
-      const el = grid.addWidget(node)
-      const contentEl = el.querySelector('.grid-stack-item-content') as HTMLDivElement
-
-      let root = reactRoots.get(contentEl)
-      if (!root) {
-        root = createRoot(contentEl)
-        reactRoots.set(contentEl, root)
-      }
-      root.render(item.content)
-    })
-
-    const handleChange = () => {
-      const nodes = grid.engine.nodes
-      const newLayout = nodes.map((n) => ({
-        id: String(n.id ?? ''),
-        x: n.x ?? 0,
-        y: n.y ?? 0,
-        w: n.w ?? 0,
-        h: n.h ?? 0,
-      }))
-      setLayout(newLayout)
-    }
-
-    grid.on('change', handleChange)
-    grid.on('dragstop', handleChange)
-    grid.on('resizestop', handleChange)
-
-    handleChange() // capture initial layout
-
-    return () => {
-      grid.off('change')
-      grid.off('dragstop')
-      grid.off('resizestop')
-      grid.destroy(false)
-      gridRef.current = null
-    }
-  }, [layoutKey, currentBreakpoint])
-
-  useEffect(() => {
-    handleResize()
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
-
-  const LayoutButtons = () => (
-    <div className='flex sm:flex-row flex-col gap-2 mb-3'>
-      <Button
-        onClick={() => {
-          const layoutMap = {
-            [currentBreakpoint]: layout.map((l) => ({
-              i: l.id,
-              x: l.x,
-              y: l.y,
-              w: l.w,
-              h: l.h,
-            })),
-          }
-
-          saveLayouts(layoutMap)
-          toast.info('Layout saved')
-        }}
-      >
-        Save layout
-      </Button>
-      <Button onClick={resetToSaved}>Reset to saved</Button>
-      <Button onClick={resetToDefault}>Reset to default</Button>
-    </div>
+      </CardContent>
+    </Card>
   )
 
   return (
-    <div>
-      <LayoutButtons />
-      <section className='border rounded-lg p-1'>
-        <div ref={gridContainerRef} />
-      </section>
-      {/* <GridLayoutWrapper
-        className={className}
-        layouts={layouts}
-        layoutKey={layoutKey}
-        onLayoutChange={(layout) => setLayouts({ ...layouts, [currentBreakpoint]: layout as RGLLayoutItem[] })}
-        onBreakpointChange={setCurrentBreakpoint}
-      >
-        <div key='memory' className='drag-handle '>
-          <MemoryCard />
+    <div className={'space-y-4 mb-4'}>
+      <div className='grid grid-cols-1 lg:grid-cols-3 gap-4'>
+        <div className='lg:col-span-2 space-y-4'>
+          <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+            <TeamCard />
+            <LocationCard />
+            <LastUpdatedCard />
+          </div>
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+            <ConfigurationCard />
+            <MemoryCard />
+          </div>
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+            <CpuCard />
+            <DiskCard />
+          </div>
         </div>
-        <div key='configuration' className='drag-handle '>
-          <ConfigurationCard />
-        </div>
-        <div key='cpu' className='drag-handle '>
-          <CpuCard />
-        </div> */}
-      {/* {teamValue && ( */}
-      {/* <div key='team' className='drag-handle '>
-          <TeamCard />
-        </div> */}
-      {/* )} */}
-      {/* {AdGroup && ( */}
-      {/* <div key='ad-groups' className='drag-handle '>
-          <AdGroupsCard />
-        </div> */}
-      {/* )} */}
-      {/* {serviceId && ( */}
-      {/* <div key='service-id' className='drag-handle '>
-          <ServiceIdCard />
-        </div> */}
-      {/* )} */}
-      {/* <div key='info' className='drag-handle '>
-          <InfoCard />
-        </div>
-        <div key='control-panel' className='drag-handle '>
+        <div className='lg:col-span-1 space-y-4'>
           <ControlPanelCard />
+          <InfoCard />
+          <TagCards />
         </div>
-      </GridLayoutWrapper> */}
+      </div>
     </div>
   )
 }

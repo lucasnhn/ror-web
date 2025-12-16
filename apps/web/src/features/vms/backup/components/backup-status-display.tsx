@@ -10,6 +10,8 @@ import { cn } from '@/utils/clsxm'
 import { useActiveBackupStatus, useBackupStatus } from '@/features/vms/backup/hooks/useBackupStatus'
 import type { VirtualMachine } from '@ror/js-api-client'
 import type { VMWithBackupStatus } from '@/features/vms/backup/utils/map-backup-to-vm'
+import { Pill } from '@/components/shadcn/pill'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/shadcn/tooltip'
 
 type VMTableRow = VirtualMachine | VMWithBackupStatus
 
@@ -67,6 +69,73 @@ const NoBackupDisplay = () => (
     </div>
   </div>
 )
+
+const NoBackupTableDisplay = () => (
+  <div>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <div>
+          <Pill className='bg-gray-100 text-gray-800 border-gray-200 cursor-pointer'>No Backup</Pill>
+        </div>
+      </TooltipTrigger>
+      <TooltipContent>
+        <div className='text-xs'>No backup data available</div>
+      </TooltipContent>
+    </Tooltip>
+  </div>
+)
+
+export const BackupStatusTableDisplay = ({ vm }: BackupStatusDisplayProps) => {
+  const backupStatus = useBackupStatus(vm)
+  const activeBackupStatus = useActiveBackupStatus(vm)
+  const isActive = activeBackupStatus.hasActiveBackup
+  const isHistorical = activeBackupStatus.hasHistoricalBackup
+
+  // If no backup data is loaded or no backup info exists, show no backup display
+  if (!backupStatus.isDataLoaded || !backupStatus.lastBackupInfo) {
+    return <NoBackupTableDisplay />
+  }
+
+  const formatDateTime = (dateString: string) => {
+    return new Date(dateString).toLocaleString('en-GB', { timeZone: 'Europe/Oslo' })
+  }
+
+  const tooltipContent = (
+    <div className='space-y-1 text-xs'>
+      <div>
+        <strong>Started:</strong>{' '}
+        {backupStatus.lastBackupInfo.startTime ? formatDateTime(backupStatus.lastBackupInfo.startTime) : 'N/A'}
+      </div>
+      <div>
+        <strong>Ended:</strong>{' '}
+        {backupStatus.lastBackupInfo.endTime ? formatDateTime(backupStatus.lastBackupInfo.endTime) : 'N/A'}
+      </div>
+      <div>
+        <strong>Expires:</strong>{' '}
+        {backupStatus.lastBackupInfo.expiryTime ? formatDateTime(backupStatus.lastBackupInfo.expiryTime) : 'N/A'}
+      </div>
+    </div>
+  )
+
+  return (
+    <div>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div>
+            {isActive ? (
+              <Pill className='bg-green-100 text-green-800 dark:text-green-500 cursor-pointer'>Active</Pill>
+            ) : isHistorical ? (
+              <Pill className='bg-orange-100 text-orange-800 border-orange-200 cursor-pointer'>Historical</Pill>
+            ) : (
+              <Pill className='bg-gray-100 text-gray-800 border-gray-200 cursor-pointer'>No Backup</Pill>
+            )}
+          </div>
+        </TooltipTrigger>
+        <TooltipContent>{tooltipContent}</TooltipContent>
+      </Tooltip>
+    </div>
+  )
+}
 
 export const BackupStatusDisplay = ({ vm, className }: BackupStatusDisplayProps) => {
   const activeBackupStatus = useActiveBackupStatus(vm)

@@ -4,7 +4,6 @@ import {
   ChartColumn,
   ChevronRight,
   CircleDollarSign,
-  DatabaseBackup,
   CircleHelp,
   CornerUpLeft,
   Settings2,
@@ -80,13 +79,6 @@ const sections: Section[] = [
         title: 'Virtual machines',
         url: routes.app.vms.getHref(),
       },
-    ],
-  },
-  {
-    title: 'Backup',
-    icon: DatabaseBackup,
-    isActive: true,
-    items: [
       {
         title: 'Backup jobs',
         url: routes.app.backupJobs.getHref(),
@@ -97,6 +89,21 @@ const sections: Section[] = [
       },
     ],
   },
+  // {
+  //   title: 'Backup',
+  //   icon: DatabaseBackup,
+  //   isActive: true,
+  //   items: [
+  //     {
+  //       title: 'Backup jobs',
+  //       url: routes.app.backupJobs.getHref(),
+  //     },
+  //     {
+  //       title: 'Backup runs',
+  //       url: routes.app.backupRuns.getHref(),
+  //     },
+  //   ],
+  // },
   {
     title: 'Statistics',
     icon: ChartColumn,

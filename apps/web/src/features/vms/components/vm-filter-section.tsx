@@ -1,20 +1,25 @@
 'use client'
 
 import MultipleSelector from '@/components/shadcn/multiselect'
-import { filterOptions } from '@/features/vms/config/page-view-options'
+import { generateFilterOptions } from '@/features/vms/config/page-view-options'
+import type { VirtualMachine } from '@ror/js-api-client'
+import type { VMWithBackupStatus } from '@/features/vms/backup/utils/map-backup-to-vm'
 
 interface VmFilterSectionProps {
   filtersOpen: boolean
   selectedFilters: Record<string, string[]>
   setSelectedFilters: React.Dispatch<React.SetStateAction<Record<string, string[]>>>
+  vms: VirtualMachine[] | VMWithBackupStatus[]
 }
 
-export const VmFilterSection = ({ filtersOpen, selectedFilters, setSelectedFilters }: VmFilterSectionProps) => {
+export const VmFilterSection = ({ filtersOpen, selectedFilters, setSelectedFilters, vms }: VmFilterSectionProps) => {
   if (!filtersOpen) return null
+
+  const dynamicFilterOptions = generateFilterOptions(vms as VirtualMachine[])
 
   return (
     <div className='flex flex-wrap items-center gap-x-4 gap-y-6 min-h-28 mx-12 mt-6'>
-      {filterOptions.map((option) => (
+      {dynamicFilterOptions.map((option) => (
         <MultipleSelector
           key={option.label}
           className='w-52'

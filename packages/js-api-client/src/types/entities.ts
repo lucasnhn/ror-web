@@ -17,7 +17,7 @@ import { DaemonSetResponseSchema, DaemonSetSchema } from '../schemas/daemon-set'
 import { ConfigurationSchema, configurationResponseSchema } from '../schemas/configuration'
 import { VulnerabilityReportResponseSchema, VulnerabilityReportSchema } from '../schemas/vulnerability-report'
 import { RorMetaDataResponseSchema, RorMetaDataSchema } from '../schemas/common'
-import { VirtualMachineDiskStatus, VirtualMachineNetwork, VirtualMachineType } from '../schemas/vm'
+import { VirtualMachineDiskStatus, VirtualMachineNetwork, VirtualMachineTag, VirtualMachineType } from '../schemas/vm'
 import type { PriceResponseSchema, PriceSchema } from '../schemas/price'
 import type { DatacenterResponseSchema, DatacenterSchema } from '../schemas/datacenter'
 import type { BackupJobSchema } from '../schemas/backup-job'
@@ -65,6 +65,7 @@ export type VulnerabilityReportResponse = z.infer<typeof VulnerabilityReportResp
 export type VirtualMachine = z.infer<typeof VirtualMachineType>
 export type VirtualMachineNetworks = z.infer<typeof VirtualMachineNetwork>
 export type VirtualMachineDisks = z.infer<typeof VirtualMachineDiskStatus>
+export type VirtualMachineTeam = z.infer<typeof VirtualMachineTag>
 //BackupJob and BackupRun matches the v2 resource
 export type BackupJob = z.infer<typeof BackupJobSchema>
 export type BackupRun = z.infer<typeof BackupRunSchema>
