@@ -413,7 +413,6 @@ spec:
           })}
           placeholder='Enter control plane num'
         />
-        {errors.cp && <span className={errorTextStyling}>{errors.cp.message}</span>}
       </FormSection>
     )
   }, [errors.cp])
