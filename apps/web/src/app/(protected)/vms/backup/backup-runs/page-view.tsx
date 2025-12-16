@@ -126,7 +126,7 @@ export const PageView = ({ className, backupRuns, params, backupJobId }: PageVie
     if (!searchResults.length) return safeItems
     const ids = new Set(searchResults.map(getBackupRunId))
     return sortedItems.filter((c) => ids.has(getBackupRunId(c)))
-  }, [searchResults, sortedItems])
+  }, [safeItems, searchResults, sortedItems])
 
   const renderControls = () => (
     <div className='flex flex-wrap items-center justify-between w-full gap-4 [@container(max-width:1000px)]:flex-col [@container(max-width:1000px)]:items-start [@container(max-width:1000px)]:gap-6'>
