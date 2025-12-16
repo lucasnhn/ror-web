@@ -57,7 +57,7 @@ export interface DataTableProps<TData> extends Omit<TableProps, 'gridTemplateCol
   renderExpandedRow?: (row: Row<TData>) => React.ReactNode
   hasMore?: boolean
   isLoading?: boolean
-  sentinelRef?: React.RefObject<HTMLDivElement>
+  sentinelRef?: React.RefObject<HTMLDivElement | null>
 }
 
 export function DataTable<TData>(props: DataTableProps<TData>) {
