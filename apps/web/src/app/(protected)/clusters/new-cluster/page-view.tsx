@@ -445,7 +445,7 @@ spec:
           })}
           placeholder='Enter workerpools num'
         />
-        {errors.cp && <span className={errorTextStyling}>{errors.cp.message}</span>}
+        {errors.wpNumber && <span className={errorTextStyling}>{errors.wpNumber.message}</span>}
 
         <h4>Class</h4>
         <Controller
@@ -468,7 +468,7 @@ spec:
         {errors.wpClass && <span className={errorTextStyling}>{errors.wpClass.message}</span>}
       </section>
     )
-  }, [errors.wpName, errors.cp, errors.wpClass])
+  }, [errors.wpName, errors.wpNumber, errors.wpClass])
 
   const NetworkInput = useCallback(() => {
     return (
@@ -598,7 +598,7 @@ spec:
 
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
         <div className='flex flex-row gap-32'>
-          {providerWatch != '' ? (
+          {providerWatch !== '' ? (
             <>
               <div className={flexGap4}>
                 <ProjectInput />
@@ -635,7 +635,7 @@ spec:
           )}
         </div>
 
-        {providerWatch != '' && (
+        {providerWatch !== '' && (
           <Button type='submit' className='mt-4'>
             Create cluster
           </Button>
