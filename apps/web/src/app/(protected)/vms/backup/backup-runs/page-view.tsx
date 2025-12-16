@@ -13,9 +13,7 @@ import {
 import { useDebouncedValue } from '@/hooks/use-debounced-value'
 import { useDisplayData } from '@/hooks/use-display-data'
 import { useFilters } from '@/hooks/use-filters'
-import { useInfiniteLoader } from '@/hooks/use-infinite-loader'
 import { SortDefinition, useSorting } from '@/hooks/use-sorting'
-import { loadMoreBackupRuns } from '@/utils/backup-run-actions'
 import { BackupRun } from '@ror/js-api-client'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
@@ -33,24 +31,7 @@ import { BackupRunColumnsData } from '@/features/backup/backup-run/types/backup-
 export const PageView = ({ className, backupRuns, params, backupJobId }: PageViewProps) => {
   const filtersOpen = params.filters === 'open'
 
-  const { items, sentinelRef, isLoading, hasMore } = useInfiniteLoader<BackupRun>({
-    initial: backupRuns,
-    sort: params.sort,
-    pageSize: 50,
-    getItemId: getBackupRunId,
-    getItemsKey: getBackupRunKey,
-    loadMore: async (offset, limit) => {
-      const res = await loadMoreBackupRuns({
-        offset,
-        limit,
-        sort: params.sort,
-        order: params.order,
-      })
-      return { items: res.items ?? [], hasMore: res.hasMore }
-    },
-  })
-
-  const safeItems = useMemo(() => items.filter((c) => getBackupRunId(c)), [items])
+  const safeItems = useMemo(() => backupRuns.filter((c) => getBackupRunId(c)), [backupRuns])
 
   const filterDefinitions = [{ key: 'source', extractor: (backupRun: BackupRun) => getBackupRunSource(backupRun) }]
   const definitions: SortDefinition<BackupRun>[] = [
@@ -157,13 +138,7 @@ export const PageView = ({ className, backupRuns, params, backupJobId }: PageVie
   const TableView = () => {
     return (
       <div>
-        <DataTable
-          data={displayedItems}
-          columns={getBackupRunTableColumns()}
-          hasMore={hasMore}
-          isLoading={isLoading}
-          sentinelRef={sentinelRef}
-        />
+        <DataTable data={displayedItems} columns={getBackupRunTableColumns()} />
       </div>
     )
   }
