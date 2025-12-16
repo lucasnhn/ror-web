@@ -184,7 +184,7 @@ export function ResourceControls<T>({
           </Link>
         </Toggle>
 
-        {domain == 'clusters' && (
+        {domain === 'clusters' && (
           <Link href={`/clusters/new-cluster`}>
             <Button>
               <Plus />
