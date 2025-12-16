@@ -214,7 +214,7 @@ spec:
 
   const ProjectInput = useCallback(() => {
     return (
-      <FormSection title='Projct' error={errors.project && errors.project.message}>
+      <FormSection title='Project' error={errors.project && errors.project.message}>
         <Input {...register('project', { required: 'Name is required' })} placeholder='Enter project...' />
       </FormSection>
     )
