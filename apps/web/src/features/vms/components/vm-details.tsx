@@ -37,11 +37,14 @@ import {
   getLocation,
   getTags,
   getLastUpdated,
+  getVmDisks,
 } from '../utils/vms'
 import { Card, CardContent, CardHeader as ShadcnCardHeader, CardTitle } from '@/components/shadcn/card'
 import { DetailedCPUUsage } from './detailed-cpu-usage'
 import { DetailedDiskUsage } from './detailed-disk-usage'
+import { DetailedMemoryUsage } from './detailed-memory-usage'
 import { Badge } from '@/components/shadcn/badge'
+import Link from 'next/link'
 
 export const VMDetails = ({ user }: VMDetailsProps) => {
   const { vm } = useVMContext()
@@ -49,6 +52,8 @@ export const VMDetails = ({ user }: VMDetailsProps) => {
   const cpuCoresPerSocket = getSpecCoresPerSocket(vm) || 0
   const memory = getSpecMemory(vm)
   const memoryInGB = ((memory ?? 0) / 1024 ** 3).toFixed(2)
+  const disks = getVmDisks(vm)
+  const numberOfDisks = disks.length
 
   const id = getVmOperatingSystemId(vm)
   const name = getVmName(vm)
@@ -80,19 +85,6 @@ export const VMDetails = ({ user }: VMDetailsProps) => {
 
   console.log(user)
 
-  const MemoryCard = () => (
-    <Card className='bg-slate-50 dark:bg-slate-900/50'>
-      <ShadcnCardHeader>
-        <CardTitle>Memory</CardTitle>
-      </ShadcnCardHeader>
-      <CardContent>
-        <div className='flex flex-col gap-2'>
-          <span className='text-2xl font-semibold'>{memoryInGB} GB</span>
-        </div>
-      </CardContent>
-    </Card>
-  )
-
   const ConfigurationCard = () => (
     <Card className='bg-slate-50 dark:bg-slate-900/50'>
       <ShadcnCardHeader>
@@ -122,13 +114,27 @@ export const VMDetails = ({ user }: VMDetailsProps) => {
     return <DetailedCPUUsage />
   }
 
+  const MemoryCard = () => {
+    return <DetailedMemoryUsage />
+  }
+
   const DiskCard = () => (
     <Card className='bg-slate-50 dark:bg-slate-900/50'>
       <ShadcnCardHeader>
-        <CardTitle>Disk Usage</CardTitle>
+        <CardTitle>Disks</CardTitle>
       </ShadcnCardHeader>
       <CardContent>
-        <DetailedDiskUsage />
+        <div className='flex flex-col gap-3'>
+          <div className='flex justify-between items-center'>
+            <span className='text-sm text-muted-foreground'>Number of disks:</span>
+            <span className='font-xs'>{numberOfDisks}</span>
+          </div>
+          <div className='flex justify-between items-center'>
+            <Link href={`/vms/${hostName.toLowerCase()}/disks`} className='hover:underline'>
+              <span className='text-sm text-muted-foreground hover:underline'>More information... </span>
+            </Link>
+          </div>
+        </div>
       </CardContent>
     </Card>
   )
@@ -333,11 +339,12 @@ export const VMDetails = ({ user }: VMDetailsProps) => {
           </div>
           <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
             <ConfigurationCard />
-            <MemoryCard />
+            <DiskCard />
+            {/* <MemoryCard /> */}
           </div>
           <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
             <CpuCard />
-            <DiskCard />
+            <MemoryCard />
           </div>
         </div>
         <div className='lg:col-span-1 space-y-4'>
