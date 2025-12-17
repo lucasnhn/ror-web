@@ -30,7 +30,6 @@ import {
   getSpecSockets,
   getSpecCoresPerSocket,
   getVmToolVersion,
-  getSpecMemory,
   getTeamValue,
   VMDetailsProps,
   getTeamDescription,
@@ -41,7 +40,6 @@ import {
 } from '../utils/vms'
 import { Card, CardContent, CardHeader as ShadcnCardHeader, CardTitle } from '@/components/shadcn/card'
 import { DetailedCPUUsage } from './detailed-cpu-usage'
-import { DetailedDiskUsage } from './detailed-disk-usage'
 import { DetailedMemoryUsage } from './detailed-memory-usage'
 import { Badge } from '@/components/shadcn/badge'
 import Link from 'next/link'
@@ -50,8 +48,6 @@ export const VMDetails = ({ user }: VMDetailsProps) => {
   const { vm } = useVMContext()
   const cpuSockets = getSpecSockets(vm) || 0
   const cpuCoresPerSocket = getSpecCoresPerSocket(vm) || 0
-  const memory = getSpecMemory(vm)
-  const memoryInGB = ((memory ?? 0) / 1024 ** 3).toFixed(2)
   const disks = getVmDisks(vm)
   const numberOfDisks = disks.length
 

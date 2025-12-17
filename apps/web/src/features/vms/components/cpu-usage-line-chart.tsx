@@ -23,13 +23,6 @@ interface CpuUsageLineChartProps {
   height?: number
 }
 
-const chartConfig = {
-  cpuUsage: {
-    label: 'CPU Usage (%)',
-    color: '#0c8aca',
-  },
-}
-
 interface UsageLineChartProps {
   vmId: string
   type: 'cpu' | 'memory'
