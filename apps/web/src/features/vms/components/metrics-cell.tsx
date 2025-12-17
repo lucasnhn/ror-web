@@ -296,9 +296,7 @@ export function MetricCell({
           </TooltipTrigger>
           <TooltipContent>{getTooltipContent()}</TooltipContent>
         </Tooltip>
-        <span
-          className={`${type === 'cpu' ? 'w-[4ch]' : 'w-[10ch]'} text-right inline-block text-xs text-muted-foreground whitespace-nowrap tabular-nums`}
-        >
+        <span className='w-[10ch] text-right inline-block text-xs text-muted-foreground whitespace-nowrap tabular-nums'>
           {formatValue(metricValue)}
           {showPercentage && metricLimit && metricValue > 0 && (
             <span className='text-[10px] opacity-70'>({percentage.toFixed(0)}%)</span>
