@@ -93,7 +93,7 @@ export const DiskProgressBars = ({ items }: { items: VirtualMachineDisks[] }) =>
           <div className='flex items-start gap-2'>
             <CheckCircle className='h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0' />
             <div>
-              <h4 className='font-semibold text-green-800 dark:text-green-200 text-sm'>Disk Space Status: OK</h4>
+              <h4 className='font-semibold text-green-800 dark:text-green-200 text-sm'>Disk Space Status: Healthy</h4>
               <p className='text-green-700 dark:text-green-300 text-xs mt-1'>
                 All disks have sufficient free space (less than 80% used). No action required.
               </p>

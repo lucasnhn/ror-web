@@ -22,7 +22,7 @@ export const DetailedDiskUsage = () => {
   return (
     <div className='space-y-6'>
       <div>
-        <ResponsiveContainer width='100%' height={300}>
+        <ResponsiveContainer width='100%' height={400}>
           <BarChart data={chartData} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
             <XAxis dataKey='name' fontSize={12} tickLine={false} axisLine={false} />
             <YAxis fontSize={12} tickLine={false} axisLine={false} tickMargin={8} />
