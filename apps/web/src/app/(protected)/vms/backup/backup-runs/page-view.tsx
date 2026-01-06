@@ -34,6 +34,8 @@ import { BackupRunColumnsData } from '@/features/backup/backup-run/types/backup-
 export const PageView = ({ className, backupRuns, params, backupJobId }: PageViewProps) => {
   const filtersOpen = params.filters === 'open'
   const [isPending, startTransition] = useTransition()
+  const [isServerSearching, setIsServerSearching] = useState(false)
+  const searchAbortControllerRef = useRef<AbortController | null>(null)
 
   const { items, sentinelRef, isLoading, hasMore } = useInfiniteLoader<BackupRun>({
     initial: backupRuns,
@@ -42,6 +44,11 @@ export const PageView = ({ className, backupRuns, params, backupJobId }: PageVie
     getItemId: getBackupRunId,
     getItemsKey: getBackupRunKey,
     loadMore: async (offset, limit) => {
+      // Prevent infinite loading during server search
+      if (isServerSearching) {
+        return { items: [], hasMore: false }
+      }
+
       const res = await loadMoreBackupRuns({
         offset,
         limit,
@@ -69,14 +76,21 @@ export const PageView = ({ className, backupRuns, params, backupJobId }: PageVie
   const [serverSearchResults, setServerSearchResults] = useState<BackupRun[]>([])
   // Initialize search query from backupJobId parameter
   const [searchQuery, setSearchQuery] = useState(backupJobId || '')
-  const debouncedQuery = useDebouncedValue(searchQuery, 120)
+  const debouncedQuery = useDebouncedValue(searchQuery, 800) // Increased debounce to reduce API calls
   const sortedItems = useSorting({ items: filteredItems, sortKey: params.sort, sortOrder: params.order, definitions })
 
   // Enhanced search handler with server-side fallback
   useEffect(() => {
+    // Cancel any ongoing search
+    if (searchAbortControllerRef.current) {
+      searchAbortControllerRef.current.abort()
+      searchAbortControllerRef.current = null
+    }
+
     if (!debouncedQuery.trim()) {
       setSearchResults(safeItems)
       setServerSearchResults([])
+      setIsServerSearching(false)
       return
     }
 
@@ -90,6 +104,7 @@ export const PageView = ({ className, backupRuns, params, backupJobId }: PageVie
     if (exactIdMatch.length > 0) {
       setSearchResults(exactIdMatch)
       setServerSearchResults([])
+      setIsServerSearching(false)
       return
     }
 
@@ -106,31 +121,68 @@ export const PageView = ({ className, backupRuns, params, backupJobId }: PageVie
     if (fuzzyMatches.length > 0) {
       setSearchResults(fuzzyMatches)
       setServerSearchResults([])
+      setIsServerSearching(false)
       return
     }
 
     // If no local matches found, search on the server
+    setIsServerSearching(true)
+
+    // Create new abort controller for this search request
+    searchAbortControllerRef.current = new AbortController()
+    const currentAbortController = searchAbortControllerRef.current
+
     startTransition(async () => {
       try {
+        if (currentAbortController.signal.aborted) return
+
         // Try exact ID search first
         const exactResult = await searchBackupRunById(trimmedQuery)
+
+        if (currentAbortController.signal.aborted) return
+
         if (exactResult) {
           setServerSearchResults([exactResult])
           setSearchResults([])
           return
         }
 
-        // Fall back to general query search
-        const queryResults = await searchBackupRunsByQuery(trimmedQuery, 50)
-        setServerSearchResults(queryResults)
-        setSearchResults([])
+        // For backup job IDs with colons, also try query search (but with reduced limit)
+        if (trimmedQuery.includes(':')) {
+          const queryResults = await searchBackupRunsByQuery(trimmedQuery, 10) // Much smaller limit
+
+          if (currentAbortController.signal.aborted) return
+
+          setServerSearchResults(queryResults)
+          setSearchResults([])
+        } else {
+          setServerSearchResults([])
+          setSearchResults([])
+        }
       } catch (error) {
-        console.error('Server search failed:', error)
-        setServerSearchResults([])
-        setSearchResults([])
+        if (error instanceof Error && error.name !== 'AbortError') {
+          console.error('Server search failed:', error)
+        }
+        if (!currentAbortController.signal.aborted) {
+          setServerSearchResults([])
+          setSearchResults([])
+        }
+      } finally {
+        if (!currentAbortController.signal.aborted) {
+          setIsServerSearching(false)
+        }
       }
     })
   }, [debouncedQuery, safeItems])
+
+  // Cleanup effect to cancel ongoing requests when component unmounts
+  useEffect(() => {
+    return () => {
+      if (searchAbortControllerRef.current) {
+        searchAbortControllerRef.current.abort()
+      }
+    }
+  }, [])
 
   const lastSafeKeyRef = useRef('')
   useEffect(() => {
@@ -151,9 +203,17 @@ export const PageView = ({ className, backupRuns, params, backupJobId }: PageVie
   }, [pathname, router])
 
   const handleRefreshFilters = useCallback(() => {
+    // Cancel any ongoing search
+    if (searchAbortControllerRef.current) {
+      searchAbortControllerRef.current.abort()
+      searchAbortControllerRef.current = null
+    }
+
     resetFilters()
     setSelectedDisplayData([])
     setServerSearchResults([])
+    setIsServerSearching(false)
+    setSearchQuery('')
     clearUrl()
   }, [resetFilters, setSelectedDisplayData, clearUrl])
 
@@ -176,16 +236,15 @@ export const PageView = ({ className, backupRuns, params, backupJobId }: PageVie
           <Input
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder={isPending ? 'Searching...' : 'Search backup runs...'}
+            placeholder={isServerSearching ? 'Searching...' : isPending ? 'Processing...' : 'Search on backups...'}
             aria-label='Search backup runs...'
-            icon={<Search className='w-4 h-4' />}
+            icon={<Search className={cn('w-4 h-4', isServerSearching && 'animate-spin')} />}
             iconPosition='left'
-            disabled={isPending}
+            disabled={isPending || isServerSearching}
           />
-          {serverSearchResults.length > 0 && (
-            <div className='absolute -bottom-6 left-0 text-xs text-muted-foreground'>
-              Found {serverSearchResults.length} result(s) from server
-            </div>
+          {isServerSearching && <div className='absolute -bottom-6 left-0 text-xs text-orange-500'>Searching...</div>}
+          {debouncedQuery && !isServerSearching && searchResults.length === 0 && serverSearchResults.length === 0 && (
+            <div className='absolute -bottom-6 left-0 text-xs text-muted-foreground'>No results found</div>
           )}
         </div>
         <SortSelect options={sortingOptionsBackupRun} currentSort={params.sort} />
@@ -195,6 +254,7 @@ export const PageView = ({ className, backupRuns, params, backupJobId }: PageVie
           aria-label='Reset filters'
           title='Reset filters'
           className='gap-2'
+          disabled={isServerSearching}
         >
           <RotateCw className='h-4 w-4' />
           Refresh
@@ -209,9 +269,9 @@ export const PageView = ({ className, backupRuns, params, backupJobId }: PageVie
         <DataTable
           data={displayedItems}
           columns={getBackupRunTableColumns()}
-          hasMore={hasMore}
-          isLoading={isLoading}
-          sentinelRef={sentinelRef}
+          hasMore={!isServerSearching && hasMore} // Freeze infinite scroll during server search
+          isLoading={isLoading || isServerSearching}
+          sentinelRef={!isServerSearching ? sentinelRef : undefined} // Disable sentinel during server search
         />
       </div>
     )
