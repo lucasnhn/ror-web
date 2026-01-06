@@ -15,6 +15,7 @@ interface IdListTooltipProps {
 
 export const IdListTooltip = ({ ids, label, triggerText, triggerElement }: IdListTooltipProps) => {
   const displayText = triggerText || `View ${label.toLowerCase()}`
+  const countIds = ids.length
 
   return (
     <TooltipProvider>
@@ -24,7 +25,7 @@ export const IdListTooltip = ({ ids, label, triggerText, triggerElement }: IdLis
           <div className='space-y-2 max-w-xs'>
             <div className='font-semibold text-sm'>{label}:</div>
             <div className='space-y-1'>
-              {ids.map((item, index) => {
+              {ids.slice(0, 3).map((item, index) => {
                 const id = typeof item === 'string' ? item : item.id
                 const href = typeof item === 'string' ? undefined : item.href
 
@@ -45,6 +46,7 @@ export const IdListTooltip = ({ ids, label, triggerText, triggerElement }: IdLis
                   </div>
                 )
               })}
+              {countIds > 3 && <div className='font-mono text-xs text-gray-500 italic'>{countIds - 3} more runs</div>}
             </div>
           </div>
         </TooltipContent>
@@ -53,7 +55,6 @@ export const IdListTooltip = ({ ids, label, triggerText, triggerElement }: IdLis
   )
 }
 
-// Keep the old component for backward compatibility
 export const ActiveTargetsTooltip = ({
   ids,
   triggerElement,
