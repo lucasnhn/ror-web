@@ -1,13 +1,13 @@
 'use client'
 
 import { useVMContext } from '@/context/vm-context'
-import { getStatusCpuUsage, getSpecCpuTotal, getVmUniqueKey } from '../utils/vms'
-import { CpuUsageLineChart } from './cpu-usage-line-chart'
+import { getSpecMemory, getStatusMemoryUsage, getVmUniqueKey } from '../utils/vms'
+import { MemoryUsageLineChart } from './cpu-usage-line-chart'
 import { Card, CardContent } from '@/components/shadcn/card'
 
-export const DetailedCPUUsage = () => {
+export const DetailedMemoryUsage = () => {
   const { vm } = useVMContext()
-  const currentCpuUsage = getStatusCpuUsage(vm)
+  const currentMemoryUsage = getStatusMemoryUsage(vm)
   const vmId = getVmUniqueKey(vm)
 
   if (!vm) {
@@ -20,13 +20,18 @@ export const DetailedCPUUsage = () => {
     )
   }
 
-  const cpuSize = getSpecCpuTotal(vm)
+  const memorySize = getSpecMemory(vm)
 
   return (
     <div className='space-y-6'>
       <Card className='bg-slate-50 dark:bg-slate-900/50'>
         <CardContent className='p-4 pt-0'>
-          <CpuUsageLineChart vmId={vmId} currentCpuUsage={currentCpuUsage} cpuSize={cpuSize} height={350} />
+          <MemoryUsageLineChart
+            vmId={vmId}
+            currentMemoryUsage={currentMemoryUsage}
+            memorySize={memorySize}
+            height={350}
+          />
         </CardContent>
       </Card>
     </div>
