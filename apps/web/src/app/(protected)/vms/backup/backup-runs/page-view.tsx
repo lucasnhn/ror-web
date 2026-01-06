@@ -35,7 +35,9 @@ export const PageView = ({ className, backupRuns, params, backupJobId }: PageVie
   const filtersOpen = params.filters === 'open'
   const [isPending, startTransition] = useTransition()
   const [isServerSearching, setIsServerSearching] = useState(false)
+  const [isSearchFrozen, setIsSearchFrozen] = useState(false) // New state to freeze the UI
   const searchAbortControllerRef = useRef<AbortController | null>(null)
+  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   const { items, sentinelRef, isLoading, hasMore } = useInfiniteLoader<BackupRun>({
     initial: backupRuns,
@@ -44,8 +46,8 @@ export const PageView = ({ className, backupRuns, params, backupJobId }: PageVie
     getItemId: getBackupRunId,
     getItemsKey: getBackupRunKey,
     loadMore: async (offset, limit) => {
-      // Prevent infinite loading during server search
-      if (isServerSearching) {
+      // Prevent infinite loading during server search or when frozen
+      if (isServerSearching || isSearchFrozen) {
         return { items: [], hasMore: false }
       }
 
@@ -81,16 +83,21 @@ export const PageView = ({ className, backupRuns, params, backupJobId }: PageVie
 
   // Enhanced search handler with server-side fallback
   useEffect(() => {
-    // Cancel any ongoing search
+    // Cancel any ongoing search and timers
     if (searchAbortControllerRef.current) {
       searchAbortControllerRef.current.abort()
       searchAbortControllerRef.current = null
+    }
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current)
+      searchTimeoutRef.current = null
     }
 
     if (!debouncedQuery.trim()) {
       setSearchResults(safeItems)
       setServerSearchResults([])
       setIsServerSearching(false)
+      setIsSearchFrozen(false)
       return
     }
 
@@ -105,6 +112,7 @@ export const PageView = ({ className, backupRuns, params, backupJobId }: PageVie
       setSearchResults(exactIdMatch)
       setServerSearchResults([])
       setIsServerSearching(false)
+      setIsSearchFrozen(false)
       return
     }
 
@@ -122,11 +130,18 @@ export const PageView = ({ className, backupRuns, params, backupJobId }: PageVie
       setSearchResults(fuzzyMatches)
       setServerSearchResults([])
       setIsServerSearching(false)
+      setIsSearchFrozen(false)
       return
     }
 
     // If no local matches found, search on the server
     setIsServerSearching(true)
+    setIsSearchFrozen(true) // Freeze the UI immediately
+
+    // Set a 5-second timeout to unfreeze the UI
+    searchTimeoutRef.current = setTimeout(() => {
+      setIsSearchFrozen(false)
+    }, 5000)
 
     // Create new abort controller for this search request
     searchAbortControllerRef.current = new AbortController()
@@ -170,6 +185,7 @@ export const PageView = ({ className, backupRuns, params, backupJobId }: PageVie
       } finally {
         if (!currentAbortController.signal.aborted) {
           setIsServerSearching(false)
+          // Don't unfreeze here, let the timeout handle it
         }
       }
     })
@@ -180,6 +196,9 @@ export const PageView = ({ className, backupRuns, params, backupJobId }: PageVie
     return () => {
       if (searchAbortControllerRef.current) {
         searchAbortControllerRef.current.abort()
+      }
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current)
       }
     }
   }, [])
@@ -203,16 +222,21 @@ export const PageView = ({ className, backupRuns, params, backupJobId }: PageVie
   }, [pathname, router])
 
   const handleRefreshFilters = useCallback(() => {
-    // Cancel any ongoing search
+    // Cancel any ongoing search and timers
     if (searchAbortControllerRef.current) {
       searchAbortControllerRef.current.abort()
       searchAbortControllerRef.current = null
+    }
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current)
+      searchTimeoutRef.current = null
     }
 
     resetFilters()
     setSelectedDisplayData([])
     setServerSearchResults([])
     setIsServerSearching(false)
+    setIsSearchFrozen(false)
     setSearchQuery('')
     clearUrl()
   }, [resetFilters, setSelectedDisplayData, clearUrl])
@@ -238,14 +262,19 @@ export const PageView = ({ className, backupRuns, params, backupJobId }: PageVie
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={isServerSearching ? 'Searching...' : isPending ? 'Processing...' : 'Search on backups...'}
             aria-label='Search backup runs...'
-            icon={<Search className={cn('w-4 h-4', isServerSearching && 'animate-spin')} />}
+            icon={<Search className={cn('w-4 h-4', isServerSearching || isSearchFrozen)} />}
             iconPosition='left'
-            disabled={isPending || isServerSearching}
           />
-          {isServerSearching && <div className='absolute -bottom-6 left-0 text-xs text-orange-500'>Searching...</div>}
-          {debouncedQuery && !isServerSearching && searchResults.length === 0 && serverSearchResults.length === 0 && (
-            <div className='absolute -bottom-6 left-0 text-xs text-muted-foreground'>No results found</div>
+          {isServerSearching && !isSearchFrozen && (
+            <div className='absolute -bottom-6 left-0 text-xs'>Searching...</div>
           )}
+          {debouncedQuery &&
+            !isServerSearching &&
+            !isSearchFrozen &&
+            searchResults.length === 0 &&
+            serverSearchResults.length === 0 && (
+              <div className='absolute -bottom-6 left-0 text-xs text-muted-foreground'>No results found</div>
+            )}
         </div>
         <SortSelect options={sortingOptionsBackupRun} currentSort={params.sort} />
         <Button
@@ -254,7 +283,6 @@ export const PageView = ({ className, backupRuns, params, backupJobId }: PageVie
           aria-label='Reset filters'
           title='Reset filters'
           className='gap-2'
-          disabled={isServerSearching}
         >
           <RotateCw className='h-4 w-4' />
           Refresh
