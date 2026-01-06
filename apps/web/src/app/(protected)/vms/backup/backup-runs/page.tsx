@@ -32,10 +32,7 @@ export default async function BackupRunPage({
   // Extract backupJobId from search parameters
   const backupJobId = typeof sp.backupJobId === 'string' ? sp.backupJobId : undefined
 
-  // Fetch all data at once (no pagination for non-infinite loading)
-  const modifiedParams = { ...params, fetchAll: true }
-
-  const [fetchedBackupRuns] = await Promise.all([fetchBackupRuns(api, modifiedParams)])
+  const [fetchedBackupRuns] = await Promise.all([fetchBackupRuns(api, params)])
 
   const backupRuns = fetchedBackupRuns.backupRuns || []
 

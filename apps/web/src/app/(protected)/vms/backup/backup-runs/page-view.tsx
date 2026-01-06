@@ -13,9 +13,12 @@ import {
 import { useDebouncedValue } from '@/hooks/use-debounced-value'
 import { useDisplayData } from '@/hooks/use-display-data'
 import { useFilters } from '@/hooks/use-filters'
+import { useInfiniteLoader } from '@/hooks/use-infinite-loader'
 import { SortDefinition, useSorting } from '@/hooks/use-sorting'
+import { loadMoreBackupRuns } from '@/utils/backup-run-actions'
+import { searchBackupRunById, searchBackupRunsByQuery } from '@/utils/backup-search-actions'
 import { BackupRun } from '@ror/js-api-client'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { RotateCw, Search } from 'lucide-react'
 import { Input } from '@/components/shadcn/input'
@@ -30,8 +33,26 @@ import { BackupRunColumnsData } from '@/features/backup/backup-run/types/backup-
 
 export const PageView = ({ className, backupRuns, params, backupJobId }: PageViewProps) => {
   const filtersOpen = params.filters === 'open'
+  const [isPending, startTransition] = useTransition()
 
-  const safeItems = useMemo(() => backupRuns.filter((c) => getBackupRunId(c)), [backupRuns])
+  const { items, sentinelRef, isLoading, hasMore } = useInfiniteLoader<BackupRun>({
+    initial: backupRuns,
+    sort: params.sort,
+    pageSize: 50,
+    getItemId: getBackupRunId,
+    getItemsKey: getBackupRunKey,
+    loadMore: async (offset, limit) => {
+      const res = await loadMoreBackupRuns({
+        offset,
+        limit,
+        sort: params.sort,
+        order: params.order,
+      })
+      return { items: res.items ?? [], hasMore: res.hasMore }
+    },
+  })
+
+  const safeItems = useMemo(() => items.filter((c) => getBackupRunId(c)), [items])
 
   const filterDefinitions = [{ key: 'source', extractor: (backupRun: BackupRun) => getBackupRunSource(backupRun) }]
   const definitions: SortDefinition<BackupRun>[] = [
@@ -45,39 +66,70 @@ export const PageView = ({ className, backupRuns, params, backupJobId }: PageVie
   const { filteredItems, resetFilters } = useFilters<BackupRun>(safeItems, filterDefinitions)
   const { setSelectedDisplayData } = useDisplayData<BackupRunColumnsData>('backup-runs')
   const [searchResults, setSearchResults] = useState<BackupRun[]>(safeItems)
+  const [serverSearchResults, setServerSearchResults] = useState<BackupRun[]>([])
   // Initialize search query from backupJobId parameter
   const [searchQuery, setSearchQuery] = useState(backupJobId || '')
   const debouncedQuery = useDebouncedValue(searchQuery, 120)
   const sortedItems = useSorting({ items: filteredItems, sortKey: params.sort, sortOrder: params.order, definitions })
 
-  // Custom search handler for exact ID matching
+  // Enhanced search handler with server-side fallback
   useEffect(() => {
     if (!debouncedQuery.trim()) {
       setSearchResults(safeItems)
+      setServerSearchResults([])
       return
     }
 
     const trimmedQuery = debouncedQuery.trim()
 
+    // First, try exact ID match in loaded data
     const exactIdMatch = safeItems.filter(
       (item) => getBackupRunId(item) === trimmedQuery || getBackupRunMappedBackupJobId(item) === trimmedQuery
     )
 
     if (exactIdMatch.length > 0) {
       setSearchResults(exactIdMatch)
+      setServerSearchResults([])
       return
     }
 
-    // If no exact ID match, do fuzzy search directly here
+    // If no exact ID match, do fuzzy search in loaded data
     const fuzzyMatches = safeItems.filter((item) => {
       const id = getBackupRunId(item).toLowerCase()
       const source = getBackupRunSource(item).toLowerCase()
+      const backupJobId = getBackupRunMappedBackupJobId(item).toLowerCase()
       const queryLower = trimmedQuery.toLowerCase()
 
-      return id.includes(queryLower) || source.includes(queryLower)
+      return id.includes(queryLower) || source.includes(queryLower) || backupJobId.includes(queryLower)
     })
 
-    setSearchResults(fuzzyMatches)
+    if (fuzzyMatches.length > 0) {
+      setSearchResults(fuzzyMatches)
+      setServerSearchResults([])
+      return
+    }
+
+    // If no local matches found, search on the server
+    startTransition(async () => {
+      try {
+        // Try exact ID search first
+        const exactResult = await searchBackupRunById(trimmedQuery)
+        if (exactResult) {
+          setServerSearchResults([exactResult])
+          setSearchResults([])
+          return
+        }
+
+        // Fall back to general query search
+        const queryResults = await searchBackupRunsByQuery(trimmedQuery, 50)
+        setServerSearchResults(queryResults)
+        setSearchResults([])
+      } catch (error) {
+        console.error('Server search failed:', error)
+        setServerSearchResults([])
+        setSearchResults([])
+      }
+    })
   }, [debouncedQuery, safeItems])
 
   const lastSafeKeyRef = useRef('')
@@ -87,6 +139,7 @@ export const PageView = ({ className, backupRuns, params, backupJobId }: PageVie
       lastSafeKeyRef.current = nextKey
       if (!debouncedQuery.trim()) {
         setSearchResults(safeItems)
+        setServerSearchResults([])
       }
     }
   }, [safeItems, debouncedQuery])
@@ -100,26 +153,41 @@ export const PageView = ({ className, backupRuns, params, backupJobId }: PageVie
   const handleRefreshFilters = useCallback(() => {
     resetFilters()
     setSelectedDisplayData([])
+    setServerSearchResults([])
     clearUrl()
   }, [resetFilters, setSelectedDisplayData, clearUrl])
 
   const displayedItems = useMemo(() => {
-    if (!searchResults.length) return safeItems
+    // If we have server search results, use those exclusively
+    if (serverSearchResults.length > 0) {
+      return serverSearchResults
+    }
+
+    // Otherwise use local search results filtered by sorted items
+    if (!searchResults.length) return sortedItems
     const ids = new Set(searchResults.map(getBackupRunId))
     return sortedItems.filter((c) => ids.has(getBackupRunId(c)))
-  }, [safeItems, searchResults, sortedItems])
+  }, [safeItems, searchResults, serverSearchResults, sortedItems])
 
   const renderControls = () => (
     <div className='flex flex-wrap items-center justify-between w-full gap-4 [@container(max-width:1000px)]:flex-col [@container(max-width:1000px)]:items-start [@container(max-width:1000px)]:gap-6'>
       <div className='flex flex-wrap items-center gap-x-4 gap-y-6'>
-        <Input
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder='Search backup runs...'
-          aria-label='Search backup runs...'
-          icon={<Search className='w-4 h-4' />}
-          iconPosition='left'
-        />
+        <div className='relative'>
+          <Input
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder={isPending ? 'Searching...' : 'Search backup runs...'}
+            aria-label='Search backup runs...'
+            icon={<Search className='w-4 h-4' />}
+            iconPosition='left'
+            disabled={isPending}
+          />
+          {serverSearchResults.length > 0 && (
+            <div className='absolute -bottom-6 left-0 text-xs text-muted-foreground'>
+              Found {serverSearchResults.length} result(s) from server
+            </div>
+          )}
+        </div>
         <SortSelect options={sortingOptionsBackupRun} currentSort={params.sort} />
         <Button
           type='button'
@@ -138,7 +206,13 @@ export const PageView = ({ className, backupRuns, params, backupJobId }: PageVie
   const TableView = () => {
     return (
       <div>
-        <DataTable data={displayedItems} columns={getBackupRunTableColumns()} />
+        <DataTable
+          data={displayedItems}
+          columns={getBackupRunTableColumns()}
+          hasMore={hasMore}
+          isLoading={isLoading}
+          sentinelRef={sentinelRef}
+        />
       </div>
     )
   }
