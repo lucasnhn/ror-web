@@ -1,6 +1,6 @@
 'use client'
 
-import { BackupJob } from '@ror/js-api-client'
+import { BackupJob, BackupRun } from '@ror/js-api-client'
 import { createColumnHelper } from '@tanstack/react-table'
 import { DataTableColumnDef } from '@/components/ui/data-table'
 import {
@@ -12,13 +12,14 @@ import {
   getBackupJobActiveTargets,
   BackupActiveTarget,
 } from '@/features/vms/backup/utils/backup-job'
+import { getBackupRunId } from '@/features/vms/backup/utils/backup-run'
 import Link from 'next/link'
 import React from 'react'
 import { ActiveTargetsTooltip, IdListTooltip } from '../../utils/active-targets-tooltip'
 
 const columnHelper = createColumnHelper<BackupJob>()
 
-export const getBackupJobTableColumns = (): DataTableColumnDef<BackupJob>[] => {
+export const getBackupJobTableColumns = (backupRuns?: BackupRun[]): DataTableColumnDef<BackupJob>[] => {
   return [
     columnHelper.accessor(
       (row) => {
@@ -120,7 +121,11 @@ export const getBackupJobTableColumns = (): DataTableColumnDef<BackupJob>[] => {
     columnHelper.accessor(
       (row) => {
         const backupRunIds = getBackupJobAllRunIds(row)
-        return backupRunIds
+        if (!backupRuns) return backupRunIds
+
+        // Filter to only show backup run IDs that exist in the actual backup runs data
+        const existingBackupRunIds = backupRuns.map((run) => getBackupRunId(run))
+        return backupRunIds.filter((id) => existingBackupRunIds.includes(id))
       },
       {
         id: 'backupRunIds',
