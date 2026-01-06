@@ -258,7 +258,7 @@ export const PageView = ({ className, backupRuns, params, backupJobId }: PageVie
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={isServerSearching ? 'Searching...' : isPending ? 'Processing...' : 'Search backups...'}
             aria-label='Search backup runs...'
-            icon={<Search className={cn('w-4 h-4', isServerSearching || isSearchFrozen)} />}
+            icon={<Search className='w-4 h-4' />}
             iconPosition='left'
           />
           {isServerSearching && !isSearchFrozen && (
