@@ -176,13 +176,7 @@ export const PageView = ({ className, backupJobs, backupRuns, params }: PageView
             placeholder={isPending ? 'Searching...' : 'Search backup jobs...'}
             icon={<Search className='w-4 h-4' />}
             iconPosition='left'
-            disabled={isPending}
           />
-          {serverSearchResults.length > 0 && (
-            <div className='absolute -bottom-6 left-0 text-xs text-muted-foreground'>
-              Found {serverSearchResults.length} result(s) from server
-            </div>
-          )}
         </div>
         <SortSelect options={sortingOptionsBackupJob} currentSort={params.sort} />
         <Button
