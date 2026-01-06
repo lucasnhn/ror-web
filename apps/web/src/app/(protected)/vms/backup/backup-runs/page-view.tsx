@@ -44,7 +44,7 @@ export const PageView = ({ className, backupRuns, params, backupJobId }: PageVie
 
   const { filteredItems, resetFilters } = useFilters<BackupRun>(safeItems, filterDefinitions)
   const { setSelectedDisplayData } = useDisplayData<BackupRunColumnsData>('backup-runs')
-  const [searchResults, setSearchResults] = useState<BackupRun[]>([])
+  const [searchResults, setSearchResults] = useState<BackupRun[]>(safeItems)
   // Initialize search query from backupJobId parameter
   const [searchQuery, setSearchQuery] = useState(backupJobId || '')
   const debouncedQuery = useDebouncedValue(searchQuery, 120)
@@ -104,10 +104,10 @@ export const PageView = ({ className, backupRuns, params, backupJobId }: PageVie
   }, [resetFilters, setSelectedDisplayData, clearUrl])
 
   const displayedItems = useMemo(() => {
-    if (!searchResults?.length) return sortedItems
+    if (!searchResults.length) return safeItems
     const ids = new Set(searchResults.map(getBackupRunId))
     return sortedItems.filter((c) => ids.has(getBackupRunId(c)))
-  }, [searchResults, sortedItems])
+  }, [safeItems, searchResults, sortedItems])
 
   const renderControls = () => (
     <div className='flex flex-wrap items-center justify-between w-full gap-4 [@container(max-width:1000px)]:flex-col [@container(max-width:1000px)]:items-start [@container(max-width:1000px)]:gap-6'>
