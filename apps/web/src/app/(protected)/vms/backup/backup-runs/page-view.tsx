@@ -16,7 +16,7 @@ import { useFilters } from '@/hooks/use-filters'
 import { useInfiniteLoader } from '@/hooks/use-infinite-loader'
 import { SortDefinition, useSorting } from '@/hooks/use-sorting'
 import { loadMoreBackupRuns } from '@/utils/backup-run-actions'
-import { searchBackupRunById, searchBackupRunsByQuery } from '@/utils/backup-search-actions'
+import { searchBackupRunById, searchBackupRunsByQuery } from '@/utils/backup-run-search-actions'
 import { BackupRun } from '@ror/js-api-client'
 import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
@@ -35,7 +35,7 @@ export const PageView = ({ className, backupRuns, params, backupJobId }: PageVie
   const filtersOpen = params.filters === 'open'
   const [isPending, startTransition] = useTransition()
   const [isServerSearching, setIsServerSearching] = useState(false)
-  const [isSearchFrozen, setIsSearchFrozen] = useState(false) // New state to freeze the UI
+  const [isSearchFrozen, setIsSearchFrozen] = useState(false)
   const searchAbortControllerRef = useRef<AbortController | null>(null)
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
@@ -46,11 +46,9 @@ export const PageView = ({ className, backupRuns, params, backupJobId }: PageVie
     getItemId: getBackupRunId,
     getItemsKey: getBackupRunKey,
     loadMore: async (offset, limit) => {
-      // Prevent infinite loading during server search or when frozen
       if (isServerSearching || isSearchFrozen) {
         return { items: [], hasMore: false }
       }
-
       const res = await loadMoreBackupRuns({
         offset,
         limit,
@@ -78,12 +76,11 @@ export const PageView = ({ className, backupRuns, params, backupJobId }: PageVie
   const [serverSearchResults, setServerSearchResults] = useState<BackupRun[]>([])
   // Initialize search query from backupJobId parameter
   const [searchQuery, setSearchQuery] = useState(backupJobId || '')
-  const debouncedQuery = useDebouncedValue(searchQuery, 800) // Increased debounce to reduce API calls
+  const debouncedQuery = useDebouncedValue(searchQuery, 800)
   const sortedItems = useSorting({ items: filteredItems, sortKey: params.sort, sortOrder: params.order, definitions })
 
   // Enhanced search handler with server-side fallback
   useEffect(() => {
-    // Cancel any ongoing search and timers
     if (searchAbortControllerRef.current) {
       searchAbortControllerRef.current.abort()
       searchAbortControllerRef.current = null
@@ -136,7 +133,7 @@ export const PageView = ({ className, backupRuns, params, backupJobId }: PageVie
 
     // If no local matches found, search on the server
     setIsServerSearching(true)
-    setIsSearchFrozen(true) // Freeze the UI immediately
+    setIsSearchFrozen(true)
 
     // Set a 5-second timeout to unfreeze the UI
     searchTimeoutRef.current = setTimeout(() => {
@@ -164,7 +161,7 @@ export const PageView = ({ className, backupRuns, params, backupJobId }: PageVie
 
         // For backup job IDs with colons, also try query search (but with reduced limit)
         if (trimmedQuery.includes(':')) {
-          const queryResults = await searchBackupRunsByQuery(trimmedQuery, 10) // Much smaller limit
+          const queryResults = await searchBackupRunsByQuery(trimmedQuery, 10)
 
           if (currentAbortController.signal.aborted) return
 
@@ -185,7 +182,6 @@ export const PageView = ({ className, backupRuns, params, backupJobId }: PageVie
       } finally {
         if (!currentAbortController.signal.aborted) {
           setIsServerSearching(false)
-          // Don't unfreeze here, let the timeout handle it
         }
       }
     })
