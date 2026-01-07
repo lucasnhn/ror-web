@@ -40,6 +40,7 @@ export const powerStateOptions: Option[] = [
 export const backupStatusOptions: Option[] = [
   { value: 'activeBackup', label: 'Active Backup' },
   { value: 'historicalBackup', label: 'Historical Backup' },
+  { value: 'configuredBackup', label: 'Configured Backup' },
   { value: 'noBackup', label: 'No Backup' },
   // TODO: Implement these statuses in the future
   // { value: 'inProgress', label: 'In Progress' },

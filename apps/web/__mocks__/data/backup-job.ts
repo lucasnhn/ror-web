@@ -243,5 +243,75 @@ export const mockBackupJobs = {
         },
       },
     },
+    {
+      kind: 'BackupJob',
+      apiVersion: 'backup.ror.internal/v1alpha1',
+      metadata: {
+        name: '4923908281402464:1614676439887:11158778',
+        uid: '3a7cecdb-2587-5444-ad7e-3405506cc790',
+      },
+      rormeta: {
+        ownerref: {
+          scope: 'ror',
+          subject: 'globalscope',
+        },
+        action: 'Add',
+      },
+      backupjob: {
+        id: '4923908281402464:1614676439887:11158778',
+        provider: 'cohesity',
+        source: 'mtr1-bck-ccl01.drift.nhn.no',
+        status: {
+          resourceBackupJobSpec: {
+            name: 'tr1-vs-nhn-12h-single-vm',
+            status: 'active',
+            policyId: '4923908281402464:1614676439887:3153',
+            schedules: [
+              {
+                startTime: '12:00',
+                endTime: 'none',
+                frequency: 12,
+                unit: 'Hours',
+                retention: {
+                  duration: 14,
+                  unit: 'Days',
+                },
+                destination: {
+                  name: 'mtr1-bck-ccl01.drift.nhn.no',
+                  id: '',
+                  type: 'local',
+                  status: 'active',
+                },
+              },
+            ],
+            activeTargets: [
+              {
+                name: 'Mock-Virtual-machine-8',
+                id: '2515',
+                externalId: '501425ca-4dd7-1950-f259-3e53d087a38',
+                source: {
+                  name: 'm-trd-vcenter-02.drift.nhn.no',
+                  id: '193',
+                  uuid: '3acf4419-4708-4869-b7a5-28edc591fe2a',
+                  type: 'kVCenter',
+                },
+              },
+            ],
+            indirectBackupTargets: null,
+          },
+          location: 'OSL1',
+          policyName: 'Frequent-12H',
+          backupRunIds: [],
+        },
+        spec: {
+          name: '',
+          status: '',
+          policyId: '',
+          schedules: [],
+          activeTargets: [],
+          indirectBackupTargets: [],
+        },
+      },
+    },
   ],
 }
