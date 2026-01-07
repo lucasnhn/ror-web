@@ -121,24 +121,20 @@ export const getBackupJobTableColumns = (backupRuns?: BackupRun[]): DataTableCol
     columnHelper.accessor(
       (row) => {
         const backupRunIds = getBackupJobAllRunIds(row)
-        //return backupRunIds
-        const existingBackupRunIds = backupRuns?.map((run) => getBackupRunId(run)) || []
-        const filteredIds = backupRunIds.filter((id) => existingBackupRunIds.includes(id))
-
-        return filteredIds
+        return backupRunIds
       },
       {
         id: 'backupRunIds',
         header: 'Backup run IDs',
         enableSorting: false,
         cell: (info) => {
-          const filteredIds = info.getValue()
-          if (!filteredIds || filteredIds.length === 0) {
+          const backupRunIds = info.getValue()
+          if (!backupRunIds || backupRunIds.length === 0) {
             return 'No backup runs'
           }
           const backupJobId = getBackupJobId(info.row.original)
           return React.createElement(IdListTooltip, {
-            ids: filteredIds,
+            ids: backupRunIds,
             label: 'Backup Run IDs',
             triggerElement: React.createElement(
               Link,
@@ -146,7 +142,7 @@ export const getBackupJobTableColumns = (backupRuns?: BackupRun[]): DataTableCol
                 href: `/vms/backup/backup-runs?backupJobId=${backupJobId}`,
                 className: 'text-blue-600 hover:underline',
               },
-              `${filteredIds.length} backup runs`
+              `View Backup Runs`
             ),
           })
         },
