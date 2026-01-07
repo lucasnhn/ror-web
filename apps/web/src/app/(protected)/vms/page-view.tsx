@@ -92,7 +92,7 @@ export const PageView = ({ className, vms, params }: PageViewProps) => {
       extractor: (vm: VirtualMachine | VMWithBackupStatus) => {
         if ('backupStatus' in vm) {
           const backupStatus = vm.backupStatus as { hasBackupJob: boolean; hasBackupRun: boolean }
-          if (backupStatus.hasBackupJob) return 'activeBackup'
+          if (backupStatus.hasBackupJob && backupStatus.hasBackupRun) return 'activeBackup'
           if (backupStatus.hasBackupRun) return 'historicalBackup'
           return 'noBackup'
         }
@@ -118,7 +118,7 @@ export const PageView = ({ className, vms, params }: PageViewProps) => {
       extractor: (vm) => {
         if ('backupStatus' in vm) {
           const backupStatus = vm.backupStatus as { hasBackupJob: boolean; hasBackupRun: boolean }
-          if (backupStatus.hasBackupJob) return 1 // Active backup
+          if (backupStatus.hasBackupJob && backupStatus.hasBackupRun) return 1 // Active backup
           if (backupStatus.hasBackupRun) return 2 // Historical backup
           return 3 // No backup
         }
@@ -128,7 +128,7 @@ export const PageView = ({ className, vms, params }: PageViewProps) => {
         const getBackupPriority = (vm: VirtualMachine | VMWithBackupStatus) => {
           if ('backupStatus' in vm) {
             const backupStatus = vm.backupStatus as { hasBackupJob: boolean; hasBackupRun: boolean }
-            if (backupStatus.hasBackupJob) return 1 // Active backup (highest priority)
+            if (backupStatus.hasBackupJob && backupStatus.hasBackupRun) return 1 // Active backup (highest priority)
             if (backupStatus.hasBackupRun) return 2 // Historical backup
             return 3 // No backup (lowest priority)
           }
