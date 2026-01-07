@@ -46,7 +46,7 @@ const BackupInfoItem = ({ icon, label, value }: BackupInfoItemProps) => {
 
 const NoBackupDisplay = () => (
   <div className='mt-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800/50'>
-    <h5 className='font-semibold text-sm text-gray-700 dark:text-gray-300 tracking-wide '>Backup Status</h5>
+    <h5 className='font-semibold text-sm text-gray-700 dark:text-gray-300 tracking-wide '>Backup status</h5>
     <div className='flex items-center justify-center'>
       <div className='text-center space-y-2'>
         <div className='w-10 h-10 bg-gray-200 dark:bg-gray-600 rounded-full flex items-center justify-center mx-auto'>
@@ -75,7 +75,7 @@ const NoBackupTableDisplay = () => (
     <Tooltip>
       <TooltipTrigger asChild>
         <div>
-          <Pill className='bg-gray-100 text-gray-800 border-gray-200 cursor-pointer'>No Backup</Pill>
+          <Pill className='bg-gray-100 text-gray-800 border-gray-200 cursor-pointer'>No backup</Pill>
         </div>
       </TooltipTrigger>
       <TooltipContent>
@@ -143,7 +143,7 @@ export const BackupStatusTableDisplay = ({ vm }: BackupStatusDisplayProps) => {
             ) : isHistorical ? (
               <Pill className='bg-orange-100 text-orange-800 border-orange-200 cursor-pointer'>Historical</Pill>
             ) : (
-              <Pill className='bg-gray-100 text-gray-800 border-gray-200 cursor-pointer'>No Backup</Pill>
+              <Pill className='bg-gray-100 text-gray-800 border-gray-200 cursor-pointer'>No backup</Pill>
             )}
           </div>
         </TooltipTrigger>
@@ -220,7 +220,7 @@ export const BackupStatusDisplay = ({ vm, className }: BackupStatusDisplayProps)
         {isConfigured && <span className='w-2 h-2 bg-blue-400 rounded-full mr-2'></span>}
         {isActive && !isConfigured && <span className='w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse'></span>}
         {isHistorical && <span className='w-2 h-2 bg-orange-400 rounded-full mr-2'></span>}
-        {isConfigured && !backupStatus.hasBackupRun ? 'Backup Configuration' : 'Last Backup'}
+        {isConfigured && !backupStatus.hasBackupRun ? 'Backup configured' : 'Last backup'}
       </h5>
 
       <div className='grid grid-cols-1 gap-2 text-xs'>
