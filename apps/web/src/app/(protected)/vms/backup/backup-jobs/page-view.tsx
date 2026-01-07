@@ -28,7 +28,7 @@ import { RotateCw, Search } from 'lucide-react'
 import { useDebouncedValue } from '@/hooks/use-debounced-value'
 import { Button } from '@/components/shadcn/button'
 
-export const PageView = ({ className, backupJobs, backupRuns, params }: PageViewProps) => {
+export const PageView = ({ className, backupJobs, params }: PageViewProps) => {
   const filtersOpen = params.filters === 'open'
   const [isPending, startTransition] = useTransition()
 
@@ -198,7 +198,7 @@ export const PageView = ({ className, backupJobs, backupRuns, params }: PageView
       <div>
         <DataTable
           data={displayedItems}
-          columns={getBackupJobTableColumns(backupRuns)}
+          columns={getBackupJobTableColumns()}
           hasMore={hasMore}
           isLoading={isLoading}
           sentinelRef={sentinelRef}
