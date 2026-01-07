@@ -121,24 +121,46 @@ export const getBackupJobTableColumns = (backupRuns?: BackupRun[]): DataTableCol
     columnHelper.accessor(
       (row) => {
         const backupRunIds = getBackupJobAllRunIds(row)
-        if (!backupRuns) return backupRunIds
+
+        if (!backupRuns) {
+          return {
+            allIds: backupRunIds,
+            existingIds: backupRunIds,
+          }
+        }
 
         // Filter to only show backup run IDs that exist in the actual backup runs data
         const existingBackupRunIds = backupRuns.map((run) => getBackupRunId(run))
-        return backupRunIds.filter((id) => existingBackupRunIds.includes(id))
+        const filteredIds = backupRunIds.filter((id) => existingBackupRunIds.includes(id))
+
+        return {
+          allIds: backupRunIds,
+          existingIds: filteredIds,
+        }
       },
       {
         id: 'backupRunIds',
         header: 'Backup run IDs',
         enableSorting: false,
         cell: (info) => {
-          const backupRunIds = info.getValue()
-          if (!backupRunIds || backupRunIds.length === 0) {
+          const { allIds, existingIds } = info.getValue()
+
+          if (!allIds || allIds.length === 0) {
             return 'No backup runs'
           }
+
+          if (existingIds.length === 0) {
+            return `${allIds.length} backup runs`
+          }
+
           const backupJobId = getBackupJobId(info.row.original)
+          const displayText =
+            existingIds.length === allIds.length
+              ? `${existingIds.length} backup runs`
+              : `${existingIds.length}/${allIds.length} backup runs`
+
           return React.createElement(IdListTooltip, {
-            ids: backupRunIds,
+            ids: existingIds,
             label: 'Backup Run IDs',
             triggerElement: React.createElement(
               Link,
@@ -146,7 +168,7 @@ export const getBackupJobTableColumns = (backupRuns?: BackupRun[]): DataTableCol
                 href: `/vms/backup/backup-runs?backupJobId=${backupJobId}`,
                 className: 'text-blue-600 hover:underline',
               },
-              `${backupRunIds.length} backup runs`
+              displayText
             ),
           })
         },
