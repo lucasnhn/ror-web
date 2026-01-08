@@ -270,7 +270,6 @@ export const PageView = ({ className, vms, params }: PageViewProps) => {
           filtersOpen={filtersOpen}
           selectedFilters={selectedFilters}
           setSelectedFilters={setSelectedFilters}
-          vms={vms}
         />
       </div>
 

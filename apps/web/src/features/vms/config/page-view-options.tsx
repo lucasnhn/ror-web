@@ -1,5 +1,5 @@
 import { Option } from '@/components/shadcn/multiselect'
-import { fetchAllTeamOptions, fetchAllDetailedTeamOptions } from '@/utils/vm-team-actions'
+import { fetchAllTeamOptions } from '@/utils/vm-team-actions'
 
 export const displayDataOptions: Option[] = [
   { label: 'Backup status', value: 'activeBackup' },

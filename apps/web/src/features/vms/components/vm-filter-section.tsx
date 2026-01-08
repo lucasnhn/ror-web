@@ -5,17 +5,14 @@ import MultipleSelector from '@/components/shadcn/multiselect'
 import { powerStateOptions, backupStatusOptions } from '@/features/vms/config/page-view-options'
 import { generateServerTeamOptions } from '@/features/vms/config/page-view-options'
 import { Option } from '@/components/shadcn/multiselect'
-import type { VirtualMachine } from '@ror/js-api-client'
-import type { VMWithBackupStatus } from '@/features/vms/backup/utils/map-backup-to-vm'
 
 interface VmFilterSectionProps {
   filtersOpen: boolean
   selectedFilters: Record<string, string[]>
   setSelectedFilters: React.Dispatch<React.SetStateAction<Record<string, string[]>>>
-  vms: VirtualMachine[] | VMWithBackupStatus[]
 }
 
-export const VmFilterSection = ({ filtersOpen, selectedFilters, setSelectedFilters, vms }: VmFilterSectionProps) => {
+export const VmFilterSection = ({ filtersOpen, selectedFilters, setSelectedFilters }: VmFilterSectionProps) => {
   const [teamOptions, setTeamOptions] = useState<Option[]>([])
   const [isLoadingTeams, setIsLoadingTeams] = useState(false)
 
