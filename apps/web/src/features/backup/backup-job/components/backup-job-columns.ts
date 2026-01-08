@@ -141,7 +141,7 @@ export const getBackupJobTableColumns = (): DataTableColumnDef<BackupJob>[] => {
                 href: `/vms/backup/backup-runs?backupJobId=${backupJobId}`,
                 className: 'text-blue-600 hover:underline',
               },
-              `${backupRunIds.length} backup runs`
+              `View Backup Runs`
             ),
           })
         },

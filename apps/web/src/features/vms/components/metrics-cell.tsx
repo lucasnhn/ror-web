@@ -304,5 +304,16 @@ export function MetricCell({
         </span>
       </div>
     )
-  }, [metricLimit, metricValue, metricRequest, formatValue, limitLabel, type, showPercentage])
+  }, [
+    metricLimit,
+    metricValue,
+    metricRequest,
+    formatValue,
+    limitLabel,
+    type,
+    showPercentage,
+    diskData,
+    metrics?.cpuCoresPerSocket,
+    metrics?.cpuSockets,
+  ])
 }

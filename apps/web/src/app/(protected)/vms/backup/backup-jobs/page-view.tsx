@@ -11,8 +11,9 @@ import {
 import { useFilters } from '@/hooks/use-filters'
 import { useInfiniteLoader } from '@/hooks/use-infinite-loader'
 import { loadMoreBackupJobs } from '@/utils/backup-job-actions'
+import { searchBackupJobById, searchBackupJobsByQuery } from '@/utils/backup-job-search-actions'
 import { BackupJob } from '@ror/js-api-client'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { SortDefinition, useSorting } from '@/hooks/use-sorting'
 import { useDisplayData } from '@/hooks/use-display-data'
@@ -29,6 +30,7 @@ import { Button } from '@/components/shadcn/button'
 
 export const PageView = ({ className, backupJobs, params }: PageViewProps) => {
   const filtersOpen = params.filters === 'open'
+  const [isPending, startTransition] = useTransition()
 
   const { items, sentinelRef, isLoading, hasMore } = useInfiniteLoader<BackupJob>({
     initial: backupJobs,
@@ -62,37 +64,67 @@ export const PageView = ({ className, backupJobs, params }: PageViewProps) => {
   const { filteredItems, resetFilters } = useFilters<BackupJob>(safeItems, filterDefinitions)
   const { setSelectedDisplayData } = useDisplayData<BackupJobColumnsData>('backup-jobs')
   const [searchResults, setSearchResults] = useState<BackupJob[]>(safeItems)
+  const [serverSearchResults, setServerSearchResults] = useState<BackupJob[]>([])
   const [searchQuery, setSearchQuery] = useState('')
   const debouncedQuery = useDebouncedValue(searchQuery, 120)
   const sortedItems = useSorting({ items: filteredItems, sortKey: params.sort, sortOrder: params.order, definitions })
 
-  // Custom search handler for exact ID matching
+  // Enhanced search handler with server-side fallback
   useEffect(() => {
     if (!debouncedQuery.trim()) {
       setSearchResults(safeItems)
+      setServerSearchResults([])
       return
     }
 
     const trimmedQuery = debouncedQuery.trim()
 
-    // First, try exact ID match
+    // First, try exact ID match in loaded data
     const exactIdMatch = safeItems.filter((item) => getBackupJobId(item) === trimmedQuery)
 
     if (exactIdMatch.length > 0) {
       setSearchResults(exactIdMatch)
+      setServerSearchResults([])
       return
     }
 
-    // If no exact ID match, do fuzzy search directly here
+    // If no exact ID match, do fuzzy search in loaded data
     const fuzzyMatches = safeItems.filter((item) => {
       const id = getBackupJobId(item).toLowerCase()
+      const source = getBackupJobSource(item).toLowerCase()
       const location = getBackupJobLocation(item).toLowerCase()
       const queryLower = trimmedQuery.toLowerCase()
 
-      return id.includes(queryLower) || location.includes(queryLower)
+      return id.includes(queryLower) || source.includes(queryLower) || location.includes(queryLower)
     })
 
-    setSearchResults(fuzzyMatches)
+    if (fuzzyMatches.length > 0) {
+      setSearchResults(fuzzyMatches)
+      setServerSearchResults([])
+      return
+    }
+
+    // If no local matches found, search on the server
+    startTransition(async () => {
+      try {
+        // Try exact ID search first
+        const exactResult = await searchBackupJobById(trimmedQuery)
+        if (exactResult) {
+          setServerSearchResults([exactResult])
+          setSearchResults([])
+          return
+        }
+
+        // Fall back to general query search
+        const queryResults = await searchBackupJobsByQuery(trimmedQuery, 50)
+        setServerSearchResults(queryResults)
+        setSearchResults([])
+      } catch (error) {
+        console.error('Server search failed:', error)
+        setServerSearchResults([])
+        setSearchResults([])
+      }
+    })
   }, [debouncedQuery, safeItems])
 
   const lastSafeKeyRef = useRef('')
@@ -103,6 +135,7 @@ export const PageView = ({ className, backupJobs, params }: PageViewProps) => {
       // Only update search results if no active search query
       if (!debouncedQuery.trim()) {
         setSearchResults(safeItems)
+        setServerSearchResults([])
       }
     }
   }, [safeItems, debouncedQuery])
@@ -116,26 +149,35 @@ export const PageView = ({ className, backupJobs, params }: PageViewProps) => {
   const handleRefreshFilters = useCallback(() => {
     resetFilters()
     setSelectedDisplayData([])
+    setServerSearchResults([])
     clearUrl()
   }, [resetFilters, setSelectedDisplayData, clearUrl])
 
   const displayedItems = useMemo(() => {
+    // If we have server search results, use those exclusively
+    if (serverSearchResults.length > 0) {
+      return serverSearchResults
+    }
+
+    // Otherwise use local search results filtered by sorted items
     if (!searchResults?.length) return sortedItems
     const ids = new Set(searchResults.map(getBackupJobId))
     return sortedItems.filter((c) => ids.has(getBackupJobId(c)))
-  }, [searchResults, sortedItems])
+  }, [searchResults, serverSearchResults, sortedItems])
 
   const renderControls = () => (
     <div className='flex flex-wrap items-center justify-between w-full gap-4 [@container(max-width:1000px)]:flex-col [@container(max-width:1000px)]:items-start [@container(max-width:1000px)]:gap-6'>
       <div className='flex flex-wrap items-center gap-x-4 gap-y-6'>
-        <Input
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          aria-label='Search backup jobs...'
-          placeholder='Search backup jobs...'
-          icon={<Search className='w-4 h-4' />}
-          iconPosition='left'
-        />
+        <div className='relative'>
+          <Input
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            aria-label='Search backup jobs...'
+            placeholder={isPending ? 'Searching...' : 'Search backup jobs...'}
+            icon={<Search className='w-4 h-4' />}
+            iconPosition='left'
+          />
+        </div>
         <SortSelect options={sortingOptionsBackupJob} currentSort={params.sort} />
         <Button
           type='button'

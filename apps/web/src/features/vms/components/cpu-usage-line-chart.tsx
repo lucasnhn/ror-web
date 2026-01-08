@@ -9,7 +9,7 @@ import {
   USAGE_HISTORY_CONFIGS,
   UsageHistory,
 } from '../utils/usage-history'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { Button } from '@/components/shadcn/button'
 import { Activity, RotateCcw, Clock, MemoryStick } from 'lucide-react'
 import { cn } from '@/utils/clsxm'
@@ -88,18 +88,18 @@ export const UsageLineChart = ({
   const usageLabel = getUsageLabel(type)
   const unit = usageHistory.getUnit()
 
-  const refreshData = () => {
+  const refreshData = useCallback(() => {
     setIsRefreshing(true)
     const data = usageHistory.getChartData(vmId, timeRange)
     const statistics = usageHistory.getStats(vmId, timeRange)
     setChartData(data)
     setStats(statistics)
     setTimeout(() => setIsRefreshing(false), 300)
-  }
+  }, [vmId, timeRange, usageHistory])
 
   useEffect(() => {
     refreshData()
-  }, [vmId, timeRange, type])
+  }, [refreshData])
 
   // Add current usage whenever it changes
   useEffect(() => {
@@ -110,12 +110,12 @@ export const UsageLineChart = ({
       setChartData(data)
       setStats(statistics)
     }
-  }, [currentUsage, vmId, timeRange, type])
+  }, [currentUsage, vmId, timeRange, type, usageHistory])
 
-  const clearHistory = () => {
+  const clearHistory = useCallback(() => {
     usageHistory.clearHistory(vmId)
     refreshData()
-  }
+  }, [vmId, usageHistory, refreshData])
 
   const formatTooltipLabel = (label: string, payload: Array<{ payload?: { timestamp: string } }>) => {
     if (payload && payload.length > 0 && payload[0].payload) {

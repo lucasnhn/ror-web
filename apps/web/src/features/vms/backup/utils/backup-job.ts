@@ -1,5 +1,5 @@
 import { Params } from '@/types/resources-page'
-import type { BackupJob } from '@ror/js-api-client'
+import type { BackupJob, BackupRun } from '@ror/js-api-client'
 
 export interface ActiveTargetSource {
   name?: string
@@ -18,6 +18,7 @@ export interface BackupActiveTarget {
 export interface PageViewProps {
   className?: string
   backupJobs: BackupJob[]
+  backupRuns?: BackupRun[]
   params: Params
 }
 
