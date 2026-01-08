@@ -35,7 +35,6 @@ export const PageView = ({ className, backupRuns, params, backupJobId }: PageVie
   const filtersOpen = params.filters === 'open'
   const [isPending, startTransition] = useTransition()
   const [isServerSearching, setIsServerSearching] = useState(false)
-  //const [isSearchFrozen, setIsSearchFrozen] = useState(false)
   const searchAbortControllerRef = useRef<AbortController | null>(null)
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
@@ -46,10 +45,7 @@ export const PageView = ({ className, backupRuns, params, backupJobId }: PageVie
     getItemId: getBackupRunId,
     getItemsKey: getBackupRunKey,
     loadMore: async (offset, limit) => {
-      if (
-        isServerSearching
-        // || isSearchFrozen
-      ) {
+      if (isServerSearching) {
         return { items: [], hasMore: false }
       }
       const res = await loadMoreBackupRuns({
@@ -97,7 +93,6 @@ export const PageView = ({ className, backupRuns, params, backupJobId }: PageVie
       setSearchResults(safeItems)
       setServerSearchResults([])
       setIsServerSearching(false)
-      //setIsSearchFrozen(false)
       return
     }
 
@@ -112,7 +107,6 @@ export const PageView = ({ className, backupRuns, params, backupJobId }: PageVie
       setSearchResults(exactIdMatch)
       setServerSearchResults([])
       setIsServerSearching(false)
-      //setIsSearchFrozen(false)
       return
     }
 
@@ -130,18 +124,14 @@ export const PageView = ({ className, backupRuns, params, backupJobId }: PageVie
       setSearchResults(fuzzyMatches)
       setServerSearchResults([])
       setIsServerSearching(false)
-      //setIsSearchFrozen(false)
       return
     }
 
     // If no local matches found, search on the server
     setIsServerSearching(true)
-    //setIsSearchFrozen(true)
 
     // Set a 5-second timeout to unfreeze the UI
-    searchTimeoutRef.current = setTimeout(() => {
-      //setIsSearchFrozen(false)
-    }, 5000)
+    searchTimeoutRef.current = setTimeout(() => {}, 5000)
 
     // Create new abort controller for this search request
     searchAbortControllerRef.current = new AbortController()
@@ -235,7 +225,6 @@ export const PageView = ({ className, backupRuns, params, backupJobId }: PageVie
     setSelectedDisplayData([])
     setServerSearchResults([])
     setIsServerSearching(false)
-    //setIsSearchFrozen(false)
     setSearchQuery('')
     clearUrl()
   }, [resetFilters, setSelectedDisplayData, clearUrl])
