@@ -93,6 +93,7 @@ export const useActiveBackupStatus = (vm: VMTableRow) => {
     hasActiveBackup: fullStatus.hasActiveBackup,
     isDataLoaded: fullStatus.isDataLoaded,
     hasHistoricalBackup: fullStatus.hasBackupRun && !fullStatus.hasBackupJob, // Has runs but no job
+    hasConfiguredBackup: fullStatus.hasBackupJob && !fullStatus.hasBackupRun, // Has job but no runs
   }
 }
 

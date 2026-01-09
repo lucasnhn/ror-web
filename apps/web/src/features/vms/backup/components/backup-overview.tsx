@@ -22,7 +22,7 @@ import {
   getBackupRunMappedBackupJobId,
 } from '@/features/vms/backup/utils/backup-run'
 import { formatDistance, format, isAfter } from 'date-fns'
-import { Clock, Calendar, HardDrive, AlertTriangle, CheckCircle, XCircle, Loader } from 'lucide-react'
+import { Clock, Calendar, HardDrive, AlertTriangle, CheckCircle, XCircle, LoaderCircle, Loader } from 'lucide-react'
 
 interface BackupOverviewProps {
   vm: VMWithBackupStatus
@@ -68,11 +68,13 @@ const getStatusColor = (status: string) => {
   }
 }
 
-const getBackupStatusColor = (isActive: boolean, hasRuns: boolean, latestStatus: string) => {
+const getBackupStatusColor = (isActive: boolean, hasRuns: boolean, hasActiveJobs: boolean, latestStatus: string) => {
   if (isActive) {
     return getStatusColor(latestStatus)
   } else if (hasRuns) {
     return 'bg-amber-100 text-amber-800 dark:bg-amber-900/20 dark:text-amber-300'
+  } else if (hasActiveJobs) {
+    return 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300'
   }
 }
 
@@ -357,6 +359,8 @@ export const BackupOverview: React.FC<BackupOverviewProps> = ({ backupJobs, back
               getStatusIcon(backupSummary.latestStatus)
             ) : backupSummary.hasRuns ? (
               <AlertTriangle className='w-4 h-4 text-amber-500' />
+            ) : backupSummary.hasActiveJob ? (
+              <LoaderCircle className='w-4 h-4 text-blue-500 animate-spin' />
             ) : (
               <XCircle className='w-4 h-4 text-gray-400' />
             )}
@@ -364,10 +368,17 @@ export const BackupOverview: React.FC<BackupOverviewProps> = ({ backupJobs, back
               className={getBackupStatusColor(
                 backupSummary.isActive,
                 backupSummary.hasRuns,
+                backupSummary.hasActiveJob,
                 backupSummary.latestStatus
               )}
             >
-              {backupSummary.isActive ? 'Active' : backupSummary.hasRuns ? 'Historical' : 'No Backups'}
+              {backupSummary.isActive
+                ? 'Active'
+                : backupSummary.hasRuns
+                  ? 'Historical'
+                  : backupSummary.hasActiveJob
+                    ? 'Configured backup'
+                    : 'No Backups'}
             </Badge>
           </div>
         </div>

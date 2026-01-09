@@ -1,6 +1,5 @@
 import { Option } from '@/components/shadcn/multiselect'
-import { getUniqueTeams, getTeamDescription, getTeamValue } from '../utils/vms'
-import type { VirtualMachine } from '@ror/js-api-client'
+import { fetchAllTeamOptions } from '@/utils/vm-team-actions'
 
 export const displayDataOptions: Option[] = [
   { label: 'Backup status', value: 'activeBackup' },
@@ -40,6 +39,7 @@ export const powerStateOptions: Option[] = [
 export const backupStatusOptions: Option[] = [
   { value: 'activeBackup', label: 'Active Backup' },
   { value: 'historicalBackup', label: 'Historical Backup' },
+  { value: 'configuredBackup', label: 'Configured Backup' },
   { value: 'noBackup', label: 'No Backup' },
   // TODO: Implement these statuses in the future
   // { value: 'inProgress', label: 'In Progress' },
@@ -47,58 +47,22 @@ export const backupStatusOptions: Option[] = [
   // { value: 'failed', label: 'Failed' },
 ]
 
-// Generate team options from VM data using team descriptions and values
-export const generateTeamOptions = (vms: VirtualMachine[]): Option[] => {
-  const teamOptionsSet = new Set<string>()
-
-  vms.forEach((vm) => {
-    const teamDescription = getTeamDescription(vm)
-    const teamValue = getTeamValue(vm)
-
-    // Prefer description, but fall back to value if description is empty
-    if (teamDescription && teamDescription.trim()) {
-      teamOptionsSet.add(teamDescription.trim())
-    } else if (teamValue && teamValue.trim()) {
-      teamOptionsSet.add(teamValue.trim())
-    }
-  })
-
-  const options: Option[] = Array.from(teamOptionsSet)
-    .sort()
-    .map((teamIdentifier) => ({
-      value: teamIdentifier,
-      label: teamIdentifier,
-    }))
-
-  // Add "No Team" option for VMs without any team tags
-  const hasVmsWithoutAnyTeamData = vms.some((vm) => !getTeamDescription(vm) && !getTeamValue(vm))
-  if (hasVmsWithoutAnyTeamData) {
-    options.push({ value: 'No Team', label: 'No Team' })
-  }
-
-  return options
+export const generateServerTeamOptions = async (): Promise<Option[]> => {
+  return await fetchAllTeamOptions()
 }
 
-// Generate detailed team options with both description and value
-export const generateDetailedTeamOptions = (vms: VirtualMachine[]): Option[] => {
-  const teams = getUniqueTeams(vms)
+// export const generateServerDetailedTeamOptions = async (): Promise<Option[]> => {
+//   return await fetchAllDetailedTeamOptions()
+// }
 
-  const options: Option[] = teams.map((team) => ({
-    value: team.description,
-    label: `${team.description} (${team.value})`,
-  }))
+export const generateServerFilterOptions = async (): Promise<
+  Array<{ label: string; placeholder: string; data: Option[] }>
+> => {
+  const teamOptions = await generateServerTeamOptions()
 
-  // Add "No Team" option for VMs without team tags (consistent with existing filter system)
-  const hasVmsWithoutTeam = vms.some((vm) => !getTeamDescription(vm))
-  if (hasVmsWithoutTeam) {
-    options.push({ value: 'No Team', label: 'No Team' })
-  }
-
-  return options
+  return [
+    { label: 'Power States', placeholder: 'Choose Power State', data: powerStateOptions },
+    { label: 'Teams', placeholder: 'Choose Team', data: teamOptions },
+    { label: 'Backup', placeholder: 'Choose Backup Status', data: backupStatusOptions },
+  ]
 }
-
-export const generateFilterOptions = (vms: VirtualMachine[]) => [
-  { label: 'Power States', placeholder: 'Choose Power State', data: powerStateOptions },
-  { label: 'Teams', placeholder: 'Choose Team', data: generateTeamOptions(vms) },
-  { label: 'Backup', placeholder: 'Choose Backup Status', data: backupStatusOptions },
-]
