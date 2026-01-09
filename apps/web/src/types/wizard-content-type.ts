@@ -1,6 +1,6 @@
 import { ReactNode } from 'react'
 
-export interface contentType {
+export interface WizardContentType {
   title: string
   wizardContent: ReactNode
 }
