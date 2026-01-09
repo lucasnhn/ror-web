@@ -124,7 +124,7 @@ export const Wizard = <TFieldValues extends FieldValues>({
       </div>
 
       <div className='p-12'>
-        {content[active].wizardContent}
+        {content[active]?.wizardContent}
 
         <div className='flex gap-4 justify-center mt-16'>
           {active > 0 && (
