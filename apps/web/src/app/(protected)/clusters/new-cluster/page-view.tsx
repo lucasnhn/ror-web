@@ -20,6 +20,7 @@ import { addTag, removeTag } from '@/features/cluster/utils/tags'
 import { TagsSection } from '@/features/cluster/components/create-cluster/tags-section'
 import { copyToClipboard } from '@/utils/copy-to-clipboard'
 import { RegionProviderPriceSection } from '@/features/cluster/components/create-cluster/region-provider-price-section'
+import { WizardContentType } from '@/types/wizard-content-type'
 
 const stepFields: Array<Array<Path<CreateClusterForm>>> = [
   ['project', 'name', 'environment'],
@@ -319,7 +320,7 @@ export const PageView = () => {
   }
 
   // Wizard
-  const content: contentType[] = [
+  const content: WizardContentType[] = [
     {
       title: 'Basics',
       wizardContent: (
