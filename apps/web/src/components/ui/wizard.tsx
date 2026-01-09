@@ -124,16 +124,21 @@ export const Wizard = <TFieldValues extends FieldValues>({
       </div>
 
       <div className='p-12'>
-        {content[active].wizardContent}
+        {content[active]?.wizardContent}
 
         <div className='flex gap-4 justify-center mt-16'>
           {active > 0 && (
-            <Button variant='outline' type='button' onClick={() => setActive((p) => p - 1)}>
+            <Button
+              variant='outline'
+              type='button'
+              aria-label='Previous step'
+              onClick={() => setActive((p) => p - 1)}
+            >
               <ArrowLeft />
             </Button>
           )}
           {active < content.length - 1 && (
-            <Button type='button' onClick={goNext}>
+            <Button type='button' aria-label='Next step' onClick={goNext}>
               <ArrowRight />
             </Button>
           )}
