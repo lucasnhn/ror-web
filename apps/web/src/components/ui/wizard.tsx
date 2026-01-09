@@ -1,13 +1,13 @@
-import { contentType } from '@/app/(protected)/clusters/new-cluster/page-view'
 import { cn } from '@/utils/clsxm'
 import { useState } from 'react'
 import { Button } from '../shadcn/button'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { FieldValues, Path, UseFormTrigger } from 'react-hook-form'
+import { WizardContentType } from '@/types/wizard-content-type'
 
 interface WizardProps<TFieldValues extends FieldValues> {
   className?: string
-  content: contentType[]
+  content: WizardContentType[]
   trigger: UseFormTrigger<TFieldValues>
   stepFields: Array<Array<Path<TFieldValues>>>
 }
