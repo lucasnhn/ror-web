@@ -20,7 +20,7 @@ const HorizontalLine = ({ className }: { className?: string }) => {
 
 const Circle = ({ className, circleNum }: { className?: string; circleNum: number }) => {
   return (
-    <div className={cn('rounded-full border border-[--r-layer] h-16 w-16 flex justify-center items-center', className)}>
+    <div className={cn('rounded-full border h-16 w-16 flex justify-center items-center', className)}>
       <p>{circleNum}</p>
     </div>
   )
@@ -67,8 +67,8 @@ const WizardItem = ({
       aria-disabled={!clickable}
       aria-current={isActive ? 'step' : undefined}
       className={cn(
-        'flex items-center min-w-55 text-left',
-        clickable ? 'cursor-pointer' : 'cursor-not-allowed opacity-60'
+        'flex items-center min-w-56 text-left',
+        clickable ? 'cursor-pointer' : 'cursor-not-allowed text-gray-600'
       )}
     >
       <Circle circleNum={circleNum} className={circleClass} />
