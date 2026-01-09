@@ -117,6 +117,7 @@ export const Wizard = <TFieldValues extends FieldValues>({
               itemState={state}
               clickable={clickable}
               onClick={() => goToStep(index)}
+              aria-label={`Step ${index + 1}: ${c.title}`}
             />
           )
         })}
