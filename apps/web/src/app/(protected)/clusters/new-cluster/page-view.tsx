@@ -177,7 +177,7 @@ export const PageView = () => {
             {...register('wpNumber', {
               required: 'Amount of workerpools is required',
               min: { value: 1, message: 'Need at least one workerpool' },
-              max: { value: 10, message: 'Cannot have more than workerpools' },
+              max: { value: 10, message: 'Cannot have more than 10 workerpools' },
               valueAsNumber: true,
               onChange: (e) => {
                 const cleaned = e.target.value.replace(/[^0-9]/g, '')
