@@ -17,7 +17,7 @@ type RegionOption = {
 }
 
 type RegionItem = { key: Region; display: string }
-type ProviderRow = {
+export type ProviderRow = {
   label: string
   providerKey: Provider
   rowIndex: number

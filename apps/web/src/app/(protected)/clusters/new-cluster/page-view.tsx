@@ -383,9 +383,5 @@ export const PageView = () => {
     },
   ]
 
-  return (
-    <div>
-      <Wizard<CreateClusterForm> content={content} trigger={trigger} stepFields={stepFields} />
-    </div>
-  )
+  return <Wizard<CreateClusterForm> content={content} trigger={trigger} stepFields={stepFields} />
 }
