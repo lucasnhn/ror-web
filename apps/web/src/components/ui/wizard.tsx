@@ -16,7 +16,6 @@ interface WizardProps<TFieldValues extends FieldValues> {
 interface WizardItemProps {
   title: string
   circleNum: number
-  withLine: boolean
   itemState: ItemState
   onClick?: () => void
 }
@@ -24,7 +23,7 @@ interface WizardItemProps {
 type ItemState = 'inactive' | 'active' | 'wasActive'
 
 const HorizontalLine = ({ className }: { className?: string }) => (
-  <span className={cn('mx-4 h-px w-16 border-b', className)} />
+  <span className={cn('mx-4 h-px w-16 border border-b rounded-xs', className)} />
 )
 
 const Circle = ({ className, circleNum }: { className?: string; circleNum: number }) => (
@@ -39,12 +38,11 @@ function getItemState(index: number, active: number, maxReached: number): ItemSt
   return 'inactive'
 }
 
-const WizardItem = ({ title, circleNum, withLine, itemState, onClick }: WizardItemProps) => {
+const WizardItem = ({ title, circleNum, itemState, onClick }: WizardItemProps) => {
   const isActive = itemState === 'active'
   const isReached = itemState !== 'inactive'
   const circleClass = cn('mr-4 border-3 font-bold', isReached && 'border-blue-600', isActive && 'bg-blue-600')
   const titleClass = cn(isReached && 'text-blue-600')
-  const lineClass = cn(isReached && 'border-blue-600')
 
   return (
     <button
@@ -53,11 +51,10 @@ const WizardItem = ({ title, circleNum, withLine, itemState, onClick }: WizardIt
       disabled={!isReached}
       aria-disabled={!isReached}
       aria-current={isActive ? 'step' : undefined}
-      className={cn('flex items-center min-w-56 text-left', isReached ? 'cursor-pointer' : 'cursor-not-allowed')}
+      className={cn('flex items-center text-left', isReached ? 'cursor-pointer' : 'cursor-not-allowed')}
     >
       <Circle circleNum={circleNum} className={circleClass} />
       <StepTitle title={title} className={titleClass} />
-      {withLine && <HorizontalLine className={lineClass} />}
     </button>
   )
 }
@@ -104,15 +101,19 @@ export const Wizard = <TFieldValues extends FieldValues>({
             const state = getItemState(index, safeActive, maxReached)
 
             return (
-              <WizardItem
-                key={index}
-                title={c.title}
-                circleNum={index + 1}
-                withLine={index !== content.length - 1}
-                itemState={state}
-                onClick={() => goToStep(index)}
-                aria-label={`Step ${index + 1}: ${c.title}`}
-              />
+              <div key={index} className='flex items-center'>
+                <WizardItem
+                  key={index}
+                  title={c.title}
+                  circleNum={index + 1}
+                  itemState={state}
+                  onClick={() => goToStep(index)}
+                  aria-label={`Step ${index + 1}: ${c.title}`}
+                />
+                {index !== content.length - 1 && (
+                  <HorizontalLine className={cn(state !== 'inactive' && 'border-blue-600')} />
+                )}
+              </div>
             )
           })}
         </div>
