@@ -29,7 +29,7 @@ export const RegionProviderPriceSection = ({ control, setValue }: RPPProps) => {
     <div className={flexGap4}>
       <h3>Region, Provider &amp; Price</h3>
 
-      <div className='mb-2 mt-4 flex gap-2'>
+      <div className='mb-2 flex gap-2'>
         <Controller
           name='tempProvider'
           control={control}

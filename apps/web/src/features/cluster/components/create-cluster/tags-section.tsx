@@ -24,8 +24,8 @@ export const TagsSection = ({
 }: TagsSectionProps) => {
   return (
     <section>
-      <h3>Tags</h3>
-      <div className='grid grid-cols-[15rem_15rem_auto] gap-y-4 items-center'>
+      <h3 className='mx-auto w-fit mb-4'>Tags</h3>
+      <div className='grid grid-cols-[15rem_15rem_auto] gap-y-4 items-center border p-4 rounded-lg'>
         <b>Key</b>
         <b>Value</b>
         <b></b>

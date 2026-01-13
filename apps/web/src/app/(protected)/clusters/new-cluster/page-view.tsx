@@ -5,7 +5,7 @@ import { Input } from '@/components/shadcn/input'
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/shadcn/select'
 import { routes } from '@/config/routes'
 import { CodeSnippet } from '@ror/react'
-import { useCallback, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { Controller, Path } from 'react-hook-form'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
@@ -95,7 +95,7 @@ export const PageView = () => {
   const ProjectInput = useCallback(() => {
     return (
       <FormSection title='Project' error={errors.project && errors.project.message}>
-        <Input {...register('project', { required: 'Name is required' })} placeholder='Enter project...' />
+        <Input {...register('project', { required: 'Project is required' })} placeholder='Enter project...' />
       </FormSection>
     )
   }, [errors.project, register])
@@ -162,7 +162,7 @@ export const PageView = () => {
       <section>
         <h3>Worker pools</h3>
 
-        <div className='w-fit mx-auto'>
+        <div className='w-fit mx-auto mt-2'>
           <h4>Name</h4>
           <Input {...register('wpName', { required: 'Workerpool name is required' })} placeholder='Enter name...' />
           {errors.wpName && <span className={errorTextStyling}>{errors.wpName.message}</span>}
@@ -236,67 +236,52 @@ export const PageView = () => {
     )
   }, [control, errors.network])
 
+  const SummaryTableRow = ({ title, content }: { title: string; content: string | number }) => (
+    <tr>
+      <td className='font-semibold py-1 pr-4'>{title}</td>
+      <td>{content}</td>
+    </tr>
+  )
+
   const Summary = () => {
     return (
-      <>
+      <div className='w-fit'>
         <h3 className='mx-auto w-fit'>Summary</h3>
-        <table>
-          <tbody>
-            <tr>
-              <td className='font-semibold py-1 pr-4'>Project</td>
-              <td>{projectWatch}</td>
-            </tr>
-            <tr>
-              <td className='font-semibold py-1 pr-4'>Cluster name</td>
-              <td>{nameWatch}</td>
-            </tr>
-            <tr>
-              <td className='font-semibold py-1 pr-4'>Environment</td>
-              <td>{environmentWatch}</td>
-            </tr>
-            <tr>
-              <td className='font-semibold py-1 pr-4'>Control plane</td>
-              <td>{cpWatch}</td>
-            </tr>
-            <tr>
-              <td className='font-semibold py-1 pr-4'>Worker pools name</td>
-              <td>{wpNameWatch}</td>
-            </tr>
-            <tr>
-              <td className='font-semibold py-1 pr-4'>Worker pools number</td>
-              <td>{wpNumberWatch}</td>
-            </tr>
-            <tr>
-              <td className='font-semibold py-1 pr-4'>Worker pools class</td>
-              <td>{wpClassWatch}</td>
-            </tr>
-            <tr>
-              <td className='font-semibold py-1 pr-4'>Network</td>
-              <td>{networkWatch}</td>
-            </tr>
-            <tr>
-              <td className='font-semibold pt-1 pb-3 pr-4 align-top'>Tags</td>
-              <td>
-                {Object.entries(tagsWatch).length === 0 ? (
-                  <span className='italic opacity-70'>No tags</span>
-                ) : (
-                  Object.entries(tagsWatch).map(([key, value]) => (
-                    <p key={key}>
-                      {key}: {value}
-                    </p>
-                  ))
-                )}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </>
+        <div className='border rounded-lg p-4 overflow-hidden my-4 w-96'>
+          <table className='w-full border-separate border-spacing-0'>
+            <tbody>
+              <SummaryTableRow title='Project' content={projectWatch} />
+              <SummaryTableRow title='Cluster name' content={nameWatch} />
+              <SummaryTableRow title='Environment' content={environmentWatch} />
+              <SummaryTableRow title='Control plane' content={cpWatch} />
+              <SummaryTableRow title='Worker pools name' content={wpNameWatch} />
+              <SummaryTableRow title='Worker pools number' content={wpNumberWatch} />
+              <SummaryTableRow title='Worker pools class' content={wpClassWatch} />
+              <SummaryTableRow title='Network' content={networkWatch} />
+              <tr>
+                <td className='font-semibold pt-1 pb-3 pr-4 align-top'>Tags</td>
+                <td>
+                  {Object.entries(tagsWatch).length === 0 ? (
+                    <span className='italic opacity-70'>No tags</span>
+                  ) : (
+                    Object.entries(tagsWatch).map(([key, value]) => (
+                      <p key={key}>
+                        {key}: {value}
+                      </p>
+                    ))
+                  )}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     )
   }
 
   const ClusterYaml = () => {
     return (
-      <section>
+      <section className='w-fit mx-auto'>
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <Button type='button' onClick={() => setYamlOpen(!yamlOpen)}>
             {yamlOpen ? 'Close YAML' : 'Open YAML'}
@@ -373,7 +358,7 @@ export const PageView = () => {
       ),
     },
     {
-      title: 'Review',
+      title: 'Summary',
       wizardContent: (
         <div className='w-fit mx-auto'>
           <Summary />
@@ -383,5 +368,5 @@ export const PageView = () => {
     },
   ]
 
-  return <Wizard<CreateClusterForm> content={content} trigger={trigger} stepFields={stepFields} />
+  return <Wizard<CreateClusterForm> content={content} trigger={trigger} stepFields={stepFields} summary={<Summary />} />
 }
