@@ -102,6 +102,7 @@ export const Wizard = <TFieldValues extends FieldValues>({
 
             return (
               <div key={index} className='flex items-center'>
+                {index !== 0 && <HorizontalLine className={cn(state !== 'inactive' && 'border-blue-600')} />}
                 <WizardItem
                   key={index}
                   title={c.title}
@@ -110,9 +111,6 @@ export const Wizard = <TFieldValues extends FieldValues>({
                   onClick={() => goToStep(index)}
                   aria-label={`Step ${index + 1}: ${c.title}`}
                 />
-                {index !== content.length - 1 && (
-                  <HorizontalLine className={cn(state !== 'inactive' && 'border-blue-600')} />
-                )}
               </div>
             )
           })}
