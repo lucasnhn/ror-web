@@ -76,7 +76,6 @@ const createTabNavigationItems = (clusterId: string) => {
 }
 
 const fetchCluster = cache(async (id: string) => {
-  console.log('[fetchCluster] fetching cluster', { id, at: new Date().toISOString() })
   const api = await getRorApi()
   return api.kubernetesClusters.id(id)
 })
