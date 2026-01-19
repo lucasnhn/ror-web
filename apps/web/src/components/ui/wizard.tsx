@@ -97,7 +97,7 @@ export const Wizard = <TFieldValues extends FieldValues>({
 
   return (
     <div className={cn(className, 'py-4')}>
-      <div className='flex px-4 pb-4 border-b justify-between flex-col sm:flex-row'>
+      <div className={cn('flex px-4 border-b justify-between items-center', 'flex-col', 'sm:flex-row')}>
         <div className='flex flex-wrap gap-y-4 sm:gap-y-6 mb-4 justify-center sm:justify-start'>
           {content.map((c, index) => {
             const state = getItemState(index, safeActive, maxReached)
@@ -117,7 +117,11 @@ export const Wizard = <TFieldValues extends FieldValues>({
             )
           })}
         </div>
-        <Button onClick={() => setShowSummary(!showSummary)}>{showSummary ? 'Hide summary' : 'Show summary'}</Button>
+        {active !== content.length - 1 && (
+          <Button className='mb-4' onClick={() => setShowSummary(!showSummary)}>
+            {showSummary ? 'Hide summary' : 'Show summary'}
+          </Button>
+        )}
       </div>
 
       <div className={cn('px-4 py-12', 'sm:p-12')}>

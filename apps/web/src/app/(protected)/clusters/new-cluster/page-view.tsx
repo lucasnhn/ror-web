@@ -248,8 +248,8 @@ export const PageView = () => {
     return (
       <div className='w-fit'>
         <h3 className='mx-auto w-fit'>Summary</h3>
-        <div className='border rounded-lg p-4 overflow-hidden my-4 w-96'>
-          <table className='w-full border-separate border-spacing-0'>
+        <div className={cn('border rounded-lg p-4 overflow-hidden my-4', 'w-full', 'sm:w-96')}>
+          <table className={cn('border-separate border-spacing-0 w-full', 'text-sm', 'sm:text-md')}>
             <tbody>
               <SummaryTableRow title='Project' content={projectWatch} />
               <SummaryTableRow title='Cluster name' content={nameWatch} />
@@ -284,13 +284,15 @@ export const PageView = () => {
     return (
       <section className='w-fit mx-auto'>
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
-          <Button type='button' onClick={() => setYamlOpen(!yamlOpen)}>
+          <Button type='button' className={cn('text-xs', 'sm:text-sm')} onClick={() => setYamlOpen(!yamlOpen)}>
             {yamlOpen ? 'Close YAML' : 'Open YAML'}
           </Button>
-          <Button type='button' className='mx-2' onClick={copyYaml}>
+          <Button type='button' className={cn('mx-2', 'text-xs', 'sm:text-sm')} onClick={copyYaml}>
             Copy YAML
           </Button>
-          <Button type='submit'>Create cluster</Button>
+          <Button type='submit' className={cn('text-xs', 'sm:text-sm')}>
+            Create cluster
+          </Button>
           {yamlOpen && (
             <CodeSnippet
               type='multi'
@@ -310,7 +312,7 @@ export const PageView = () => {
     {
       title: 'Basics',
       wizardContent: (
-        <div className={cn('flex  justify-center', 'flex-col gap-8', 'sm:flex-row sm:gap-24')}>
+        <div className={cn('flex justify-center', 'flex-col gap-8', 'sm:flex-row sm:gap-24')}>
           <ProjectInput />
           <NameInput />
           <EnvironmentInput />
@@ -328,7 +330,7 @@ export const PageView = () => {
     {
       title: 'Capacity',
       wizardContent: (
-        <div className='flex flex-row gap-24 w-fit mx-auto'>
+        <div className={cn('flex gap-24 w-fit mx-auto', 'flex-col gap-8', 'sm:flex-row sm:gap-24')}>
           <WorkerPools />
           <ControlPlaneInput />
         </div>
