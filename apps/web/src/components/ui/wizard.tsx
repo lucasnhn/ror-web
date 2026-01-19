@@ -23,11 +23,13 @@ interface WizardItemProps {
 type ItemState = 'inactive' | 'active' | 'wasActive'
 
 const HorizontalLine = ({ className }: { className?: string }) => (
-  <span className={cn('mx-4 h-px w-16 border border-b rounded-xs', className)} />
+  <span className={cn('mx-2 sm:mx-3 md:mx-4 h-px w-2 sm:w-4 md:w-8 border-2 border-b rounded-sm', className)} />
 )
 
 const Circle = ({ className, circleNum }: { className?: string; circleNum: number }) => (
-  <div className={cn('rounded-full border h-10 w-10 flex justify-center items-center', className)}>{circleNum}</div>
+  <div className={cn('rounded-full border h-8 sm:h-10 w-8 sm:w-10 flex justify-center items-center', className)}>
+    {circleNum}
+  </div>
 )
 
 const StepTitle = ({ title, className }: { title: string; className?: string }) => <p className={className}>{title}</p>
@@ -41,7 +43,7 @@ function getItemState(index: number, active: number, maxReached: number): ItemSt
 const WizardItem = ({ title, circleNum, itemState, onClick }: WizardItemProps) => {
   const isActive = itemState === 'active'
   const isReached = itemState !== 'inactive'
-  const circleClass = cn('mr-4 border-3 font-bold', isReached && 'border-blue-600', isActive && 'bg-blue-600')
+  const circleClass = cn('border-2 sm:border-3 sm:font-bold', isReached && 'border-blue-600', isActive && 'bg-blue-600')
   const titleClass = cn(isReached && 'text-blue-600')
 
   return (
@@ -54,7 +56,7 @@ const WizardItem = ({ title, circleNum, itemState, onClick }: WizardItemProps) =
       className={cn('flex items-center text-left', isReached ? 'cursor-pointer' : 'cursor-not-allowed')}
     >
       <Circle circleNum={circleNum} className={circleClass} />
-      <StepTitle title={title} className={titleClass} />
+      <StepTitle title={title} className={cn(titleClass, 'hidden md:block ml-2', isActive ? 'sm:block' : '')} />
     </button>
   )
 }
@@ -95,8 +97,8 @@ export const Wizard = <TFieldValues extends FieldValues>({
 
   return (
     <div className={cn(className, 'py-4')}>
-      <div className='flex px-12 pb-4 border-b justify-between'>
-        <div className='flex flex-wrap gap-y-6'>
+      <div className='flex px-4 pb-4 border-b justify-between flex-col sm:flex-row'>
+        <div className='flex flex-wrap gap-y-4 sm:gap-y-6 mb-4 justify-center sm:justify-start'>
           {content.map((c, index) => {
             const state = getItemState(index, safeActive, maxReached)
 
@@ -118,7 +120,7 @@ export const Wizard = <TFieldValues extends FieldValues>({
         <Button onClick={() => setShowSummary(!showSummary)}>{showSummary ? 'Hide summary' : 'Show summary'}</Button>
       </div>
 
-      <div className='p-12'>
+      <div className={cn('px-4 py-12', 'sm:p-12')}>
         <div className='flex flex-row gap-24 justify-center'>
           <span>{content[safeActive]?.wizardContent}</span>
           {showSummary && safeActive !== content.length - 1 && summary}

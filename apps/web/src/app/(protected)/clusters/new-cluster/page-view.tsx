@@ -21,6 +21,7 @@ import { TagsSection } from '@/features/cluster/components/create-cluster/tags-s
 import { copyToClipboard } from '@/utils/copy-to-clipboard'
 import { RegionProviderPriceSection } from '@/features/cluster/components/create-cluster/region-provider-price-section'
 import { WizardContentType } from '@/types/wizard-content-type'
+import { cn } from '@/utils/clsxm'
 
 const stepFields: Array<Array<Path<CreateClusterForm>>> = [
   ['project', 'name', 'environment'],
@@ -309,7 +310,7 @@ export const PageView = () => {
     {
       title: 'Basics',
       wizardContent: (
-        <div className='flex flex-row gap-24 justify-center'>
+        <div className={cn('flex  justify-center', 'flex-col gap-8', 'sm:flex-row sm:gap-24')}>
           <ProjectInput />
           <NameInput />
           <EnvironmentInput />

@@ -53,7 +53,7 @@ export const RegionProviderMatrixTable = ({
   setHoverRow,
   setHoverCol,
 }: RegionProviderMatrixTableProps) => (
-  <table className={cn(outerTableStyling, 'w-2xl table-fixed')}>
+  <table className={cn(outerTableStyling, 'w-2xl table-fixed hidden sm:block')}>
     <tbody>
       {/* Header row */}
       <tr className='h-20'>
