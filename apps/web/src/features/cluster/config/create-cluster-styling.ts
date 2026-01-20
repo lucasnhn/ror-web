@@ -15,3 +15,10 @@ export const table1CellStyling = (provider: string, region: string, tempRegion: 
     isTemp(provider, tempProvider) && tableBlue,
     isTemp(region, tempRegion) && isTemp(provider, tempProvider) && tableDarkerBlue
   )
+export const hoveredCellStyling = (hoverRow: number | null, hoverCol: number | null, row: number, col: number) =>
+  cn(
+    tableStyling,
+    hoverRow === row && 'bg-blue-800',
+    hoverCol === col && 'bg-blue-800',
+    hoverRow === row && hoverCol === col && 'bg-blue-900'
+  )
