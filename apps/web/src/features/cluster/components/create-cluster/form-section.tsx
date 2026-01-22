@@ -6,7 +6,7 @@ export const FormSection = ({ title, error, children, className }: FormSectionPr
   return (
     <section className={cn(className, 'flex flex-col items-center')}>
       <h3>{title}</h3>
-      <div>{children}</div>
+      <div className='mt-4'>{children}</div>
       {error && <span className={errorTextStyling}>{error}</span>}
     </section>
   )

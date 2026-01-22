@@ -7,6 +7,7 @@ import { ProviderRow, RegionProviderMatrixTable } from './region-provider-matrix
 import { Control, Controller, UseFormSetValue } from 'react-hook-form'
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/shadcn/select'
 import { CreateClusterForm } from '../../types/create-cluster'
+import { cn } from '@/utils/clsxm'
 
 type RPPProps = {
   control: Control<CreateClusterForm>
@@ -27,9 +28,9 @@ export const RegionProviderPriceSection = ({ control, setValue }: RPPProps) => {
 
   return (
     <div className={flexGap4}>
-      <h3>Region, Provider &amp; Price</h3>
+      <h2 className={cn('text-3xl', 'sm:text-5xl')}>Region, Provider &amp; Price</h2>
 
-      <div className='mb-2 mt-4 flex gap-2'>
+      <div className={cn('mb-2 flex gap-2 flex-row', 'hidden', 'sm:block')}>
         <Controller
           name='tempProvider'
           control={control}

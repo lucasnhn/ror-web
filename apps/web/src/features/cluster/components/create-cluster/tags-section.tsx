@@ -23,30 +23,64 @@ export const TagsSection = ({
   removeTag,
 }: TagsSectionProps) => {
   return (
-    <section>
-      <h3>Tags</h3>
-      <div className='grid grid-cols-[15rem_15rem_auto] gap-y-4 items-center'>
-        <b>Key</b>
-        <b>Value</b>
-        <b></b>
+    <>
+      <h3 className='mx-auto w-fit mb-4'>Tags</h3>
+      <section>
+        <div className='hidden sm:grid grid-cols-[15rem_15rem_auto] gap-y-4 items-center border p-4 rounded-lg'>
+          <b>Key</b>
+          <b>Value</b>
+          <b></b>
 
-        {Object.entries(tags).map(([key, value]) => (
-          <Fragment key={key}>
-            <span>{key}</span>
-            <span>{value}</span>
-            <Button type='button' size='icon' variant='destructive' onClick={() => removeTag(key)}>
-              <Trash />
-            </Button>
-          </Fragment>
-        ))}
+          {Object.entries(tags).map(([key, value]) => (
+            <Fragment key={key}>
+              <span>{key}</span>
+              <span>{value}</span>
+              <Button type='button' size='icon' variant='destructive' onClick={() => removeTag(key)}>
+                <Trash />
+              </Button>
+            </Fragment>
+          ))}
 
-        <Input placeholder='Enter key...' value={tagKey} onChange={(e) => setTagKey(e.target.value)} />
-        <Input placeholder='Enter value...' value={tagValue} onChange={(e) => setTagValue(e.target.value)} />
+          <Input placeholder='Enter key...' value={tagKey} onChange={(e) => setTagKey(e.target.value)} />
+          <Input placeholder='Enter value...' value={tagValue} onChange={(e) => setTagValue(e.target.value)} />
 
-        <Button type='button' className='w-20' onClick={addTag} disabled={!tagKey.trim() || !tagValue.trim()}>
-          <PlusIcon /> Add
-        </Button>
-      </div>
-    </section>
+          <Button type='button' className='w-20' onClick={addTag} disabled={!tagKey.trim() || !tagValue.trim()}>
+            <PlusIcon /> Add
+          </Button>
+        </div>
+      </section>
+      <section>
+        <div className='sm:hidden items-center border p-4 rounded-lg'>
+          <b>Key</b>
+          <Input
+            placeholder='Enter key...'
+            value={tagKey}
+            onChange={(e) => setTagKey(e.target.value)}
+            className='mb-4'
+          />
+          <b>Value</b>
+          <Input
+            placeholder='Enter value...'
+            value={tagValue}
+            onChange={(e) => setTagValue(e.target.value)}
+            className='mb-4'
+          />
+          <Button type='button' className='w-20' onClick={addTag} disabled={!tagKey.trim() || !tagValue.trim()}>
+            <PlusIcon /> Add
+          </Button>
+
+          {Object.entries(tags).map(([key, value]) => (
+            <div key={key} className='flex justify-between items-center'>
+              <span>
+                {key}: {value}
+              </span>
+              <Button type='button' size='icon' variant='destructive' onClick={() => removeTag(key)}>
+                <Trash />
+              </Button>
+            </div>
+          ))}
+        </div>
+      </section>
+    </>
   )
 }

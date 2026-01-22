@@ -10,6 +10,8 @@ import { Control, Controller, UseFormSetValue, useFormState } from 'react-hook-f
 import { CreateClusterForm, Provider, Region } from '@/features/cluster/types/create-cluster'
 import { useRppValues } from '@/features/cluster/hooks/use-rpp-values'
 import { options } from '@/features/cluster/config/create-cluster-values'
+import { cn } from '@/utils/clsxm'
+import { Check } from 'lucide-react'
 
 type Props = {
   control: Control<CreateClusterForm>
@@ -26,8 +28,16 @@ export function RegionProviderPriceTable({ control, setValue }: Props) {
   }
 
   return (
-    <div className='w-2xl'>
+    <div className={cn('w-full', 'sm:w-2xl')}>
+      <p>Price is calculated for 3 control planes and 3 workers</p>
       <table className={outerTableStyling}>
+        <thead>
+          <tr>
+            <th className='border border-gray-300'>Option</th>
+            <th className='border border-gray-300'>Price</th>
+            <th className='border border-gray-300'>Pick</th>
+          </tr>
+        </thead>
         <tbody>
           {options.map((option, key) => {
             if (!table2DisplayCondition(option.provider, option.region, tempProvider, tempRegion)) return null
@@ -41,26 +51,32 @@ export function RegionProviderPriceTable({ control, setValue }: Props) {
                     {option.provider} - {option.region}
                   </td>
 
-                  <td rowSpan={2} className='border border-gray-300 text-right p-2 min-w-44'>
-                    {wpClass}
-                    <br />
+                  <td
+                    className={cn('border border-gray-300 text-right p-2', 'row-span-1', 'sm:row-span-2 sm:min-w-44')}
+                  >
+                    <p className={cn('hidden', 'sm:block')}>{wpClass}</p>
+                    <br className={cn('hidden', 'sm:block')} />
                     {priceForCluster(option.provider, wpClass, wpNumber, cp)}
                   </td>
 
-                  <td rowSpan={2} className='border border-gray-300 text-center p-2 min-w-28'>
+                  <td
+                    className={cn(
+                      'border border-gray-300 text-center p-2 flex justify-center items-center',
+                      'row-span-1',
+                      'sm:row-span-2 sm:min-w-28'
+                    )}
+                  >
                     {isChosen ? (
-                      <span className='px-3 py-2 border rounded-md border-emerald-500 dark:border-emerald-600 text-sm'>
-                        Chosen
+                      <span className='p-1 border rounded-md border-emerald-500 dark:border-emerald-600 text-sm'>
+                        <Check />
                       </span>
                     ) : (
-                      <Button type='button' onClick={() => choose(option.provider, option.region)}>
-                        Choose
-                      </Button>
+                      <Button type='button' onClick={() => choose(option.provider, option.region)}></Button>
                     )}
                   </td>
                 </tr>
 
-                <tr>
+                <tr className={cn('hidden', 'sm:block')}>
                   <td className='p-2 min-w-60'>{tableClusterPriceDescription(cp, wpNumber)}</td>
                 </tr>
               </Fragment>

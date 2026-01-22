@@ -10,21 +10,25 @@ import {
 } from '@/features/cluster/config/create-cluster-styling'
 import { Region, Provider } from '@/features/cluster/types/create-cluster'
 
-type RegionOption = {
+interface RegionOption {
   provider: Provider
   region: Region
   valid: boolean
 }
 
-type RegionItem = { key: Region; display: string }
-export type ProviderRow = {
+interface RegionItem {
+  key: Region
+  display: string
+}
+
+export interface ProviderRow {
   label: string
   providerKey: Provider
   rowIndex: number
   options: RegionOption[]
 }
 
-type Props = {
+interface RegionProviderMatrixTableProps {
   regions: RegionItem[]
   tempRegion: Region
   tempProvider: Provider
@@ -37,7 +41,7 @@ type Props = {
   setHoverCol: (v: number | null) => void
 }
 
-export function RegionProviderMatrixTable({
+export const RegionProviderMatrixTable = ({
   regions,
   tempRegion,
   tempProvider,
@@ -48,80 +52,81 @@ export function RegionProviderMatrixTable({
   hoverCol,
   setHoverRow,
   setHoverCol,
-}: Props) {
-  const REGION_ROW = 0
+}: RegionProviderMatrixTableProps) => (
+  <table className={cn(outerTableStyling, 'w-2xl table-fixed hidden sm:block')}>
+    <tbody>
+      {/* Header row */}
+      <tr className='h-20'>
+        <th className={cn(tableStyling, 'h-20')} />
+        {regions.map((region, colIndex) => (
+          <th
+            key={region.key}
+            className={cn(
+              tableStyling,
+              'p-4 h-20',
+              hoverCol === null && hoverRow === null && isTemp(region.key, tempRegion) && tableBlue,
+              hoveredCellStyling(hoverRow, hoverCol, 0, colIndex)
+            )}
+            onMouseEnter={() => setHoverCol(colIndex)}
+            onMouseLeave={() => setHoverCol(null)}
+            onClick={() => {
+              setTempProvider('')
+              setTempRegion(region.key)
+            }}
+          >
+            {region.display}
+          </th>
+        ))}
+      </tr>
 
-  return (
-    <table className={cn(outerTableStyling, 'w-2xl table-fixed')}>
-      <tbody>
-        {/* Header row */}
-        <tr className='h-20'>
-          <th className={cn(tableStyling, 'h-20')} />
-          {regions.map((region, colIndex) => (
-            <th
-              key={region.key}
+      {/* Provider rows */}
+      {rows.map((row, rowIndex) => (
+        <tr key={row.providerKey} className='h-20'>
+          <th
+            className={cn(
+              tableStyling,
+              'p-4 h-20 transition-colors',
+              hoverCol === null && hoverRow === null && isTemp(row.providerKey, tempProvider) && tableBlue,
+              hoveredCellStyling(hoverRow, hoverCol, rowIndex + 1, -1)
+            )}
+            onMouseEnter={() => setHoverRow(rowIndex)}
+            onMouseLeave={() => setHoverRow(null)}
+            onClick={() => {
+              setTempProvider(row.providerKey)
+              setTempRegion('')
+            }}
+          >
+            {row.label}
+          </th>
+          {row.options.map((option, colIndex) => (
+            <td
+              key={`${option.provider}-${option.region}-${colIndex}`}
               className={cn(
-                tableStyling,
-                'p-4 h-20',
-                hoverCol === null && hoverRow === null && isTemp(region.key, tempRegion) && tableBlue,
-                hoveredCellStyling(hoverRow, hoverCol, REGION_ROW, colIndex)
+                hoverCol === null &&
+                  hoverRow === null &&
+                  table1CellStyling(option.provider, option.region, tempRegion, tempProvider),
+                'h-20',
+                hoveredCellStyling(hoverRow, hoverCol, row.rowIndex, colIndex)
               )}
-              onMouseEnter={() => setHoverCol(colIndex)}
-              onMouseLeave={() => setHoverCol(null)}
-              onClick={() => setTempRegion(region.key)}
+              onMouseEnter={() => {
+                setHoverRow(row.rowIndex)
+                setHoverCol(colIndex)
+              }}
+              onMouseLeave={() => {
+                setHoverRow(null)
+                setHoverCol(null)
+              }}
+              onClick={() => {
+                if (!option.valid) return
+                setTempProvider(option.provider)
+                setTempRegion(option.region)
+              }}
             >
-              {region.display}
-            </th>
+              {option.valid && <X className='mx-auto my-2' />}
+            </td>
           ))}
         </tr>
-
-        {/* Provider rows */}
-        {rows.map((row) => (
-          <tr key={row.providerKey} className='h-20'>
-            <th
-              className={cn(
-                tableStyling,
-                'p-4 h-20 transition-colors',
-                hoverCol === null && hoverRow === null && isTemp(row.providerKey, tempProvider) && tableBlue,
-                hoveredCellStyling(hoverRow, hoverCol, row.rowIndex, -1)
-              )}
-              onMouseEnter={() => setHoverRow(row.rowIndex)}
-              onMouseLeave={() => setHoverRow(null)}
-              onClick={() => setTempProvider(row.providerKey)}
-            >
-              {row.label}
-            </th>
-
-            {row.options.map((option, colIndex) => (
-              <td
-                key={`${option.provider}-${option.region}-${colIndex}`}
-                className={cn(
-                  hoverCol === null &&
-                    hoverRow === null &&
-                    table1CellStyling(option.provider, option.region, tempRegion, tempProvider),
-                  'h-20',
-                  hoveredCellStyling(hoverRow, hoverCol, row.rowIndex, colIndex)
-                )}
-                onMouseEnter={() => {
-                  setHoverRow(row.rowIndex)
-                  setHoverCol(colIndex)
-                }}
-                onMouseLeave={() => {
-                  setHoverRow(null)
-                  setHoverCol(null)
-                }}
-                onClick={() => {
-                  if (!option.valid) return
-                  setTempProvider(option.provider)
-                  setTempRegion(option.region)
-                }}
-              >
-                {option.valid && <X className='mx-auto my-2' />}
-              </td>
-            ))}
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  )
-}
+      ))}
+    </tbody>
+  </table>
+)
