@@ -1,5 +1,6 @@
 import { Button } from '@/components/shadcn/button'
 import { Input } from '@/components/shadcn/input'
+import { cn } from '@/utils/clsxm'
 import { PlusIcon, Trash } from 'lucide-react'
 import { Fragment } from 'react'
 
@@ -24,9 +25,14 @@ export const TagsSection = ({
 }: TagsSectionProps) => {
   return (
     <>
-      <h3 className='mx-auto w-fit mb-4'>Tags</h3>
+      <h3 className={cn('mx-auto w-fit mb-4 text-3xl', 'sm:text-3xl', 'md:text-5xl')}>Tags</h3>
       <section>
-        <div className='hidden sm:grid grid-cols-[15rem_15rem_auto] gap-y-4 items-center border p-4 rounded-lg'>
+        <div
+          className={cn(
+            'hidden',
+            'sm:grid sm:grid-cols-[10rem_10rem_auto] md:grid-cols-[15rem_15rem_auto] gap-y-4 items-center border p-4 rounded-lg'
+          )}
+        >
           <b>Key</b>
           <b>Value</b>
           <b></b>
@@ -41,8 +47,18 @@ export const TagsSection = ({
             </Fragment>
           ))}
 
-          <Input placeholder='Enter key...' value={tagKey} onChange={(e) => setTagKey(e.target.value)} />
-          <Input placeholder='Enter value...' value={tagValue} onChange={(e) => setTagValue(e.target.value)} />
+          <Input
+            className='sm:w-36 md:w-auto'
+            placeholder='Enter key...'
+            value={tagKey}
+            onChange={(e) => setTagKey(e.target.value)}
+          />
+          <Input
+            className='sm:w-36 md:w-auto'
+            placeholder='Enter value...'
+            value={tagValue}
+            onChange={(e) => setTagValue(e.target.value)}
+          />
 
           <Button type='button' className='w-20' onClick={addTag} disabled={!tagKey.trim() || !tagValue.trim()}>
             <PlusIcon /> Add
