@@ -16,7 +16,6 @@ import { environments, networks, pools } from '@/features/cluster/config/create-
 import { Wizard } from '@/components/ui/wizard'
 import { useCreateClusterForm } from '@/features/cluster/hooks/use-create-cluster-form'
 import { buildClusterYaml } from '@/features/cluster/utils/generate-cluster-yaml'
-import { addTag, removeTag } from '@/features/cluster/utils/tags'
 import { TagsSection } from '@/features/cluster/components/create-cluster/tags-section'
 import { copyToClipboard } from '@/utils/copy-to-clipboard'
 import { RegionProviderPriceSection } from '@/features/cluster/components/create-cluster/region-provider-price-section'
