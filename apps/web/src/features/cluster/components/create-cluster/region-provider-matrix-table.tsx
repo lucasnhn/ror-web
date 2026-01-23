@@ -1,5 +1,4 @@
 import { cn } from '@/utils/clsxm'
-import { Check, X } from 'lucide-react'
 import { isTemp } from '@/features/cluster/config/create-cluster-helpers'
 import { hoveredCellStyling, table1CellStyling, tableBlue } from '@/features/cluster/config/create-cluster-styling'
 import { Region, Provider } from '@/features/cluster/types/create-cluster'
