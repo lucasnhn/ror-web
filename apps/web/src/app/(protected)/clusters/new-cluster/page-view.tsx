@@ -161,7 +161,7 @@ export const PageView = () => {
   const WorkerPools = useCallback(() => {
     return (
       <section>
-        <h3 className={cn('text-3xl', 'sm:text-3xl', 'md:text4')}>Worker pools</h3>
+        <h3 className={cn('text-3xl', 'sm:text-3xl', 'md:text-4xl')}>Worker pools</h3>
 
         <div className='w-fit mx-auto mt-2'>
           <h4>Name</h4>
