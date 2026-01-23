@@ -4,7 +4,7 @@ import type { CreateClusterForm } from '../types/create-cluster'
 export function useCreateClusterForm() {
   return useForm<CreateClusterForm>({
     defaultValues: {
-      tags: {},
+      tags: [],
       tempProvider: '',
       tempRegion: '',
       provider: '',

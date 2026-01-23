@@ -5,7 +5,7 @@ import { PlusIcon, Trash } from 'lucide-react'
 import { Fragment } from 'react'
 
 type TagsSectionProps = {
-  tags: Record<string, string>
+  tags: { key: string; value: string }[]
   tagKey: string
   tagValue: string
   setTagKey: (v: string) => void
@@ -23,6 +23,7 @@ export const TagsSection = ({
   addTag,
   removeTag,
 }: TagsSectionProps) => {
+  const safeTags: { key: string; value: string }[] = Array.isArray(tags) ? tags : []
   return (
     <>
       <h3 className={cn('mx-auto w-fit mb-4 text-3xl', 'sm:text-3xl', 'md:text-5xl')}>Tags</h3>
@@ -37,7 +38,7 @@ export const TagsSection = ({
           <b>Value</b>
           <b></b>
 
-          {Object.entries(tags).map(([key, value]) => (
+          {safeTags.map(({ key, value }) => (
             <Fragment key={key}>
               <span>{key}</span>
               <span>{value}</span>
@@ -85,7 +86,7 @@ export const TagsSection = ({
             <PlusIcon /> Add
           </Button>
 
-          {Object.entries(tags).map(([key, value]) => (
+          {safeTags.map(({ key, value }) => (
             <div key={key} className='flex justify-between items-center'>
               <span>
                 {key}: {value}
