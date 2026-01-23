@@ -16,7 +16,6 @@ import { environments, networks, pools } from '@/features/cluster/config/create-
 import { Wizard } from '@/components/ui/wizard'
 import { useCreateClusterForm } from '@/features/cluster/hooks/use-create-cluster-form'
 import { buildClusterYaml } from '@/features/cluster/utils/generate-cluster-yaml'
-import { addTag, removeTag } from '@/features/cluster/utils/tags'
 import { TagsSection } from '@/features/cluster/components/create-cluster/tags-section'
 import { copyToClipboard } from '@/utils/copy-to-clipboard'
 import { RegionProviderPriceSection } from '@/features/cluster/components/create-cluster/region-provider-price-section'
@@ -63,14 +62,29 @@ export const PageView = () => {
 
   // Handlers
   const handleAddTag = () => {
-    if (!tagKey.trim() || !tagValue.trim()) return
-    setValue('tags', addTag(tagsWatch ?? {}, tagKey, tagValue), { shouldDirty: true })
+    const k = tagKey.trim()
+    const v = tagValue.trim()
+    if (!k || !v) return
+
+    const current = Array.isArray(tagsWatch) ? tagsWatch : []
+    const next = [...current, { key: k, value: v }] // preserves insertion order
+
+    setValue('tags', next, { shouldDirty: true, shouldTouch: true, shouldValidate: true })
     setTagKey('')
     setTagValue('')
   }
 
   const handleRemoveTag = (key: string) => {
-    setValue('tags', removeTag(tagsWatch ?? {}, key), { shouldDirty: true })
+    const current = Array.isArray(tagsWatch) ? tagsWatch : []
+    setValue(
+      'tags',
+      current.filter((t) => t.key !== key),
+      {
+        shouldDirty: true,
+        shouldTouch: true,
+        shouldValidate: true,
+      }
+    )
   }
 
   // Helper functions for form
@@ -265,7 +279,7 @@ export const PageView = () => {
                   {Object.entries(tagsWatch).length === 0 ? (
                     <span className='italic opacity-70'>No tags</span>
                   ) : (
-                    Object.entries(tagsWatch).map(([key, value]) => (
+                    (Array.isArray(tagsWatch) ? tagsWatch : []).map(({ key, value }) => (
                       <p key={key}>
                         {key}: {value}
                       </p>
@@ -349,7 +363,7 @@ export const PageView = () => {
       wizardContent: (
         <div className='w-fit mx-auto'>
           <TagsSection
-            tags={tagsWatch ?? {}}
+            tags={Array.isArray(tagsWatch) ? tagsWatch : []}
             tagKey={tagKey}
             tagValue={tagValue}
             setTagKey={setTagKey}
