@@ -60,7 +60,11 @@ export function RegionProviderPriceTable({ control, setValue }: Props) {
                           <Check />
                         </span>
                       ) : (
-                        <Button type='button' onClick={() => choose(option.provider, option.region)}>
+                        <Button
+                          type='button'
+                          aria-label={`Choose ${option.provider} - ${option.region}`}
+                          onClick={() => choose(option.provider, option.region)}
+                        >
                           <span className={cn('hidden', 'sm:block')}>Choose</span>
                         </Button>
                       )}
