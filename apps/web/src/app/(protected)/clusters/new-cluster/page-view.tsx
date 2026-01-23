@@ -161,7 +161,7 @@ export const PageView = () => {
   const WorkerPools = useCallback(() => {
     return (
       <section>
-        <h3>Worker pools</h3>
+        <h3 className={cn('text-3xl', 'sm:text-3xl', 'md:text-4xl')}>Worker pools</h3>
 
         <div className='w-fit mx-auto mt-2'>
           <h4>Name</h4>
@@ -247,7 +247,7 @@ export const PageView = () => {
   const Summary = () => {
     return (
       <div className='w-fit'>
-        <h3 className='mx-auto w-fit'>Summary</h3>
+        <h3 className={cn('mx-auto w-fit text-3xl', 'sm:text-3xl', 'md:text-5xl')}>Summary</h3>
         <div className={cn('border rounded-lg p-4 overflow-hidden my-4', 'w-full', 'sm:w-96')}>
           <table className={cn('border-separate border-spacing-0 w-full', 'text-sm', 'sm:text-md')}>
             <tbody>
@@ -312,7 +312,7 @@ export const PageView = () => {
     {
       title: 'Basics',
       wizardContent: (
-        <div className={cn('flex justify-center', 'flex-col gap-8', 'sm:flex-row sm:gap-24')}>
+        <div className={cn('flex justify-center', 'flex-col gap-4', 'flex-row lg:gap-20')}>
           <ProjectInput />
           <NameInput />
           <EnvironmentInput />
@@ -330,7 +330,7 @@ export const PageView = () => {
     {
       title: 'Capacity',
       wizardContent: (
-        <div className={cn('flex gap-24 w-fit mx-auto', 'flex-col gap-8', 'sm:flex-row sm:gap-24')}>
+        <div className={cn('flex gap-24 w-fit mx-auto', 'flex-col gap-4', 'sm:flex-row sm:gap-24')}>
           <WorkerPools />
           <ControlPlaneInput />
         </div>

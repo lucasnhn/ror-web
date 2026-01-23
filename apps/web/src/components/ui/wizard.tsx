@@ -23,11 +23,20 @@ interface WizardItemProps {
 type ItemState = 'inactive' | 'active' | 'wasActive'
 
 const HorizontalLine = ({ className }: { className?: string }) => (
-  <span className={cn('mx-2 sm:mx-3 md:mx-4 h-px w-2 sm:w-4 md:w-8 border-2 border-b rounded-sm', className)} />
+  <span
+    className={cn(
+      'h-px border-2 border-b rounded-sm',
+      'mx-2 w-2',
+      'sm:mx-3 sm:w-4',
+      'md:mx-3 md:w-6',
+      'lg:mx-4 lg:max-w-8',
+      className
+    )}
+  />
 )
 
 const Circle = ({ className, circleNum }: { className?: string; circleNum: number }) => (
-  <div className={cn('rounded-full border h-8 sm:h-10 w-8 sm:w-10 flex justify-center items-center', className)}>
+  <div className={cn('rounded-full border flex justify-center items-center', 'w-8 h-8', 'sm:w-10 sm:h-10', className)}>
     {circleNum}
   </div>
 )
@@ -97,7 +106,15 @@ export const Wizard = <TFieldValues extends FieldValues>({
 
   return (
     <div className={cn(className, 'py-4')}>
-      <div className={cn('flex px-4 border-b justify-between items-center', 'flex-col', 'sm:flex-row')}>
+      <div
+        className={cn(
+          'flex border-b justify-between items-center',
+          'flex-col px-4',
+          'sm:flex-row',
+          'md:px-6',
+          'lg:px-12'
+        )}
+      >
         <div className='flex flex-wrap gap-y-4 sm:gap-y-6 mb-4 justify-center sm:justify-start'>
           {content.map((c, index) => {
             const state = getItemState(index, safeActive, maxReached)
@@ -125,7 +142,7 @@ export const Wizard = <TFieldValues extends FieldValues>({
       </div>
 
       <div className={cn('px-4 py-12', 'sm:p-12')}>
-        <div className='flex flex-row gap-24 justify-center'>
+        <div className={cn('flex justify-center', 'flex-col-reverse gap-4', 'sm:flex-row sm:gap-24')}>
           <span>{content[safeActive]?.wizardContent}</span>
           {showSummary && safeActive !== content.length - 1 && summary}
         </div>
