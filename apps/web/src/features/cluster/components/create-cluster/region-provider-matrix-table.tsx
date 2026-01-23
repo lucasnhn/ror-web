@@ -2,6 +2,7 @@ import { cn } from '@/utils/clsxm'
 import { isTemp } from '@/features/cluster/config/create-cluster-helpers'
 import { hoveredCellStyling, table1CellStyling, tableBlue } from '@/features/cluster/config/create-cluster-styling'
 import { Region, Provider } from '@/features/cluster/types/create-cluster'
+import { Check } from 'lucide-react'
 
 interface RegionOption {
   provider: Provider
