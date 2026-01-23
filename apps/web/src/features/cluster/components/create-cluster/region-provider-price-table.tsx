@@ -1,11 +1,7 @@
 import { Fragment } from 'react'
 import { Button } from '@/components/shadcn/button'
-import { errorTextStyling, outerTableStyling, tableBoldText } from '@/features/cluster/config/create-cluster-styling'
-import {
-  priceForCluster,
-  table2DisplayCondition,
-  tableClusterPriceDescription,
-} from '@/features/cluster/config/create-cluster-helpers'
+import { errorTextStyling, tableBoldText } from '@/features/cluster/config/create-cluster-styling'
+import { priceForCluster, table2DisplayCondition } from '@/features/cluster/config/create-cluster-helpers'
 import { Control, Controller, UseFormSetValue, useFormState } from 'react-hook-form'
 import { CreateClusterForm, Provider, Region } from '@/features/cluster/types/create-cluster'
 import { useRppValues } from '@/features/cluster/hooks/use-rpp-values'
@@ -28,17 +24,17 @@ export function RegionProviderPriceTable({ control, setValue }: Props) {
   }
 
   return (
-    <div className='w-lg'>
+    <div className='w-full sm:w-lg'>
       <p className='mb-2'>
         Price is calculated for 3 control planes, 3 workers and the machine class best-effort-medium
       </p>
-      <div className={cn('sm:block sm:w-lg sm:overflow-hidden sm:rounded-lg sm:border')}>
-        <table className='w-fit table table-fixed'>
+      <div className={cn('w-full overflow-hidden rounded-lg border sm:w-lg')}>
+        <table className='w-full table-fixed'>
           <thead>
             <tr className='border-b'>
-              <th className='border-r p-2'>Option</th>
-              <th className='border-r p-2'>Price</th>
-              <th>Pick</th>
+              <th className='border-r py-2 w-16'>Option</th>
+              <th className={cn('border-r py-2 w-14')}>Price</th>
+              <th className='w-8'>Pick</th>
             </tr>
           </thead>
           <tbody>
@@ -50,22 +46,15 @@ export function RegionProviderPriceTable({ control, setValue }: Props) {
               return (
                 <Fragment key={key}>
                   <tr className='border-b last:border-b-0'>
-                    <th className={cn(tableBoldText, 'border-r')}>
+                    <th className={cn(tableBoldText, 'w-16 border-r')}>
                       {option.provider} - {option.region}
                     </th>
 
-                    <td className={cn('border-r text-right p-2', 'row-span-1', 'sm:row-span-2 sm:min-w-44')}>
-                      <br className={cn('hidden', 'sm:block')} />
+                    <td className={cn('border-r text-center p-2 w-14')}>
                       {priceForCluster(option.provider, wpClass, wpNumber, cp)}
                     </td>
 
-                    <td
-                      className={cn(
-                        'text-center p-2 flex justify-center items-center',
-                        'row-span-1',
-                        'sm:row-span-2 sm:min-w-28'
-                      )}
-                    >
+                    <td className='text-center p-2 w-8'>
                       {isChosen ? (
                         <span className='p-1 border rounded-md border-emerald-500 dark:border-emerald-600 text-sm'>
                           <Check />
