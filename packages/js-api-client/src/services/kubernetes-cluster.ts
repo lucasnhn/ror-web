@@ -66,7 +66,7 @@ export const createKubernetesClusterService = (request: (requestOptions: Request
         path: `/v2/resources/uid/${id}`,
       })
       console.log('[KUBERNETES CLUSTER SERVICE]: response')
-      console.log(response)
+      console.dir(response, { depth: null })
       console.log('--------------------------------')
       return validateResponse(response, KubernetesClusterSchema)
     } catch (error) {
