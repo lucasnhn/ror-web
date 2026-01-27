@@ -21,6 +21,14 @@ import { copyToClipboard } from '@/utils/copy-to-clipboard'
 import { RegionProviderPriceSection } from '@/features/cluster/components/create-cluster/region-provider-price-section'
 import { WizardContentType } from '@/types/wizard-content-type'
 import { cn } from '@/utils/clsxm'
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from '@/components/shadcn/combobox'
 
 const stepFields: Array<Array<Path<CreateClusterForm>>> = [
   ['project', 'name', 'environment'],
@@ -31,7 +39,42 @@ const stepFields: Array<Array<Path<CreateClusterForm>>> = [
   [],
 ]
 
-export const PageView = () => {
+interface BillingType {
+  workorder: string
+}
+
+interface ContentInfoType {
+  email: string
+  phone: string
+  upn: string
+}
+
+interface RoleType {
+  contentInfo: ContentInfoType
+  roleDefinition: string
+}
+
+interface ProjectMetadataType {
+  billing: BillingType
+  roles: RoleType[]
+  serviceTags: Record<string, string>
+}
+
+interface ProjectType {
+  active: boolean
+  create: string
+  description: string
+  id: string
+  name: string
+  projectMetadata: ProjectMetadataType
+  updated: string
+}
+
+interface NewClusterProps {
+  projects: ProjectType[]
+}
+
+export const PageView = ({ projects }: NewClusterProps) => {
   // States
   const [tagKey, setTagKey] = useState('')
   const [tagValue, setTagValue] = useState('')
@@ -110,10 +153,22 @@ export const PageView = () => {
   const ProjectInput = useCallback(() => {
     return (
       <FormSection title='Project' error={errors.project && errors.project.message}>
-        <Input {...register('project', { required: 'Project is required' })} placeholder='Enter project...' />
+        <Combobox items={projects}>
+          <ComboboxInput showTrigger={false} className='max-w-52' placeholder='Select project' />
+          <ComboboxContent className='max-w-52'>
+            <ComboboxEmpty>No items found.</ComboboxEmpty>
+            <ComboboxList>
+              {(project) => (
+                <ComboboxItem key={project.id} value={project.id}>
+                  {project.name}
+                </ComboboxItem>
+              )}
+            </ComboboxList>
+          </ComboboxContent>
+        </Combobox>
       </FormSection>
     )
-  }, [errors.project, register])
+  }, [errors.project, projects])
 
   const NameInput = useCallback(() => {
     return (
