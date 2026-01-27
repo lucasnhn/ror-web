@@ -13,7 +13,6 @@ import { CodeSnippet } from '../../../components/ui/code-snippet'
 import { ClusterCardDisplayData } from '../types/display-data'
 import { ResourceType } from '../types/resource'
 import {
-  getClusterId,
   getClusterName,
   getClusterResource,
   getClusterUid,
@@ -39,7 +38,7 @@ function Card({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot='card'
-      className={cn('bg-[var(--r-layer)] text-card-foreground flex flex-col rounded-xl py-6 shadow-sm', className)}
+      className={cn('bg-(--r-layer) text-card-foreground flex flex-col rounded-xl py-6 shadow-sm', className)}
       {...props}
     />
   )
@@ -75,7 +74,6 @@ interface ClusterCardProps {
  * @returns A clickable card component linking to the cluster details page.
  */
 const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps) => {
-  const clusterId = getClusterId(cluster)
   const clusterUid = getClusterUid(cluster)
   const clusterName = getClusterName(cluster)
   const env = getEnvironment(cluster)
