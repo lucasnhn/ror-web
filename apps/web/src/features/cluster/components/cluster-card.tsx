@@ -16,6 +16,7 @@ import {
   getClusterId,
   getClusterName,
   getClusterResource,
+  getClusterUid,
   getDatacenter,
   getEnvironment,
   getHealthCondition,
@@ -75,6 +76,7 @@ interface ClusterCardProps {
  */
 const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps) => {
   const clusterId = getClusterId(cluster)
+  const clusterUid = getClusterUid(cluster)
   const clusterName = getClusterName(cluster)
   const env = getEnvironment(cluster)
   const tools = getTools(cluster)
@@ -231,7 +233,7 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
 
   return (
     <Link
-      href={routes.app.cluster.getHref(clusterId)}
+      href={routes.app.cluster.getHref(clusterUid)}
       onClick={() => localStorage.setItem('selectedCluster', JSON.stringify(cluster))}
     >
       <Card
@@ -247,7 +249,7 @@ const ClusterCard = ({ className, user, cluster, displayData }: ClusterCardProps
           <CardTitle className={cn('text-2xl rounded-t-xl px-6 py-2 flex', envColor[0], envColor[1])}>
             {(clusterName || 'Unnamed Cluster') as string}
           </CardTitle>
-          <HealthCircle className='ml-auto mr-4 mt-[-24px] w-[52px] h-[52px] ' healthCondition={healthCondition} />
+          <HealthCircle className='ml-auto mr-4 -mt-6 w-13 h-13 ' healthCondition={healthCondition} />
         </CardHeader>
 
         <CardContent className='text-sm flex flex-col gap-3'>
