@@ -1,6 +1,6 @@
 import type { RequestOptions } from '../core/request'
 import { validateResponse } from '../core/validation'
-import { ProjectListSchema } from '../schemas/project'
+import { ProjectResponseSchema } from '../schemas/project'
 
 export const createProjectService = (request: (requestOptions: RequestOptions) => Promise<unknown>) => ({
   list: async () => {
@@ -8,15 +8,13 @@ export const createProjectService = (request: (requestOptions: RequestOptions) =
       method: 'POST',
       path: '/v1/projects/filter',
       body: {
-        body: {
-          filters: [],
-          globalFilter: '',
-          limit: 0,
-          skip: 0,
-          sort: [],
-        },
+        filters: [],
+        globalFilter: '',
+        limit: 0,
+        skip: 0,
+        sort: [],
       },
     })
-    return validateResponse(response, ProjectListSchema)
+    return validateResponse(response, ProjectResponseSchema)
   },
 })

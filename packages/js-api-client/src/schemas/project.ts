@@ -22,7 +22,7 @@ export const ProjectSchema = z
           roleDefinition: z.string(),
         })
       ),
-      serviceTags: z.array(z.record(z.string(), z.string())),
+      serviceTags: z.record(z.string(), z.string()).nullable().optional(),
     }),
     updated: z.string(),
   })
