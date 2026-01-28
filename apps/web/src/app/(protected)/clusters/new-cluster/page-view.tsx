@@ -5,7 +5,7 @@ import { Input } from '@/components/shadcn/input'
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/shadcn/select'
 import { routes } from '@/config/routes'
 import { CodeSnippet } from '@ror/react'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { Controller, Path } from 'react-hook-form'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
@@ -23,12 +23,14 @@ import { WizardContentType } from '@/types/wizard-content-type'
 import { cn } from '@/utils/clsxm'
 import {
   Combobox,
+  ComboboxCollection,
   ComboboxContent,
   ComboboxEmpty,
   ComboboxInput,
   ComboboxItem,
   ComboboxList,
 } from '@/components/shadcn/combobox'
+import { Form, FormControl, FormField, FormItem } from '@/components/shadcn/form'
 
 const stepFields: Array<Array<Path<CreateClusterForm>>> = [
   ['project', 'name', 'environment'],
@@ -74,6 +76,62 @@ interface NewClusterProps {
   projects: ProjectType[]
 }
 
+interface SimpleProjectType {
+  label: string
+  value: string // id
+}
+
+function ProjectInput({ control, projects }: { control: any; projects: ProjectType[] | undefined }) {
+  const projectsSafe = projects ?? []
+
+  const simpleProjects: SimpleProjectType[] = React.useMemo(
+    () => projectsSafe.map((p) => ({ label: p.name, value: p.id })),
+    [projectsSafe]
+  )
+
+  return (
+    <section className={cn('flex flex-col items-center gap-4')}>
+      <h3 className={cn('text-3xl', 'sm:text-3xl', 'md:text-4xl')}>Project</h3>
+
+      <FormField
+        control={control}
+        name='project'
+        render={({ field }) => {
+          const selected = simpleProjects.find((p) => p.value === (field.value ?? '')) ?? null
+
+          return (
+            <FormItem>
+              <FormControl>
+                <Combobox<SimpleProjectType>
+                  items={simpleProjects}
+                  value={selected}
+                  onValueChange={(p) => field.onChange(p?.value ?? '')}
+                  itemToStringValue={(p) => p?.label ?? ''}
+                >
+                  <ComboboxInput showTrigger={false} className='max-w-52' placeholder='Search project...' />
+
+                  <ComboboxContent className='max-w-52'>
+                    <ComboboxEmpty>No items found.</ComboboxEmpty>
+                    <ComboboxList>
+                      <ComboboxCollection>
+                        {(p) => (
+                          <ComboboxItem key={p.value} value={p}>
+                            {p.label}
+                          </ComboboxItem>
+                        )}
+                      </ComboboxCollection>
+                    </ComboboxList>
+                  </ComboboxContent>
+                </Combobox>
+              </FormControl>
+            </FormItem>
+          )
+        }}
+      />
+    </section>
+  )
+}
+
 export const PageView = ({ projects }: NewClusterProps) => {
   // States
   const [tagKey, setTagKey] = useState('')
@@ -81,16 +139,17 @@ export const PageView = ({ projects }: NewClusterProps) => {
   const [yamlOpen, setYamlOpen] = useState(false)
 
   // Hooks
+  const form = useCreateClusterForm()
   const {
-    register,
     control,
+    register,
     handleSubmit,
     setValue,
     watch,
     getValues,
     trigger,
     formState: { errors },
-  } = useCreateClusterForm()
+  } = form
 
   // Watches
   const wpClassWatch = watch('wpClass')
@@ -100,8 +159,16 @@ export const PageView = ({ projects }: NewClusterProps) => {
   const nameWatch = watch('name')
   const networkWatch = watch('network')
   const environmentWatch = watch('environment')
+  const regionWatch = watch('region')
+  const providerWatch = watch('provider')
   const projectWatch = watch('project')
   const wpNameWatch = watch('wpName')
+
+  const projectId = projectWatch
+  const projectName = useMemo(() => {
+    if (!projectId) return ''
+    return projects?.find((p) => p.id === projectId)?.name ?? projectId
+  }, [projectId, projects])
 
   // Handlers
   const handleAddTag = () => {
@@ -130,6 +197,24 @@ export const PageView = ({ projects }: NewClusterProps) => {
     )
   }
 
+  const yaml = useMemo(() => {
+    const values = getValues()
+    return buildClusterYaml({ ...values, project: projectName })
+  }, [
+    getValues,
+    projectName,
+    nameWatch,
+    environmentWatch,
+    regionWatch,
+    providerWatch,
+    networkWatch,
+    cpWatch,
+    wpNameWatch,
+    wpNumberWatch,
+    wpClassWatch,
+    tagsWatch,
+  ])
+
   // Helper functions for form
   const onSubmit = async () => {
     copyYaml()
@@ -142,7 +227,7 @@ export const PageView = ({ projects }: NewClusterProps) => {
   // YAML
   const copyYaml = async () => {
     try {
-      await copyToClipboard(buildClusterYaml(getValues()))
+      await copyToClipboard(yaml)
       toast.info('YAML copied to clipboard')
     } catch {
       toast.error('Failed to copy YAML')
@@ -150,26 +235,6 @@ export const PageView = ({ projects }: NewClusterProps) => {
   }
 
   // Inputs
-  const ProjectInput = useCallback(() => {
-    return (
-      <FormSection title='Project' error={errors.project && errors.project.message}>
-        <Combobox items={projects}>
-          <ComboboxInput showTrigger={false} className='max-w-52' placeholder='Select project' />
-          <ComboboxContent className='max-w-52'>
-            <ComboboxEmpty>No items found.</ComboboxEmpty>
-            <ComboboxList>
-              {(project) => (
-                <ComboboxItem key={project.id} value={project.id}>
-                  {project.name}
-                </ComboboxItem>
-              )}
-            </ComboboxList>
-          </ComboboxContent>
-        </Combobox>
-      </FormSection>
-    )
-  }, [errors.project, projects])
-
   const NameInput = useCallback(() => {
     return (
       <FormSection title='Cluster name' error={errors.name && errors.name.message}>
@@ -186,7 +251,7 @@ export const PageView = ({ projects }: NewClusterProps) => {
           control={control}
           rules={{ required: 'Environment is required' }}
           render={({ field }) => (
-            <Select value={field.value} onValueChange={field.onChange}>
+            <Select value={field.value ?? ''} onValueChange={field.onChange}>
               <SelectTrigger className='w-52'>{field.value || 'Select environment'}</SelectTrigger>
               <SelectContent>
                 {environments.map((environment) => (
@@ -264,7 +329,7 @@ export const PageView = ({ projects }: NewClusterProps) => {
             control={control}
             rules={{ required: 'Workerpool class is required' }}
             render={({ field }) => (
-              <Select value={field.value} onValueChange={field.onChange}>
+              <Select value={field.value ?? ''} onValueChange={field.onChange}>
                 <SelectTrigger className='w-52'>{field.value || 'Select class'}</SelectTrigger>
                 <SelectContent>
                   {pools.map((pool) => (
@@ -290,7 +355,7 @@ export const PageView = ({ projects }: NewClusterProps) => {
           control={control}
           rules={{ required: 'Network is required' }}
           render={({ field }) => (
-            <Select value={field.value} onValueChange={field.onChange}>
+            <Select value={field.value ?? ''} onValueChange={field.onChange}>
               <SelectTrigger className='w-52'>{field.value || 'Select network'}</SelectTrigger>
               <SelectContent>
                 {networks.map((network) => (
@@ -320,9 +385,11 @@ export const PageView = ({ projects }: NewClusterProps) => {
         <div className={cn('border rounded-lg p-4 overflow-hidden my-4', 'w-full', 'sm:w-96')}>
           <table className={cn('border-separate border-spacing-0 w-full', 'text-sm', 'sm:text-md')}>
             <tbody>
-              <SummaryTableRow title='Project' content={projectWatch} />
+              <SummaryTableRow title='Project' content={projectName} />
               <SummaryTableRow title='Cluster name' content={nameWatch} />
               <SummaryTableRow title='Environment' content={environmentWatch} />
+              <SummaryTableRow title='Region' content={regionWatch} />
+              <SummaryTableRow title='Provider' content={providerWatch} />
               <SummaryTableRow title='Control plane' content={cpWatch} />
               <SummaryTableRow title='Worker pools name' content={wpNameWatch} />
               <SummaryTableRow title='Worker pools number' content={wpNumberWatch} />
@@ -368,7 +435,7 @@ export const PageView = ({ projects }: NewClusterProps) => {
               className='rounded-lg mt-2'
               style={{ '--code-snippet-multi-max-height': '27rem' }}
             >
-              {buildClusterYaml(getValues())}
+              {yaml}
             </CodeSnippet>
           )}
         </form>
@@ -382,7 +449,7 @@ export const PageView = ({ projects }: NewClusterProps) => {
       title: 'Basics',
       wizardContent: (
         <div className={cn('flex justify-center', 'flex-col gap-4', 'flex-row lg:gap-20')}>
-          <ProjectInput />
+          <ProjectInput control={control} projects={projects} />
           <NameInput />
           <EnvironmentInput />
         </div>
@@ -440,5 +507,9 @@ export const PageView = ({ projects }: NewClusterProps) => {
     },
   ]
 
-  return <Wizard<CreateClusterForm> content={content} trigger={trigger} stepFields={stepFields} summary={<Summary />} />
+  return (
+    <Form {...form}>
+      <Wizard<CreateClusterForm> content={content} trigger={trigger} stepFields={stepFields} summary={<Summary />} />
+    </Form>
+  )
 }
