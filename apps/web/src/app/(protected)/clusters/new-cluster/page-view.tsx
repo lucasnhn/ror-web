@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/s
 import { routes } from '@/config/routes'
 import { CodeSnippet } from '@ror/react'
 import React, { useCallback, useMemo, useState } from 'react'
-import { Controller, Path } from 'react-hook-form'
+import { Control, Controller, Path } from 'react-hook-form'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import { CreateClusterForm } from '@/features/cluster/types/create-cluster'
@@ -31,6 +31,7 @@ import {
   ComboboxList,
 } from '@/components/shadcn/combobox'
 import { Form, FormControl, FormField, FormItem } from '@/components/shadcn/form'
+import { ProjectType } from './page'
 
 const stepFields: Array<Array<Path<CreateClusterForm>>> = [
   ['project', 'name', 'environment'],
@@ -41,37 +42,6 @@ const stepFields: Array<Array<Path<CreateClusterForm>>> = [
   [],
 ]
 
-interface BillingType {
-  workorder: string
-}
-
-interface ContentInfoType {
-  email: string
-  phone: string
-  upn: string
-}
-
-interface RoleType {
-  contentInfo: ContentInfoType
-  roleDefinition: string
-}
-
-interface ProjectMetadataType {
-  billing: BillingType
-  roles: RoleType[]
-  serviceTags: Record<string, string>
-}
-
-interface ProjectType {
-  active: boolean
-  create: string
-  description: string
-  id: string
-  name: string
-  projectMetadata: ProjectMetadataType
-  updated: string
-}
-
 interface NewClusterProps {
   projects: ProjectType[]
 }
@@ -81,7 +51,13 @@ interface SimpleProjectType {
   value: string // id
 }
 
-function ProjectInput({ control, projects }: { control: any; projects: ProjectType[] | undefined }) {
+function ProjectInput({
+  control,
+  projects,
+}: {
+  control: Control<CreateClusterForm>
+  projects: ProjectType[] | undefined
+}) {
   const projectsSafe = projects ?? []
 
   const simpleProjects: SimpleProjectType[] = React.useMemo(
