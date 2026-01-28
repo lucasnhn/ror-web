@@ -65,12 +65,16 @@ export const v2ResourcesHandlers = [
 
   // Handle GET requests to /v2/resources/uid/:id to fetch a resource by unique ID
   http.get('http://localhost:10000/v2/resources/uid/:id', ({ params }) => {
+    console.log('=============================== HALLA PÅ DEG ============================')
     const { id } = params // Extract the resource ID from the URL
 
     // Find a cluster resource with the matching clusterId
     const cluster = clustersVersion2.resources.find(
-      (res) => res.kind === 'KubernetesCluster' && res.kubernetescluster?.spec?.data.clusterId === id
+      (res) => res.kind === 'KubernetesCluster' && res.metadata.uid === id
     )
+    console.log('===========================================================')
+    console.log(cluster)
+    console.log('===========================================================')
 
     // Return 404 if not found
     if (!cluster) {
