@@ -20,7 +20,7 @@
 
 ## How to - repo
 
-- [How to - clone and run ROR](clone-run.md)
+- [How to - clone and run ror-web](clone-run.md)
 
 ## General how tos
 
