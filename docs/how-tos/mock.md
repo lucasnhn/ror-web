@@ -14,7 +14,7 @@ Tools like faker, machine and sub can be used to create well made mock, that can
 
 ## How to implement mock data?
 
-We have a directory, [`apps/web/__mocks__/data`](apps/web/__mocks__/data). Here one can implement the mock for a data set. Setup is like this:
+We have a directory, [`apps/web/__mocks__/data`](/apps/web/__mocks__/data). Here one can implement the mock for a data set. Setup is like this:
 
 ```bash
 export const mockName = {
@@ -52,17 +52,17 @@ export default prices
 
 `mockName` should be changed to something that makes sense for your mocking. Then the mocking can be placed inside this object.
 
-## Handlers
+## Handlers/
 
 Depending on the endpoint you use, you might need to implement or change a handler.
 
 ### v1 endpoint
 
-If you are using the v1 endpoint, you need to implement your own handler. Here it is recommended to check out the [clusters handler](apps/web/__mocks__/handlers/clusters.ts), [prices handler](apps/web/__mocks__/handlers/prices.ts) or [projects handler](apps/web/__mocks__/handlers/projects.ts).
+If you are using the v1 endpoint, you need to implement your own handler. Here it is recommended to check out the [clusters handler](/apps/web/__mocks__/handlers/clusters.ts), [prices handler](/apps/web/__mocks__/handlers/prices.ts) or [projects handler](/apps/web/__mocks__/handlers/projects.ts).
 
 ### v2 endpoint
 
-If you are using the v2 endpoint, you need to add functionality to the [v2-resources handler](apps/web/__mocks__handlers/v2-resources.ts).
+If you are using the v2 endpoint, you need to add functionality to the [v2-resources handler](/apps/web/__mocks__handlers/v2-resources.ts).
 
 Here you must check if the call you are using is already defined (for example if you are using `'GET' v2/resources`).
 

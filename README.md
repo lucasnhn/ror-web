@@ -30,13 +30,13 @@ To run with dex, run the following command:
 npm run dev:all
 ```
 
-The `:all` suffix runs the [`scripts/dev-with-compose.sh`](scripts/dev-with-compose.sh) script, that runs both `docker-compose up` and `npm run dev`.
+The `:all` suffix runs the [`scripts/dev-with-compose.sh`](/scripts/dev-with-compose.sh) script, that runs both `docker-compose up` and `npm run dev`.
 
 ### Setup environmental variables
 
 #### For apps/web
 
-Create a new file `apps/web/.env.local`, and copy the contents of [`apps/web/.env.example`](apps/web/.env.example). Fill in the necessary values.
+Create a new file `apps/web/.env.local`, and copy the contents of [`apps/web/.env.example`](/apps/web/.env.example). Fill in the necessary values.
 
 **Note**: Environmental variables will be validated running runtime and mapped to a different naming convention. See `/env.ts` for implementation details.
 
