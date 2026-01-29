@@ -2,8 +2,6 @@
 
 # How to - clone and run ror-web
 
-To run ROR with the new web, you need to run [ror](https://github.com/NorskHelsenett/ror) and [ror-web](https://github.com/NorskHelsenett/ror-web). ror-web is the frontend, while ror is the backend. Therefore, if you try to run ror-web without ror, you just won't get any data.
-
 ## Clone ror-web repo
 
 - In the [ror-web repo](https://github.com/NorskHelsenett/ror-web), find the green "Code" button, and choose SSH. If you have not set up SSH, do so instead of cloning with HTTPS, as this will save you problems later.
