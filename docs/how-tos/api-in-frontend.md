@@ -6,13 +6,13 @@ An API call has to be implemented in a server component. This means it can not s
 
 One can get the API by using:
 
-```bash
+```ts
 await getRorApi()
 ```
 
 One has to know what service from `@ror/js-api-client`. In this example, we will say we want the `projects` service. Then, one has to know what API call one wants from the service, `list()` in this example. To list all projects, one would use:
 
-```bash
+```ts
 const api = await getRorApi()
 const res = await api.projects.list()
 ```
