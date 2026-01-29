@@ -12,7 +12,7 @@ Frontend for admin GUI in the ROR project.
 
 ### Run project
 
-You can either chose to run ror-web with or without dex.
+You can either choose to run ror-web with or without dex.
 
 #### Without dex
 
@@ -72,7 +72,7 @@ Your application will be available at `http://localhost:11100`.
 
 ## Mocking
 
-The web application uses [mswjs](https://mswjs.io/) to mock API requests. To enable mocking, set `NEXT_PUBLICK_MOCKING_ENABLED` to `true` in the appropriate environment file.
+The web application uses [mswjs](https://mswjs.io/) to mock API requests. To enable mocking, set `NEXT_PUBLIC_MOCKING_ENABLED` to `true` in the appropriate environment file.
 Further configuration and which requests that are mocked can be found in `/apps/web/__mocks__/handlers.ts`.
 
 ## Building for Production
