@@ -4,7 +4,7 @@
 
 Sometimes one need to use the user object. One can get the user object in a server component by doing:
 
-```bash
+```ts
 const session = await authGuard()
 const user = session.user
 ```

@@ -16,17 +16,15 @@ Tools like faker, machine and sub can be used to create well made mock, that can
 
 We have a directory, [`apps/web/__mocks__/data`](/apps/web/__mocks__/data). Here one can implement the mock for a data set. Setup is like this:
 
-```bash
-export const mockName = {
-
-}
+```ts
+export const mockName = {}
 ```
 
 It is usually a good idea to use the schema from `@ror/js-api-client`, to ensure that you have the correct data structure.
 
 This is an example of how a mock can look:
 
-```bash
+```ts
 import { PriceListSchema } from '@ror/js-api-client'
 
 const prices: PriceListSchema = [
