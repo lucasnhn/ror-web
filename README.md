@@ -12,7 +12,7 @@ Frontend for admin GUI in the ROR project.
 
 ### Run project
 
-You can either chose to run ror-web with or without dex.
+You can either choose to run ror-web with or without dex.
 
 #### Without dex
 
