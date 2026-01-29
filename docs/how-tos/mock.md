@@ -24,7 +24,7 @@ export const mockName = {
 
 It is usually a good idea to use the schema from `@ror/js-api-client`, to ensure that you have the correct data structure.
 
-This is an example of how a mock can look.
+This is an example of how a mock can look:
 
 ```bash
 import { PriceListSchema } from '@ror/js-api-client'
