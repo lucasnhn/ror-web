@@ -22,6 +22,34 @@ export const mockName = {
 }
 ```
 
+It is usually a good idea to use the schema from `@ror/js-api-client`, to ensure that you have the correct data structure.
+
+This is an example of how a mock can look.
+
+```bash
+import { PriceListSchema } from '@ror/js-api-client'
+
+const prices: PriceListSchema = [
+  {
+    id: '62b1ad7161ecad60301b45aa',
+    machineClass: 'best-effort-xsmall',
+    price: 958,
+  },
+  {
+    id: '62b1ad7161ecad60301b45ab',
+    machineClass: 'best-effort-small',
+    price: 1038,
+  },
+  {
+    id: '62b1ad7161ecad60301b45ac',
+    machineClass: 'best-effort-medium',
+    price: 1199,
+  },
+]
+
+export default prices
+```
+
 `mockName` should be changed to something that makes sense for your mocking. Then the mocking can be placed inside this object.
 
 ## Handlers
