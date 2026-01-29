@@ -1,5 +1,9 @@
 # Index
 
+## How to - use API
+
+- [How to - use API in terminal](use-api.md)
+
 ## How to - implement API call from start to end
 
 - [How to - implement API call in js-api-client](api-in-client.md) (unfinished)
@@ -18,6 +22,6 @@
 
 - [How to - clone and run ROR](clone-run.md)
 
-## How to - use API
+## General how tos
 
-- [How to - use API in terminal](use-api.md)
+- [How to - get the user object](get-user-object.md)
