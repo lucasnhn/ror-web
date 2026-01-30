@@ -262,12 +262,25 @@ export const PageView = ({ projects, clusterIdSuffix }: NewClusterProps) => {
           type='number'
           inputMode='numeric'
           pattern='[0-9]*'
-          {...register('serialNumber', { required: 'Serial number is required' })}
+          {...register('serialNumber', {
+            required: 'Serial number is required',
+            valueAsNumber: true,
+            min: {
+              value: 1,
+              message: 'Serial number must be a positive integer',
+            },
+            max: {
+              value: 2147483647,
+              message: 'Serial number is too large',
+            },
+            validate: (value) =>
+              Number.isInteger(value) || 'Serial number must be an integer',
+          })}
           placeholder='Enter serial number...'
         />
       </FormSection>
     )
-  }, [errors.name, register])
+  }, [errors.serialNumber, register])
 
   const EnvironmentInput = useCallback(() => {
     return (
