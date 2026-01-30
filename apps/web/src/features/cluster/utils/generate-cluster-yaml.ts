@@ -1,6 +1,5 @@
 import type { CreateClusterForm } from '../types/create-cluster'
 import { convertToVitiMachineClass, renderTagsYaml } from '../config/create-cluster-helpers'
-import { randomUUID } from 'crypto'
 
 const s = (v: unknown) => (v == null ? '' : String(v))
 
