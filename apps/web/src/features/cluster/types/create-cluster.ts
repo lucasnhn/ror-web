@@ -2,6 +2,9 @@ export interface CreateClusterForm {
   name: string
   project: string
   environment: string
+  serialNumber: string
+  fullname: string
+  clusterId: string
   cp: number
   wpName: string
   wpNumber: number
