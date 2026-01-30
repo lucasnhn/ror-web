@@ -1,5 +1,6 @@
 import type { CreateClusterForm } from '../types/create-cluster'
 import { convertToVitiMachineClass, renderTagsYaml } from '../config/create-cluster-helpers'
+import { randomUUID } from 'crypto'
 
 const s = (v: unknown) => (v == null ? '' : String(v))
 
@@ -28,7 +29,7 @@ metadata:
 ${renderTagsYaml(tags)}
 spec:
   data:
-    clusterUid: 5d6da5d8-9a10-4a65-8db9-6aa1027d4b4d
+    clusterUid: ${crypto.randomUUID()}
     clusterId: ${clusterId || ''}
     provider: ${provider || ''}
     environment: ${environment || ''}

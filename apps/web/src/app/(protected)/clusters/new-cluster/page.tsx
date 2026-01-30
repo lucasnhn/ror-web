@@ -38,7 +38,7 @@ export default async function ClustersPage() {
   const api = await getRorApi()
   const res = await api.projects.list()
   const projects: ProjectType[] = res.data
-  const clusterIdSuffix = randomString(4)
+  const clusterIdSuffix = randomString(4) // unpredictability of suffix is not important
 
   return (
     <div className='w-full flex flex-col'>

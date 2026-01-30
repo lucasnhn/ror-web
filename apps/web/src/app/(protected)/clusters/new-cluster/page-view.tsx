@@ -267,7 +267,7 @@ export const PageView = ({ projects, clusterIdSuffix }: NewClusterProps) => {
         />
       </FormSection>
     )
-  }, [errors.name, register])
+  }, [errors.serialNumber, register])
 
   const EnvironmentInput = useCallback(() => {
     return (
