@@ -9,6 +9,7 @@ export function useCreateClusterForm() {
       environment: '',
       fullname: '',
       clusterId: '',
+      serialNumber: '',
       wpName: '',
       network: '',
       tags: [],
