@@ -24,6 +24,8 @@ import type { BackupJobSchema } from '../schemas/backup-job'
 import type { BackupRunSchema } from '../schemas/backup-run'
 import type { ProjectResponseSchema, ProjectSchema } from '../schemas/project'
 
+import { VirtualMachineVulnerabilityInfo } from '../schemas/vm-vulnerability-info'
+
 // "Cluster" matches the v1 resource
 export type Cluster = z.infer<typeof ClusterSchema>
 export type ClustersResponse = z.infer<typeof ClustersResponseSchema>
@@ -69,3 +71,5 @@ export type VirtualMachineTeam = z.infer<typeof VirtualMachineTag>
 //BackupJob and BackupRun matches the v2 resource
 export type BackupJob = z.infer<typeof BackupJobSchema>
 export type BackupRun = z.infer<typeof BackupRunSchema>
+
+export type VirtualMachineVulnerabilityInfoType = z.infer<typeof VirtualMachineVulnerabilityInfo>
