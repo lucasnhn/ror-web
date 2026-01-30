@@ -50,12 +50,9 @@ export const v2ResourcesHandlers = [
         return HttpResponse.json({ resources: allVMs.slice(offset, offset + limit) })
       }
       case 'VirtualMachineVulnerabilityInfo': {
-        console.log('Received request for VirtualMachineVulnerabilityInfo with ownerSubject:', ownerSubject, kind)
         let resources = mockVmVulnerabilityInfo.resources
 
-        // 3. Implement the filtering logic
         if (ownerSubject) {
-          console.log('Filtering by ownerSubject:', ownerSubject)
           resources = resources.filter((resource) => resource.rormeta?.ownerref?.subject === ownerSubject)
         }
 

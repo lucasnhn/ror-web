@@ -92,7 +92,7 @@ export const VMDetails = ({ user }: VMDetailsProps) => {
         const data = await fetchVulnerabilityInfo(vm.metadata.uid)
         setVulnerabilityData(data)
       } else {
-        console.log('VM is null, cannot fetch vulnerability info')
+        console.error('VM is null, cannot fetch vulnerability info')
       }
     }
     fetchData()
