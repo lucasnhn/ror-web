@@ -210,10 +210,15 @@ export const PageView = ({ projects, clusterIdSuffix }: NewClusterProps) => {
   ])
 
   const fullname = useMemo(() => {
-    const envPrefix = (environmentWatch ?? '')[0] ?? ''
-    const sn = serialNumberWatch ?? ''
-    const n = nameWatch ?? ''
-    if (!envPrefix || !n || sn === '') return ''
+    const rawEnv = (environmentWatch ?? '').trim()
+    const envPrefix = rawEnv.charAt(0)
+    const sn = (serialNumberWatch ?? '').trim()
+    const n = (nameWatch ?? '').trim()
+
+    // Require non-empty, alphabetic environment prefix, non-empty name, and digit-only serial number
+    if (!envPrefix || !/[A-Za-z]/.test(envPrefix)) return ''
+    if (!n) return ''
+    if (!/^\d+$/.test(sn)) return ''
     return `${envPrefix}-${n}-${sn}`
   }, [environmentWatch, nameWatch, serialNumberWatch])
 
