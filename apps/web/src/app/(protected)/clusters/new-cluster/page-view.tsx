@@ -32,6 +32,7 @@ import {
 } from '@/components/shadcn/combobox'
 import { Form, FormControl, FormField, FormItem } from '@/components/shadcn/form'
 import { ProjectType } from './page'
+import { tagKeyValidator, tagValueValidator } from '@/features/cluster/utils/tags-validatiors'
 
 const stepFields: Array<Array<Path<CreateClusterForm>>> = [
   ['project', 'name', 'environment'],
@@ -150,9 +151,20 @@ export const PageView = ({ projects }: NewClusterProps) => {
   const handleAddTag = () => {
     const k = tagKey.trim()
     const v = tagValue.trim()
+
+    const keyError = tagKeyValidator(k)
+    const valueError = tagValueValidator(v)
+
+    if (keyError || valueError) return
+
     if (!k || !v) return
 
     const current = Array.isArray(tagsWatch) ? tagsWatch : []
+
+    if (current.some((t) => t.key === k)) {
+      return
+    }
+
     const next = [...current, { key: k, value: v }] // preserves insertion order
 
     setValue('tags', next, { shouldDirty: true, shouldTouch: true, shouldValidate: true })
