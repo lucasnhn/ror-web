@@ -15,8 +15,6 @@
  */
 'use client'
 
-import { useEffect, useState } from 'react'
-import { fetchVulnerabilityInfo } from '../actions/vulnerability-actions'
 import { useVMContext } from '@/context/vm-context'
 import { Pill } from '@/components/shadcn/pill'
 import { vmActionsColors } from '../utils/env-colors'
@@ -44,15 +42,13 @@ import { Card, CardContent, CardHeader as ShadcnCardHeader, CardTitle } from '@/
 import { DetailedCPUUsage } from './detailed-cpu-usage'
 import { DetailedMemoryUsage } from './detailed-memory-usage'
 import { Badge } from '@/components/shadcn/badge'
-import { Button } from '@/components/shadcn/button'
-import { ChevronDown, ChevronUp } from 'lucide-react'
-import { useDebouncedValue } from '@/hooks/use-debounced-value'
-import { useSearch } from '@/hooks/use-search'
-import { Input } from '@/components/shadcn/input'
-import { Search } from 'lucide-react'
 import Link from 'next/link'
 
+import { useEffect, useState } from 'react'
 import type { VirtualMachineVulnerabilityInfoType } from '@ror/js-api-client'
+import { fetchVulnerabilityInfo } from '../actions/vulnerability-actions'
+import { VulnerabilityCard } from './vm-vulnerability-info-card'
+
 export const VMDetails = ({ user }: VMDetailsProps) => {
   const { vm } = useVMContext()
   const [vulnerabilityData, setVulnerabilityData] = useState<VirtualMachineVulnerabilityInfoType | null>(null)
@@ -224,138 +220,6 @@ export const VMDetails = ({ user }: VMDetailsProps) => {
     </Card>
   )
 
-  const VulnerabilityCard = () => {
-    const [showAll, setShowAll] = useState(false)
-    const [query, setQuery] = useState('')
-    const debouncedQuery = useDebouncedValue(query, 120)
-    const INITIAL_LIMIT = 20
-
-    if (!vulnerabilityData || !vulnerabilityData.resources?.length) {
-      return null
-    }
-
-    const info = vulnerabilityData.resources[0].virtualMachineVulnerabilityInfo
-    if (!info) return null
-
-    const { status } = info
-
-    const cves: string[] = status?.cves || []
-
-    const filteredCves = useSearch<string, { id: string }>(cves, debouncedQuery, {
-      keys: ['id'],
-      mapItem: (item) => ({ id: item }),
-      threshold: 0.3,
-    })
-
-    const displayedCves = showAll ? filteredCves : filteredCves.slice(0, INITIAL_LIMIT)
-    const hiddenCount = filteredCves.length - INITIAL_LIMIT
-    const hasHiddenItems = filteredCves.length > INITIAL_LIMIT
-
-    const severity = status?.severity || 'Unknown'
-    const badgeVariant = ['Critical', 'High'].includes(severity)
-      ? 'destructive'
-      : ['Medium'].includes(severity)
-        ? 'default'
-        : 'secondary'
-
-    return (
-      <Card className='bg-slate-50 dark:bg-slate-900/50'>
-        <ShadcnCardHeader className='pb-2'>
-          <div className='flex justify-between items-center'>
-            <CardTitle>Vulnerabilities</CardTitle>
-            <Badge variant={badgeVariant as any} className='text-xs'>
-              {severity}
-            </Badge>
-          </div>
-        </ShadcnCardHeader>
-        <CardContent>
-          <div className='flex flex-col gap-4'>
-            {/* Metrics Row */}
-            <div className='grid grid-cols-2 gap-1 text-sm'>
-              <div className='flex flex-col'>
-                <span className='text-muted-foreground text-xs'>Score</span>
-                <span className='font-medium'>{status?.severityScore ?? '-'}</span>
-              </div>
-              <div className='flex flex-col'>
-                <span className='text-muted-foreground text-xs'>Last Scanned</span>
-                <span className='font-medium'>
-                  {status?.lastReportTime ? new Date(status.lastReportTime).toLocaleDateString() : '-'}
-                </span>
-              </div>
-            </div>
-
-            <div className='space-y-3'>
-              <div className='flex justify-between items-center'>
-                <span className='text-xs font-medium text-muted-foreground'>Detected CVEs ({filteredCves.length})</span>
-              </div>
-
-              <div className='w-full'>
-                <Input
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  placeholder='Search CVEs...'
-                  className='h-8 text-xs'
-                  icon={<Search className='w-3.5 h-3.5 text-muted-foreground' />}
-                  iconPosition='left'
-                />
-              </div>
-
-              {/* CVE List Section */}
-              {filteredCves.length > 0 ? (
-                <div className='flex flex-col gap-2'>
-                  <div
-                    className={`flex flex-wrap gap-2 transition-all duration-300 ease-in-out ${
-                      showAll ? 'max-h-60 overflow-y-auto pr-2' : ''
-                    }`}
-                  >
-                    {displayedCves.map((cve) => (
-                      <a
-                        key={cve}
-                        href={`https://nvd.nist.gov/vuln/detail/${cve}`}
-                        target='_blank'
-                        rel='noopener noreferrer'
-                        className='
-                        inline-flex items-center rounded-md border px-2 py-0.5 text-xs font-medium transition-colors
-                        border-slate-200 bg-white text-blue-600 hover:underline hover:bg-slate-50
-                        dark:border-slate-700 dark:bg-slate-800 dark:text-blue-400
-                      '
-                      >
-                        {cve}
-                      </a>
-                    ))}
-                  </div>
-
-                  {hasHiddenItems && (
-                    <Button
-                      variant='ghost'
-                      size='sm'
-                      className='w-full h-8 text-xs text-muted-foreground hover:text-foreground mt-1'
-                      onClick={() => setShowAll(!showAll)}
-                    >
-                      {showAll ? (
-                        <span className='flex items-center gap-1'>
-                          Show less <ChevronUp className='w-3 h-3' />
-                        </span>
-                      ) : (
-                        <span className='flex items-center gap-1'>
-                          Show {hiddenCount} more... <ChevronDown className='w-3 h-3' />
-                        </span>
-                      )}
-                    </Button>
-                  )}
-                </div>
-              ) : (
-                <span className='text-sm text-muted-foreground py-2 block'>
-                  {query ? 'No matching CVEs found.' : 'No vulnerabilities found.'}
-                </span>
-              )}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    )
-  }
-
   const InfoCard = () => (
     <Card className='bg-slate-50 dark:bg-slate-900/50'>
       <ShadcnCardHeader>
@@ -504,7 +368,7 @@ export const VMDetails = ({ user }: VMDetailsProps) => {
         </div>
       </div>
       <div className='grid grid-cols-1 md:grid-cols-1'>
-        <VulnerabilityCard />
+        <VulnerabilityCard data={vulnerabilityData} />
       </div>
     </div>
   )
