@@ -430,8 +430,8 @@ export const PageView = ({ projects, clusterIdSuffix }: NewClusterProps) => {
           <table className={cn('border-separate border-spacing-0 w-full', 'text-sm', 'sm:text-md')}>
             <tbody>
               <SummaryTableRow title='Project' content={projectName} />
-              <SummaryTableRow title='Environment' content={environmentWatch} />
               <SummaryTableRow title='Cluster name' content={fullnameWatch} />
+              <SummaryTableRow title='Environment' content={environmentWatch} />
               <SummaryTableRow title='Cluster ID' content={clusterIdWatch} />
               <SummaryTableRow title='Serial number' content={serialNumberWatch} />
               <SummaryTableRow title='Region' content={regionWatch} />
