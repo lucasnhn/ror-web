@@ -4,7 +4,8 @@ import { convertToVitiMachineClass, renderTagsYaml } from '../config/create-clus
 const s = (v: unknown) => (v == null ? '' : String(v))
 
 export function buildClusterYaml(v: CreateClusterForm) {
-  const name = s(v.name)
+  const name = s(v.fullname)
+  const clusterId = s(v.clusterId)
   const region = s(v.region)
   const network = s(v.network)
   const environment = s(v.environment)
@@ -21,14 +22,14 @@ export function buildClusterYaml(v: CreateClusterForm) {
 apiVersion: vitistack.io/v1alpha1
 kind: KubernetesCluster
 metadata:
-  name: ${name || ''}-4y8e
+  name: ${name || ''}
   annotations:
     vitistack.io/networknamespace: ${network || ''}
 ${renderTagsYaml(tags)}
 spec:
   data:
     clusterUid: 5d6da5d8-9a10-4a65-8db9-6aa1027d4b4d
-    clusterId: ${name || ''}-4y8e
+    clusterId: ${clusterId || ''}
     provider: ${provider || ''}
     environment: ${environment || ''}
     datacenter: ${region || ''}

@@ -1,6 +1,7 @@
 import { Header } from '@/components/layout/app-shell/header'
 import { PageView } from './page-view'
 import { getRorApi } from '@/services/ror-api'
+import { randomString } from '@/utils/random-string'
 
 interface BillingType {
   workorder: string
@@ -37,11 +38,12 @@ export default async function ClustersPage() {
   const api = await getRorApi()
   const res = await api.projects.list()
   const projects: ProjectType[] = res.data
+  const clusterIdSuffix = randomString(4)
 
   return (
     <div className='w-full flex flex-col'>
       <Header title='New Cluster' />
-      <PageView projects={projects} />
+      <PageView projects={projects} clusterIdSuffix={clusterIdSuffix} />
     </div>
   )
 }

@@ -7,6 +7,8 @@ export function useCreateClusterForm() {
       name: '',
       project: '',
       environment: '',
+      fullname: '',
+      clusterId: '',
       wpName: '',
       network: '',
       tags: [],
