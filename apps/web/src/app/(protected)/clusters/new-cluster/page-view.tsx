@@ -210,10 +210,15 @@ export const PageView = ({ projects, clusterIdSuffix }: NewClusterProps) => {
   ])
 
   const fullname = useMemo(() => {
-    const envPrefix = (environmentWatch ?? '')[0] ?? ''
-    const sn = serialNumberWatch ?? ''
-    const n = nameWatch ?? ''
-    if (!envPrefix || !n || sn === '') return ''
+    const rawEnv = (environmentWatch ?? '').trim()
+    const envPrefix = rawEnv.charAt(0)
+    const sn = (serialNumberWatch ?? '').trim()
+    const n = (nameWatch ?? '').trim()
+
+    // Require non-empty, alphabetic environment prefix, non-empty name, and digit-only serial number
+    if (!envPrefix || !/[A-Za-z]/.test(envPrefix)) return ''
+    if (!n) return ''
+    if (!/^\d+$/.test(sn)) return ''
     return `${envPrefix}-${n}-${sn}`
   }, [environmentWatch, nameWatch, serialNumberWatch])
 
@@ -262,7 +267,20 @@ export const PageView = ({ projects, clusterIdSuffix }: NewClusterProps) => {
           type='number'
           inputMode='numeric'
           pattern='[0-9]*'
-          {...register('serialNumber', { required: 'Serial number is required' })}
+          {...register('serialNumber', {
+            required: 'Serial number is required',
+            valueAsNumber: true,
+            min: {
+              value: 1,
+              message: 'Serial number must be a positive integer',
+            },
+            max: {
+              value: 2147483647,
+              message: 'Serial number is too large',
+            },
+            validate: (value) =>
+              Number.isInteger(value) || 'Serial number must be an integer',
+          })}
           placeholder='Enter serial number...'
         />
       </FormSection>
@@ -412,8 +430,8 @@ export const PageView = ({ projects, clusterIdSuffix }: NewClusterProps) => {
           <table className={cn('border-separate border-spacing-0 w-full', 'text-sm', 'sm:text-md')}>
             <tbody>
               <SummaryTableRow title='Project' content={projectName} />
-              <SummaryTableRow title='Environment' content={environmentWatch} />
               <SummaryTableRow title='Cluster name' content={fullnameWatch} />
+              <SummaryTableRow title='Environment' content={environmentWatch} />
               <SummaryTableRow title='Cluster ID' content={clusterIdWatch} />
               <SummaryTableRow title='Serial number' content={serialNumberWatch} />
               <SummaryTableRow title='Region' content={regionWatch} />
