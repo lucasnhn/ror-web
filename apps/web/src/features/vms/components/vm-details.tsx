@@ -52,10 +52,10 @@ import { Input } from '@/components/shadcn/input'
 import { Search } from 'lucide-react'
 import Link from 'next/link'
 
+import type { VirtualMachineVulnerabilityInfoType } from '@ror/js-api-client'
 export const VMDetails = ({ user }: VMDetailsProps) => {
   const { vm } = useVMContext()
-
-  const [vulnerabilityData, setVulnerabilityData] = useState<any>(null)
+  const [vulnerabilityData, setVulnerabilityData] = useState<VirtualMachineVulnerabilityInfoType | null>(null)
 
   const cpuSockets = getSpecSockets(vm) || 0
   const cpuCoresPerSocket = getSpecCoresPerSocket(vm) || 0

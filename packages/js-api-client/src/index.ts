@@ -49,3 +49,5 @@ export type {
   BackupJob,
   BackupRun,
 } from './types/entities'
+
+export type { VirtualMachineVulnerabilityInfoType } from './schemas/vm-vulnerability-info'
