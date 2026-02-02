@@ -95,7 +95,6 @@ export const TagsSection = ({
               const next = e.target.value
               setTagKey(e.target.value)
               setTagKeyError(tagKeyValidator(next))
-              console.log(tagKeyError)
             }}
           />
           {tagKeyError ? <p className={errorTextStyling}>{tagKeyError}</p> : null}
