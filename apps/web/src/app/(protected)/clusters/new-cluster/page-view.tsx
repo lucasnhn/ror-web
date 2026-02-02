@@ -508,7 +508,7 @@ export const PageView = ({ projects, clusterIdSuffix }: NewClusterProps) => {
       title: 'Basics',
       wizardContent: (
         <div className={cn('')}>
-          <div className={cn('flex justify-center', 'flex-col gap-4', 'flex-row lg:gap-20')}>
+          <div className={cn('flex justify-center', 'flex-col gap-4', 'lg:flex-row lg:gap-20')}>
             <ProjectInput control={control} projects={projects} />
             <EnvironmentInput />
             <NameInput />
@@ -516,13 +516,12 @@ export const PageView = ({ projects, clusterIdSuffix }: NewClusterProps) => {
           </div>
           {fullname && clusterId && (
             <div className='mt-4 text-xl text-center'>
-              <span>
+              <div>
                 Full cluster name: <b>{fullname}</b>
-              </span>
-              <span className='mx-4'>-</span>
-              <span>
+              </div>
+              <div className='mt-2'>
                 Cluster ID: <b>{clusterId}</b>
-              </span>
+              </div>
             </div>
           )}
         </div>
