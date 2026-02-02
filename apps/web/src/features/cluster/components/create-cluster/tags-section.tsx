@@ -2,7 +2,9 @@ import { Button } from '@/components/shadcn/button'
 import { Input } from '@/components/shadcn/input'
 import { cn } from '@/utils/clsxm'
 import { PlusIcon, Trash } from 'lucide-react'
-import { Fragment } from 'react'
+import { Fragment, useState } from 'react'
+import { errorTextStyling } from '../../config/create-cluster-styling'
+import { tagKeyValidator, tagValueValidator } from '../../utils/tags-validators'
 
 type TagsSectionProps = {
   tags: { key: string; value: string }[]
@@ -23,6 +25,8 @@ export const TagsSection = ({
   addTag,
   removeTag,
 }: TagsSectionProps) => {
+  const [tagKeyError, setTagKeyError] = useState<string | null>(null)
+  const [tagValueError, setTagValueError] = useState<string | null>(null)
   const safeTags: { key: string; value: string }[] = Array.isArray(tags) ? tags : []
   return (
     <>
@@ -52,18 +56,33 @@ export const TagsSection = ({
             className='sm:w-36 md:w-auto'
             placeholder='Enter key...'
             value={tagKey}
-            onChange={(e) => setTagKey(e.target.value)}
+            onChange={(e) => {
+              const next = e.target.value
+              setTagKey(e.target.value)
+              setTagKeyError(tagKeyValidator(next))
+            }}
           />
           <Input
             className='sm:w-36 md:w-auto'
             placeholder='Enter value...'
             value={tagValue}
-            onChange={(e) => setTagValue(e.target.value)}
+            onChange={(e) => {
+              const next = e.target.value
+              setTagValue(e.target.value)
+              setTagValueError(tagValueValidator(next))
+            }}
           />
 
-          <Button type='button' className='w-20' onClick={addTag} disabled={!tagKey.trim() || !tagValue.trim()}>
+          <Button
+            type='button'
+            className='w-20'
+            onClick={addTag}
+            disabled={!tagKey.trim() || !tagValue.trim() || !!tagKeyError || !!tagValueError}
+          >
             <PlusIcon /> Add
           </Button>
+          <p className={errorTextStyling}>{tagKeyError}</p>
+          <p className={errorTextStyling}>{tagValueError}</p>
         </div>
       </section>
       <section>
@@ -72,17 +91,31 @@ export const TagsSection = ({
           <Input
             placeholder='Enter key...'
             value={tagKey}
-            onChange={(e) => setTagKey(e.target.value)}
-            className='mb-4'
+            onChange={(e) => {
+              const next = e.target.value
+              setTagKey(e.target.value)
+              setTagKeyError(tagKeyValidator(next))
+              console.log(tagKeyError)
+            }}
           />
+          {tagKeyError ? <p className={errorTextStyling}>{tagKeyError}</p> : null}
           <b>Value</b>
           <Input
             placeholder='Enter value...'
             value={tagValue}
-            onChange={(e) => setTagValue(e.target.value)}
-            className='mb-4'
+            onChange={(e) => {
+              const next = e.target.value
+              setTagValue(e.target.value)
+              setTagValueError(tagValueValidator(next))
+            }}
           />
-          <Button type='button' className='w-20' onClick={addTag} disabled={!tagKey.trim() || !tagValue.trim()}>
+          {tagValueError ? <p className={errorTextStyling}>{tagValueError}</p> : null}
+          <Button
+            type='button'
+            className='w-20'
+            onClick={addTag}
+            disabled={!tagKey.trim() || !tagValue.trim() || !!tagKeyError || !!tagValueError}
+          >
             <PlusIcon /> Add
           </Button>
 

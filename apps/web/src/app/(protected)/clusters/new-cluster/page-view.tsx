@@ -32,6 +32,7 @@ import {
 } from '@/components/shadcn/combobox'
 import { Form, FormControl, FormField, FormItem } from '@/components/shadcn/form'
 import { ProjectType } from './page'
+import { tagKeyValidator, tagValueValidator } from '@/features/cluster/utils/tags-validators'
 
 const stepFields: Array<Array<Path<CreateClusterForm>>> = [
   ['project', 'name', 'serialNumber', 'environment'],
@@ -165,9 +166,21 @@ export const PageView = ({ projects, clusterIdSuffix }: NewClusterProps) => {
   const handleAddTag = () => {
     const k = tagKey.trim()
     const v = tagValue.trim()
+
+    const keyError = tagKeyValidator(k)
+    const valueError = tagValueValidator(v)
+
+    if (keyError || valueError) return
+
     if (!k || !v) return
 
     const current = Array.isArray(tagsWatch) ? tagsWatch : []
+
+    if (current.some((t) => t.key === k)) {
+      toast.error('A tag with this key already exists.')
+      return
+    }
+
     const next = [...current, { key: k, value: v }] // preserves insertion order
 
     setValue('tags', next, { shouldDirty: true, shouldTouch: true, shouldValidate: true })
@@ -210,15 +223,16 @@ export const PageView = ({ projects, clusterIdSuffix }: NewClusterProps) => {
   ])
 
   const fullname = useMemo(() => {
-    const rawEnv = (environmentWatch ?? '').trim()
+    const rawEnv = String(environmentWatch ?? '').trim()
     const envPrefix = rawEnv.charAt(0)
-    const sn = (serialNumberWatch ?? '').trim()
-    const n = (nameWatch ?? '').trim()
 
-    // Require non-empty, alphabetic environment prefix, non-empty name, and digit-only serial number
+    const sn = serialNumberWatch == null ? '' : String(serialNumberWatch).trim()
+    const n = String(nameWatch ?? '').trim()
+
     if (!envPrefix || !/[A-Za-z]/.test(envPrefix)) return ''
     if (!n) return ''
     if (!/^\d+$/.test(sn)) return ''
+
     return `${envPrefix}-${n}-${sn}`
   }, [environmentWatch, nameWatch, serialNumberWatch])
 
@@ -278,8 +292,7 @@ export const PageView = ({ projects, clusterIdSuffix }: NewClusterProps) => {
               value: 2147483647,
               message: 'Serial number is too large',
             },
-            validate: (value) =>
-              Number.isInteger(value) || 'Serial number must be an integer',
+            validate: (value) => Number.isInteger(value) || 'Serial number must be an integer',
           })}
           placeholder='Enter serial number...'
         />
@@ -503,9 +516,13 @@ export const PageView = ({ projects, clusterIdSuffix }: NewClusterProps) => {
           </div>
           {fullname && clusterId && (
             <div className='mt-4 text-xl text-center'>
-              <span>Full cluster name: {fullname}</span>
+              <span>
+                Full cluster name: <b>{fullname}</b>
+              </span>
               <span className='mx-4'>-</span>
-              <span>Cluster ID: {clusterId}</span>
+              <span>
+                Cluster ID: <b>{clusterId}</b>
+              </span>
             </div>
           )}
         </div>
