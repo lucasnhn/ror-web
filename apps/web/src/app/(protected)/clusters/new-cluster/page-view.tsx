@@ -177,6 +177,7 @@ export const PageView = ({ projects, clusterIdSuffix }: NewClusterProps) => {
     const current = Array.isArray(tagsWatch) ? tagsWatch : []
 
     if (current.some((t) => t.key === k)) {
+      toast.error('A tag with this key already exists.')
       return
     }
 
