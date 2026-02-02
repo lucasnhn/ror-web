@@ -5,7 +5,7 @@ import { Input } from '@/components/shadcn/input'
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/shadcn/select'
 import { routes } from '@/config/routes'
 import { CodeSnippet } from '@ror/react'
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { Control, Controller, Path } from 'react-hook-form'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
@@ -35,7 +35,7 @@ import { ProjectType } from './page'
 import { tagKeyValidator, tagValueValidator } from '@/features/cluster/utils/tags-validatiors'
 
 const stepFields: Array<Array<Path<CreateClusterForm>>> = [
-  ['project', 'name', 'environment'],
+  ['project', 'name', 'serialNumber', 'environment'],
   ['region', 'provider'],
   ['wpName', 'wpNumber', 'wpClass', 'cp'],
   ['network'],
@@ -45,6 +45,7 @@ const stepFields: Array<Array<Path<CreateClusterForm>>> = [
 
 interface NewClusterProps {
   projects: ProjectType[]
+  clusterIdSuffix: string
 }
 
 interface SimpleProjectType {
@@ -66,6 +67,8 @@ function ProjectInput({
     [projectsSafe]
   )
 
+  const projectIdSet = React.useMemo(() => new Set(simpleProjects.map((p) => p.value)), [simpleProjects])
+
   return (
     <section className={cn('flex flex-col items-center gap-4')}>
       <h3 className={cn('text-3xl', 'sm:text-3xl', 'md:text-4xl')}>Project</h3>
@@ -73,7 +76,14 @@ function ProjectInput({
       <FormField
         control={control}
         name='project'
-        render={({ field }) => {
+        rules={{
+          required: 'Project is required',
+          validate: (value) => {
+            if (!value) return 'Project is required'
+            return projectIdSet.has(value) || 'Please select a valid project'
+          },
+        }}
+        render={({ field, fieldState }) => {
           const selected = simpleProjects.find((p) => p.value === (field.value ?? '')) ?? null
 
           return (
@@ -101,6 +111,8 @@ function ProjectInput({
                   </ComboboxContent>
                 </Combobox>
               </FormControl>
+
+              {fieldState.error?.message && <span className={errorTextStyling}>{fieldState.error.message}</span>}
             </FormItem>
           )
         }}
@@ -109,7 +121,7 @@ function ProjectInput({
   )
 }
 
-export const PageView = ({ projects }: NewClusterProps) => {
+export const PageView = ({ projects, clusterIdSuffix }: NewClusterProps) => {
   // States
   const [tagKey, setTagKey] = useState('')
   const [tagValue, setTagValue] = useState('')
@@ -134,6 +146,9 @@ export const PageView = ({ projects }: NewClusterProps) => {
   const cpWatch = watch('cp')
   const tagsWatch = watch('tags')
   const nameWatch = watch('name')
+  const fullnameWatch = watch('fullname')
+  const clusterIdWatch = watch('clusterId')
+  const serialNumberWatch = watch('serialNumber')
   const networkWatch = watch('network')
   const environmentWatch = watch('environment')
   const regionWatch = watch('region')
@@ -192,6 +207,9 @@ export const PageView = ({ projects }: NewClusterProps) => {
     getValues,
     projectName,
     nameWatch,
+    serialNumberWatch,
+    fullnameWatch,
+    clusterIdWatch,
     environmentWatch,
     regionWatch,
     providerWatch,
@@ -202,6 +220,29 @@ export const PageView = ({ projects }: NewClusterProps) => {
     wpClassWatch,
     tagsWatch,
   ])
+
+  const fullname = useMemo(() => {
+    const rawEnv = (environmentWatch ?? '').trim()
+    const envPrefix = rawEnv.charAt(0)
+    const sn = (serialNumberWatch ?? '').trim()
+    const n = (nameWatch ?? '').trim()
+
+    // Require non-empty, alphabetic environment prefix, non-empty name, and digit-only serial number
+    if (!envPrefix || !/[A-Za-z]/.test(envPrefix)) return ''
+    if (!n) return ''
+    if (!/^\d+$/.test(sn)) return ''
+    return `${envPrefix}-${n}-${sn}`
+  }, [environmentWatch, nameWatch, serialNumberWatch])
+
+  const clusterId = useMemo(() => {
+    if (!fullname) return ''
+    return `${fullname}-${clusterIdSuffix}`
+  }, [fullname, clusterIdSuffix])
+
+  useEffect(() => {
+    setValue('fullname', fullname, { shouldValidate: true, shouldDirty: false })
+    setValue('clusterId', clusterId, { shouldValidate: true, shouldDirty: false })
+  }, [fullname, clusterId, setValue])
 
   // Helper functions for form
   const onSubmit = async () => {
@@ -230,6 +271,33 @@ export const PageView = ({ projects }: NewClusterProps) => {
       </FormSection>
     )
   }, [errors.name, register])
+
+  const SerialNumberInput = useCallback(() => {
+    return (
+      <FormSection title='Serial number' error={errors.serialNumber && errors.serialNumber.message}>
+        <Input
+          type='number'
+          inputMode='numeric'
+          pattern='[0-9]*'
+          {...register('serialNumber', {
+            required: 'Serial number is required',
+            valueAsNumber: true,
+            min: {
+              value: 1,
+              message: 'Serial number must be a positive integer',
+            },
+            max: {
+              value: 2147483647,
+              message: 'Serial number is too large',
+            },
+            validate: (value) =>
+              Number.isInteger(value) || 'Serial number must be an integer',
+          })}
+          placeholder='Enter serial number...'
+        />
+      </FormSection>
+    )
+  }, [errors.serialNumber, register])
 
   const EnvironmentInput = useCallback(() => {
     return (
@@ -374,8 +442,10 @@ export const PageView = ({ projects }: NewClusterProps) => {
           <table className={cn('border-separate border-spacing-0 w-full', 'text-sm', 'sm:text-md')}>
             <tbody>
               <SummaryTableRow title='Project' content={projectName} />
-              <SummaryTableRow title='Cluster name' content={nameWatch} />
+              <SummaryTableRow title='Cluster name' content={fullnameWatch} />
               <SummaryTableRow title='Environment' content={environmentWatch} />
+              <SummaryTableRow title='Cluster ID' content={clusterIdWatch} />
+              <SummaryTableRow title='Serial number' content={serialNumberWatch} />
               <SummaryTableRow title='Region' content={regionWatch} />
               <SummaryTableRow title='Provider' content={providerWatch} />
               <SummaryTableRow title='Control plane' content={cpWatch} />
@@ -436,10 +506,20 @@ export const PageView = ({ projects }: NewClusterProps) => {
     {
       title: 'Basics',
       wizardContent: (
-        <div className={cn('flex justify-center', 'flex-col gap-4', 'flex-row lg:gap-20')}>
-          <ProjectInput control={control} projects={projects} />
-          <NameInput />
-          <EnvironmentInput />
+        <div className={cn('')}>
+          <div className={cn('flex justify-center', 'flex-col gap-4', 'flex-row lg:gap-20')}>
+            <ProjectInput control={control} projects={projects} />
+            <EnvironmentInput />
+            <NameInput />
+            <SerialNumberInput />
+          </div>
+          {fullname && clusterId && (
+            <div className='mt-4 text-xl text-center'>
+              <span>Full cluster name: {fullname}</span>
+              <span className='mx-4'>-</span>
+              <span>Cluster ID: {clusterId}</span>
+            </div>
+          )}
         </div>
       ),
     },
