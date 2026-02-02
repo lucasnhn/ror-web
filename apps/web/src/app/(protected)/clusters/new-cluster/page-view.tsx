@@ -32,7 +32,7 @@ import {
 } from '@/components/shadcn/combobox'
 import { Form, FormControl, FormField, FormItem } from '@/components/shadcn/form'
 import { ProjectType } from './page'
-import { tagKeyValidator, tagValueValidator } from '@/features/cluster/utils/tags-validatiors'
+import { tagKeyValidator, tagValueValidator } from '@/features/cluster/utils/tags-validators'
 
 const stepFields: Array<Array<Path<CreateClusterForm>>> = [
   ['project', 'name', 'serialNumber', 'environment'],

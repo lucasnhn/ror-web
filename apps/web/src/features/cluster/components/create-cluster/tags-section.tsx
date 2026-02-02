@@ -4,7 +4,7 @@ import { cn } from '@/utils/clsxm'
 import { PlusIcon, Trash } from 'lucide-react'
 import { Fragment, useState } from 'react'
 import { errorTextStyling } from '../../config/create-cluster-styling'
-import { tagKeyValidator, tagValueValidator } from '../../utils/tags-validatiors'
+import { tagKeyValidator, tagValueValidator } from '../../utils/tags-validators'
 
 type TagsSectionProps = {
   tags: { key: string; value: string }[]
