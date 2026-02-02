@@ -60,7 +60,6 @@ export const TagsSection = ({
               const next = e.target.value
               setTagKey(e.target.value)
               setTagKeyError(tagKeyValidator(next))
-              console.log(tagKeyError)
             }}
           />
           <Input
