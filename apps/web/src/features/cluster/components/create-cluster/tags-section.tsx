@@ -74,7 +74,12 @@ export const TagsSection = ({
             }}
           />
 
-          <Button type='button' className='w-20' onClick={addTag} disabled={!tagKey.trim() || !tagValue.trim()}>
+          <Button
+            type='button'
+            className='w-20'
+            onClick={addTag}
+            disabled={!tagKey.trim() || !tagValue.trim() || !!tagKeyError || !!tagValueError}
+          >
             <PlusIcon /> Add
           </Button>
           <p className={errorTextStyling}>{tagKeyError}</p>
