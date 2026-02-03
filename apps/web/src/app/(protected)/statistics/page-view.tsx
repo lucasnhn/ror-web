@@ -21,9 +21,17 @@ import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
  */
 interface PageViewProps {
   className?: string
+  topologyVersions?: Record<string, number>
+  topologyControlPlaneVersions?: Record<string, number>
   kubernetesVersions: Record<string, number>
   agentVersions: Record<string, number>
   nhnToolingVersion: Record<string, number>
+  providers: Record<string, number>
+  datacenters: Record<string, number>
+  regions: Record<string, number>
+  projects: Record<string, number>
+  workorders: Record<string, number>
+  environments: Record<string, number>
 }
 
 /**
@@ -35,23 +43,7 @@ interface PageViewProps {
 interface ChartProps {
   title: string
   data: Record<string, number>
-}
-
-const data: Record<string, number> = {
-  'v1.24.9': 7,
-  'v1.25.3': 12,
-  'v1.25.13': 61,
-  'v1.26.2': 4,
-  'v1.26.13': 18,
-  'v1.27.5': 9,
-  'v1.27.10': 3,
-  'v1.27.11': 5,
-  'v1.28.4': 14,
-  'v1.28.7': 184,
-  'v1.29.2': 22,
-  'v1.30.0': 6,
-  'v1.30.3': 15,
-  'v1.31.1': 2,
+  className?: string
 }
 
 /**
@@ -77,27 +69,26 @@ const chartConfig = {
  *
  * @returns {JSX.Element} The rendered chart component.
  */
-const Chart = ({ title, data }: ChartProps) => {
+const Chart = ({ title, data, className }: ChartProps) => {
   const chartData = Object.entries(data).map(([version, count]) => ({
     version,
     count,
   }))
 
   return (
-    <div>
+    <div className={className}>
       <h2 className='mb-4 text-lg font-medium'>{title}</h2>
-      <ChartContainer config={chartConfig} className='h-96 w-[560px]'>
+      <ChartContainer config={chartConfig} className={cn('h-128 w-full')}>
         <BarChart accessibilityLayer data={chartData}>
           <CartesianGrid vertical={false} />
           <XAxis
             dataKey='version'
             tickLine={false}
-            tickMargin={10}
-            axisLine={true}
+            tickMargin={5}
             angle={-45}
             textAnchor='end'
             interval={0}
-            height={70}
+            height={220}
           />
           <YAxis />
           <ChartTooltip content={<ChartTooltipContent />} />
@@ -116,7 +107,20 @@ const Chart = ({ title, data }: ChartProps) => {
  * @param agentVersions - An object containing data about agent versions.
  * @param nhnToolingVersion - An object containing data about NHN Tooling versions.
  */
-export const PageView = ({ className, kubernetesVersions, agentVersions, nhnToolingVersion }: PageViewProps) => {
+export const PageView = ({
+  className,
+  topologyVersions,
+  topologyControlPlaneVersions,
+  kubernetesVersions,
+  agentVersions,
+  nhnToolingVersion,
+  providers,
+  datacenters,
+  regions,
+  projects,
+  workorders,
+  environments,
+}: PageViewProps) => {
   // TODO: Remove logs when kubernetesVersions, agentVersions and nhnToolingVersion are used
   console.log('kubernetesVersions', kubernetesVersions)
   console.log('agentVersions', agentVersions)
@@ -129,15 +133,22 @@ export const PageView = ({ className, kubernetesVersions, agentVersions, nhnTool
         complete product as quick as possible :)
       </NotReadyMessage>
 
-      <div className='flex flex-row flex-wrap gap-6 mx-12 my-6'>
-        <Chart title='Kubernetes versions (mock)' data={data} />
-        <Chart title='Agent versions (mock)' data={data} />
-        <Chart title='NHN Tooling versions (mock)' data={data} />
+      <div className='grid gap-x-8 px-12 my-6 grid-cols-32'>
+        {topologyVersions && <Chart title='Topology versions' data={topologyVersions} className='col-span-8' />}
+        {topologyControlPlaneVersions && (
+          <Chart title='Control plane versions' data={topologyControlPlaneVersions} className='col-span-8' />
+        )}
+        {providers && <Chart title='Providers' data={providers} className='col-span-8' />}
+        {datacenters && <Chart title='Datacenters' data={datacenters} className='col-span-8' />}
+        {regions && <Chart title='Regions' data={regions} className='col-span-8' />}
+        {environments && <Chart title='Environments' data={environments} className='col-span-8' />}
+        {projects && <Chart title='Projects' data={projects} className='col-span-32' />}
+        {workorders && <Chart title='Workorders' data={workorders} className='col-span-32' />}
       </div>
 
       {/* {kubernetesVersions && Object.keys(kubernetesVersions).length > 0 && <Chart title='Kubernetes Versions' data={kubernetesVersions} />}
-            {agentVersions && Object.keys(agentVersions).length > 0 && <Chart title='Agent Versions' data={agentVersions} />}
-            {nhnToolingVersion && Object.keys(nhnToolingVersion).length > 0 && <Chart title='NHN Tooling Version' data={nhnToolingVersion} />} */}
+          {agentVersions && Object.keys(agentVersions).length > 0 && <Chart title='Agent Versions' data={agentVersions} />}
+          {nhnToolingVersion && Object.keys(nhnToolingVersion).length > 0 && <Chart title='NHN Tooling Version' data={nhnToolingVersion} />} */}
     </div>
   )
 }

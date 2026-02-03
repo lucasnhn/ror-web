@@ -1,4 +1,4 @@
-import type { KubernetesCluster } from '@ror/js-api-client'
+import { KubernetesCluster } from '@ror/js-api-client'
 import type { HealthStatus } from '../types/health-status'
 import { normalizeHealthStatus } from './health'
 import { ResourceType } from '../types/resource'
@@ -263,6 +263,36 @@ export function getVersions(cluster: KubernetesCluster): ClusterVersions {
     nhnTooling: findOrDefault('nhnTooling', 'NHN Tooling'),
   }
 }
+
+/**
+ * Retrieves the control plane topology version from a Kubernetes cluster specification.
+ * @param cluster - The Kubernetes cluster object containing spec and topology information.
+ * @returns The control plane topology version string, or undefined if not available.
+ */
+export const getClusterSpecTopologyVersion = (cluster: KubernetesCluster): string =>
+  cluster?.kubernetescluster?.spec?.topology?.version || 'No topology version'
+
+/**
+ * Retrieves the Kubernetes control plane version from a cluster's topology specification.
+ * @param cluster - The Kubernetes cluster object containing specification details
+ * @returns The control plane version string, or undefined if the path doesn't exist
+ */
+export const getClusterSpecTopologyControlPlaneVersion = (cluster: KubernetesCluster): string =>
+  cluster?.kubernetescluster?.spec?.topology?.controlplane?.version || 'No topology control plane version'
+
+/**
+ * Retrieves the provider of a Kubernetes cluster.
+ * @param cluster - The Kubernetes cluster object to extract the provider from.
+ * @returns The provider string of the cluster, or undefined if the cluster or its data is not available.
+ */
+export const getClusterProvider = (cluster: KubernetesCluster): string =>
+  cluster?.kubernetescluster?.spec?.data?.provider || 'No provider'
+
+export const getRegion = (cluster: KubernetesCluster): string =>
+  cluster?.kubernetescluster?.spec?.data?.region || 'No region'
+
+export const getWorkorder = (cluster: KubernetesCluster): string =>
+  cluster?.kubernetescluster?.spec?.data?.workorder || 'No workorder'
 
 /**
  * Retrieves the project name from a given KubernetesCluster object.
