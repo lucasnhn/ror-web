@@ -17,8 +17,6 @@ const StatisticsPage = async () => {
   const res = await api.kubernetesClusters.list(listParams)
   const items: KubernetesCluster[] = res?.resources ?? []
 
-  console.log('[ITEMS]', items)
-
   const { topologyVersionCount, topologyControlPlaneVersionCount, kubernetesCount, agentCount, nhnToolingCount } =
     findVersions(items)
   const { providerCount } = findProviders(items)
@@ -31,7 +29,6 @@ const StatisticsPage = async () => {
   return (
     <div className='w-full flex flex-col'>
       <Header title='Statistics' />
-      {/* {JSON.stringify(items)} */}
       <PageView
         topologyVersions={topologyVersionCount}
         topologyControlPlaneVersions={topologyControlPlaneVersionCount}
