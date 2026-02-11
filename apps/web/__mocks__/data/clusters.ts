@@ -297,7 +297,12 @@ export const clustersVersion2 = {
                 monthly: -3,
                 yearly: -36,
               },
-              resources: {},
+              resources: {
+                cpu: { capacity: '4 cores', used: '1.2 cores', percentage: 30 },
+                memory: { capacity: '16 Gi', used: '6 Gi', percentage: 38 },
+                gpu: { capacity: '0', used: '0', percentage: 0 },
+                disk: { capacity: '200 Gi', used: '55 Gi', percentage: 28 },
+              },
             },
             created: null,
             egressIP: '10.204.104.42',
