@@ -194,7 +194,9 @@ export const VMDetails = ({ user }: VMDetailsProps) => {
           {tagKey.map((key) => (
             <div key={key} className='flex justify-between items-start'>
               <span className='text-sm text-muted-foreground font-medium'>{key}:</span>
-              <span className='text-sm text-right max-w-[60%]'>{tags[key].description || 'Missing..'}</span>
+              <span className='text-sm text-right max-w-[60%]'>
+                {tags[key].description || tags[key].value || 'Missing..'}
+              </span>
             </div>
           ))}
         </div>
