@@ -105,6 +105,9 @@ const VMCard = ({ className, vm, vmDisplayData }: VMCardProps) => {
     if (teamDescription == '') {
       return teamValue
     }
+    if (teamValue == '' && teamDescription == '') {
+      return 'Unknown'
+    }
     return teamDescription
   }
 
@@ -168,7 +171,7 @@ const VMCard = ({ className, vm, vmDisplayData }: VMCardProps) => {
               />
             </div>
           )}
-          {showDiskUsage && diskData.length > 0 && (
+          {showDiskUsage && (
             <div className='flex items-center justify-between'>
               <span className='font-bold'>Disks</span>
               <MetricCell
