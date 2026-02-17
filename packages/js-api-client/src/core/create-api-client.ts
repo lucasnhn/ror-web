@@ -17,6 +17,7 @@ import { createVirtualMachineService } from '../services/vm'
 import { createBackupJobService } from '../services/backup-job'
 import { createBackupRunService } from '../services/backup-run'
 import { createProjectService } from '../services/projects'
+import { createAclService } from '../services/acls'
 
 function setDefaultHeaders(config: ApiClientConfig): Record<string, string> {
   return {
@@ -45,6 +46,7 @@ export function createApiClient(config: ApiClientConfig) {
    * Create our different services
    */
   const services = {
+    acl: createAclService(request),
     configuration: createConfigurationService(request),
     daemonSet: createDaemonSetService(request),
     datacenter: createDatacentersService(request),
