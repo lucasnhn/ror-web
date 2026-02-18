@@ -24,7 +24,7 @@ export default async function ProfilePage() {
     if (group != null && group.group) {
       aclsBeingUsed.push(group)
     } else {
-      aclsNotBeingUsed.push(group)
+      aclsNotBeingUsed.push(acl)
     }
   }
 
