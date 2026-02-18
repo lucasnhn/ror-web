@@ -20,9 +20,10 @@ export default async function ProfilePage() {
   const aclsNotBeingUsed = []
 
   for (const acl of acls) {
-    const group = await api.acl.getByName(acl)
-    if (group != null && group.group) {
-      aclsBeingUsed.push(group)
+    const data = await api.acl.getByName(acl)
+    console.dir('whole object:', data)
+    if (data != null) {
+      aclsBeingUsed.push(data)
     } else {
       aclsNotBeingUsed.push(acl)
     }
@@ -38,7 +39,7 @@ export default async function ProfilePage() {
         <p className='text-(--r-text-secondary)'>{self.user.email}</p>
       </header>
 
-      <div className='mt-10 grid grid-cols-12 gap-8 max-w-[60rem]'>
+      <div className='mt-10 grid grid-cols-12 gap-8 max-w-240'>
         <div className='col-span-8'>
           <Tile className='p-5'>
             <h3 className='r-heading-03 mb-8'>Groups that grant access in ROR</h3>
