@@ -21,10 +21,9 @@ export default async function ProfilePage() {
 
   for (const acl of acls) {
     const res = await api.acl.getByName(acl)
-    const group = (res.data as (typeof res.data)[])[0]
-    console.dir(group, { depth: null })
-    if (group) {
-      aclsBeingUsed.push(group)
+    console.dir(res, { depth: null })
+    if (res.data) {
+      aclsBeingUsed.push(res.data)
     } else {
       aclsNotBeingUsed.push(acl)
     }
@@ -45,10 +44,11 @@ export default async function ProfilePage() {
           <Tile className='p-5'>
             <h3 className='r-heading-03 mb-8'>Groups that grant access in ROR</h3>
             <ul className='list-disc list-inside'>
-              {aclsBeingUsed.map((group) => (
-                <li key={group.group} className='mb-1'>
-                  {group.group}
-                </li>
+              {aclsBeingUsed.map((group, index) => (
+                // <li key={group.group} className='mb-1'>
+                //   {group.group}
+                // </li>
+                <p key={index}>{JSON.stringify(group)}</p>
               ))}
             </ul>
             <hr />

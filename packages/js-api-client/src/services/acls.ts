@@ -1,6 +1,6 @@
 import type { RequestOptions } from '../core/request'
 import { validateResponse } from '../core/validation'
-import { AclResponseSchema, AclSchema } from '../schemas/acl'
+import { AclResponseSchema } from '../schemas/acl'
 
 export interface Filter {
   field: string
@@ -56,6 +56,6 @@ export const createAclService = (request: (requestOptions: RequestOptions) => Pr
       body,
     })
 
-    return validateResponse(response, AclSchema)
+    return validateResponse(response, AclResponseSchema)
   },
 })
