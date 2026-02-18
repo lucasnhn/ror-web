@@ -28,6 +28,9 @@ export default async function ProfilePage() {
     }
   }
 
+  console.log('aclsBeingUsed:', aclsBeingUsed)
+  console.log('aclsNotBeingUsed:', aclsNotBeingUsed)
+
   return (
     <div className='p-10'>
       <header>
