@@ -19,9 +19,6 @@ export interface FilterRequestOptions {
 }
 
 export const createAclService = (request: (requestOptions: RequestOptions) => Promise<unknown>) => ({
-  /**
-   * @deprecated use list instead
-   */
   filter: async (options: FilterRequestOptions) => {
     const body = {
       limit: options?.limit ?? 25,
