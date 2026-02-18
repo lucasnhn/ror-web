@@ -20,10 +20,11 @@ export default async function ProfilePage() {
   const aclsNotBeingUsed = []
 
   for (const acl of acls) {
-    const data = await api.acl.getByName(acl)
-    console.dir(data, { depth: null })
-    if (data.group != null) {
-      aclsBeingUsed.push(data)
+    const res = await api.acl.getByName(acl)
+    const group = (res.data as (typeof res.data)[])[0]
+    console.dir(group, { depth: null })
+    if (group) {
+      aclsBeingUsed.push(group)
     } else {
       aclsNotBeingUsed.push(acl)
     }
