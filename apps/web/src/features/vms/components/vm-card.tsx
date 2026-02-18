@@ -16,7 +16,6 @@ import { cn } from '@/utils/clsxm'
 import Link from 'next/link'
 import { vmCardPowerStatus } from '@/features/vms/utils/env-colors'
 import {
-  getTeamValue,
   getVmArchitecture,
   getVmFamily,
   getVmHostName,
@@ -26,7 +25,6 @@ import {
   getVmToolVersion,
   getVmVersion,
   VMCardProps,
-  getTeamDescription,
   getSpecMemory,
   getStatusMemoryUsage,
   getStatusCpuUsage,
@@ -34,6 +32,7 @@ import {
   getSpecSockets,
   getSpecCoresPerSocket,
   getVmDisks,
+  getTeamIdentifier,
 } from '@/features/vms/utils/vms'
 import { changePowerStateValues } from '../types/powerState'
 import { BackupStatusDisplay } from '@/features/vms/backup/components'
@@ -74,9 +73,6 @@ const VMCard = ({ className, vm, vmDisplayData }: VMCardProps) => {
   const toolVersion = getVmToolVersion(vm)
   const powerState = getVmPowerState(vm)
 
-  const teamValue = getTeamValue(vm)
-  const teamDescription = getTeamDescription(vm)
-
   const envColor = vmCardPowerStatus[powerState ?? 'undefined'] ?? vmCardPowerStatus['undefined']
 
   const Info = ({ label, value }: { label: string; value: string | number }) => {
@@ -99,16 +95,6 @@ const VMCard = ({ className, vm, vmDisplayData }: VMCardProps) => {
         </Badge>
       </div>
     ) : null
-  }
-
-  const teamFallback = () => {
-    if (teamDescription == '') {
-      return teamValue
-    }
-    if (teamValue == '' && teamDescription == '') {
-      return 'Unknown'
-    }
-    return teamDescription
   }
 
   const MetricsSection = () => {
@@ -211,7 +197,7 @@ const VMCard = ({ className, vm, vmDisplayData }: VMCardProps) => {
             <div>
               <div className='grid grid-cols-2 gap-4 mb-2'>
                 <p className='font-bold'>Team</p>
-                <p className='text-md'>{teamFallback()}</p>
+                <p className='text-md'>{getTeamIdentifier(vm)}</p>
               </div>
               <div className='border-b border-gray-700 mt-1'></div>
             </div>

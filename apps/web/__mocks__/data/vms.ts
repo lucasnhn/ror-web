@@ -32,6 +32,8 @@ export const mockVms = {
         isMounted: true,
       },
     ]
+    const locations = ['OSL NAM01', 'OSL3 NAM03', 'TRD NAM01', 'TRD3 NAM03']
+    const location = locations[idx % 4]
     const disks = allDisks.slice(0, diskCount)
     const memorySizes = [4294967296, 8589934592] // 4GB, 8GB in bytes
     const memorySize = memorySizes[idx % 2]
@@ -73,7 +75,7 @@ export const mockVms = {
         },
         status: {
           lastUpdated: '2025-09-23T07:52:41Z',
-          location: 'OSL3 NAM02',
+          location: location,
           cpu: {
             coresPerSocket: CoresPerSocket,
             sockets: 4,

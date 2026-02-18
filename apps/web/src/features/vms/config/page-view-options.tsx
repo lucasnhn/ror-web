@@ -36,15 +36,18 @@ export const powerStateOptions: Option[] = [
   { value: 'undefined', label: 'Undefined' },
 ]
 
+export const locationOptions: Option[] = [
+  { value: 'TRD', label: 'TRD NAM01' },
+  { value: 'TRD3', label: 'TRD3 NAM03' },
+  { value: 'OSL', label: 'OSL NAM01' },
+  { value: 'OSL3', label: 'OSL3 NAM03' },
+]
+
 export const backupStatusOptions: Option[] = [
   { value: 'activeBackup', label: 'Active Backup' },
   { value: 'historicalBackup', label: 'Historical Backup' },
   { value: 'configuredBackup', label: 'Configured Backup' },
   { value: 'noBackup', label: 'No Backup' },
-  // TODO: Implement these statuses in the future
-  // { value: 'inProgress', label: 'In Progress' },
-  // { value: 'completed', label: 'Completed' },
-  // { value: 'failed', label: 'Failed' },
 ]
 
 export const generateServerTeamOptions = async (): Promise<Option[]> => {
@@ -62,6 +65,7 @@ export const generateServerFilterOptions = async (): Promise<
 
   return [
     { label: 'Power States', placeholder: 'Choose Power State', data: powerStateOptions },
+    { label: 'Location', placeholder: 'Choose Location', data: locationOptions },
     { label: 'Teams', placeholder: 'Choose Team', data: teamOptions },
     { label: 'Backup', placeholder: 'Choose Backup Status', data: backupStatusOptions },
   ]
