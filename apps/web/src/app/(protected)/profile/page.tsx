@@ -38,7 +38,7 @@ export default async function ProfilePage() {
       <div className='mt-10 grid grid-cols-12 gap-8 max-w-240'>
         <div className='col-span-8'>
           <Tile className='p-5'>
-            <h3 className='r-heading-03 mb-8'>Groups that grant access in ROR</h3>
+            <h3 className='r-heading-03 mb-4'>Groups that grant access in ROR</h3>
             <ul className='list-disc list-inside'>
               {aclsBeingUsed.map((group) => (
                 <li key={group[0].group} className='mb-1'>
@@ -46,8 +46,8 @@ export default async function ProfilePage() {
                 </li>
               ))}
             </ul>
-            <hr />
-            <h3 className='r-heading-03 mb-8'>Groups that does not grant access in ROR</h3>
+            <hr className='my-2' />
+            <h3 className='r-heading-03 mb-4'>Groups that does not grant access in ROR</h3>
             <ul className='list-disc list-inside'>
               {aclsNotBeingUsed.map((acl) => (
                 <li key={acl} className='mb-1'>
