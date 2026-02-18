@@ -22,7 +22,7 @@ export default async function ProfilePage() {
   for (const acl of acls) {
     const res = await api.acl.getByName(acl)
     console.dir(res, { depth: null })
-    if (res.data) {
+    if (res.data.length > 0) {
       aclsBeingUsed.push(res.data)
     } else {
       aclsNotBeingUsed.push(acl)
