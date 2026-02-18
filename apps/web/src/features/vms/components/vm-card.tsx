@@ -41,7 +41,7 @@ import { Badge } from '@/components/shadcn/badge'
 import { PowerStatusIcon } from './power-status-icon'
 import { routes } from '@/config/routes'
 import { MetricCell } from './metrics-cell'
-import { Dot, Users } from 'lucide-react'
+import { Dot } from 'lucide-react'
 import { TooltipContent, TooltipTrigger, Tooltip } from '@/components/shadcn/tooltip'
 import { VersionLogoWithTooltip } from '../utils/versions-logo'
 
@@ -94,7 +94,6 @@ const VMCard = ({ className, vm, vmDisplayData }: VMCardProps) => {
       <div className='flex items-center gap-5'>
         <Tooltip>
           <TooltipTrigger asChild>
-            {/* <p className='font-bold'>Power</p> */}
             <Badge variant='outline' className='px-1.5 text-base-muted'>
               <PowerStatusIcon status={powerState} className='mr-2' />
               {changePowerStateValues[powerState ?? 'Undefined'].charAt(0).toUpperCase() +
@@ -114,7 +113,7 @@ const VMCard = ({ className, vm, vmDisplayData }: VMCardProps) => {
       <div className='flex items-center gap-5'>
         <Tooltip>
           <TooltipTrigger asChild>
-            <p>[{location?.split(' ').join(' · ')}]</p>
+            <p>{location?.split(' ').join(' · ')}</p>
           </TooltipTrigger>
           <TooltipContent>
             <p>Location: {location}</p>
