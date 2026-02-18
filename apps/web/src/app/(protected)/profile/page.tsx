@@ -21,7 +21,7 @@ export default async function ProfilePage() {
 
   for (const acl of acls) {
     const data = await api.acl.getByName(acl)
-    console.dir('whole object:', data)
+    console.dir(data, { depth: null })
     if (data.group != null) {
       aclsBeingUsed.push(data)
     } else {
