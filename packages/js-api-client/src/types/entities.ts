@@ -23,7 +23,10 @@ import type { DatacenterResponseSchema, DatacenterSchema } from '../schemas/data
 import type { BackupJobSchema } from '../schemas/backup-job'
 import type { BackupRunSchema } from '../schemas/backup-run'
 import type { ProjectResponseSchema, ProjectSchema } from '../schemas/project'
+import type { AclResponseSchema, AclSchema } from '../schemas/acl'
 
+export type Acl = z.infer<typeof AclSchema>
+export type AclResponse = z.infer<typeof AclResponseSchema>
 // "Cluster" matches the v1 resource
 export type Cluster = z.infer<typeof ClusterSchema>
 export type ClustersResponse = z.infer<typeof ClustersResponseSchema>
