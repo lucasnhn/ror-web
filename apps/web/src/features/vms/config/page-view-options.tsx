@@ -11,6 +11,7 @@ export const displayDataOptions: Option[] = [
   { label: 'ID', value: 'id' },
   { label: 'Architecture', value: 'architecture' },
   { label: 'Family', value: 'family' },
+  { label: 'Location', value: 'location' },
   { label: 'Version', value: 'version' },
   { label: 'VMware Tools version', value: 'toolVersion' },
 ]

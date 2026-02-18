@@ -1,7 +1,7 @@
 export const mockVms = {
   resources: Array.from({ length: 104 }, (_, i) => {
     const idx = i + 1
-    const teamsDescription = ['Monitorering', 'stamnett', '']
+    const teamsDescription = ['Driftsteam 1 Fagapplikasjoner SHDIR', 'stamnett', '']
     const teamsValue = ['mon', 'stam']
     const osFamily = ['Windows', 'Linux']
     const osName = ['Windows', 'Red Hat Enterprise Linux']
@@ -109,7 +109,7 @@ export const mockVms = {
             },
           ],
           operatingSystem: {
-            id: `mock${idx}`,
+            id: `windows2022srvNext_64Guest`,
             name: osName[idx % 5],
             family: osFamily[idx % 2],
             version: '5.4.0-208-generic',

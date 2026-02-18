@@ -19,9 +19,7 @@ export const VersionLogoWithTooltip = ({ version }: { version: string }) => {
     <div className='flex items-center justify-center gap-1'>
       <Tooltip>
         <TooltipTrigger asChild>
-          <div className='px-2 py-1 bg-muted rounded text-sm text-muted-foreground'>
-            {ConvertToVersionLogo(version)}
-          </div>
+          <div className='px-2 py-1 rounded text-sm text-muted-foreground'>{ConvertToVersionLogo(version)}</div>
         </TooltipTrigger>
         <TooltipContent>
           <p>{version}</p>

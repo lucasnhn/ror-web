@@ -245,10 +245,10 @@ export function MetricCell({
     }
 
     return (
-      <div className='flex items-center justify-center gap-1'>
+      <div className='flex items-center justify-center -gap-2'>
         <Tooltip>
           <TooltipTrigger asChild>
-            <div className='w-14 h-2 relative'>
+            <div className='w-25 h-2 relative'>
               <div className='w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden'>
                 {type === 'disk' && diskData && diskData.length > 1 && metricLimit ? (
                   <div className='flex h-full'>
