@@ -52,9 +52,9 @@ export default async function ProfilePage() {
             <hr />
             <h3 className='r-heading-03 mb-8'>Groups that does not grant access in ROR</h3>
             <ul className='list-disc list-inside'>
-              {aclsNotBeingUsed.map((group) => (
-                <li key={group.group} className='mb-1'>
-                  {group.group}
+              {aclsNotBeingUsed.map((acl) => (
+                <li key={acl} className='mb-1'>
+                  {acl}
                 </li>
               ))}
             </ul>
