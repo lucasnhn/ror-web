@@ -40,12 +40,19 @@ export function useSearch<T, M = T>(items: T[], query: string, options: UseSearc
       : items.map((i) => ({ original: i, mapped: i as unknown as M }))
     const fuse = new Fuse<M>(
       sourceItems.map((i) => i.mapped),
-      { keys, threshold }
+      {
+        keys,
+        threshold,
+        useExtendedSearch: true,
+        ignoreLocation: true,
+      }
     )
     return { fuse, sourceItems }
   }, [items, keys, threshold, mapItem])
 
   if (!query.trim()) return items
-  const results = fuse.search(query.trim())
+  const formattedQuery = query.includes('-') || query.includes('_') ? `=${query.trim()}` : query.trim()
+
+  const results = fuse.search(formattedQuery)
   return results.map((r) => sourceItems[r.refIndex].original)
 }

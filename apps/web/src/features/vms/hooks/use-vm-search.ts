@@ -2,7 +2,6 @@ import { useMemo } from 'react'
 import Fuse from 'fuse.js'
 import type { VirtualMachine } from '@ror/js-api-client'
 import { getVmFamily, getVmHostName, getVmPowerState, getLocation } from '../utils/vms'
-import { get } from 'http'
 
 export const getSpecificLocation = (location: string | undefined): string => {
   const locationMap: Record<string, string> = {
@@ -28,10 +27,8 @@ export const useVmSearch = (items: VirtualMachine[], query: string) => {
 
     return new Fuse(flat, {
       keys: ['label', 'powerState', 'family', 'location'],
-      threshold: 0.2,
-      ignoreLocation: false,
-      minMatchCharLength: 1,
-      distance: 50,
+      threshold: 0.0,
+
       // includeMatches: false,
       // useExtendedSearch: true,
     })
