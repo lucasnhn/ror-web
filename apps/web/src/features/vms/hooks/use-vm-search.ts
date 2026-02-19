@@ -28,9 +28,6 @@ export const useVmSearch = (items: VirtualMachine[], query: string) => {
     return new Fuse(flat, {
       keys: ['label', 'powerState', 'family', 'location'],
       threshold: 0.0,
-
-      // includeMatches: false,
-      // useExtendedSearch: true,
     })
   }, [items])
 
