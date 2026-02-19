@@ -32,6 +32,7 @@ export const mockVms = {
         isMounted: true,
       },
     ]
+    const names = [`mtrd-posl-${idx}`, `mtrd3-posl-${idx}`, `trd1-dc-nam-01-intern-${idx}`]
     const locations = ['OSL NAM01', 'OSL3 NAM03', 'TRD NAM01', 'TRD3 NAM03']
     const location = locations[idx % 4]
     const disks = allDisks.slice(0, diskCount)
@@ -49,7 +50,7 @@ export const mockVms = {
       kind: 'VirtualMachine',
       apiVersion: 'general.ror.internal/v1alpha1',
       metadata: {
-        name: `Mock-Virtual-machine-${idx}`,
+        name: names[idx % names.length],
         uid: `mock-uid-${idx}`,
       },
       rormeta: {
@@ -67,7 +68,7 @@ export const mockVms = {
             coresPerSocket: CoresPerSocket,
             sockets: 4,
           },
-          name: `Mock-Virtual-machine-${idx}`,
+          name: names[idx % names.length],
           disks: null,
           memory: {
             sizeBytes: memorySize,
@@ -113,7 +114,7 @@ export const mockVms = {
             name: osName[idx % 5],
             family: osFamily[idx % 2],
             version: '5.4.0-208-generic',
-            hostName: `Mock-Virtual-machine-${idx}`,
+            hostName: names[idx % names.length],
             powerState: idx % 3 === 0 ? 'poweredOn' : idx % 3 === 1 ? 'poweredOff' : 'undefined',
             toolVersion: '11360',
             architecture: 'X86',
