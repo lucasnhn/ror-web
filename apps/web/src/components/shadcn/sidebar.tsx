@@ -475,7 +475,6 @@ const sidebarMenuButtonVariants = cva(
   }
 )
 
-// ...existing code...
 const SidebarMenuButton = React.forwardRef<
   HTMLButtonElement,
   React.ComponentProps<'button'> & {
@@ -534,6 +533,7 @@ const SidebarMenuButton = React.forwardRef<
           hidden={state !== 'collapsed' || isMobile}
           className='min-w-[12rem] p-2'
           onMouseLeave={() => setOpen(false)}
+          onMouseDown={() => setOpen(false)}
         >
           {popoverContent.items.length === 1 ? (
             'url' in popoverContent.items[0] ? (
@@ -568,7 +568,6 @@ const SidebarMenuButton = React.forwardRef<
     )
   }
 )
-// ...existing code...
 
 SidebarMenuButton.displayName = 'SidebarMenuButton'
 
