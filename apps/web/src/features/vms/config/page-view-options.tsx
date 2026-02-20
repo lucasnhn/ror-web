@@ -41,7 +41,7 @@ export const locationOptions: Option[] = [
   { value: 'TRD', label: 'TRD NAM01' },
   { value: 'TRD3', label: 'TRD3 NAM03' },
   { value: 'OSL', label: 'OSL NAM01' },
-  { value: 'OSL3', label: 'OSL3 NAM03' },
+  { value: 'OSL3', label: 'OSL3 NAM02' },
 ]
 
 export const backupStatusOptions: Option[] = [
