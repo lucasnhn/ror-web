@@ -15,6 +15,19 @@ export default async function ProfilePage() {
   const api = await getRorApi()
   const decodedAuthToken = jwtDecode(session.accessToken)
   const self = await api.users.self()
+  const acls: string[] = self.user.groups
+  const aclsBeingUsed = []
+  const aclsNotBeingUsed = []
+
+  for (const acl of acls) {
+    const res = await api.acl.getByName(acl)
+    if (res.data.length > 0) {
+      aclsBeingUsed.push(res.data)
+    } else {
+      aclsNotBeingUsed.push(acl)
+    }
+  }
+
   return (
     <div className='p-10'>
       <header>
@@ -22,14 +35,23 @@ export default async function ProfilePage() {
         <p className='text-(--r-text-secondary)'>{self.user.email}</p>
       </header>
 
-      <div className='mt-10 grid grid-cols-12 gap-8 max-w-[60rem]'>
+      <div className='mt-10 grid grid-cols-12 gap-8 max-w-240'>
         <div className='col-span-8'>
           <Tile className='p-5'>
-            <h3 className='r-heading-03 mb-8'>Groups</h3>
+            <h3 className='r-heading-03 mb-4'>Groups that grant access in ROR</h3>
             <ul className='list-disc list-inside'>
-              {self.user.groups.map((group) => (
-                <li key={group} className='mb-1'>
-                  {group}
+              {aclsBeingUsed.map((group) => (
+                <li key={group[0].group} className='mb-1'>
+                  {group[0].group}
+                </li>
+              ))}
+            </ul>
+            <hr className='my-2' />
+            <h3 className='r-heading-03 mb-4'>Groups that does not grant access in ROR</h3>
+            <ul className='list-disc list-inside'>
+              {aclsNotBeingUsed.map((acl) => (
+                <li key={acl} className='mb-1'>
+                  {acl}
                 </li>
               ))}
             </ul>
