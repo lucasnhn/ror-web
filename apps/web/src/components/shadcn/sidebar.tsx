@@ -499,6 +499,8 @@ const SidebarMenuButton = React.forwardRef<
         popoverContent.items.length > 0 &&
         'url' in popoverContent.items[0]
       ) {
+        e.preventDefault()
+        e.stopPropagation()
         window.location.href = popoverContent.items[0].url
       }
     }
