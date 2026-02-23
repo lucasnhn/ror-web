@@ -46,9 +46,15 @@ export const getBackupRunTableColumns = (): DataTableColumnDef<BackupRun>[] => {
           return React.createElement(
             'div',
             {
-              className: 'min-w-0 break-words font-mono text-sm flex items-center gap-2',
+              className: 'flex items-center gap-2 min-w-0',
             },
-            id,
+            React.createElement(
+              'span',
+              {
+                className: 'font-mono text-sm break-words',
+              },
+              id
+            ),
             React.createElement(CopyButton, { onClick: copyIdValue })
           )
         },
@@ -163,9 +169,15 @@ export const getBackupRunTableColumns = (): DataTableColumnDef<BackupRun>[] => {
           return React.createElement(
             'div',
             {
-              className: 'min-w-0 break-words font-mono text-sm flex items-center gap-2',
+              className: 'flex items-center gap-2 min-w-0',
             },
-            backupJobId,
+            React.createElement(
+              'span',
+              {
+                className: 'font-mono text-sm break-words',
+              },
+              backupJobId
+            ),
             React.createElement(CopyButton, { onClick: copyIdValue })
           )
         },

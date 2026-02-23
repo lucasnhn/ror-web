@@ -84,9 +84,15 @@ export const getBackupJobTableColumns = (): DataTableColumnDef<BackupJob>[] => {
           return React.createElement(
             'div',
             {
-              className: 'min-w-0 break-words font-mono text-sm flex items-center gap-2',
+              className: 'flex items-center gap-2 min-w-0',
             },
-            id,
+            React.createElement(
+              'span',
+              {
+                className: 'font-mono text-sm break-words',
+              },
+              id
+            ),
             React.createElement(CopyButton, { onClick: copyIdValue })
           )
         },
