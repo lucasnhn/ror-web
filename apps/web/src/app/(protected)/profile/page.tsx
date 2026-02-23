@@ -1,5 +1,4 @@
 import { authGuard } from '@/features/auth/utils/auth-guard'
-import { table1CellStyling } from '@/features/cluster/config/create-cluster-styling'
 import { getRorApi } from '@/services/ror-api'
 import { localizeDate } from '@/utils/time-and-date'
 import { Acl } from '@ror/js-api-client'
