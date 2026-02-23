@@ -15,7 +15,6 @@ import { useIsMobile } from '@/hooks/use-mobile'
 import { cn } from '@/utils/clsxm'
 import { SidebarItem } from '../app-sidebar-content'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 
 const SIDEBAR_COOKIE_NAME = 'sidebar_state'
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
@@ -491,7 +490,6 @@ const SidebarMenuButton = React.forwardRef<
     const Comp = asChild ? Slot : 'button'
     const { isMobile, state } = useSidebar()
     const [open, setOpen] = React.useState(false)
-    const router = useRouter()
 
     const button = (
       <Comp
