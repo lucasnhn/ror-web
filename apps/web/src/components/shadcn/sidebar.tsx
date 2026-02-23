@@ -15,6 +15,7 @@ import { useIsMobile } from '@/hooks/use-mobile'
 import { cn } from '@/utils/clsxm'
 import { SidebarItem } from '../app-sidebar-content'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 const SIDEBAR_COOKIE_NAME = 'sidebar_state'
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
@@ -490,20 +491,7 @@ const SidebarMenuButton = React.forwardRef<
     const Comp = asChild ? Slot : 'button'
     const { isMobile, state } = useSidebar()
     const [open, setOpen] = React.useState(false)
-
-    const handleIconClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-      // When sidebar is collapsed and there are multiple items, navigate to first item
-      if (
-        state === 'collapsed' &&
-        popoverContent &&
-        popoverContent.items.length > 0 &&
-        'url' in popoverContent.items[0]
-      ) {
-        e.preventDefault()
-        e.stopPropagation()
-        window.location.href = popoverContent.items[0].url
-      }
-    }
+    const router = useRouter()
 
     const button = (
       <Comp
@@ -514,7 +502,6 @@ const SidebarMenuButton = React.forwardRef<
         data-active={isActive}
         className={cn(sidebarMenuButtonVariants({ variant, size }), className)}
         onClick={(e) => {
-          handleIconClick(e as React.MouseEvent<HTMLButtonElement>)
           props.onClick?.(e as React.MouseEvent<HTMLButtonElement>)
         }}
         onMouseEnter={() => state === 'collapsed' && setOpen(true)}
@@ -550,7 +537,7 @@ const SidebarMenuButton = React.forwardRef<
             )
           ) : (
             <div>
-              <div className=''>
+              <div>
                 {popoverContent.items.map((item) => (
                   <div key={item.title}>
                     {'url' in item ? (
