@@ -101,40 +101,34 @@ const BackupJobCard: React.FC<{ job: BackupJob; index: number; backupRuns: Backu
             </div>
             <div className='flex items-center gap-2'>
               <Badge variant='outline' className='font-mono text-xs '>
-                {React.createElement(
-                  Link,
-                  {
-                    href: `/vms/backup/backup-jobs?backupJobId=${getBackupJobId(job)}`,
-                  },
-                  React.createElement(
-                    Badge,
-                    {
-                      variant: 'default',
-                      className:
-                        'text-gray-800 dark:text-gray-200 font-mono text-xs cursor-pointer hover:underline dark:hover:underline transition-colors bg-transparent border-0 p-0',
-                    },
-                    getBackupJobId(job)
-                  )
-                )}
-                {React.createElement(CopyButton, {
-                  className: 'bg-transparent p-0 border-0 text-gray-400 transition-colors',
-                  onClick: (e?: React.MouseEvent) => {
-                    e?.preventDefault()
+                <Link href={`/vms/backup/backup-jobs?backupJobId=${getBackupJobId(job)}`}>
+                  <Badge
+                    variant='default'
+                    className='text-gray-800 dark:text-gray-200 font-mono text-xs cursor-pointer hover:underline dark:hover:underline transition-colors bg-transparent border-0 p-0'
+                  >
+                    {getBackupJobId(job)}
+                  </Badge>
+                </Link>
+
+                <CopyButton
+                  className='bg-transparent p-0 border-0 text-gray-400 transition-colors'
+                  onClick={(e) => {
+                    e.preventDefault()
                     void copy(getBackupJobId(job))
-                  },
-                })}
+                  }}
+                />
               </Badge>
             </div>
           </div>
           <CardTitle className='text-xl font-semibold flex items-center gap-1'>
             {getBackupJobName(job)}
-            {React.createElement(CopyButton, {
-              className: 'bg-transparent p-0 border-0 text-gray-400  transition-colors',
-              onClick: (e?: React.MouseEvent) => {
-                e?.preventDefault()
+            <CopyButton
+              className='bg-transparent p-0 border-0 text-gray-400 transition-colors'
+              onClick={(e) => {
+                e.preventDefault()
                 void copy(getBackupJobName(job))
-              },
-            })}
+              }}
+            />
           </CardTitle>
         </div>
       </CardHeader>
@@ -199,29 +193,22 @@ const BackupRunCard: React.FC<{ run: BackupRun; isLatest: boolean }> = ({ run, i
           </div>
           <div className='flex items-center space-x-2 '>
             <Badge variant='outline' className='font-mono text-xs'>
-              {React.createElement(
-                Link,
-                {
-                  href: `/vms/backup/backup-runs?backupRunId=${getBackupRunId(run)}`,
-                },
-                React.createElement(
-                  Badge,
-                  {
-                    variant: 'default',
-                    className:
-                      'text-gray-800 dark:text-gray-200 font-mono text-xs cursor-pointer hover:underline dark:hover:underline transition-colors bg-transparent border-0 p-0',
-                  },
-                  getBackupRunId(run)
-                )
-              )}
+              <Link href={`/vms/backup/backup-runs?backupRunId=${getBackupRunId(run)}`}>
+                <Badge
+                  variant='default'
+                  className='text-gray-800 dark:text-gray-200 font-mono text-xs cursor-pointer hover:underline dark:hover:underline transition-colors bg-transparent border-0 p-0'
+                >
+                  {getBackupRunId(run)}
+                </Badge>
+              </Link>
               <div className='flex items-center gap-2'>
-                {React.createElement(CopyButton, {
-                  className: 'bg-transparent p-0 border-0 text-gray-400  transition-colors',
-                  onClick: (e?: React.MouseEvent) => {
-                    e?.preventDefault()
+                <CopyButton
+                  className='bg-transparent p-0 border-0 text-gray-400 transition-colors'
+                  onClick={(e) => {
+                    e.preventDefault()
                     void copy(getBackupRunId(run))
-                  },
-                })}
+                  }}
+                />
               </div>
             </Badge>
           </div>
@@ -241,13 +228,13 @@ const BackupRunCard: React.FC<{ run: BackupRun; isLatest: boolean }> = ({ run, i
             </label>
             <span className='text-sm font-medium items-center text-gray-900 dark:text-gray-100 flex gap-2'>
               {backupJobId}
-              {React.createElement(CopyButton, {
-                className: 'bg-transparent p-0 border-0 text-gray-400  transition-colors',
-                onClick: (e?: React.MouseEvent) => {
-                  e?.preventDefault()
+              <CopyButton
+                className='bg-transparent p-0 border-0 text-gray-400 transition-colors'
+                onClick={(e) => {
+                  e.preventDefault()
                   void copy(backupJobId)
-                },
-              })}
+                }}
+              />
             </span>
           </div>
         )}
