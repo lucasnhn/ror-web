@@ -102,7 +102,7 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
             </div>
             {decodedAuthToken.exp && (
               <div>
-                <span className='w-1/3 font-bold'>Audience</span>
+                <span className='w-1/3 font-bold'>Expires</span>
                 <span className='w-2/3'>{localizeDate(new Date(decodedAuthToken.exp * 1000))}</span>
               </div>
             )}
