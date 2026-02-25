@@ -77,7 +77,7 @@ export function CopyButton({ onClick, className, children, size = 'md', value }:
     try {
       await navigator.clipboard.writeText(value)
       toast.info('Copied to clipboard')
-    } catch (error) {
+    } catch {
       toast.error('Failed to copy to clipboard')
     }
   }
