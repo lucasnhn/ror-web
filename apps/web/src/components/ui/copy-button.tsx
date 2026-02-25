@@ -64,10 +64,22 @@ export function CopyButton({ onClick, className, children, size = 'md', value }:
     e.nativeEvent.stopImmediatePropagation()
     e.preventDefault()
     onClick?.(e)
-    if (value) {
-      await navigator.clipboard.writeText(value)
+
+    if (!value) {
+      return
     }
-    toast.info('Copied to clipboard')
+
+    if (!navigator || !navigator.clipboard || typeof navigator.clipboard.writeText !== 'function') {
+      toast.error('Clipboard is not supported in this environment')
+      return
+    }
+
+    try {
+      await navigator.clipboard.writeText(value)
+      toast.info('Copied to clipboard')
+    } catch (error) {
+      toast.error('Failed to copy to clipboard')
+    }
   }
 
   const classes = clsx('r-copy-btn', 'no-drag', className)
