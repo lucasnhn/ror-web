@@ -9,6 +9,10 @@ export {
   isApiError,
 } from './core/errors'
 export type {
+  ApiKey,
+  ApiKeyListResponse,
+  CreateApiKeyRequest,
+  CreateApiKeyResponse,
   Acl,
   AclResponse,
   Cluster,
