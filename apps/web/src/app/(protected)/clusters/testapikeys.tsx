@@ -1,4 +1,5 @@
 import { Button } from '@/components/shadcn/button'
+import { createApiKey } from '@/features/api-keys/services/create-api-key'
 import { fetchApiKeys } from '@/features/api-keys/services/fetch-api-keys'
 /**
  * Display environment as a tag using consistent color for the different environments
@@ -6,11 +7,13 @@ import { fetchApiKeys } from '@/features/api-keys/services/fetch-api-keys'
 export function TestApiKeys() {
   return (
     <div>
-      {/* <Button onClick={() => {
-
-        }}>
-            Create
-        </Button> */}
+      <Button
+        onClick={() => {
+          console.log(createApiKey({ name: 'testiprod', ttl: 3600 }))
+        }}
+      >
+        Create
+      </Button>
 
       <Button
         onClick={() => {

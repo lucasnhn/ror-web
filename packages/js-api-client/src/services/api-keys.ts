@@ -6,13 +6,14 @@ import {
   CreateApiKeyResponseSchema,
   DeleteApiKeyResponseSchema,
 } from '../schemas/api-key'
+import type { CreateApiKeyRequest } from '../types/entities'
 
 export const createApiKeyService = (request: (requestOptions: RequestOptions) => Promise<unknown>) => ({
   /**
    * Create/Renew API key for current user (v2)
    * Returns token + expires.
    */
-  create: async (input: unknown) => {
+  create: async (input: CreateApiKeyRequest) => {
     const parsed = CreateApiKeyRequestSchema.parse(input)
 
     const response = await request({
