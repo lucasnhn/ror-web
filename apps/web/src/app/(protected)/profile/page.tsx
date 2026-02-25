@@ -114,11 +114,14 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
             )}
             <hr className='my-4' />
             <h4>Copy access token</h4>
-            <CopyButton className='bg-blue-600 min-w-fit p-2 text-sm my-2'>
+            <CopyButton className='bg-blue-600 min-w-fit p-2 text-sm my-2' value={session.accessToken}>
               <Copy className='mr-2' />
               Access token
             </CopyButton>
-            <CopyButton className='bg-blue-600 min-w-fit p-2 text-sm'>
+            <CopyButton
+              className='bg-blue-600 min-w-fit p-2 text-sm'
+              value={`Bearer ${session.accessToken}`}
+            >
               <Copy className='mr-2' />
               Access token with Bearer
             </CopyButton>
