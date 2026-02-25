@@ -52,6 +52,7 @@ interface ChartProps {
   title?: string
   data: Record<string, number>
   className?: string
+  metricLabel: string
 }
 
 /**
@@ -61,20 +62,22 @@ interface ChartProps {
  * @property count.label - The display label for the count metric.
  * @property count.color - The color used to represent the count metric in the chart.
  */
-const chartConfig = {
-  count: {
-    label: 'Count',
-    color: '#0c8aca',
-  },
-} satisfies ChartConfig
+const makeChartConfig = (label: string) =>
+  ({
+    count: {
+      label,
+      color: '#0c8aca',
+    },
+  }) satisfies ChartConfig
 
 const ROW_H = 22
 const MIN_H = 140
 
-const SmallerChart = ({ title, data, className }: ChartProps) => {
+const SmallerChart = ({ title, data, className, metricLabel }: ChartProps) => {
   const chartData = Object.entries(data).map(([version, count]) => ({ version, count }))
   const rows = chartData.length
   const chartH = Math.max(MIN_H, rows * ROW_H)
+  const chartConfig = makeChartConfig(metricLabel)
 
   return (
     <div className={cn('flex flex-col', className)}>
@@ -84,7 +87,7 @@ const SmallerChart = ({ title, data, className }: ChartProps) => {
           <BarChart accessibilityLayer data={chartData} layout='vertical' margin={{ left: -54 }}>
             <XAxis type='number' dataKey='count' hide />
             <YAxis type='category' tickLine axisLine tickFormatter={() => ''} />
-            <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
+            <ChartTooltip cursor={false} content={<ChartTooltipContent className='min-w-56' hideLabel />} />
             <Bar dataKey='count' fill='var(--color-count)' radius={4} barSize={36}>
               <LabelList
                 dataKey='version'
@@ -101,10 +104,11 @@ const SmallerChart = ({ title, data, className }: ChartProps) => {
   )
 }
 
-const SmChart = ({ title, data, className }: ChartProps) => {
+const SmChart = ({ title, data, className, metricLabel }: ChartProps) => {
   const chartData = Object.entries(data).map(([version, count]) => ({ version, count }))
   const rows = chartData.length
   const chartH = Math.max(MIN_H, rows * ROW_H)
+  const chartConfig = makeChartConfig(metricLabel)
 
   return (
     <div className={cn('flex flex-col', className)}>
@@ -114,7 +118,7 @@ const SmChart = ({ title, data, className }: ChartProps) => {
           <BarChart accessibilityLayer data={chartData} layout='vertical' margin={{ left: -54 }}>
             <XAxis type='number' dataKey='count' hide />
             <YAxis type='category' tickLine axisLine tickFormatter={() => ''} />
-            <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
+            <ChartTooltip cursor={false} content={<ChartTooltipContent className='min-w-56' hideLabel />} />
             <Bar dataKey='count' fill='var(--color-count)' radius={4} barSize={36}>
               <LabelList
                 dataKey='version'
@@ -131,8 +135,9 @@ const SmChart = ({ title, data, className }: ChartProps) => {
   )
 }
 
-const MdChart = ({ title, data, className }: ChartProps) => {
+const MdChart = ({ title, data, className, metricLabel }: ChartProps) => {
   const chartData = Object.entries(data).map(([version, count]) => ({ version, count }))
+  const chartConfig = makeChartConfig(metricLabel)
 
   return (
     <div className={cn('min-w-0 w-full', className)}>
@@ -155,7 +160,7 @@ const MdChart = ({ title, data, className }: ChartProps) => {
               tickFormatter={(v: string) => (v.length > 7 ? `${v.slice(0, 7)}…` : v)}
             />
             <YAxis tickMargin={0} tickLine={false} />
-            <ChartTooltip content={<ChartTooltipContent />} />
+            <ChartTooltip content={<ChartTooltipContent className='min-w-56' />} />
             <Bar dataKey='count' fill='var(--color-count)' radius={4} />
           </BarChart>
         </ChartContainer>
@@ -164,8 +169,9 @@ const MdChart = ({ title, data, className }: ChartProps) => {
   )
 }
 
-const LgChart = ({ title, data, className }: ChartProps) => {
+const LgChart = ({ title, data, className, metricLabel }: ChartProps) => {
   const chartData = Object.entries(data).map(([version, count]) => ({ version, count }))
+  const chartConfig = makeChartConfig(metricLabel)
 
   return (
     <div className={cn('min-w-0 w-full', className)}>
@@ -183,7 +189,7 @@ const LgChart = ({ title, data, className }: ChartProps) => {
             height={220}
           />
           <YAxis />
-          <ChartTooltip content={<ChartTooltipContent />} />
+          <ChartTooltip content={<ChartTooltipContent className='min-w-56' />} />
           <Bar dataKey='count' fill='var(--color-count)' radius={4} />
         </BarChart>
       </ChartContainer>
@@ -227,126 +233,406 @@ export const PageView = ({
 
       <div className={cn('my-6 px-4', 'sm:hidden')}>
         {topologyVersions && (
-          <SmallerChart title='Topology versions' data={topologyVersions} className='w-80 mx-auto' />
+          <SmallerChart
+            title='Topology versions'
+            data={topologyVersions}
+            className='w-80 mx-auto'
+            metricLabel='Clusters w/ version'
+          />
         )}
         {topologyControlPlaneVersions && (
-          <SmallerChart title='Control plane versions' data={topologyControlPlaneVersions} className='w-80 mx-auto' />
+          <SmallerChart
+            title='Control plane versions'
+            data={topologyControlPlaneVersions}
+            className='w-80 mx-auto'
+            metricLabel='Clusters w/ version'
+          />
         )}
-        {environments && <SmallerChart title='Environments' data={environments} className='w-80 mx-auto' />}
-        {datacenters && <SmallerChart title='Datacenters' data={datacenters} className='w-80 mx-auto' />}
-        {regions && <SmallerChart title='Regions' data={regions} className='w-80 mx-auto' />}
-        {providers && <SmallerChart title='Providers' data={providers} className='w-80 mx-auto' />}
-        {projects && <SmallerChart title='Projects' data={projects} className='w-80 mx-auto' />}
-        {workorders && <SmallerChart title='Workorders' data={workorders} className='w-80 mx-auto' />}
+        {environments && (
+          <SmallerChart
+            title='Environments'
+            data={environments}
+            className='w-80 mx-auto'
+            metricLabel='Clusters w/ environment'
+          />
+        )}
+        {datacenters && (
+          <SmallerChart
+            title='Datacenters'
+            data={datacenters}
+            className='w-80 mx-auto'
+            metricLabel='Clusters w/ datacenter'
+          />
+        )}
+        {regions && (
+          <SmallerChart title='Regions' data={regions} className='w-80 mx-auto' metricLabel='Clusters w/ region' />
+        )}
+        {providers && (
+          <SmallerChart
+            title='Providers'
+            data={providers}
+            className='w-80 mx-auto'
+            metricLabel='Clusters w/ provider'
+          />
+        )}
+        {projects && (
+          <SmallerChart title='Projects' data={projects} className='w-80 mx-auto' metricLabel='Clusters w/ project' />
+        )}
+        {workorders && (
+          <SmallerChart
+            title='Workorders'
+            data={workorders}
+            className='w-80 mx-auto'
+            metricLabel='Clusters w/ workorder'
+          />
+        )}
       </div>
 
       <div className={cn('hidden sm:block md:hidden', 'sm:my-6 sm:px-12')}>
-        {topologyVersions && <SmChart title='Topology versions' data={topologyVersions} className='w-lg mx-auto' />}
-        {topologyControlPlaneVersions && (
-          <SmChart title='Control plane versions' data={topologyControlPlaneVersions} className='w-lg mx-auto' />
+        {topologyVersions && (
+          <SmChart
+            title='Topology versions'
+            data={topologyVersions}
+            className='w-lg mx-auto'
+            metricLabel='Clusters w/ version'
+          />
         )}
-        {environments && <SmChart title='Environments' data={environments} className='w-lg mx-auto' />}
-        {datacenters && <SmChart title='Datacenters' data={datacenters} className='w-lg mx-auto' />}
-        {regions && <SmChart title='Regions' data={regions} className='w-lg mx-auto' />}
-        {providers && <SmChart title='Providers' data={providers} className='w-lg mx-auto' />}
-        {projects && <SmChart title='Projects' data={projects} className='w-lg mx-auto' />}
-        {workorders && <SmChart title='Workorders' data={workorders} className='w-lg mx-auto' />}
+        {topologyControlPlaneVersions && (
+          <SmChart
+            title='Control plane versions'
+            data={topologyControlPlaneVersions}
+            className='w-lg mx-auto'
+            metricLabel='Clusters w/ version'
+          />
+        )}
+        {environments && (
+          <SmChart
+            title='Environments'
+            data={environments}
+            className='w-lg mx-auto'
+            metricLabel='Clusters w/ environment'
+          />
+        )}
+        {datacenters && (
+          <SmChart
+            title='Datacenters'
+            data={datacenters}
+            className='w-lg mx-auto'
+            metricLabel='Clusters w/ datacenter'
+          />
+        )}
+        {regions && (
+          <SmChart title='Regions' data={regions} className='w-lg mx-auto' metricLabel='Clusters w/ region' />
+        )}
+        {providers && (
+          <SmChart title='Providers' data={providers} className='w-lg mx-auto' metricLabel='Clusters w/ provider' />
+        )}
+        {projects && (
+          <SmChart title='Projects' data={projects} className='w-lg mx-auto' metricLabel='Clusters w/ project' />
+        )}
+        {workorders && (
+          <SmChart title='Workorders' data={workorders} className='w-lg mx-auto' metricLabel='Clusters w/ workorder' />
+        )}
       </div>
 
       <div className={cn('hidden md:block lg:hidden', 'md:my-6 md:px-12 md:grid md:grid-cols-32')}>
-        {topologyVersions && <MdChart title='Topology versions' data={topologyVersions} className='col-span-32' />}
-        {topologyControlPlaneVersions && (
-          <MdChart title='Control plane versions' data={topologyControlPlaneVersions} className='col-span-32' />
+        {topologyVersions && (
+          <MdChart
+            title='Topology versions'
+            data={topologyVersions}
+            className='col-span-32'
+            metricLabel='Clusters w/ version'
+          />
         )}
-        {environments && <MdChart title='Environments' data={environments} className='col-span-32' />}
-        {datacenters && <MdChart title='Datacenters' data={datacenters} className='col-span-16' />}
-        {regions && <MdChart title='Regions' data={regions} className='col-span-16' />}
-        {providers && <MdChart title='Providers' data={providers} className='col-span-16' />}
-        {projects && <MdChart title='Projects' data={projects} className='col-span-32' />}
-        {workorders && <MdChart title='Workorders' data={workorders} className='col-span-32' />}
+        {topologyControlPlaneVersions && (
+          <MdChart
+            title='Control plane versions'
+            data={topologyControlPlaneVersions}
+            className='col-span-32'
+            metricLabel='Clusters w/ version'
+          />
+        )}
+        {environments && (
+          <MdChart
+            title='Environments'
+            data={environments}
+            className='col-span-32'
+            metricLabel='Clusters w/ environment'
+          />
+        )}
+        {datacenters && (
+          <MdChart
+            title='Datacenters'
+            data={datacenters}
+            className='col-span-16'
+            metricLabel='Clusters w/ datacenter'
+          />
+        )}
+        {regions && <MdChart title='Regions' data={regions} className='col-span-16' metricLabel='Clusters w/ region' />}
+        {providers && (
+          <MdChart title='Providers' data={providers} className='col-span-16' metricLabel='Clusters w/ provider' />
+        )}
+        {projects && (
+          <MdChart title='Projects' data={projects} className='col-span-32' metricLabel='Clusters w/ project' />
+        )}
+        {workorders && (
+          <MdChart title='Workorders' data={workorders} className='col-span-32' metricLabel='Clusters w/ workorder' />
+        )}
       </div>
 
       <div className={cn('hidden lg:block xl:hidden', 'lg:my-6 lg:px-12')}>
         <div className='grid lg:grid-cols-32 lg:gap-x-6 lg:gap-y-8'>
           {topologyVersions && (
-            <LgChart title='Topology versions' data={topologyVersions} className='col-span-16 min-w-0' />
+            <LgChart
+              title='Topology versions'
+              data={topologyVersions}
+              className='col-span-16 min-w-0'
+              metricLabel='Clusters w/ version'
+            />
           )}
           {topologyControlPlaneVersions && (
             <LgChart
               title='Control plane versions'
               data={topologyControlPlaneVersions}
               className='col-span-16 min-w-0'
+              metricLabel='Clusters w/ version'
             />
           )}
-          {environments && <LgChart title='Environments' data={environments} className='col-span-16 min-w-0' />}
-          {datacenters && <LgChart title='Datacenters' data={datacenters} className='col-span-8 min-w-0' />}
-          {regions && <LgChart title='Regions' data={regions} className='col-span-8 min-w-0' />}
-          {providers && <LgChart title='Providers' data={providers} className='col-span-8 min-w-0' />}
-          {projects && <LgChart title='Projects' data={projects} className='col-span-32 min-w-0' />}
-          {workorders && <LgChart title='Workorders' data={workorders} className='col-span-32 min-w-0' />}
+          {environments && (
+            <LgChart
+              title='Environments'
+              data={environments}
+              className='col-span-16 min-w-0'
+              metricLabel='Clusters w/ environment'
+            />
+          )}
+          {datacenters && (
+            <LgChart
+              title='Datacenters'
+              data={datacenters}
+              className='col-span-8 min-w-0'
+              metricLabel='Clusters w/ datacenter'
+            />
+          )}
+          {regions && (
+            <LgChart title='Regions' data={regions} className='col-span-8 min-w-0' metricLabel='Clusters w/ region' />
+          )}
+          {providers && (
+            <LgChart
+              title='Providers'
+              data={providers}
+              className='col-span-8 min-w-0'
+              metricLabel='Clusters w/ provider'
+            />
+          )}
+          {projects && (
+            <LgChart
+              title='Projects'
+              data={projects}
+              className='col-span-32 min-w-0'
+              metricLabel='Clusters w/ project'
+            />
+          )}
+          {workorders && (
+            <LgChart
+              title='Workorders'
+              data={workorders}
+              className='col-span-32 min-w-0'
+              metricLabel='Clusters w/ workorder'
+            />
+          )}
         </div>
       </div>
 
       <div className={cn('hidden xl:block 3xl:hidden', 'xl:my-6 xl:px-12')}>
         <div className='grid xl:grid-cols-32 xl:gap-x-6 xl:gap-y-8'>
           {topologyVersions && (
-            <LgChart title='Topology versions' data={topologyVersions} className='col-span-12 min-w-0' />
+            <LgChart
+              title='Topology versions'
+              data={topologyVersions}
+              className='col-span-12 min-w-0'
+              metricLabel='Clusters w/ version'
+            />
           )}
           {topologyControlPlaneVersions && (
             <LgChart
               title='Control plane versions'
               data={topologyControlPlaneVersions}
               className='col-span-12 min-w-0'
+              metricLabel='Clusters w/ version'
             />
           )}
-          {regions && <LgChart title='Regions' data={regions} className='col-span-8 min-w-0' />}
-          {environments && <LgChart title='Environments' data={environments} className='col-span-12 min-w-0' />}
-          {datacenters && <LgChart title='Datacenters' data={datacenters} className='col-span-8 min-w-0' />}
-          {providers && <LgChart title='Providers' data={providers} className='col-span-8 min-w-0' />}
-          {projects && <LgChart title='Projects' data={projects} className='col-span-32 min-w-0' />}
-          {workorders && <LgChart title='Workorders' data={workorders} className='col-span-32 min-w-0' />}
+          {regions && (
+            <LgChart title='Regions' data={regions} className='col-span-8 min-w-0' metricLabel='Clusters w/ region' />
+          )}
+          {environments && (
+            <LgChart
+              title='Environments'
+              data={environments}
+              className='col-span-12 min-w-0'
+              metricLabel='Clusters w/ environment'
+            />
+          )}
+          {datacenters && (
+            <LgChart
+              title='Datacenters'
+              data={datacenters}
+              className='col-span-8 min-w-0'
+              metricLabel='Clusters w/ datacenter'
+            />
+          )}
+          {providers && (
+            <LgChart
+              title='Providers'
+              data={providers}
+              className='col-span-8 min-w-0'
+              metricLabel='Clusters w/ provider'
+            />
+          )}
+          {projects && (
+            <LgChart
+              title='Projects'
+              data={projects}
+              className='col-span-32 min-w-0'
+              metricLabel='Clusters w/ project'
+            />
+          )}
+          {workorders && (
+            <LgChart
+              title='Workorders'
+              data={workorders}
+              className='col-span-32 min-w-0'
+              metricLabel='Clusters w/ workorder'
+            />
+          )}
         </div>
       </div>
 
       <div className={cn('hidden 3xl:block 4xl:hidden', '3xl:my-6 3xl:px-12')}>
         <div className='grid 3xl:grid-cols-32 3xl:gap-x-6 3xl:gap-y-8'>
           {topologyVersions && (
-            <LgChart title='Topology versions' data={topologyVersions} className='col-span-9 min-w-0' />
+            <LgChart
+              title='Topology versions'
+              data={topologyVersions}
+              className='col-span-9 min-w-0'
+              metricLabel='Clusters w/ version'
+            />
           )}
           {topologyControlPlaneVersions && (
             <LgChart
               title='Control plane versions'
               data={topologyControlPlaneVersions}
               className='col-span-9 min-w-0'
+              metricLabel='Clusters w/ version'
             />
           )}
-          {environments && <LgChart title='Environments' data={environments} className='col-span-9 min-w-0' />}
-          {regions && <LgChart title='Regions' data={regions} className='col-span-5 min-w-0' />}
-          {projects && <LgChart title='Projects' data={projects} className='col-span-27 min-w-0' />}
-          {datacenters && <LgChart title='Datacenters' data={datacenters} className='col-span-5 min-w-0' />}
-          {workorders && <LgChart title='Workorders' data={workorders} className='col-span-27 min-w-0' />}
-          {providers && <LgChart title='Providers' data={providers} className='col-span-5 min-w-0' />}
+          {environments && (
+            <LgChart
+              title='Environments'
+              data={environments}
+              className='col-span-9 min-w-0'
+              metricLabel='Clusters w/ environment'
+            />
+          )}
+          {regions && (
+            <LgChart title='Regions' data={regions} className='col-span-5 min-w-0' metricLabel='Clusters w/ region' />
+          )}
+          {projects && (
+            <LgChart
+              title='Projects'
+              data={projects}
+              className='col-span-27 min-w-0'
+              metricLabel='Clusters w/ project'
+            />
+          )}
+          {datacenters && (
+            <LgChart
+              title='Datacenters'
+              data={datacenters}
+              className='col-span-5 min-w-0'
+              metricLabel='Clusters w/ datacenter'
+            />
+          )}
+          {workorders && (
+            <LgChart
+              title='Workorders'
+              data={workorders}
+              className='col-span-27 min-w-0'
+              metricLabel='Clusters w/ workorder'
+            />
+          )}
+          {providers && (
+            <LgChart
+              title='Providers'
+              data={providers}
+              className='col-span-5 min-w-0'
+              metricLabel='Clusters w/ provider'
+            />
+          )}
         </div>
       </div>
 
       <div className={cn('hidden 4xl:block', '4xl:my-6 4xl:px-12')}>
         <div className='grid 4xl:grid-cols-64 4xl:gap-x-6 4xl:gap-y-8'>
           {topologyVersions && (
-            <LgChart title='Topology versions' data={topologyVersions} className='col-span-13 min-w-0' />
+            <LgChart
+              title='Topology versions'
+              data={topologyVersions}
+              className='col-span-13 min-w-0'
+              metricLabel='Clusters w/ version'
+            />
           )}
           {topologyControlPlaneVersions && (
             <LgChart
               title='Control plane versions'
               data={topologyControlPlaneVersions}
               className='col-span-13 min-w-0'
+              metricLabel='Clusters w/ version'
             />
           )}
-          {environments && <LgChart title='Environments' data={environments} className='col-span-13 min-w-0' />}
-          {regions && <LgChart title='Regions' data={regions} className='col-span-8 min-w-0' />}
-          {datacenters && <LgChart title='Datacenters' data={datacenters} className='col-span-8 min-w-0' />}
-          {providers && <LgChart title='Providers' data={providers} className='col-span-8 min-w-0' />}
-          {projects && <LgChart title='Projects' data={projects} className='col-span-32 min-w-0' />}
-          {workorders && <LgChart title='Workorders' data={workorders} className='col-span-32 min-w-0' />}
+          {environments && (
+            <LgChart
+              title='Environments'
+              data={environments}
+              className='col-span-13 min-w-0'
+              metricLabel='Clusters w/ environment'
+            />
+          )}
+          {regions && (
+            <LgChart title='Regions' data={regions} className='col-span-8 min-w-0' metricLabel='Clusters w/ region' />
+          )}
+          {datacenters && (
+            <LgChart
+              title='Datacenters'
+              data={datacenters}
+              className='col-span-8 min-w-0'
+              metricLabel='Clusters w/ datacenter'
+            />
+          )}
+          {providers && (
+            <LgChart
+              title='Providers'
+              data={providers}
+              className='col-span-8 min-w-0'
+              metricLabel='Clusters w/ provider'
+            />
+          )}
+          {projects && (
+            <LgChart
+              title='Projects'
+              data={projects}
+              className='col-span-32 min-w-0'
+              metricLabel='Clusters w/ project'
+            />
+          )}
+          {workorders && (
+            <LgChart
+              title='Workorders'
+              data={workorders}
+              className='col-span-32 min-w-0'
+              metricLabel='Clusters w/ workorder'
+            />
+          )}
         </div>
       </div>
 
