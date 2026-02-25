@@ -24,9 +24,19 @@ import type { BackupJobSchema } from '../schemas/backup-job'
 import type { BackupRunSchema } from '../schemas/backup-run'
 import type { ProjectResponseSchema, ProjectSchema } from '../schemas/project'
 import type { AclResponseSchema, AclSchema } from '../schemas/acl'
+import type {
+  ApiKeyListResponseSchema,
+  ApiKeySchema,
+  CreateApiKeyRequestSchema,
+  CreateApiKeyResponseSchema,
+} from '../schemas/api-key'
 
 export type Acl = z.infer<typeof AclSchema>
 export type AclResponse = z.infer<typeof AclResponseSchema>
+export type ApiKey = z.infer<typeof ApiKeySchema>
+export type ApiKeyListResponse = z.infer<typeof ApiKeyListResponseSchema>
+export type CreateApiKeyRequest = z.infer<typeof CreateApiKeyRequestSchema>
+export type CreateApiKeyResponse = z.infer<typeof CreateApiKeyResponseSchema>
 // "Cluster" matches the v1 resource
 export type Cluster = z.infer<typeof ClusterSchema>
 export type ClustersResponse = z.infer<typeof ClustersResponseSchema>
