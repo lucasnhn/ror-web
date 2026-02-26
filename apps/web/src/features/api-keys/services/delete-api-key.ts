@@ -3,7 +3,10 @@
 import { getRorApi } from '@/services/ror-api'
 
 export async function deleteApiKey({ apikeyId }: { apikeyId: string }) {
-  const api = await getRorApi()
-  const res = await api.apiKey.delete(apikeyId)
-  return res
+  try {
+    const api = await getRorApi()
+    return await api.apiKey.delete(apikeyId)
+  } catch {
+    return false
+  }
 }
