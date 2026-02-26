@@ -37,7 +37,7 @@ export const DeleteApiKeyButton = ({ apikeyId, onDeleted }: { apikeyId: string; 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant='destructive' type='button'>
+        <Button variant='destructive' type='button' aria-label='Delete API key'>
           <Trash />
         </Button>
       </DialogTrigger>
@@ -45,7 +45,9 @@ export const DeleteApiKeyButton = ({ apikeyId, onDeleted }: { apikeyId: string; 
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Delete API key?</DialogTitle>
-          <DialogDescription>This action can't be undone. The key will stop working immediately.</DialogDescription>
+          <DialogDescription>
+            This action can&apos;t be undone. The key will stop working immediately.
+          </DialogDescription>
         </DialogHeader>
 
         <DialogFooter>
@@ -56,7 +58,7 @@ export const DeleteApiKeyButton = ({ apikeyId, onDeleted }: { apikeyId: string; 
           </DialogClose>
 
           <Button type='button' variant='destructive' onClick={handleDelete} disabled={isPending}>
-            {isPending ? 'Deleting...' : 'Confirm'}
+            {isPending ? 'Deleting...' : 'Delete'}
           </Button>
         </DialogFooter>
       </DialogContent>
