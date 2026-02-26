@@ -4,11 +4,12 @@ import { localizeDate } from '@/utils/time-and-date'
 import { Acl } from '@ror/js-api-client'
 import { Tile } from '@ror/react/components/tile'
 import { jwtDecode } from 'jwt-decode'
-import { Copy, Eye, EyeClosed, Trash } from 'lucide-react'
+import { Copy, Eye, EyeClosed } from 'lucide-react'
 import { CopyButton } from '@/components/ui/copy-button'
 import Link from 'next/link'
-import { Button } from '@/components/shadcn/button'
-import { format } from 'date-fns'
+import { Suspense } from 'react'
+import { ApiKeysTile } from '@/features/api-keys/components/api-keys-tile'
+import { ApiKeysTileLoading } from '@/features/api-keys/components/api-keys-tile-loading'
 
 export const dynamic = 'force-dynamic'
 
@@ -37,8 +38,6 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
 
   const sp = (await searchParams) ?? {}
   const showToken = sp.showToken === '1'
-
-  const keys = await (await api.apiKey.list()).data
 
   return (
     <div className='p-10'>
@@ -147,39 +146,9 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
                 : '**********************************************************************************'}
             </p>
           </Tile>
-          <Tile className='p-5 mt-8'>
-            <h3 className='r-heading-03 mb-4'>API keys</h3>
-
-            <div className={'overflow-hidden rounded-lg border'}>
-              <table className='w-full table table-auto'>
-                <thead>
-                  <tr>
-                    <th className='border border-t-0 border-l-0 px-2 py-1'>Name</th>
-                    <th className='border border-t-0 px-2 py-1'>Created</th>
-                    <th className='border border-t-0 px-2 py-1'>Expires</th>
-                    <th className='border border-t-0 border-r-0 px-2 py-1'>Delete</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {keys.map((k) => (
-                    <tr key={k.id} className='last:[&>td]:border-b-0'>
-                      <td className='border border-l-0 px-2 py-1'>{k.displayName}</td>
-                      <td className='border px-2 py-1'>{format(new Date(k.created), 'dd.MM.yy, HH:mm')}</td>
-                      <td className='border px-2 py-1'>
-                        {k.expires ? format(new Date(k.expires), 'dd.MM.yy, HH:mm') : 'No expiration'}
-                      </td>
-                      <td className='border border-r-0 px-2 py-1 text-center'>
-                        {/* TODO: implement API call for deleting button */}
-                        <Button variant='destructive' type='submit'>
-                          <Trash />
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </Tile>
+          <Suspense fallback={<ApiKeysTileLoading />}>
+            <ApiKeysTile />
+          </Suspense>
         </div>
       </div>
     </div>
