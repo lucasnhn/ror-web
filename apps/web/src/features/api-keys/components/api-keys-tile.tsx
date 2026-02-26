@@ -50,7 +50,8 @@ export async function ApiKeysTile() {
         </div>
       </Tile>
     )
-  } catch {
+  } catch (error) {
+    console.error('Failed to fetch API keys', error)
     return (
       <Tile className='p-5 mt-8'>
         <h3 className='r-heading-03 mb-4'>API keys</h3>
