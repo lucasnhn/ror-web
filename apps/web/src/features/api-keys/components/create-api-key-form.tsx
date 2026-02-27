@@ -15,6 +15,7 @@ import { RotateCcw } from 'lucide-react'
 
 type CreateApiKeyFormProps = {
   onCreated?: () => void
+  onFinish?: () => void
 }
 
 const TTL_PRESETS: { label: string; ttl: number }[] = [
@@ -30,7 +31,7 @@ const calculateTTL = (date: Date): number => {
   return Math.max(0, Math.floor(ttlMs / 1000))
 }
 
-export const CreateApiKeyForm = ({ onCreated }: CreateApiKeyFormProps) => {
+export const CreateApiKeyForm = ({ onCreated, onFinish }: CreateApiKeyFormProps) => {
   const [date, setDate] = useState<Date>(new Date())
   const [showCustom, setShowCustom] = useState<boolean>(false)
   const [created, setCreated] = useState<null | CreateApiKeyResponse>(null)
@@ -59,7 +60,7 @@ export const CreateApiKeyForm = ({ onCreated }: CreateApiKeyFormProps) => {
 
   if (created) {
     return (
-      <div className='space-y-3'>
+      <div className='mx-4 space-y-3'>
         <div className='rounded-md border p-3'>
           <div className='font-medium'>API key created</div>
           <p>
@@ -76,18 +77,33 @@ export const CreateApiKeyForm = ({ onCreated }: CreateApiKeyFormProps) => {
           </p>
 
           <div className='mt-3 flex flex-col gap-2'>
-            <CodeSnippet type='single'>11dcee98-13d6-11f1-b75f-9edcb9caf251</CodeSnippet>
+            <CodeSnippet type='single'>{created.token}</CodeSnippet>
 
             <div className='flex flex-wrap gap-2'>
-              <Button type='button' variant='default'>
+              <Button
+                type='button'
+                variant='default'
+                onClick={() => {
+                  setCreated(null)
+                  form.reset()
+                  onFinish?.()
+                }}
+              >
                 Finish
               </Button>
-              <Button type='button' variant='outline'>
+              <Button
+                type='button'
+                variant='outline'
+                onClick={() => {
+                  setCreated(null)
+                  form.reset()
+                }}
+              >
                 Create new key
               </Button>
             </div>
 
-            <div className='text-xs text-muted-foreground'>Expires: 28/05/2026, 14:15:56</div>
+            <div className='text-xs text-muted-foreground'>Expires: {new Date(created.expires).toLocaleString()}</div>
           </div>
         </div>
       </div>
