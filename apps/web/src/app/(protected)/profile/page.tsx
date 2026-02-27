@@ -19,22 +19,22 @@ type ProfilePageProps = {
 
 export default async function ProfilePage({ searchParams }: ProfilePageProps) {
   const session = await authGuard()
-  const api = await getRorApi()
+  // const api = await getRorApi()
   const decodedAuthToken = jwtDecode(session.accessToken)
-  const self = await api.users.self()
+  // const self = await api.users.self()
 
-  const acls: string[] = self.user.groups
+  // const acls: string[] = self.user.groups
   const aclsBeingUsed: Acl[] = []
   const aclsNotBeingUsed = []
 
-  for (const acl of acls) {
-    const res = await api.acl.getByName(acl)
-    if (res.data.length > 0) {
-      aclsBeingUsed.push(...res.data)
-    } else {
-      aclsNotBeingUsed.push(acl)
-    }
-  }
+  // for (const acl of acls) {
+  //   const res = await api.acl.getByName(acl)
+  //   if (res.data.length > 0) {
+  //     aclsBeingUsed.push(...res.data)
+  //   } else {
+  //     aclsNotBeingUsed.push(acl)
+  //   }
+  // }
 
   const sp = (await searchParams) ?? {}
   const showToken = sp.showToken === '1'
@@ -42,8 +42,8 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
   return (
     <div className='p-10'>
       <header>
-        <h1 className='mb-2'>{self.user.name}</h1>
-        <p className='text-(--r-text-secondary)'>{self.user.email}</p>
+        {/* <h1 className='mb-2'>{self.user.name}</h1>
+        <p className='text-(--r-text-secondary)'>{self.user.email}</p> */}
       </header>
 
       <div className='mt-10 grid grid-cols-14 gap-8 max-w-480'>
