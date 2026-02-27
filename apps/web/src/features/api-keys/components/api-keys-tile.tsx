@@ -11,7 +11,6 @@ export async function ApiKeysTile() {
     return (
       <Tile className='p-5 mt-8'>
         <ApiKeysTileHeaderCreate />
-        <hr />
         {keys.length === 0 ? (
           <p className='px-2 py-3 text-sm text-muted-foreground'>No API keys</p>
         ) : (

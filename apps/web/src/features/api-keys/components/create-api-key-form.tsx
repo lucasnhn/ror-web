@@ -7,11 +7,11 @@ import { createApiKey } from '../services/create-api-key'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { Button } from '@/components/shadcn/button'
+import { CodeSnippet } from '@/components/ui/code-snippet'
 import { Label } from '@/components/shadcn/label'
 import { Input } from '@/components/shadcn/input'
 import { Calendar } from '@/components/shadcn/calendar'
 import { RotateCcw } from 'lucide-react'
-import { CodeSnippet } from '@/components/ui/code-snippet'
 
 type CreateApiKeyFormProps = {
   onCreated?: () => void
@@ -50,6 +50,7 @@ export const CreateApiKeyForm = ({ onCreated }: CreateApiKeyFormProps) => {
     try {
       const res = await createApiKey(values)
       setCreated({ token: res.token, expires: res.expires })
+      onCreated?.()
       toast.success('API key was created')
     } catch {
       toast.error('Could not create API key')
@@ -61,43 +62,32 @@ export const CreateApiKeyForm = ({ onCreated }: CreateApiKeyFormProps) => {
       <div className='space-y-3'>
         <div className='rounded-md border p-3'>
           <div className='font-medium'>API key created</div>
-
-          <p className='text-sm text-muted-foreground'>
-            The key will only be shown once. Copy it and save it somewhere safe.
-            <br />
-            To use the API key,, add a request header <pre>X-API-KEY</pre> and set the API key as the value.
-            <br />
-            See the <a href='https://api.ror.nhn.no/swagger/index.html'>Swagger documentation</a> for the API endpoints.
+          <p>
+            The key will only be shown once. Copy it and save it somewhere safe. To use the API key, add a request
+            header <code className='mx-1 px-2 py-0.5 border rounded-md font-mono text-sm align-middle'>X-API-KEY</code>{' '}
+            and set the API key as the value. See the{' '}
+            <a
+              href='https://api.ror.nhn.no/swagger/index.html'
+              className='inline align-baseline text-blue-600 hover:underline'
+            >
+              Swagger documentation
+            </a>{' '}
+            for the API endpoints.
           </p>
 
           <div className='mt-3 flex flex-col gap-2'>
-            <CodeSnippet type='single'>{created.token}</CodeSnippet>
+            <CodeSnippet type='single'>11dcee98-13d6-11f1-b75f-9edcb9caf251</CodeSnippet>
 
             <div className='flex flex-wrap gap-2'>
-              <Button
-                type='button'
-                variant='default'
-                onClick={() => {
-                  setCreated(null)
-                  form.reset()
-                  onCreated?.()
-                }}
-              >
+              <Button type='button' variant='default'>
                 Finish
               </Button>
-              <Button
-                type='button'
-                variant='outline'
-                onClick={() => {
-                  setCreated(null)
-                  form.reset()
-                }}
-              >
+              <Button type='button' variant='outline'>
                 Create new key
               </Button>
             </div>
 
-            <div className='text-xs text-muted-foreground'>Expires: {new Date(created.expires).toLocaleString()}</div>
+            <div className='text-xs text-muted-foreground'>Expires: 28/05/2026, 14:15:56</div>
           </div>
         </div>
       </div>
