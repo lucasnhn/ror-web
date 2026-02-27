@@ -24,7 +24,6 @@ export async function ApiKeysTile() {
     return (
       <Tile className='p-5 mt-8'>
         <ApiKeysTileHeaderCreate />
-        <hr />
         An unexpected error occurred. We could not fetch your API keys.
       </Tile>
     )

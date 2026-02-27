@@ -4,8 +4,10 @@ import { Button } from '@/components/shadcn/button'
 import { Plus } from 'lucide-react'
 import { CreateApiKeyForm } from './create-api-key-form'
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 export const ApiKeysTileHeaderCreate = () => {
+  const router = useRouter()
   const [openCreate, setOpenCreate] = useState<boolean>(false)
 
   return (
@@ -19,7 +21,11 @@ export const ApiKeysTileHeaderCreate = () => {
       {openCreate && (
         <>
           <hr />
-          <CreateApiKeyForm />
+          <CreateApiKeyForm
+            onCreated={() => {
+              router.refresh()
+            }}
+          />
         </>
       )}
     </>

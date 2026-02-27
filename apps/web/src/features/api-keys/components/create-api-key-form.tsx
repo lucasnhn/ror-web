@@ -51,7 +51,6 @@ export const CreateApiKeyForm = ({ onCreated }: CreateApiKeyFormProps) => {
       const res = await createApiKey(values)
       setCreated({ token: res.token, expires: res.expires })
       toast.success('API key was created')
-      onCreated?.()
     } catch {
       toast.error('Could not create API key')
     }
@@ -81,9 +80,10 @@ export const CreateApiKeyForm = ({ onCreated }: CreateApiKeyFormProps) => {
                 onClick={() => {
                   setCreated(null)
                   form.reset()
+                  onCreated?.()
                 }}
               >
-                Create new key
+                Finish
               </Button>
               <Button
                 type='button'
