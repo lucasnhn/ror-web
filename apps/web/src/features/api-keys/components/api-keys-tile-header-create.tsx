@@ -16,8 +16,12 @@ export const ApiKeysTileHeaderCreate = () => {
           <Plus /> Create new API key
         </Button>
       </div>
-      <hr />
-      {openCreate && <CreateApiKeyForm />}
+      {openCreate && (
+        <>
+          <hr />
+          <CreateApiKeyForm />
+        </>
+      )}
     </>
   )
 }

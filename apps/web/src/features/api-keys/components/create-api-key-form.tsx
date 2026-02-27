@@ -6,12 +6,12 @@ import { useForm } from 'react-hook-form'
 import { createApiKey } from '../services/create-api-key'
 import { useState } from 'react'
 import { toast } from 'sonner'
-import { CopyButton } from '@/components/ui/copy-button'
 import { Button } from '@/components/shadcn/button'
 import { Label } from '@/components/shadcn/label'
 import { Input } from '@/components/shadcn/input'
 import { Calendar } from '@/components/shadcn/calendar'
 import { RotateCcw } from 'lucide-react'
+import { CodeSnippet } from '@/components/ui/code-snippet'
 
 type CreateApiKeyFormProps = {
   onCreated?: () => void
@@ -31,11 +31,7 @@ const calculateTTL = (date: Date): number => {
 }
 
 export const CreateApiKeyForm = ({ onCreated }: CreateApiKeyFormProps) => {
-  const [date, setDate] = useState<Date>(() => {
-    const d = new Date()
-    d.setDate(d.getDate() + 7)
-    return d
-  })
+  const [date, setDate] = useState<Date>(new Date())
   const [showCustom, setShowCustom] = useState<boolean>(false)
   const [created, setCreated] = useState<null | CreateApiKeyResponse>(null)
 
@@ -69,18 +65,29 @@ export const CreateApiKeyForm = ({ onCreated }: CreateApiKeyFormProps) => {
 
           <p className='text-sm text-muted-foreground'>
             The key will only be shown once. Copy it and save it somewhere safe.
+            <br />
+            To use the API key,, add a request header <pre>X-API-KEY</pre> and set the API key as the value.
+            <br />
+            See the <a href='https://api.ror.nhn.no/swagger/index.html'>Swagger documentation</a> for the API endpoints.
           </p>
 
           <div className='mt-3 flex flex-col gap-2'>
-            <pre className='whitespace-pre-wrap break-all rounded bg-muted p-3 text-sm'>{created.token}</pre>
+            <CodeSnippet type='single'>{created.token}</CodeSnippet>
 
             <div className='flex flex-wrap gap-2'>
-              <CopyButton value={created.token} className='min-w-fit'>
-                Copy key
-              </CopyButton>
               <Button
                 type='button'
-                variant='secondary'
+                variant='default'
+                onClick={() => {
+                  setCreated(null)
+                  form.reset()
+                }}
+              >
+                Create new key
+              </Button>
+              <Button
+                type='button'
+                variant='outline'
                 onClick={() => {
                   setCreated(null)
                   form.reset()
