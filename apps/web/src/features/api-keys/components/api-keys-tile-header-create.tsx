@@ -8,27 +8,21 @@ import { useRouter } from 'next/navigation'
 
 export const ApiKeysTileHeaderCreate = () => {
   const router = useRouter()
-  const [openCreate, setOpenCreate] = useState<boolean>(false)
+  const [createKey, setCreateKey] = useState(0)
+  const openCreate = createKey > 0
 
   return (
     <>
       <div className='flex justify-between items-center mb-4'>
         <h3 className='r-heading-03'>API keys</h3>
-        <Button onClick={() => setOpenCreate(true)}>
+        <Button onClick={() => setCreateKey((k) => k + 1)}>
           <Plus /> Create new API key
         </Button>
       </div>
       {openCreate && (
         <>
           <hr />
-          <CreateApiKeyForm
-            onCreated={() => {
-              router.refresh()
-            }}
-            onFinish={() => {
-              setOpenCreate(false)
-            }}
-          />
+          <CreateApiKeyForm key={createKey} onCreated={() => router.refresh()} onFinish={() => setCreateKey(0)} />
         </>
       )}
     </>
