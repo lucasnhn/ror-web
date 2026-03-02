@@ -36,6 +36,12 @@ export const CreateApiKeyForm = ({ onCreated, onFinish }: CreateApiKeyFormProps)
   const [showCustom, setShowCustom] = useState<boolean>(false)
   const [created, setCreated] = useState<null | CreateApiKeyResponse>(null)
 
+  const resetForm = () => {
+    form.reset()
+    setShowCustom(false)
+    setDate(new Date())
+  }
+
   const form = useForm<CreateApiKeyRequest>({
     resolver: zodResolver(CreateApiKeyRequestSchema),
     defaultValues: {
@@ -96,7 +102,7 @@ export const CreateApiKeyForm = ({ onCreated, onFinish }: CreateApiKeyFormProps)
                 variant='outline'
                 onClick={() => {
                   setCreated(null)
-                  form.reset()
+                  resetForm()
                 }}
               >
                 Create new key
@@ -159,10 +165,11 @@ export const CreateApiKeyForm = ({ onCreated, onFinish }: CreateApiKeyFormProps)
                 selected={date}
                 showWeekNumber
                 className='rounded-lg'
+                disabled={{ before: new Date(new Date().setHours(24, 0, 0, 0)) }}
                 onSelect={(d) => {
                   if (!d) return
                   setDate(d)
-                  form.setValue('ttl', calculateTTL(date), { shouldValidate: true, shouldDirty: true })
+                  form.setValue('ttl', calculateTTL(d), { shouldValidate: true, shouldDirty: true })
                 }}
               />
             )}
@@ -182,7 +189,7 @@ export const CreateApiKeyForm = ({ onCreated, onFinish }: CreateApiKeyFormProps)
           type='button'
           variant='ghost'
           disabled={isSubmitting}
-          onClick={() => form.reset()}
+          onClick={() => resetForm()}
           className='hover:underline'
         >
           <RotateCcw />
