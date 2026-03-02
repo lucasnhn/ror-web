@@ -60,7 +60,7 @@ export const CreateApiKeyForm = ({ onCreated, onFinish }: CreateApiKeyFormProps)
 
   if (created) {
     return (
-      <div className='mx-4 space-y-3'>
+      <div className='my-4 space-y-3'>
         <div className='rounded-md border p-3'>
           <div className='font-medium'>API key created</div>
           <p>

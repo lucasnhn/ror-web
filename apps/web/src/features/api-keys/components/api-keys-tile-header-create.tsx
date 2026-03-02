@@ -25,6 +25,9 @@ export const ApiKeysTileHeaderCreate = () => {
             onCreated={() => {
               router.refresh()
             }}
+            onFinish={() => {
+              setOpenCreate(false)
+            }}
           />
         </>
       )}
