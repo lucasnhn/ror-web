@@ -110,7 +110,9 @@ export const CreateApiKeyForm = ({ onCreated, onFinish }: CreateApiKeyFormProps)
               </Button>
             </div>
 
-            <div className='text-xs text-muted-foreground'>Expires: {new Date(created.expires).toLocaleString()}</div>
+            <div className='text-xs text-muted-foreground'>
+              Expires: {created.expires ? new Date(created.expires).toLocaleString() : 'Never'}
+            </div>
           </div>
         </div>
       </div>
@@ -138,7 +140,7 @@ export const CreateApiKeyForm = ({ onCreated, onFinish }: CreateApiKeyFormProps)
                 variant={form.watch('ttl') === p.ttl && !showCustom ? 'default' : 'outline'}
                 disabled={isSubmitting}
                 onClick={() => {
-                  form.setValue('ttl', p.ttl as number, { shouldValidate: true, shouldDirty: true })
+                  form.setValue('ttl', p.ttl, { shouldValidate: true, shouldDirty: true })
                   setShowCustom(false)
                 }}
               >
