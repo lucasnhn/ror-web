@@ -138,7 +138,7 @@ export const CreateApiKeyForm = ({ onCreated, onFinish }: CreateApiKeyFormProps)
                 variant={form.watch('ttl') === p.ttl && !showCustom ? 'default' : 'outline'}
                 disabled={isSubmitting}
                 onClick={() => {
-                  form.setValue('ttl', p.ttl, { shouldValidate: true, shouldDirty: true })
+                  form.setValue('ttl', p.ttl as number, { shouldValidate: true, shouldDirty: true })
                   setShowCustom(false)
                 }}
               >
