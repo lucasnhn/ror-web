@@ -22,7 +22,7 @@ const TTL_PRESETS: { label: string; ttl: number | undefined }[] = [
   { label: '7 days', ttl: 7 * 24 * 60 * 60 },
   { label: '30 days', ttl: 30 * 24 * 60 * 60 },
   { label: '90 days', ttl: 90 * 24 * 60 * 60 },
-  { label: 'No expiration', ttl: 31557599999900 }, // 1000 years
+  { label: 'No expiration', ttl: 1000 * 365 * 24 * 60 * 60 }, // 1000 years
 ]
 
 const calculateTTL = (date: Date): number => {
