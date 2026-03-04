@@ -22,7 +22,7 @@ const TTL_PRESETS: { label: string; ttl: number | undefined }[] = [
   { label: '7 days', ttl: 7 * 24 * 60 * 60 },
   { label: '30 days', ttl: 30 * 24 * 60 * 60 },
   { label: '90 days', ttl: 90 * 24 * 60 * 60 },
-  { label: 'No expiration', ttl: Number.MAX_SAFE_INTEGER }, // max backend allows
+  { label: 'No expiration', ttl: Number.MAX_SAFE_INTEGER },
 ]
 
 const calculateTTL = (date: Date): number => {
@@ -121,7 +121,7 @@ export const CreateApiKeyForm = ({ onCreated, onFinish }: CreateApiKeyFormProps)
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
-      <div className='flex justify-between mt-8'>
+      <div className='flex justify-between mt-8 gap-4'>
         <div className='space-y-2'>
           <Label htmlFor='name'>API key name</Label>
           <Input id='name' {...form.register('name')} />
