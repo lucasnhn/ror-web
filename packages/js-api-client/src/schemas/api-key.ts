@@ -3,11 +3,11 @@ import { createPaginationSchema } from './common'
 
 export const CreateApiKeyRequestSchema = z.object({
   name: z.string().min(1),
-  ttl: z.number().int().positive(),
+  ttl: z.number().int().positive().nullable().optional(),
 })
 export const CreateApiKeyResponseSchema = z.object({
   token: z.string(),
-  expires: z.string(),
+  expires: z.string().nullable().optional(),
 })
 export const DeleteApiKeyResponseSchema = z.boolean()
 export const ApiKeySchema = z

@@ -11,6 +11,12 @@ type ApiKey = {
   expires?: string | Date | null
 }
 
+const isEffectivelyNeverExpiring = (date: Date): boolean => {
+  const hundredYearsFromNow = new Date()
+  hundredYearsFromNow.setFullYear(hundredYearsFromNow.getFullYear() + 100)
+  return date > hundredYearsFromNow
+}
+
 export const ApiKeysTable = ({ keys }: { keys: ApiKey[] }) => {
   const router = useRouter()
 
@@ -31,7 +37,9 @@ export const ApiKeysTable = ({ keys }: { keys: ApiKey[] }) => {
               <td className='border border-l-0 px-2 py-1'>{k.displayName}</td>
               <td className='border px-2 py-1'>{format(new Date(k.created), 'dd.MM.yy, HH:mm')}</td>
               <td className='border px-2 py-1'>
-                {k.expires ? format(new Date(k.expires), 'dd.MM.yy, HH:mm') : 'No expiration'}
+                {isEffectivelyNeverExpiring(new Date(k.expires!))
+                  ? 'No expiration'
+                  : format(new Date(k.expires!), 'dd.MM.yy, HH:mm')}
               </td>
               <td className='border border-r-0 px-2 py-1 text-center'>
                 <DeleteApiKeyButton apikeyId={k.id} onDeleted={() => router.refresh()} />

@@ -1,6 +1,7 @@
 import { getRorApi } from '@/services/ror-api'
 import { Tile } from '@ror/react/components/tile'
 import { ApiKeysTable } from './api-keys-table'
+import { ApiKeysTileHeaderCreate } from './api-keys-tile-header-create'
 
 export async function ApiKeysTile() {
   try {
@@ -9,8 +10,7 @@ export async function ApiKeysTile() {
 
     return (
       <Tile className='p-5 mt-8'>
-        <h3 className='r-heading-03 mb-4'>API keys</h3>
-
+        <ApiKeysTileHeaderCreate />
         {keys.length === 0 ? (
           <p className='px-2 py-3 text-sm text-muted-foreground'>No API keys</p>
         ) : (
@@ -22,7 +22,7 @@ export async function ApiKeysTile() {
     console.error('Failed to fetch API keys', error)
     return (
       <Tile className='p-5 mt-8'>
-        <h3 className='r-heading-03 mb-4'>API keys</h3>
+        <ApiKeysTileHeaderCreate />
         An unexpected error occurred. We could not fetch your API keys.
       </Tile>
     )
