@@ -43,8 +43,8 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
   return (
     <div className='p-10'>
       <header>
-        {/* <h1 className='mb-2'>{self.user.name}</h1>
-        <p className='text-(--r-text-secondary)'>{self.user.email}</p> */}
+        <h1 className='mb-2'>{self.user.name}</h1>
+        <p className='text-(--r-text-secondary)'>{self.user.email}</p>
       </header>
 
       <div className='mt-10 grid grid-cols-14 gap-8 max-w-480'>
