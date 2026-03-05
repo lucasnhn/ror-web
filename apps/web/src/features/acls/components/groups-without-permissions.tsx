@@ -2,12 +2,19 @@
 
 import { getSavedPreference, savePreference } from '@/utils/local-storage'
 import { Eye, EyeClosed } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export const GroupsWithoutPermissions = ({ acls }: { acls: string[] }) => {
-  const [showGroups, setShowGroups] = useState<boolean>(getSavedPreference('profile:showAclsWOPermissions', false))
+  const [showGroups, setShowGroups] = useState<boolean>(false)
   const [isHovered, setIsHovered] = useState(false)
 
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return
+    }
+    const saved = getSavedPreference('profile:showAclsWOPermissions', false)
+    setShowGroups(saved)
+  }, [])
   const showOpenEye = isHovered ? !showGroups : showGroups
 
   const toggleGroupDisplay = () => {
