@@ -12,7 +12,7 @@ export const GroupsWithoutPermissions = ({ acls }: { acls: string[] }) => {
 
   const toggleGroupDisplay = () => {
     const next = !showGroups
-    savePreference('profile:showAclsWOPermissions', String(next) as 'true' | 'false')
+    savePreference('profile:showAclsWOPermissions', next ? 'true' : 'false')
     setShowGroups(next)
   }
 
