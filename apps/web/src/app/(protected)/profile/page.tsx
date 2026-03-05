@@ -10,6 +10,7 @@ import Link from 'next/link'
 import { Suspense } from 'react'
 import { ApiKeysTile } from '@/features/api-keys/components/api-keys-tile'
 import { ApiKeysTileLoading } from '@/features/api-keys/components/api-keys-tile-loading'
+import { GroupsWithoutPermissions } from '@/features/acls/components/groups-without-permissions'
 
 export const dynamic = 'force-dynamic'
 
@@ -19,22 +20,77 @@ type ProfilePageProps = {
 
 export default async function ProfilePage({ searchParams }: ProfilePageProps) {
   const session = await authGuard()
-  const api = await getRorApi()
+  // const api = await getRorApi()
   const decodedAuthToken = jwtDecode(session.accessToken)
-  const self = await api.users.self()
+  // const self = await api.users.self()
 
-  const acls: string[] = self.user.groups
+  // const acls: string[] = self.user.groups
   const aclsBeingUsed: Acl[] = []
-  const aclsNotBeingUsed = []
+  // const aclsNotBeingUsed: string[] = []
+  const aclsNotBeingUsed: string[] = [
+    'R-FasteAnsatte@nhn.no',
+    'A-APP-FortiGateVPN-SSO@nhn.no',
+    'A-NHN-Employee-Developer@nhn.no',
+    'R-App-NHN-DVLS-DCN-ReadOnly@nhn.no',
+    'R-NHN-Dynamic-FasteAnsatte-Moss@nhn.no',
+    'NHN Oslo@nhn.no',
+    'Norsk helsenett@nhn.no',
+    'R-NHN-Dynamic-Ansatte-Fast@nhn.no',
+    'A-Power-Virksomhetsstyring-Security-Dev@nhn.no',
+    'R-NHN-AlleAnsatte-Uten-Eksterne@nhn.no',
+    'Ansatte@nhn.no',
+    'A-nhnkontor-CA-Include-CAU010-2@nhn.no',
+    'A-Power-360Tilbakemelding-User-DEV@nhn.no',
+    'R-NHN-AlleAnsatte-EmployeeId@nhn.no',
+    'R-Ansatte@nhn.no',
+    'NHN Skytjenester 3 - Seksjon@nhn.no',
+    'A-Power-Virksomhetsstyring-Security-Prod@nhn.no',
+    'R-NHN-ORG-602@nhn.no',
+    'NHN Ansatte@nhn.no',
+    'R-NHN-ORG-NH@nhn.no',
+    'R-NHN-ORG-600@nhn.no',
+    'R-Confluence-Users@nhn.no',
+    'A-NHN-VPN-Employee-Developer@nhn.no',
+    'LIC-NHN-M365-Copilot@nhn.no',
+    'R-App-NHN-M365-ExchangeOnline@nhn.no',
+    'R-PAM-DCN-VPN-MGMT-DEVOPS@nhn.no',
+    'R-ADFS-NHN-Origo@nhn.no',
+    'NHN-Skytjenester@nhn.no',
+    'NHN-Copilot CoE@nhn.no',
+    'R-NHN-ORG-620@nhn.no',
+    'R-App-NHN-M365-Teams@nhn.no',
+    'A-Power-360Tilbakemelding-User-PROD@nhn.no',
+    'A-Power-Virksomhetsstyring-User-Dev@nhn.no',
+    'LIC-NHN-M365-Standard@nhn.no',
+    'R-App-NHN-Intune-Mac-Firefox-User@nhn.no',
+    'NHN-AVD-RemoteApp@nhn.no',
+    'NHN Applikasjons- og plattformtjenester - Divisjon@nhn.no',
+    'R-App-NHN-M365-Standard@nhn.no',
+    'NHN Skytjenester - Avdeling@nhn.no',
+    'A-SAKU-Prod@nhn.no',
+    'A-Power-360Tilbakemelding-Security-PROD@nhn.no',
+    'A-Power-Virksomhetsstyring-User-Prod@nhn.no',
+    'A-Power-360Tilbakemelding-Security-DEV@nhn.no',
+    'LIC-NHN-M365-Cloud-Pilot@nhn.no',
+    'R-NHN-Dynamic-Ansatte-Moss@nhn.no',
+    'R-Intune-MDM-Mobil-Pilot-V2@nhn.no',
+    'R-App-NHN-Intune-Mac-DockerDesktop-User@nhn.no',
+    'A-SPL-Helsenorge-QAT@nhn.no',
+    'R-App-NHN-DVLS-License@nhn.no',
+    'A-nhnkontor-CA-Include-CAU013@nhn.no',
+    'R-app-NHN-M365-Viva-Insights@nhn.no',
+    'R-App-NHN-Intune-Mac-Obsidian-User @nhn.no',
+    'R-NHN-ORG-628@nhn.no',
+  ]
 
-  for (const acl of acls) {
-    const res = await api.acl.getByName(acl)
-    if (res.data.length > 0) {
-      aclsBeingUsed.push(...res.data)
-    } else {
-      aclsNotBeingUsed.push(acl)
-    }
-  }
+  // for (const acl of acls) {
+  //   const res = await api.acl.getByName(acl)
+  //   if (res.data.length > 0) {
+  //     aclsBeingUsed.push(...res.data)
+  //   } else {
+  //     aclsNotBeingUsed.push(acl)
+  //   }
+  // }
 
   const sp = (await searchParams) ?? {}
   const showToken = sp.showToken === '1'
@@ -42,14 +98,14 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
   return (
     <div className='p-10'>
       <header>
-        <h1 className='mb-2'>{self.user.name}</h1>
-        <p className='text-(--r-text-secondary)'>{self.user.email}</p>
+        {/* <h1 className='mb-2'>{self.user.name}</h1>
+        <p className='text-(--r-text-secondary)'>{self.user.email}</p> */}
       </header>
 
       <div className='mt-10 grid grid-cols-14 gap-8 max-w-480'>
         <div className='col-span-8'>
           <Tile className='p-5'>
-            <h3 className='r-heading-03 mb-4'>Groups that grant access in ROR</h3>
+            <h3 className='r-heading-03 mb-4'>Groups with permissions in ROR</h3>
             <div className={'overflow-hidden rounded-lg border'}>
               <table className='w-full table table-auto'>
                 <thead>
@@ -83,15 +139,8 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
               </table>
             </div>
 
-            <hr className='my-2' />
-            <h3 className='r-heading-03 mb-4'>Groups that does not grant access in ROR</h3>
-            <ul className='list-disc list-inside'>
-              {aclsNotBeingUsed.map((acl) => (
-                <li key={acl} className='mb-1'>
-                  {acl}
-                </li>
-              ))}
-            </ul>
+            <hr className='my-4' />
+            <GroupsWithoutPermissions acls={aclsNotBeingUsed} />
           </Tile>
         </div>
         <div className='col-span-6'>
@@ -146,9 +195,7 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
                 : '**********************************************************************************'}
             </p>
           </Tile>
-          <Suspense fallback={<ApiKeysTileLoading />}>
-            <ApiKeysTile />
-          </Suspense>
+          <Suspense fallback={<ApiKeysTileLoading />}>{/* <ApiKeysTile /> */}</Suspense>
         </div>
       </div>
     </div>
