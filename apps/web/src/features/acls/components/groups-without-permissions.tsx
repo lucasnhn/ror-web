@@ -28,7 +28,7 @@ export const GroupsWithoutPermissions = ({ acls }: { acls: string[] }) => {
       <div className='flex justify-between'>
         <h3 className='r-heading-03 mb-2'>Groups without permissions in ROR</h3>
         <button
-          className='h-fit mt-2.5'
+          className='shrink-0'
           onClick={toggleGroupDisplay}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
