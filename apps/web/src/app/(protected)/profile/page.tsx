@@ -20,22 +20,22 @@ type ProfilePageProps = {
 
 export default async function ProfilePage({ searchParams }: ProfilePageProps) {
   const session = await authGuard()
-  // const api = await getRorApi()
+  const api = await getRorApi()
   const decodedAuthToken = jwtDecode(session.accessToken)
-  // const self = await api.users.self()
+  const self = await api.users.self()
 
-  // const acls: string[] = self.user.groups
+  const acls: string[] = self.user.groups
   const aclsBeingUsed: Acl[] = []
   const aclsNotBeingUsed: string[] = []
 
-  // for (const acl of acls) {
-  //   const res = await api.acl.getByName(acl)
-  //   if (res.data.length > 0) {
-  //     aclsBeingUsed.push(...res.data)
-  //   } else {
-  //     aclsNotBeingUsed.push(acl)
-  //   }
-  // }
+  for (const acl of acls) {
+    const res = await api.acl.getByName(acl)
+    if (res.data.length > 0) {
+      aclsBeingUsed.push(...res.data)
+    } else {
+      aclsNotBeingUsed.push(acl)
+    }
+  }
 
   const sp = (await searchParams) ?? {}
   const showToken = sp.showToken === '1'
@@ -140,7 +140,9 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
                 : '**********************************************************************************'}
             </p>
           </Tile>
-          <Suspense fallback={<ApiKeysTileLoading />}>{/* <ApiKeysTile /> */}</Suspense>
+          <Suspense fallback={<ApiKeysTileLoading />}>
+            <ApiKeysTile />
+          </Suspense>
         </div>
       </div>
     </div>
