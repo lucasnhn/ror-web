@@ -28,11 +28,15 @@ export const GroupsWithoutPermissions = ({ acls }: { acls: string[] }) => {
       <div className='flex justify-between'>
         <h3 className='r-heading-03 mb-2'>Groups without permissions in ROR</h3>
         <button
+          type='button'
           className='h-fit mt-2.5'
           onClick={toggleGroupDisplay}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
+          onFocus={() => setIsHovered(true)}
+          onBlur={() => setIsHovered(false)}
           aria-label={showGroups ? 'Hide groups without permissions' : 'Show groups without permissions'}
+          aria-pressed={showGroups}
         >
           {showOpenEye ? <Eye className='h-10 w-10' /> : <EyeClosed className='h-10 w-10' />}
         </button>
