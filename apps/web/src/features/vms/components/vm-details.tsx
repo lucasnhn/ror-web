@@ -44,14 +44,10 @@ import { DetailedMemoryUsage } from './detailed-memory-usage'
 import { Badge } from '@/components/shadcn/badge'
 import Link from 'next/link'
 
-import { useEffect, useState } from 'react'
-import type { VirtualMachineVulnerabilityInfoType } from '@ror/js-api-client'
-import { fetchVulnerabilityInfo } from '../actions/vulnerability-actions'
 import { VulnerabilityCard } from './vm-vulnerability-info-card'
 
 export const VMDetails = ({ user }: VMDetailsProps) => {
   const { vm } = useVMContext()
-  const [vulnerabilityData, setVulnerabilityData] = useState<VirtualMachineVulnerabilityInfoType | null>(null)
 
   const cpuSockets = getSpecSockets(vm) || 0
   const cpuCoresPerSocket = getSpecCoresPerSocket(vm) || 0
@@ -86,17 +82,6 @@ export const VMDetails = ({ user }: VMDetailsProps) => {
   const tags = getTags(vm)
   const tagKey = Object.keys(tags)
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (vm?.metadata?.uid != null) {
-        const data = await fetchVulnerabilityInfo(vm.metadata.uid)
-        setVulnerabilityData(data)
-      } else {
-        console.error('VM is null, cannot fetch vulnerability info')
-      }
-    }
-    fetchData()
-  }, [vm?.metadata?.uid])
   console.log(user)
 
   const ConfigurationCard = () => (
@@ -368,7 +353,7 @@ export const VMDetails = ({ user }: VMDetailsProps) => {
         </div>
       </div>
       <div className='grid grid-cols-1 md:grid-cols-1'>
-        <VulnerabilityCard data={vulnerabilityData} />
+        <VulnerabilityCard vmid={vm?.metadata?.uid} />
       </div>
     </div>
   )
