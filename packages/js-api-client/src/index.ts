@@ -9,8 +9,12 @@ export {
   isApiError,
 } from './core/errors'
 export type {
-  Ingress,
-  IngressResponse,
+  ApiKey,
+  ApiKeyListResponse,
+  CreateApiKeyRequest,
+  CreateApiKeyResponse,
+  Acl,
+  AclResponse,
   Cluster,
   ClusterIngress,
   ClustersResponse,
@@ -22,6 +26,8 @@ export type {
   DataCenterResponse,
   Deployment,
   DeploymentResponse,
+  Ingress,
+  IngressResponse,
   KubernetesCluster,
   KubernetesClusterResponse,
   KubernetesClusterNodePool,
@@ -53,3 +59,5 @@ export type {
   VirtualMachineVulnerabilityInfoType,
   CVEType,
 } from './types/entities'
+
+export { CreateApiKeyRequestSchema } from './schemas/api-key'

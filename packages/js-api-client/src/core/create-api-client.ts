@@ -18,6 +18,8 @@ import { createBackupJobService } from '../services/backup-job'
 import { createBackupRunService } from '../services/backup-run'
 import { createProjectService } from '../services/projects'
 import { createVirtualMachineVulnerabilityService as createVirtualMachineVulnerabilityInfoService } from '../services/vm-vulnerability-info'
+import { createAclService } from '../services/acls'
+import { createApiKeyService } from '../services/api-keys'
 
 function setDefaultHeaders(config: ApiClientConfig): Record<string, string> {
   return {
@@ -46,6 +48,8 @@ export function createApiClient(config: ApiClientConfig) {
    * Create our different services
    */
   const services = {
+    acl: createAclService(request),
+    apiKey: createApiKeyService(request),
     configuration: createConfigurationService(request),
     daemonSet: createDaemonSetService(request),
     datacenter: createDatacentersService(request),
