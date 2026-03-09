@@ -51,4 +51,5 @@ export type {
   BackupJob,
   BackupRun,
   VirtualMachineVulnerabilityInfoType,
+  CVEType,
 } from './types/entities'
